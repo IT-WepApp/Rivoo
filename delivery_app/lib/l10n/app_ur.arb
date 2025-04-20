@@ -1,0 +1,99 @@
+{
+  "@@locale": "ur",
+  "appTitle": "ڈیلیوری ایپ",
+  "@appTitle": {
+    "description": "ایپ کا مرکزی عنوان"
+  },
+  "login": "لاگ ان",
+  "@login": {
+    "description": "لاگ ان بٹن"
+  },
+  "email": "ای میل",
+  "@email": {
+    "description": "ای میل فیلڈ"
+  },
+  "password": "پاس ورڈ",
+  "@password": {
+    "description": "پاس ورڈ فیلڈ"
+  },
+  "forgotPassword": "پاس ورڈ بھول گئے؟",
+  "@forgotPassword": {
+    "description": "پاس ورڈ بھول گئے لنک"
+  },
+  "home": "ہوم",
+  "@home": {
+    "description": "ہوم پیج کا عنوان"
+  },
+  "orders": "آرڈرز",
+  "@orders": {
+    "description": "آرڈرز سیکشن کا عنوان"
+  },
+  "history": "تاریخ",
+  "@history": {
+    "description": "تاریخ پیج کا عنوان"
+  },
+  "profile": "پروفائل",
+  "@profile": {
+    "description": "پروفائل پیج کا عنوان"
+  },
+  "settings": "ترتیبات",
+  "@settings": {
+    "description": "ترتیبات پیج کا عنوان"
+  },
+  "language": "زبان",
+  "@language": {
+    "description": "زبان کی ترتیب"
+  },
+  "theme": "تھیم",
+  "@theme": {
+    "description": "تھیم کی ترتیب"
+  },
+  "darkMode": "ڈارک موڈ",
+  "@darkMode": {
+    "description": "ڈارک موڈ کی ترتیب"
+  },
+  "lightMode": "لائٹ موڈ",
+  "@lightMode": {
+    "description": "لائٹ موڈ کی ترتیب"
+  },
+  "systemDefault": "سسٹم ڈیفالٹ",
+  "@systemDefault": {
+    "description": "سسٹم کی ترتیبات استعمال کریں"
+  },
+  "newOrder": "نیا آرڈر",
+  "@newOrder": {
+    "description": "نئے آرڈر کی اطلاع"
+  },
+  "acceptOrder": "آرڈر قبول کریں",
+  "@acceptOrder": {
+    "description": "آرڈر قبول کرنے کا بٹن"
+  },
+  "rejectOrder": "آرڈر مسترد کریں",
+  "@rejectOrder": {
+    "description": "آرڈر مسترد کرنے کا بٹن"
+  },
+  "orderDetails": "آرڈر کی تفصیلات",
+  "@orderDetails": {
+    "description": "آرڈر کی تفصیلات کے پیج کا عنوان"
+  },
+  "customerInfo": "کسٹمر کی معلومات",
+  "@customerInfo": {
+    "description": "کسٹمر کی معلومات کا سیکشن"
+  },
+  "deliveryAddress": "ڈیلیوری کا پتہ",
+  "@deliveryAddress": {
+    "description": "ڈیلیوری کا پتہ"
+  },
+  "orderStatus": "آرڈر کی حالت",
+  "@orderStatus": {
+    "description": "آرڈر کی حالت"
+  },
+  "orderCompleted": "آرڈر مکمل ہو گیا",
+  "@orderCompleted": {
+    "description": "آرڈر مکمل ہونے کا پیغام"
+  },
+  "logout": "لاگ آؤٹ",
+  "@logout": {
+    "description": "لاگ آؤٹ بٹن"
+  }
+}

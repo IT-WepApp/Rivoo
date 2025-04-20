@@ -7,6 +7,9 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_widgets/shared_widgets.dart'; // ✅ صح
+import 'package:delivery_app/presentation/theme/app_theme.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 import 'package:delivery_app/firebase_options.dart';
 import 'package:delivery_app/features/auth/presentation/pages/delivery_login_page.dart';
@@ -14,6 +17,10 @@ import 'package:delivery_app/features/home/presentation/pages/delivery_home_page
 import 'package:delivery_app/features/order_history/presentation/pages/order_history_page_corrected.dart';
 import 'package:delivery_app/features/profile/presentation/pages/profile_page.dart';
 import 'package:delivery_app/features/map/presentation/pages/delivery_map_page_corrected.dart';
+import 'package:delivery_app/features/settings/presentation/pages/settings_page.dart';
+import 'package:delivery_app/features/settings/presentation/pages/language_selection_page.dart';
+import 'package:delivery_app/presentation/providers/locale_provider.dart';
+import 'package:delivery_app/presentation/providers/theme_provider.dart';
 
 @pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
@@ -118,6 +125,8 @@ final GoRouter _router = GoRouter(
     GoRoute(path: '/deliveryHome', builder: (_, __) => const DeliveryHomePage()),
     GoRoute(path: '/deliveryHistory', builder: (_, __) => const OrderHistoryPage()),
     GoRoute(path: '/deliveryProfile', builder: (_, __) => const ProfilePage()),
+    GoRoute(path: '/settings', builder: (_, __) => const SettingsPage()),
+    GoRoute(path: '/settings/language', builder: (_, __) => const LanguageSelectionPage()),
     GoRoute(
       path: '/deliveryMap/:orderId',
       builder: (context, state) {
@@ -135,17 +144,34 @@ final GoRouter _router = GoRouter(
   ),
 );
 
-class DeliveryApp extends StatelessWidget {
+class DeliveryApp extends ConsumerWidget {
   const DeliveryApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    final locale = ref.watch(localeProvider);
+    final themeMode = ref.watch(themeModeProvider);
+    
     return MaterialApp.router(
       routerConfig: _router,
-      title: 'Delivery App',
+      title: AppLocalizations.of(context)?.appTitle ?? 'Delivery App',
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
-      themeMode: ThemeMode.system,
+      themeMode: themeMode,
+      locale: locale,
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: const [
+        Locale('ar'), // العربية
+        Locale('en'), // English
+        Locale('fr'), // Français
+        Locale('tr'), // Türkçe
+        Locale('ur'), // اردو
+      ],
       debugShowCheckedModeBanner: false,
     );
   }
