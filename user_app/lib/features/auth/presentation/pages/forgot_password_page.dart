@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:user_app/core/utils/validators.dart';
-import 'package:user_app/features/auth/application/auth_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:user_app/theme/app_widgets.dart';
-import 'package:user_app/core/constants/route_constants.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../core/utils/validators.dart';
+import '../../application/auth_service.dart';
+import '../../../../theme/app_widgets.dart';
+import '../../../../core/constants/route_constants.dart';
 
 class ForgotPasswordPage extends ConsumerStatefulWidget {
   const ForgotPasswordPage({Key? key}) : super(key: key);
@@ -105,11 +105,11 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
           
           const SizedBox(height: 32),
           
-          AppTextField(
+          AppWidgets.AppTextField(
             controller: _emailController,
-            labelText: 'البريد الإلكتروني',
-            hintText: 'أدخل بريدك الإلكتروني',
-            prefixIcon: Icons.email,
+            label: 'البريد الإلكتروني',
+            hint: 'أدخل بريدك الإلكتروني',
+            prefixIcon: const Icon(Icons.email),
             keyboardType: TextInputType.emailAddress,
             textInputAction: TextInputAction.done,
             validator: Validators.validateEmail,
@@ -118,11 +118,11 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
           
           const SizedBox(height: 32),
           
-          AppButton(
+          AppWidgets.AppButton(
             text: 'إرسال رابط إعادة التعيين',
             onPressed: _resetPassword,
             isLoading: _isSubmitting,
-            icon: Icons.send,
+            icon: const Icon(Icons.send),
           ),
           
           const SizedBox(height: 16),

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:user_app/core/utils/validators.dart';
-import 'package:user_app/features/auth/application/auth_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:user_app/theme/app_widgets.dart';
-import 'package:user_app/core/constants/route_constants.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../core/utils/validators.dart';
+import '../../application/auth_service.dart';
+import '../../../../theme/app_widgets.dart';
+import '../../../../core/constants/route_constants.dart';
 
 class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({Key? key}) : super(key: key);
@@ -100,11 +100,11 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 const SizedBox(height: 32),
                 
                 // حقل البريد الإلكتروني
-                AppTextField(
+                AppWidgets.AppTextField(
                   controller: _emailController,
-                  labelText: 'البريد الإلكتروني',
-                  hintText: 'أدخل بريدك الإلكتروني',
-                  prefixIcon: Icons.email,
+                  label: 'البريد الإلكتروني',
+                  hint: 'أدخل بريدك الإلكتروني',
+                  prefixIcon: const Icon(Icons.email),
                   keyboardType: TextInputType.emailAddress,
                   textInputAction: TextInputAction.next,
                   validator: Validators.validateEmail,
@@ -114,11 +114,11 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 const SizedBox(height: 16),
                 
                 // حقل كلمة المرور
-                AppTextField(
+                AppWidgets.AppTextField(
                   controller: _passwordController,
-                  labelText: 'كلمة المرور',
-                  hintText: 'أدخل كلمة المرور',
-                  prefixIcon: Icons.lock,
+                  label: 'كلمة المرور',
+                  hint: 'أدخل كلمة المرور',
+                  prefixIcon: const Icon(Icons.lock),
                   obscureText: _obscurePassword,
                   textInputAction: TextInputAction.done,
                   validator: (value) {
@@ -128,7 +128,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     return null;
                   },
                   enabled: !isLoading,
-                  suffix: IconButton(
+                  suffixIcon: IconButton(
                     icon: Icon(
                       _obscurePassword ? Icons.visibility : Icons.visibility_off,
                     ),
@@ -176,7 +176,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 const SizedBox(height: 32),
                 
                 // زر تسجيل الدخول
-                AppButton(
+                AppWidgets.AppButton(
                   text: 'تسجيل الدخول',
                   onPressed: _login,
                   isLoading: isLoading,
