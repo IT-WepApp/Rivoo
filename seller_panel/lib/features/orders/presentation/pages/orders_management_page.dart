@@ -178,8 +178,8 @@ class _OrdersManagementPageState extends ConsumerState<OrdersManagementPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('إدارة الطلبات'),
-        backgroundColor: theme.colorScheme.primary,
-        foregroundColor: theme.colorScheme.onPrimary,
+        backgroundColor: AppColors.primary,
+        foregroundColor: AppColors.onPrimary,
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
@@ -230,7 +230,7 @@ class _OrdersManagementPageState extends ConsumerState<OrdersManagementPage> {
   Widget _buildFilterBar(ThemeData theme) {
     return Container(
       padding: const EdgeInsets.all(16),
-      color: theme.colorScheme.surface,
+      color: AppColors.surface,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -341,7 +341,7 @@ class _OrdersManagementPageState extends ConsumerState<OrdersManagementPage> {
             Icon(
               Icons.receipt_long,
               size: 64,
-              color: theme.colorScheme.primary.withOpacity(0.5),
+              color: AppColors.primary.withOpacity(0.5),
             ),
             const SizedBox(height: 16),
             Text(

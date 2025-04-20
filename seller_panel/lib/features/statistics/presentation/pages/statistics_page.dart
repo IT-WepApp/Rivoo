@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../core/constants/route_constants.dart';
-import '../../../core/services/order_service.dart';
-import '../../../core/widgets/app_widgets.dart';
+import '../../../../core/constants/route_constants.dart';
+import '../../../../core/services/order_service.dart';
+import '../../../../core/widgets/app_widgets.dart';
+import '../../../../core/theme/app_colors.dart';
 import 'package:fl_chart/fl_chart.dart';
 
 /// صفحة الإحصائيات والتحليلات للبائع
@@ -87,8 +88,8 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> with SingleTick
     return Scaffold(
       appBar: AppBar(
         title: const Text('الإحصائيات والتحليلات'),
-        backgroundColor: theme.colorScheme.primary,
-        foregroundColor: theme.colorScheme.onPrimary,
+        backgroundColor: AppColors.primary,
+        foregroundColor: AppColors.onPrimary,
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
@@ -98,9 +99,9 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> with SingleTick
         ],
         bottom: TabBar(
           controller: _tabController,
-          labelColor: theme.colorScheme.onPrimary,
-          unselectedLabelColor: theme.colorScheme.onPrimary.withOpacity(0.7),
-          indicatorColor: theme.colorScheme.onPrimary,
+          labelColor: AppColors.onPrimary,
+          unselectedLabelColor: AppColors.onPrimary.withOpacity(0.7),
+          indicatorColor: AppColors.onPrimary,
           tabs: const [
             Tab(text: 'المبيعات'),
             Tab(text: 'المنتجات'),
@@ -139,7 +140,7 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> with SingleTick
   Widget _buildTimeRangeFilter(ThemeData theme) {
     return Container(
       padding: const EdgeInsets.all(16),
-      color: theme.colorScheme.surface,
+      color: AppColors.surface,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
@@ -158,11 +159,11 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> with SingleTick
     return ElevatedButton(
       onPressed: () => _changeTimeRange(value),
       style: ElevatedButton.styleFrom(
-        backgroundColor: isSelected ? theme.colorScheme.primary : theme.colorScheme.surface,
-        foregroundColor: isSelected ? theme.colorScheme.onPrimary : theme.colorScheme.onSurface,
+        backgroundColor: isSelected ? AppColors.primary : AppColors.surface,
+        foregroundColor: isSelected ? AppColors.onPrimary : AppColors.textPrimary,
         elevation: isSelected ? 2 : 0,
         side: BorderSide(
-          color: isSelected ? theme.colorScheme.primary : theme.colorScheme.outline,
+          color: isSelected ? AppColors.primary : AppColors.border,
           width: 1,
         ),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -196,25 +197,25 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> with SingleTick
               'title': 'إجمالي المبيعات',
               'value': '${totalSales.toStringAsFixed(2)} ر.س',
               'icon': Icons.attach_money,
-              'color': Colors.green,
+              'color': AppColors.success,
             },
             {
               'title': 'عدد الطلبات',
               'value': totalOrders.toString(),
               'icon': Icons.shopping_bag,
-              'color': Colors.blue,
+              'color': AppColors.info,
             },
             {
               'title': 'متوسط قيمة الطلب',
               'value': '${averageOrderValue.toStringAsFixed(2)} ر.س',
               'icon': Icons.trending_up,
-              'color': Colors.purple,
+              'color': AppColors.secondary,
             },
             {
               'title': 'نمو المبيعات',
               'value': '${salesGrowth >= 0 ? '+' : ''}${salesGrowth.toStringAsFixed(1)}%',
               'icon': salesGrowth >= 0 ? Icons.arrow_upward : Icons.arrow_downward,
-              'color': salesGrowth >= 0 ? Colors.green : Colors.red,
+              'color': salesGrowth >= 0 ? AppColors.success : AppColors.error,
             },
           ],
         ),
@@ -263,19 +264,19 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> with SingleTick
               'title': 'إجمالي المنتجات',
               'value': totalProducts.toString(),
               'icon': Icons.inventory,
-              'color': Colors.blue,
+              'color': AppColors.info,
             },
             {
               'title': 'نفاد المخزون',
               'value': outOfStockProducts.toString(),
               'icon': Icons.remove_shopping_cart,
-              'color': Colors.red,
+              'color': AppColors.error,
             },
             {
               'title': 'مخزون منخفض',
               'value': lowStockProducts.toString(),
               'icon': Icons.warning,
-              'color': Colors.orange,
+              'color': AppColors.warning,
             },
           ],
         ),
@@ -313,25 +314,25 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> with SingleTick
               'title': 'إجمالي العملاء',
               'value': totalCustomers.toString(),
               'icon': Icons.people,
-              'color': Colors.blue,
+              'color': AppColors.info,
             },
             {
               'title': 'عملاء جدد',
               'value': newCustomers.toString(),
               'icon': Icons.person_add,
-              'color': Colors.green,
+              'color': AppColors.success,
             },
             {
               'title': 'عملاء عائدون',
               'value': returningCustomers.toString(),
               'icon': Icons.repeat,
-              'color': Colors.purple,
+              'color': AppColors.secondary,
             },
             {
               'title': 'معدل الاحتفاظ',
               'value': '${customerRetentionRate.toStringAsFixed(1)}%',
               'icon': Icons.favorite,
-              'color': Colors.red,
+              'color': AppColors.error,
             },
           ],
         ),
@@ -381,7 +382,7 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> with SingleTick
                     Text(
                       title,
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        color: Colors.grey.shade600,
+                        color: AppColors.textSecondary,
                       ),
                     ),
                   ],
@@ -391,7 +392,7 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> with SingleTick
                   value,
                   style: theme.textTheme.headlineSmall?.copyWith(
                     fontWeight: FontWeight.bold,
-                    color: theme.colorScheme.onSurface,
+                    color: AppColors.textPrimary,
                   ),
                 ),
               ],
@@ -440,13 +441,13 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> with SingleTick
           verticalInterval: 1,
           getDrawingHorizontalLine: (value) {
             return FlLine(
-              color: Colors.grey.shade300,
+              color: AppColors.border,
               strokeWidth: 1,
             );
           },
           getDrawingVerticalLine: (value) {
             return FlLine(
-              color: Colors.grey.shade300,
+              color: AppColors.border,
               strokeWidth: 1,
             );
           },
@@ -499,7 +500,7 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> with SingleTick
         ),
         borderData: FlBorderData(
           show: true,
-          border: Border.all(color: Colors.grey.shade300),
+          border: Border.all(color: AppColors.border),
         ),
         minX: 0,
         maxX: (salesByDay.length - 1).toDouble(),
@@ -510,8 +511,8 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> with SingleTick
             isCurved: true,
             gradient: LinearGradient(
               colors: [
-                theme.colorScheme.primary.withOpacity(0.8),
-                theme.colorScheme.primary,
+                AppColors.primary.withOpacity(0.8),
+                AppColors.primary,
               ],
             ),
             barWidth: 3,
@@ -521,9 +522,9 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> with SingleTick
               getDotPainter: (spot, percent, barData, index) {
                 return FlDotCirclePainter(
                   radius: 4,
-                  color: theme.colorScheme.primary,
+                  color: AppColors.primary,
                   strokeWidth: 2,
-                  strokeColor: Colors.white,
+                  strokeColor: AppColors.background,
                 );
               },
             ),
@@ -531,8 +532,8 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> with SingleTick
               show: true,
               gradient: LinearGradient(
                 colors: [
-                  theme.colorScheme.primary.withOpacity(0.3),
-                  theme.colorScheme.primary.withOpacity(0.0),
+                  AppColors.primary.withOpacity(0.3),
+                  AppColors.primary.withOpacity(0.0),
                 ],
                 begin: Alignment.topCenter,
                 end: Alignment.bottomCenter,
