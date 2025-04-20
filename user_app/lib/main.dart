@@ -1,82 +1,91 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:user_app/router.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:user_app/core/providers/app_providers.dart';
-import 'package:user_app/l10n/l10n.dart';
-import 'package:user_app/router.dart';
-import 'package:user_app/theme/app_theme.dart';
+import 'package:user_app/core/theme/theme_provider.dart';
+import 'package:user_app/features/auth/presentation/viewmodels/auth_view_model.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
-  // تهيئة التفضيلات المشتركة
-  final sharedPreferences = await SharedPreferences.getInstance();
+  // تهيئة خدمات Firebase
+  // await Firebase.initializeApp(
+  //   options: DefaultFirebaseOptions.currentPlatform,
+  // );
   
-  // تعيين اتجاه الشاشة للدعم في الوضع العمودي والأفقي
-  SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
-    DeviceOrientation.landscapeLeft,
-    DeviceOrientation.landscapeRight,
-  ]);
+  // تهيئة Stripe
+  // Stripe.publishableKey = 'pk_test_your_key';
+  // await Stripe.instance.applySettings();
   
-  runApp(
-    ProviderScope(
-      overrides: [
-        sharedPreferencesProvider.overrideWithValue(sharedPreferences),
-      ],
-      child: const MyApp(),
-    ),
-  );
+  // تهيئة Crashlytics
+  // await CrashlyticsService.initialize();
+  
+  runApp(const ProviderScope(child: MyApp()));
 }
 
-class MyApp extends ConsumerWidget {
+class MyApp extends ConsumerStatefulWidget {
   const MyApp({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    // الحصول على إعدادات السمة
-    final themeMode = ref.watch(themeModeProvider);
+  ConsumerState<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends ConsumerState<MyApp> {
+  @override
+  void initState() {
+    super.initState();
     
-    // الحصول على إعدادات اللغة
+    // التحقق من حالة المصادقة عند بدء التطبيق
+    Future.microtask(() {
+      ref.read(authViewModelProvider.notifier).checkAuthStatus();
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final router = ref.watch(routerProvider);
+    final themeMode = ref.watch(themeModeProvider);
     final locale = ref.watch(localeProvider);
     
-    return MaterialApp.router(
+    return MaterialApp(
       title: 'RivooSy',
-      debugShowCheckedModeBanner: false,
-      
-      // إعدادات السمة
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
+      theme: lightTheme,
+      darkTheme: darkTheme,
       themeMode: themeMode,
-      
-      // إعدادات التوطين
       locale: locale,
-      supportedLocales: L10n.supportedLocales,
       localizationsDelegates: const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      
-      // توجيه التطبيق
-      routerConfig: appRouter,
-      
-      // تكييف التطبيق مع الحجم الفعلي للشاشة
-      builder: (context, child) {
-        // ضبط مقياس النص ليكون متناسبًا مع إعدادات المستخدم
-        final mediaQueryData = MediaQuery.of(context);
-        final scale = mediaQueryData.textScaleFactor.clamp(0.8, 1.2);
-        
-        return MediaQuery(
-          data: mediaQueryData.copyWith(textScaleFactor: scale),
-          child: child!,
-        );
-      },
+      supportedLocales: AppLocalizations.supportedLocales,
+      onGenerateRoute: router.onGenerateRoute,
+      debugShowCheckedModeBanner: false,
     );
   }
 }
+
+// سمات التطبيق
+final lightTheme = ThemeData(
+  useMaterial3: true,
+  colorScheme: ColorScheme.fromSeed(
+    seedColor: Colors.blue,
+    brightness: Brightness.light,
+  ),
+  fontFamily: 'Cairo',
+);
+
+final darkTheme = ThemeData(
+  useMaterial3: true,
+  colorScheme: ColorScheme.fromSeed(
+    seedColor: Colors.blue,
+    brightness: Brightness.dark,
+  ),
+  fontFamily: 'Cairo',
+);
+
+// مزودات السمات واللغة
+final themeModeProvider = StateProvider<ThemeMode>((ref) => ThemeMode.system);
+final localeProvider = StateProvider<Locale?>((ref) => null);

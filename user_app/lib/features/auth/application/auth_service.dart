@@ -254,15 +254,19 @@ class AuthService {
         final token = await credential.user!.getIdToken();
         final refreshToken = await _getRefreshToken(credential.user!);
         
-        // تشفير الرمز المميز قبل التخزين
-        final encryptedToken = _encryptData(token);
-        final encryptedRefreshToken = _encryptData(refreshToken);
+        // استخدام الطرق المتقدمة في SecureStorageService لحفظ الرموز المميزة
+        await _secureStorage.saveAuthToken(token, expiryMinutes: AppConstants.sessionTimeoutMinutes);
+        await _secureStorage.saveRefreshToken(refreshToken);
         
-        await _secureStorage.write(key: AppConstants.tokenKey, value: encryptedToken);
-        await _secureStorage.write(key: AppConstants.refreshTokenKey, value: encryptedRefreshToken);
-        
-        // حفظ معرف المستخدم
-        await _secureStorage.write(key: AppConstants.userIdKey, value: credential.user!.uid);
+        // حفظ بيانات المستخدم بشكل آمن
+        final userData = {
+          'uid': credential.user!.uid,
+          'email': credential.user!.email,
+          'displayName': credential.user!.displayName,
+          'photoURL': credential.user!.photoURL,
+          'lastLogin': DateTime.now().toIso8601String(),
+        };
+        await _secureStorage.saveUserData(userData);
         
         // تسجيل تاريخ تسجيل الدخول
         await _updateLoginTimestamp(credential.user!.uid);
@@ -294,15 +298,20 @@ class AuthService {
         final token = await credential.user!.getIdToken();
         final refreshToken = await _getRefreshToken(credential.user!);
         
-        // تشفير الرمز المميز قبل التخزين
-        final encryptedToken = _encryptData(token);
-        final encryptedRefreshToken = _encryptData(refreshToken);
+        // استخدام الطرق المتقدمة في SecureStorageService لحفظ الرموز المميزة
+        await _secureStorage.saveAuthToken(token, expiryMinutes: AppConstants.sessionTimeoutMinutes);
+        await _secureStorage.saveRefreshToken(refreshToken);
         
-        await _secureStorage.write(key: AppConstants.tokenKey, value: encryptedToken);
-        await _secureStorage.write(key: AppConstants.refreshTokenKey, value: encryptedRefreshToken);
-        
-        // حفظ معرف المستخدم
-        await _secureStorage.write(key: AppConstants.userIdKey, value: credential.user!.uid);
+        // حفظ بيانات المستخدم بشكل آمن
+        final userData = {
+          'uid': credential.user!.uid,
+          'email': credential.user!.email,
+          'displayName': credential.user!.displayName,
+          'photoURL': credential.user!.photoURL,
+          'role': role.toString().split('.').last,
+          'createdAt': DateTime.now().toIso8601String(),
+        };
+        await _secureStorage.saveUserData(userData);
         
         // إنشاء وثيقة المستخدم في Firestore
         await _createUserDocument(credential.user!.uid, email, role);
@@ -331,10 +340,8 @@ class AuthService {
     try {
       await _auth.signOut();
       
-      // حذف الرمز المميز ومعرف المستخدم
-      await _secureStorage.delete(key: AppConstants.tokenKey);
-      await _secureStorage.delete(key: AppConstants.userIdKey);
-      await _secureStorage.delete(key: AppConstants.refreshTokenKey);
+      // استخدام طريقة clearAll من SecureStorageService لحذف جميع البيانات المخزنة
+      await _secureStorage.clearAll();
     } catch (e) {
       throw Exception('فشل تسجيل الخروج: $e');
     }
@@ -464,10 +471,8 @@ class AuthService {
         // حذف الحساب من Firebase Auth
         await user.delete();
         
-        // حذف الرمز المميز ومعرف المستخدم
-        await _secureStorage.delete(key: AppConstants.tokenKey);
-        await _secureStorage.delete(key: AppConstants.userIdKey);
-        await _secureStorage.delete(key: AppConstants.refreshTokenKey);
+        // حذف جميع البيانات المخزنة محلياً
+        await _secureStorage.clearAll();
       } else {
         throw Exception('لا يوجد مستخدم حالي');
       }
@@ -479,10 +484,33 @@ class AuthService {
   /// الحصول على دور المستخدم
   Future<UserRole> getUserRole(String userId) async {
     try {
+      // محاولة الحصول على الدور من التخزين الآمن أولاً
+      final userData = await _secureStorage.getUserData();
+      if (userData != null && userData['uid'] == userId && userData['role'] != null) {
+        final roleString = userData['role'] as String;
+        switch (roleString) {
+          case 'admin':
+            return UserRole.admin;
+          case 'driver':
+            return UserRole.driver;
+          case 'customer':
+            return UserRole.customer;
+          default:
+            return UserRole.customer;
+        }
+      }
+      
+      // إذا لم يتم العثور على الدور في التخزين الآمن، استعلم من Firestore
       final doc = await _firestore.collection('users').doc(userId).get();
       if (doc.exists && doc.data() != null) {
         final roleString = doc.data()!['role'] as String?;
         if (roleString != null) {
+          // تحديث بيانات المستخدم في التخزين الآمن
+          if (userData != null) {
+            userData['role'] = roleString;
+            await _secureStorage.saveUserData(userData);
+          }
+          
           switch (roleString) {
             case 'admin':
               return UserRole.admin;
@@ -520,10 +548,18 @@ class AuthService {
           roleString = 'customer';
       }
       
+      // تحديث الدور في Firestore
       await _firestore.collection('users').doc(userId).update({
         'role': roleString,
         'updatedAt': FieldValue.serverTimestamp(),
       });
+      
+      // تحديث الدور في التخزين الآمن إذا كان المستخدم الحالي
+      final userData = await _secureStorage.getUserData();
+      if (userData != null && userData['uid'] == userId) {
+        userData['role'] = roleString;
+        await _secureStorage.saveUserData(userData);
+      }
     } catch (e) {
       throw Exception('فشل تحديث دور المستخدم: $e');
     }
