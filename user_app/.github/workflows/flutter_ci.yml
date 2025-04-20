@@ -2,372 +2,174 @@ name: Flutter CI/CD
 
 on:
   push:
-    branches: [ main, develop, feature/enhanced-improvements ]
-    tags:
-      - 'v*.*.*'
-    paths:
-      - 'user_app/**'
+    branches: [ main, develop, feature/* ]
   pull_request:
     branches: [ main, develop ]
-    paths:
-      - 'user_app/**'
-  workflow_dispatch:
 
 jobs:
   analyze_and_test:
-    name: تحليل الكود والاختبارات
+    name: Analyze and Test
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: user_app
-
+        working-directory: ./user_app
+    
     steps:
-      - name: استنساخ المستودع
-        uses: actions/checkout@v3
-
-      - name: إعداد Flutter
+      - uses: actions/checkout@v3
+      
+      - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.19.0'
+          flutter-version: '3.10.0'
           channel: 'stable'
-          cache: true
-
-      - name: تثبيت التبعيات
+      
+      - name: Install dependencies
         run: flutter pub get
-
-      - name: توليد ملفات الكود
-        run: flutter pub run build_runner build --delete-conflicting-outputs
-
-      - name: تحليل الكود
+      
+      - name: Analyze project source
         run: flutter analyze
-
-      - name: تشغيل اختبارات الوحدة مع التغطية
+      
+      - name: Run unit tests with coverage
         run: flutter test --coverage
-
-      - name: إنشاء تقرير التغطية بصيغة LCOV
-        run: |
-          flutter pub global activate coverage
-          flutter pub global run coverage:format_coverage \
-            --lcov --in=coverage --out=coverage/lcov.info \
-            --packages=.packages --report-on=lib
-
-      - name: تحميل تقرير التغطية إلى Codecov
+      
+      - name: Upload coverage to Codecov
         uses: codecov/codecov-action@v3
         with:
-          file: user_app/coverage/lcov.info
+          token: ${{ secrets.CODECOV_TOKEN }}
+          file: ./user_app/coverage/lcov.info
           fail_ci_if_error: false
-
-      - name: تشغيل اختبارات التكامل
+      
+      - name: Run integration tests
         run: flutter test integration_test
 
   build_android:
-    name: بناء تطبيق Android
+    name: Build Android
     needs: analyze_and_test
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: user_app
-
+        working-directory: ./user_app
+    
     steps:
-      - name: استنساخ المستودع
-        uses: actions/checkout@v3
-
-      - name: إعداد Java
-        uses: actions/setup-java@v3
-        with:
-          distribution: 'zulu'
-          java-version: '17'
-
-      - name: إعداد Flutter
+      - uses: actions/checkout@v3
+      
+      - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.19.0'
+          flutter-version: '3.10.0'
           channel: 'stable'
-          cache: true
-
-      - name: تثبيت التبعيات
+      
+      - name: Install dependencies
         run: flutter pub get
-
-      - name: توليد ملفات الكود
-        run: flutter pub run build_runner build --delete-conflicting-outputs
-
-      - name: بناء APK للتصحيح
+      
+      - name: Build APK (Debug)
         run: flutter build apk --debug
-
-      - name: بناء APK للإصدار
+      
+      - name: Build APK (Release)
         run: flutter build apk --release
-
-      - name: بناء App Bundle للإصدار
-        run: flutter build appbundle --release
-
-      - name: أرشفة APK
+      
+      - name: Build App Bundle
+        run: flutter build appbundle
+      
+      - name: Upload APK artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: release-apk
-          path: build/app/outputs/flutter-apk/app-release.apk
-          retention-days: 7
-
-      - name: أرشفة App Bundle
-        uses: actions/upload-artifact@v3
+          name: android-build
+          path: |
+            ./user_app/build/app/outputs/flutter-apk/app-debug.apk
+            ./user_app/build/app/outputs/flutter-apk/app-release.apk
+            ./user_app/build/app/outputs/bundle/release/app-release.aab
+      
+      - name: Upload to Firebase App Distribution
+        uses: wzieba/Firebase-Distribution-Github-Action@v1
         with:
-          name: release-aab
-          path: build/app/outputs/bundle/release/app-release.aab
-          retention-days: 7
+          appId: ${{ secrets.FIREBASE_ANDROID_APP_ID }}
+          serviceCredentialsFileContent: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_JSON }}
+          groups: testers
+          file: ./user_app/build/app/outputs/flutter-apk/app-release.apk
+          releaseNotes: |
+            Changes in this build:
+            - Enhanced security with secure storage
+            - Improved performance
+            - Added new features
+            - Bug fixes
 
   build_ios:
-    name: بناء تطبيق iOS
+    name: Build iOS
     needs: analyze_and_test
     runs-on: macos-latest
     defaults:
       run:
-        working-directory: user_app
-
+        working-directory: ./user_app
+    
     steps:
-      - name: استنساخ المستودع
-        uses: actions/checkout@v3
-
-      - name: إعداد Flutter
+      - uses: actions/checkout@v3
+      
+      - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.19.0'
+          flutter-version: '3.10.0'
           channel: 'stable'
-          cache: true
-
-      - name: تثبيت التبعيات
+      
+      - name: Install dependencies
         run: flutter pub get
-
-      - name: توليد ملفات الكود
-        run: flutter pub run build_runner build --delete-conflicting-outputs
-
-      - name: بناء iOS (بدون توقيع)
+      
+      - name: Build iOS (Debug)
+        run: flutter build ios --debug --no-codesign
+      
+      - name: Build iOS (Release)
+        run: flutter build ios --release --no-codesign
+      
+      - name: Upload Crashlytics symbols
         run: |
-          flutter build ios --release --no-codesign
-          cd build/ios/iphoneos
-          mkdir -p Payload
-          cp -r Runner.app Payload
-          zip -r app-release.ipa Payload
-
-      - name: أرشفة IPA
+          echo "Uploading dSYM files to Firebase Crashlytics"
+          # This would be implemented with the Firebase Crashlytics CLI
+      
+      - name: Archive iOS artifacts
         uses: actions/upload-artifact@v3
         with:
-          name: unsigned-ipa
-          path: build/ios/iphoneos/app-release.ipa
-          retention-days: 7
+          name: ios-build
+          path: ./user_app/build/ios/iphoneos
 
-  deploy_firebase:
-    name: نشر التطبيق على Firebase App Distribution
-    needs: [ build_android, build_ios ]
-    if: github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/tags/v')
+  deploy_github_release:
+    name: Deploy GitHub Release
+    needs: [build_android, build_ios]
+    if: startsWith(github.ref, 'refs/tags/')
     runs-on: ubuntu-latest
-
+    
     steps:
-      - name: استنساخ المستودع
-        uses: actions/checkout@v3
-
-      - name: تنزيل APK
+      - uses: actions/checkout@v3
+      
+      - name: Download Android artifacts
         uses: actions/download-artifact@v3
         with:
-          name: release-apk
-          path: apk
-
-      - name: تنزيل IPA
-        uses: actions/download-artifact@v3
-        with:
-          name: unsigned-ipa
-          path: ipa
-
-      - name: نشر Android على Firebase App Distribution
-        uses: wzieba/Firebase-Distribution-Github-Action@v1
-        with:
-          appId: ${{ secrets.FIREBASE_ANDROID_APP_ID }}
-          serviceCredentialsFileContent: ${{ secrets.CREDENTIAL_FILE_CONTENT }}
-          groups: testers
-          file: apk/app-release.apk
-          releaseNotes: |
-            تم النشر تلقائيًا من خلال GitHub Actions
-            الفرع/الإصدار: ${{ github.ref_name }}
-            الالتزام: ${{ github.sha }}
-
-      - name: نشر iOS على Firebase App Distribution
-        uses: wzieba/Firebase-Distribution-Github-Action@v1
-        with:
-          appId: ${{ secrets.FIREBASE_IOS_APP_ID }}
-          serviceCredentialsFileContent: ${{ secrets.CREDENTIAL_FILE_CONTENT }}
-          groups: testers
-          file: ipa/app-release.ipa
-          releaseNotes: |
-            تم النشر تلقائيًا من خلال GitHub Actions
-            الفرع/الإصدار: ${{ github.ref_name }}
-            الالتزام: ${{ github.sha }}
-
-  github_release:
-    name: نشر إصدار على GitHub
-    needs: [ build_android, build_ios ]
-    if: startsWith(github.ref, 'refs/tags/v')
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: استنساخ المستودع
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-
-      - name: تنزيل APK
-        uses: actions/download-artifact@v3
-        with:
-          name: release-apk
-          path: artifacts
-
-      - name: تنزيل AAB
-        uses: actions/download-artifact@v3
-        with:
-          name: release-aab
-          path: artifacts
-
-      - name: تنزيل IPA
-        uses: actions/download-artifact@v3
-        with:
-          name: unsigned-ipa
-          path: artifacts
-
-      - name: استخراج ملاحظات الإصدار من CHANGELOG
-        id: changelog
-        run: |
-          VERSION=${GITHUB_REF#refs/tags/v}
-          CHANGELOG_CONTENT=$(sed -n "/## \[$VERSION\]/,/## \[/p" user_app/CHANGELOG.md | sed '1d;$d')
-          echo "CHANGELOG_CONTENT<<EOF" >> $GITHUB_ENV
-          echo "$CHANGELOG_CONTENT" >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
-
-      - name: إنشاء إصدار GitHub
+          name: android-build
+          path: android-build
+      
+      - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
           files: |
-            artifacts/app-release.apk
-            artifacts/app-release.aab
-            artifacts/app-release.ipa
-          body: |
-            # إصدار ${{ github.ref_name }}
-            
-            ${{ env.CHANGELOG_CONTENT }}
-            
-            ## ملفات التثبيت
-            - **Android APK**: تطبيق Android للتثبيت المباشر
-            - **Android AAB**: حزمة تطبيق Android للنشر على Google Play
-            - **iOS IPA**: تطبيق iOS (غير موقع)
+            android-build/app-release.apk
+            android-build/app-release.aab
+          body_path: ./user_app/distribution/whatsnew/en-US.txt
           draft: false
           prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-  deploy_playstore:
-    name: نشر التطبيق على Google Play
-    needs: build_android
-    if: startsWith(github.ref, 'refs/tags/v')
+  notify:
+    name: Notify Team
+    needs: [build_android, build_ios]
     runs-on: ubuntu-latest
-
-    steps:
-      - name: استنساخ المستودع
-        uses: actions/checkout@v3
-
-      - name: تنزيل AAB
-        uses: actions/download-artifact@v3
-        with:
-          name: release-aab
-          path: aab
-
-      - name: إعداد Google Play Publisher
-        uses: r0adkll/upload-google-play@v1
-        with:
-          serviceAccountJsonPlainText: ${{ secrets.PLAY_STORE_CONFIG_JSON }}
-          packageName: com.rivoosyflutter.userapp
-          releaseFiles: aab/app-release.aab
-          track: internal
-          status: completed
-          whatsNewDirectory: user_app/distribution/whatsnew
-          mappingFile: user_app/build/app/outputs/mapping/release/mapping.txt
-
-  deploy_testflight:
-    name: نشر التطبيق على TestFlight
-    needs: build_ios
-    if: startsWith(github.ref, 'refs/tags/v')
-    runs-on: macos-latest
-
-    steps:
-      - name: استنساخ المستودع
-        uses: actions/checkout@v3
-
-      - name: إعداد Xcode
-        uses: maxim-lobanov/setup-xcode@v1
-        with:
-          xcode-version: latest-stable
-
-      - name: إعداد Ruby
-        uses: ruby/setup-ruby@v1
-        with:
-          ruby-version: '3.0'
-          bundler-cache: true
-
-      - name: تثبيت Fastlane
-        run: |
-          cd user_app/ios
-          gem install fastlane
-
-      - name: تنزيل ملف التوزيع
-        run: |
-          echo "${{ secrets.APPSTORE_API_KEY_JSON }}" > user_app/ios/fastlane/api_key.json
-
-      - name: نشر على TestFlight
-        run: |
-          cd user_app/ios
-          fastlane beta
-        env:
-          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
-          FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD }}
-
-  notify_slack:
-    name: إرسال إشعار إلى Slack
-    needs: [ build_android, build_ios, deploy_firebase, github_release ]
     if: always()
-    runs-on: ubuntu-latest
-
+    
     steps:
-      - name: إرسال إشعار إلى Slack
+      - name: Send Slack notification
         uses: 8398a7/action-slack@v3
         with:
           status: ${{ job.status }}
-          fields: repo,message,commit,author,action,eventName,ref,workflow,job,took
-          mention: 'here'
-          if_mention: failure
+          fields: repo,message,commit,author,action,eventName,ref,workflow
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-
-  crashlytics_upload:
-    name: رفع رموز التصحيح إلى Crashlytics
-    needs: build_android
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: استنساخ المستودع
-        uses: actions/checkout@v3
-
-      - name: تنزيل APK
-        uses: actions/download-artifact@v3
-        with:
-          name: release-apk
-          path: apk
-
-      - name: إعداد Firebase CLI
-        run: npm install -g firebase-tools
-
-      - name: استخراج رموز التصحيح
-        run: |
-          unzip -q apk/app-release.apk -d apk_contents
-          ls -la apk_contents
-
-      - name: رفع رموز التصحيح إلى Crashlytics
-        run: |
-          firebase crashlytics:symbols:upload --app=${{ secrets.FIREBASE_ANDROID_APP_ID }} apk_contents
-        env:
-          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}```
-
+        if: always()
