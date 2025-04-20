@@ -14,11 +14,11 @@ class ShoppingCartPage extends ConsumerWidget {
     final cartItems = ref.watch(cartProvider);
     final cartNotifier = ref.read(cartProvider.notifier);
     final theme = Theme.of(context);
-    final currencyFormatter = NumberFormat.currency(locale: 'en_US', symbol: '\$'); // Adjust locale/symbol
+    final currencyFormatter = NumberFormat.currency(locale: 'ar_SA', symbol: 'ريال'); // تعديل العملة للريال السعودي
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Shopping Cart'),
+        title: const Text('سلة التسوق'),
          backgroundColor: theme.colorScheme.primaryContainer,
          foregroundColor: theme.colorScheme.onPrimaryContainer,
       ),
@@ -29,9 +29,9 @@ class ShoppingCartPage extends ConsumerWidget {
                  children: [
                    Icon(Icons.shopping_cart_outlined, size: 80, color: Colors.grey),
                    SizedBox(height: 16),
-                   Text('Your cart is empty.', style: TextStyle(fontSize: 18, color: Colors.grey)),
+                   Text('سلة التسوق فارغة', style: TextStyle(fontSize: 18, color: Colors.grey)),
                    SizedBox(height: 8),
-                   Text('Add items to get started!'),
+                   Text('أضف منتجات للبدء!'),
                  ],
                ),
              )
@@ -60,23 +60,59 @@ class ShoppingCartPage extends ConsumerWidget {
                        Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
-                             Text('Subtotal (${cartNotifier.totalItems} items):', style: theme.textTheme.titleMedium),
+                             Text('المجموع (${cartNotifier.totalItems} منتج):', style: theme.textTheme.titleMedium),
                              Text(
                                 currencyFormatter.format(cartNotifier.totalPrice),
                                 style: theme.textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
                               ),
                           ],
                        ),
-                        // Add shipping/tax info if applicable here
+                        const SizedBox(height: 8),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                             const Text('رسوم التوصيل:', style: TextStyle(fontSize: 14)),
+                             Text(
+                                currencyFormatter.format(15.0),
+                                style: const TextStyle(fontSize: 14),
+                              ),
+                          ],
+                       ),
+                        const SizedBox(height: 8),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                             const Text('الضريبة (15%):', style: TextStyle(fontSize: 14)),
+                             Text(
+                                currencyFormatter.format(cartNotifier.totalPrice * 0.15),
+                                style: const TextStyle(fontSize: 14),
+                              ),
+                          ],
+                       ),
+                        const Divider(height: 16),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                             Text('الإجمالي:', style: theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)),
+                             Text(
+                                currencyFormatter.format(cartNotifier.totalPrice + 15.0 + (cartNotifier.totalPrice * 0.15)),
+                                style: theme.textTheme.titleLarge?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                  color: theme.colorScheme.primary
+                                ),
+                              ),
+                          ],
+                       ),
                         const SizedBox(height: 16),
                         AppButton(
-                          text: 'Proceed to Checkout',
+                          text: 'المتابعة للدفع',
+                          icon: Icons.shopping_cart_checkout,
                           onPressed: () {
-                              // Navigate to checkout page (create if needed)
-                               context.go('/checkout'); // Example route
+                              // التنقل إلى صفحة الدفع
+                               context.goNamed('checkout');
                           },
-                           // Disable button if cart is empty (though the view wouldn't show if empty)
-                           // onPressed: cartItems.isEmpty ? null : () => context.go('/checkout'), 
+                           // تعطيل الزر إذا كانت السلة فارغة
+                           // onPressed: cartItems.isEmpty ? null : () => context.goNamed('checkout'), 
                         ),
                      ],
                   ),
@@ -142,7 +178,7 @@ class ShoppingCartPage extends ConsumerWidget {
                ),
                 IconButton(
                  icon: Icon(Icons.delete_outline, color: theme.colorScheme.error, size: 22),
-                 tooltip: 'Remove Item',
+                 tooltip: 'إزالة المنتج',
                  visualDensity: VisualDensity.compact,
                  padding: const EdgeInsets.only(left: 8),
                  onPressed: () => cartNotifier.removeItem(item.id),
