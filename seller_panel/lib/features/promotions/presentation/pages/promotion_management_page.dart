@@ -82,12 +82,12 @@ class _PromotionManagementPageState extends ConsumerState<PromotionManagementPag
 
     if (success) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Promotion ${_isEditing ? 'updated' : 'created'} successfully.'), backgroundColor: Colors.green),
+        SnackBar(content: Text('تم ${_isEditing ? 'تحديث' : 'إنشاء'} العرض بنجاح.'), backgroundColor: Colors.green),
       );
       _initializeForm(promotion);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Failed to save promotion.'), backgroundColor: Colors.red),
+        const SnackBar(content: Text('فشل في حفظ العرض.'), backgroundColor: Colors.red),
       );
     }
     setState(() => _isSaving = false);
@@ -97,14 +97,14 @@ class _PromotionManagementPageState extends ConsumerState<PromotionManagementPag
     final confirm = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Confirm Deletion'),
-        content: const Text('Are you sure you want to delete this promotion?'),
+        title: const Text('تأكيد الحذف'),
+        content: const Text('هل أنت متأكد من رغبتك في حذف هذا العرض؟'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
+          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('إلغاء')),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('Delete', style: TextStyle(color: Colors.white)),
+            child: const Text('حذف', style: TextStyle(color: Colors.white)),
           ),
         ],
       ),
@@ -117,12 +117,12 @@ class _PromotionManagementPageState extends ConsumerState<PromotionManagementPag
 
       if (success) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Promotion deleted.'), backgroundColor: Colors.green),
+          const SnackBar(content: Text('تم حذف العرض.'), backgroundColor: Colors.green),
         );
         _resetForm();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to delete promotion.'), backgroundColor: Colors.red),
+          const SnackBar(content: Text('فشل في حذف العرض.'), backgroundColor: Colors.red),
         );
       }
       setState(() => _isSaving = false);
@@ -160,12 +160,12 @@ class _PromotionManagementPageState extends ConsumerState<PromotionManagementPag
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Manage Promotion'),
+        title: const Text('إدارة العروض'),
         actions: [
           if (_isEditing)
             IconButton(
               icon: const Icon(Icons.delete_outline, color: Colors.red),
-              tooltip: 'Delete Promotion',
+              tooltip: 'حذف العرض',
               onPressed: _isSaving ? null : _deletePromotion,
             ),
         ],
@@ -177,18 +177,18 @@ class _PromotionManagementPageState extends ConsumerState<PromotionManagementPag
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Product ID: ${widget.productId}', style: theme.textTheme.labelSmall),
+              Text('معرف المنتج: ${widget.productId}', style: theme.textTheme.labelSmall),
               const SizedBox(height: 16),
               DropdownButtonFormField<PromotionType>(
                 value: _selectedType,
                 decoration: InputDecoration(
-                  labelText: 'Promotion Type',
+                  labelText: 'نوع العرض',
                   border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                 ),
                 items: PromotionType.values.map((type) {
                   return DropdownMenuItem(
                     value: type,
-                    child: Text(type == PromotionType.percentageDiscount ? 'Percentage Discount' : 'Fixed Amount Off'),
+                    child: Text(type == PromotionType.percentageDiscount ? 'خصم بالنسبة المئوية' : 'خصم بمبلغ ثابت'),
                   );
                 }).toList(),
                 onChanged: (value) => setState(() => _selectedType = value!),
@@ -196,39 +196,39 @@ class _PromotionManagementPageState extends ConsumerState<PromotionManagementPag
               const SizedBox(height: 16),
               AppTextField(
                 controller: _valueController,
-                label: _selectedType == PromotionType.percentageDiscount ? 'Percentage (%)' : 'Amount Off (\$)',
+                label: _selectedType == PromotionType.percentageDiscount ? 'النسبة المئوية (%)' : 'مبلغ الخصم (ر.س)',
                 keyboardType: const TextInputType.numberWithOptions(decimal: true),
                 prefixIcon: _selectedType == PromotionType.percentageDiscount ? Icons.percent : Icons.attach_money,
                 validator: (value) {
-                  if (value == null || value.isEmpty) return 'Please enter a value.';
+                  if (value == null || value.isEmpty) return 'الرجاء إدخال قيمة.';
                   final parsed = double.tryParse(value);
-                  if (parsed == null || parsed <= 0) return 'Enter a valid positive number.';
-                  if (_selectedType == PromotionType.percentageDiscount && parsed > 100) return 'Percentage cannot exceed 100%';
+                  if (parsed == null || parsed <= 0) return 'أدخل رقمًا موجبًا صالحًا.';
+                  if (_selectedType == PromotionType.percentageDiscount && parsed > 100) return 'لا يمكن أن تتجاوز النسبة المئوية 100%';
                   return null;
                 },
               ),
               const SizedBox(height: 16),
               ListTile(
                 contentPadding: EdgeInsets.zero,
-                title: Text(_startDate == null ? 'Start Date (Optional)' : 'Start: ${DateFormat.yMd().format(_startDate!)}'),
+                title: Text(_startDate == null ? 'تاريخ البدء (اختياري)' : 'البدء: ${DateFormat.yMd().format(_startDate!)}'),
                 trailing: const Icon(Icons.calendar_today),
                 onTap: () => _selectDate(context, true),
               ),
               ListTile(
                 contentPadding: EdgeInsets.zero,
-                title: Text(_endDate == null ? 'End Date (Optional)' : 'End: ${DateFormat.yMd().format(_endDate!)}'),
+                title: Text(_endDate == null ? 'تاريخ الانتهاء (اختياري)' : 'الانتهاء: ${DateFormat.yMd().format(_endDate!)}'),
                 trailing: const Icon(Icons.calendar_today),
                 onTap: () => _selectDate(context, false),
               ),
               const SizedBox(height: 24),
               AppButton(
-                text: _isSaving ? 'Saving...' : (_isEditing ? 'Update Promotion' : 'Create Promotion'),
+                text: _isSaving ? 'جاري الحفظ...' : (_isEditing ? 'تحديث العرض' : 'إنشاء عرض جديد'),
                 onPressed: _isSaving ? () {} : () { _savePromotion();},
               ),
               if (_isEditing)
                 TextButton(
                   onPressed: _resetForm,
-                  child: const Text('Clear/Create New'),
+                  child: const Text('مسح/إنشاء جديد'),
                 ),
             ],
           ),
