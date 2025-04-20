@@ -1,62 +1,48 @@
-/// ثوابت التطبيق المستخدمة في جميع أنحاء التطبيق
-///
-/// يحتوي هذا الملف على جميع الثوابت المستخدمة في التطبيق
-/// لتسهيل الصيانة وتجنب الأخطاء الناتجة عن استخدام القيم المباشرة
 class AppConstants {
-  // ثوابت التخزين
+  // Secure Storage Keys
   static const String tokenKey = 'auth_token';
   static const String refreshTokenKey = 'refresh_token';
   static const String userIdKey = 'user_id';
-  static const String userDataKey = 'user_data';
-  static const String isDarkModeKey = 'is_dark_mode';
-  static const String languageCodeKey = 'language_code';
-  static const String isFirstLaunchKey = 'is_first_launch';
-  static const String cartItemsKey = 'cart_items';
-  static const String favoriteItemsKey = 'favorite_items';
+  static const String userEmailKey = 'user_email';
+  static const String userNameKey = 'user_name';
+  static const String userPhoneKey = 'user_phone';
+  static const String userProfileImageKey = 'user_profile_image';
+  static const String isLoggedInKey = 'is_logged_in';
+  static const String fcmTokenKey = 'fcm_token';
   
-  // ثوابت الشبكة
-  static const int connectionTimeout = 30000; // 30 ثانية
-  static const int receiveTimeout = 30000; // 30 ثانية
-  static const int maxRetryAttempts = 3;
+  // Authentication Settings
+  static const int passwordMinLength = 8;
+  static const int otpLength = 6;
+  static const int otpExpiryMinutes = 10;
+  static const int sessionTimeoutMinutes = 60;
+  static const int maxLoginAttempts = 5;
   
-  // ثوابت المصادقة
-  static const int otpExpiryMinutes = 5;
-  static const int minimumPasswordLength = 8;
-  static const int sessionTimeoutMinutes = 60; // 60 دقيقة
+  // API Endpoints
+  static const String baseUrl = 'https://api.rivoosyapp.com';
+  static const String authEndpoint = '/auth';
+  static const String usersEndpoint = '/users';
+  static const String productsEndpoint = '/products';
+  static const String ordersEndpoint = '/orders';
+  static const String categoriesEndpoint = '/categories';
+  static const String notificationsEndpoint = '/notifications';
   
-  // ثوابت واجهة المستخدم
-  static const double defaultPadding = 16.0;
-  static const double smallPadding = 8.0;
-  static const double largePadding = 24.0;
-  static const double defaultBorderRadius = 8.0;
-  static const double defaultButtonHeight = 48.0;
-  static const double defaultIconSize = 24.0;
-  static const double defaultAnimationDuration = 300.0; // 300 مللي ثانية
+  // App Settings
+  static const String appName = 'RivooSy';
+  static const String appVersion = '1.0.0';
+  static const String supportEmail = 'support@rivoosyapp.com';
+  static const String privacyPolicyUrl = 'https://rivoosyapp.com/privacy-policy';
+  static const String termsOfServiceUrl = 'https://rivoosyapp.com/terms-of-service';
   
-  // ثوابت الصور
-  static const String placeholderImagePath = 'assets/images/placeholder.png';
-  static const String logoPath = 'assets/images/logo.png';
-  static const String userPlaceholderPath = 'assets/images/user_placeholder.png';
+  // Default Values
+  static const int defaultPageSize = 10;
+  static const String defaultCurrency = 'USD';
+  static const String defaultLanguage = 'en';
+  static const String defaultCountryCode = '+1';
   
-  // ثوابت الطلبات
-  static const int maxItemsPerOrder = 50;
-  static const double minimumOrderAmount = 10.0;
-  static const double deliveryFee = 5.0;
-  static const double freeDeliveryThreshold = 50.0;
-  
-  // ثوابت التقييم
-  static const int maxRating = 5;
-  static const int minReviewLength = 10;
-  static const int maxReviewLength = 500;
-  
-  // ثوابت الإشعارات
-  static const String notificationChannelId = 'rivoosyapp_channel';
-  static const String notificationChannelName = 'RivooSy Notifications';
-  static const String notificationChannelDescription = 'Receive notifications from RivooSy';
-  
-  // ثوابت الخريطة
-  static const double defaultZoomLevel = 15.0;
-  static const double defaultLatitude = 24.7136; // الرياض
-  static const double defaultLongitude = 46.6753; // الرياض
-  static const int locationUpdateIntervalSeconds = 5;
+  // Error Messages
+  static const String networkErrorMessage = 'Network error. Please check your internet connection.';
+  static const String serverErrorMessage = 'Server error. Please try again later.';
+  static const String authErrorMessage = 'Authentication error. Please login again.';
+  static const String validationErrorMessage = 'Please check your input and try again.';
+  static const String unknownErrorMessage = 'An unknown error occurred. Please try again.';
 }

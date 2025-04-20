@@ -1,200 +1,225 @@
-/// أدوات التحقق من صحة المدخلات
-///
-/// يحتوي هذا الملف على دوال للتحقق من صحة المدخلات المختلفة
-/// مثل البريد الإلكتروني وكلمة المرور ورقم الهاتف وغيرها
 class Validators {
   /// التحقق من صحة البريد الإلكتروني
-  ///
-  /// يرجع null إذا كان البريد الإلكتروني صحيحاً، أو رسالة خطأ إذا كان غير صحيح
   static String? validateEmail(String? value) {
     if (value == null || value.isEmpty) {
-      return 'الرجاء إدخال البريد الإلكتروني';
+      return 'البريد الإلكتروني مطلوب';
     }
     
-    final emailRegExp = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
+    final emailRegExp = RegExp(
+      r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$',
+    );
+    
     if (!emailRegExp.hasMatch(value)) {
-      return 'الرجاء إدخال بريد إلكتروني صحيح';
+      return 'يرجى إدخال بريد إلكتروني صحيح';
     }
     
     return null;
   }
-  
+
   /// التحقق من صحة كلمة المرور
-  ///
-  /// يرجع null إذا كانت كلمة المرور صحيحة، أو رسالة خطأ إذا كانت غير صحيحة
-  /// كلمة المرور يجب أن تكون على الأقل 8 أحرف وتحتوي على حرف كبير وحرف صغير ورقم
   static String? validatePassword(String? value) {
     if (value == null || value.isEmpty) {
-      return 'الرجاء إدخال كلمة المرور';
+      return 'كلمة المرور مطلوبة';
     }
     
     if (value.length < 8) {
-      return 'كلمة المرور يجب أن تكون على الأقل 8 أحرف';
+      return 'يجب أن تتكون كلمة المرور من 8 أحرف على الأقل';
     }
     
     if (!value.contains(RegExp(r'[A-Z]'))) {
-      return 'كلمة المرور يجب أن تحتوي على حرف كبير واحد على الأقل';
+      return 'يجب أن تحتوي كلمة المرور على حرف كبير واحد على الأقل';
     }
     
     if (!value.contains(RegExp(r'[a-z]'))) {
-      return 'كلمة المرور يجب أن تحتوي على حرف صغير واحد على الأقل';
+      return 'يجب أن تحتوي كلمة المرور على حرف صغير واحد على الأقل';
     }
     
     if (!value.contains(RegExp(r'[0-9]'))) {
-      return 'كلمة المرور يجب أن تحتوي على رقم واحد على الأقل';
+      return 'يجب أن تحتوي كلمة المرور على رقم واحد على الأقل';
+    }
+    
+    if (!value.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
+      return 'يجب أن تحتوي كلمة المرور على رمز خاص واحد على الأقل';
     }
     
     return null;
   }
-  
+
   /// التحقق من تطابق كلمتي المرور
-  ///
-  /// [password] كلمة المرور الأصلية
-  /// [confirmPassword] تأكيد كلمة المرور
-  /// يرجع null إذا كانت كلمتا المرور متطابقتين، أو رسالة خطأ إذا كانتا غير متطابقتين
-  static String? validateConfirmPassword(String? password, String? confirmPassword) {
-    if (confirmPassword == null || confirmPassword.isEmpty) {
-      return 'الرجاء تأكيد كلمة المرور';
+  static String? validatePasswordConfirmation(String? value, String password) {
+    if (value == null || value.isEmpty) {
+      return 'تأكيد كلمة المرور مطلوب';
     }
     
-    if (password != confirmPassword) {
+    if (value != password) {
       return 'كلمتا المرور غير متطابقتين';
     }
     
     return null;
   }
-  
-  /// التحقق من صحة رقم الهاتف
-  ///
-  /// يرجع null إذا كان رقم الهاتف صحيحاً، أو رسالة خطأ إذا كان غير صحيح
-  static String? validatePhone(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'الرجاء إدخال رقم الهاتف';
-    }
-    
-    // تحقق من أن رقم الهاتف يحتوي على أرقام فقط ويبدأ بـ 05 أو +966
-    final phoneRegExp = RegExp(r'^(05|\\+9665)[0-9]{8}$');
-    if (!phoneRegExp.hasMatch(value)) {
-      return 'الرجاء إدخال رقم هاتف صحيح (05xxxxxxxx أو +966xxxxxxxx)';
-    }
-    
-    return null;
-  }
-  
+
   /// التحقق من صحة الاسم
-  ///
-  /// يرجع null إذا كان الاسم صحيحاً، أو رسالة خطأ إذا كان غير صحيح
   static String? validateName(String? value) {
     if (value == null || value.isEmpty) {
-      return 'الرجاء إدخال الاسم';
+      return 'الاسم مطلوب';
     }
     
-    if (value.length < 3) {
-      return 'الاسم يجب أن يكون على الأقل 3 أحرف';
+    if (value.length < 2) {
+      return 'يجب أن يتكون الاسم من حرفين على الأقل';
     }
     
     return null;
   }
-  
-  /// التحقق من صحة العنوان
-  ///
-  /// يرجع null إذا كان العنوان صحيحاً، أو رسالة خطأ إذا كان غير صحيح
-  static String? validateAddress(String? value) {
+
+  /// التحقق من صحة رقم الهاتف
+  static String? validatePhone(String? value) {
     if (value == null || value.isEmpty) {
-      return 'الرجاء إدخال العنوان';
+      return 'رقم الهاتف مطلوب';
     }
     
-    if (value.length < 10) {
-      return 'العنوان يجب أن يكون على الأقل 10 أحرف';
+    final phoneRegExp = RegExp(r'^\+?[0-9]{10,15}$');
+    
+    if (!phoneRegExp.hasMatch(value)) {
+      return 'يرجى إدخال رقم هاتف صحيح';
     }
     
     return null;
   }
-  
+
   /// التحقق من صحة الرمز البريدي
-  ///
-  /// يرجع null إذا كان الرمز البريدي صحيحاً، أو رسالة خطأ إذا كان غير صحيح
   static String? validateZipCode(String? value) {
     if (value == null || value.isEmpty) {
-      return 'الرجاء إدخال الرمز البريدي';
+      return 'الرمز البريدي مطلوب';
     }
     
-    // تحقق من أن الرمز البريدي يحتوي على 5 أرقام
-    final zipCodeRegExp = RegExp(r'^[0-9]{5}$');
+    final zipCodeRegExp = RegExp(r'^[0-9]{5}(?:-[0-9]{4})?$');
+    
     if (!zipCodeRegExp.hasMatch(value)) {
-      return 'الرجاء إدخال رمز بريدي صحيح (5 أرقام)';
+      return 'يرجى إدخال رمز بريدي صحيح';
     }
     
     return null;
   }
-  
+
+  /// التحقق من صحة العنوان
+  static String? validateAddress(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'العنوان مطلوب';
+    }
+    
+    if (value.length < 5) {
+      return 'يجب أن يتكون العنوان من 5 أحرف على الأقل';
+    }
+    
+    return null;
+  }
+
+  /// التحقق من صحة المدينة
+  static String? validateCity(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'المدينة مطلوبة';
+    }
+    
+    return null;
+  }
+
+  /// التحقق من صحة الدولة
+  static String? validateCountry(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'الدولة مطلوبة';
+    }
+    
+    return null;
+  }
+
+  /// التحقق من صحة رقم بطاقة الائتمان
+  static String? validateCreditCard(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'رقم بطاقة الائتمان مطلوب';
+    }
+    
+    // إزالة المسافات والشرطات
+    final cleanValue = value.replaceAll(RegExp(r'[\s-]'), '');
+    
+    // التحقق من أن القيمة تحتوي على أرقام فقط
+    if (!RegExp(r'^[0-9]+$').hasMatch(cleanValue)) {
+      return 'يرجى إدخال رقم بطاقة ائتمان صحيح';
+    }
+    
+    // التحقق من طول رقم البطاقة
+    if (cleanValue.length < 13 || cleanValue.length > 19) {
+      return 'يجب أن يتكون رقم البطاقة من 13 إلى 19 رقمًا';
+    }
+    
+    // خوارزمية Luhn للتحقق من صحة رقم البطاقة
+    int sum = 0;
+    bool alternate = false;
+    for (int i = cleanValue.length - 1; i >= 0; i--) {
+      int n = int.parse(cleanValue[i]);
+      if (alternate) {
+        n *= 2;
+        if (n > 9) {
+          n = (n % 10) + 1;
+        }
+      }
+      sum += n;
+      alternate = !alternate;
+    }
+    
+    if (sum % 10 != 0) {
+      return 'رقم بطاقة الائتمان غير صحيح';
+    }
+    
+    return null;
+  }
+
+  /// التحقق من صحة تاريخ انتهاء الصلاحية
+  static String? validateExpiryDate(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'تاريخ انتهاء الصلاحية مطلوب';
+    }
+    
+    // التحقق من تنسيق MM/YY
+    if (!RegExp(r'^(0[1-9]|1[0-2])\/([0-9]{2})$').hasMatch(value)) {
+      return 'يرجى إدخال تاريخ بتنسيق MM/YY';
+    }
+    
+    final parts = value.split('/');
+    final month = int.parse(parts[0]);
+    final year = int.parse('20${parts[1]}');
+    
+    final now = DateTime.now();
+    final currentYear = now.year;
+    final currentMonth = now.month;
+    
+    if (year < currentYear || (year == currentYear && month < currentMonth)) {
+      return 'تاريخ انتهاء الصلاحية منتهي';
+    }
+    
+    return null;
+  }
+
+  /// التحقق من صحة رمز CVV
+  static String? validateCVV(String? value) {
+    if (value == null || value.isEmpty) {
+      return 'رمز CVV مطلوب';
+    }
+    
+    if (!RegExp(r'^[0-9]{3,4}$').hasMatch(value)) {
+      return 'يرجى إدخال رمز CVV صحيح (3 أو 4 أرقام)';
+    }
+    
+    return null;
+  }
+
   /// التحقق من صحة رمز التحقق
-  ///
-  /// يرجع null إذا كان رمز التحقق صحيحاً، أو رسالة خطأ إذا كان غير صحيح
-  static String? validateOtp(String? value) {
+  static String? validateOTP(String? value) {
     if (value == null || value.isEmpty) {
-      return 'الرجاء إدخال رمز التحقق';
+      return 'رمز التحقق مطلوب';
     }
     
-    // تحقق من أن رمز التحقق يحتوي على 6 أرقام
-    final otpRegExp = RegExp(r'^[0-9]{6}$');
-    if (!otpRegExp.hasMatch(value)) {
-      return 'الرجاء إدخال رمز تحقق صحيح (6 أرقام)';
-    }
-    
-    return null;
-  }
-  
-  /// التحقق من صحة المبلغ
-  ///
-  /// يرجع null إذا كان المبلغ صحيحاً، أو رسالة خطأ إذا كان غير صحيح
-  static String? validateAmount(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'الرجاء إدخال المبلغ';
-    }
-    
-    // تحقق من أن المبلغ رقم موجب
-    final double? amount = double.tryParse(value);
-    if (amount == null) {
-      return 'الرجاء إدخال مبلغ صحيح';
-    }
-    
-    if (amount <= 0) {
-      return 'المبلغ يجب أن يكون أكبر من صفر';
-    }
-    
-    return null;
-  }
-  
-  /// التحقق من صحة التقييم
-  ///
-  /// يرجع null إذا كان التقييم صحيحاً، أو رسالة خطأ إذا كان غير صحيح
-  static String? validateRating(double? value) {
-    if (value == null) {
-      return 'الرجاء إدخال التقييم';
-    }
-    
-    if (value < 1 || value > 5) {
-      return 'التقييم يجب أن يكون بين 1 و 5';
-    }
-    
-    return null;
-  }
-  
-  /// التحقق من صحة التعليق
-  ///
-  /// يرجع null إذا كان التعليق صحيحاً، أو رسالة خطأ إذا كان غير صحيح
-  static String? validateReview(String? value) {
-    if (value == null || value.isEmpty) {
-      return 'الرجاء إدخال التعليق';
-    }
-    
-    if (value.length < 10) {
-      return 'التعليق يجب أن يكون على الأقل 10 أحرف';
-    }
-    
-    if (value.length > 500) {
-      return 'التعليق يجب أن لا يتجاوز 500 حرف';
+    if (!RegExp(r'^[0-9]{6}$').hasMatch(value)) {
+      return 'يرجى إدخال رمز تحقق صحيح (6 أرقام)';
     }
     
     return null;
