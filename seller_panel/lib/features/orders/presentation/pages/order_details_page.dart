@@ -166,8 +166,8 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('تفاصيل الطلب ${_orderData != null ? '#${_orderData!['orderNumber']}' : ''}'),
-        backgroundColor: theme.colorScheme.primary,
-        foregroundColor: theme.colorScheme.onPrimary,
+        backgroundColor: AppColors.primary,
+        foregroundColor: AppColors.onPrimary,
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
@@ -397,7 +397,7 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
                           Text(
                             '${totalPrice.toStringAsFixed(2)} ر.س',
                             style: theme.textTheme.titleMedium?.copyWith(
-                              color: theme.colorScheme.primary,
+                              color: AppColors.primary,
                             ),
                           ),
                         ],

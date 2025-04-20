@@ -81,8 +81,8 @@ class _SellerDashboardPageState extends ConsumerState<SellerDashboardPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('لوحة تحكم البائع'),
-        backgroundColor: theme.colorScheme.primary,
-        foregroundColor: theme.colorScheme.onPrimary,
+        backgroundColor: AppColors.primary,
+        foregroundColor: AppColors.onPrimary,
         actions: [
           IconButton(
             icon: const Icon(Icons.refresh),
@@ -227,7 +227,7 @@ class _SellerDashboardPageState extends ConsumerState<SellerDashboardPage> {
           'المنتجات',
           productsCount.toString(),
           Icons.inventory_2,
-          const Color(0xFF7B1FA2), // بنفسجي
+          AppColors.secondary,
         ),
       ],
     );
@@ -298,7 +298,7 @@ class _SellerDashboardPageState extends ConsumerState<SellerDashboardPage> {
           context,
           'الإحصائيات',
           Icons.bar_chart,
-          const Color(0xFF7B1FA2), // بنفسجي
+          AppColors.secondary,
           () => context.push(RouteConstants.statistics),
         ),
       ],
@@ -439,7 +439,7 @@ class _SellerDashboardPageState extends ConsumerState<SellerDashboardPage> {
         children: [
           DrawerHeader(
             decoration: BoxDecoration(
-              color: theme.colorScheme.primary,
+              color: AppColors.primary,
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -447,13 +447,13 @@ class _SellerDashboardPageState extends ConsumerState<SellerDashboardPage> {
                 const CircleAvatar(
                   radius: 30,
                   backgroundColor: Colors.white,
-                  child: Icon(Icons.store, size: 30, color: Colors.green),
+                  child: Icon(Icons.store, size: 30, color: AppColors.primary),
                 ),
                 const SizedBox(height: 10),
                 Text(
                   storeName,
                   style: TextStyle(
-                    color: theme.colorScheme.onPrimary,
+                    color: AppColors.onPrimary,
                     fontSize: 20,
                     fontWeight: FontWeight.bold,
                   ),
@@ -461,7 +461,7 @@ class _SellerDashboardPageState extends ConsumerState<SellerDashboardPage> {
                 Text(
                   sellerName,
                   style: TextStyle(
-                    color: theme.colorScheme.onPrimary.withOpacity(0.8),
+                    color: AppColors.onPrimary.withOpacity(0.8),
                     fontSize: 14,
                   ),
                 ),

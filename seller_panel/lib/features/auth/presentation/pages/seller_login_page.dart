@@ -113,8 +113,8 @@ class _SellerLoginPageState extends ConsumerState<SellerLoginPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('تسجيل دخول البائع'),
-        backgroundColor: theme.colorScheme.primary,
-        foregroundColor: theme.colorScheme.onPrimary,
+        backgroundColor: AppColors.primary,
+        foregroundColor: AppColors.onPrimary,
       ),
       body: Center(
         child: SingleChildScrollView(
@@ -135,7 +135,7 @@ class _SellerLoginPageState extends ConsumerState<SellerLoginPage> {
                     errorBuilder: (context, error, stackTrace) => Icon(
                       Icons.store,
                       size: 80,
-                      color: theme.colorScheme.primary,
+                      color: AppColors.primary,
                     ),
                   ),
                 ),
@@ -228,8 +228,8 @@ class _SellerLoginPageState extends ConsumerState<SellerLoginPage> {
                         text: 'تسجيل الدخول',
                         onPressed: _login,
                         icon: Icons.login,
-                        backgroundColor: theme.colorScheme.primary,
-                        textColor: theme.colorScheme.onPrimary,
+                        backgroundColor: AppColors.primary,
+                        textColor: AppColors.onPrimary,
                       ),
                 
                 const SizedBox(height: 24),

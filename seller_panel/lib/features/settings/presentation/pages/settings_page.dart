@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../core/constants/route_constants.dart';
-import '../../../core/theme/app_colors.dart';
-import '../../../core/widgets/app_widgets.dart';
+import '../../../../core/constants/route_constants.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/app_widgets.dart';
 
 /// صفحة الإعدادات المتقدمة للبائع
 class SettingsPage extends ConsumerStatefulWidget {
@@ -136,8 +136,8 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('الإعدادات'),
-        backgroundColor: theme.colorScheme.primary,
-        foregroundColor: theme.colorScheme.onPrimary,
+        backgroundColor: AppColors.primary,
+        foregroundColor: AppColors.onPrimary,
       ),
       body: _isLoading
           ? AppWidgets.loadingIndicator(message: 'جاري تحميل الإعدادات...')
@@ -152,18 +152,18 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                       padding: const EdgeInsets.all(12),
                       margin: const EdgeInsets.only(bottom: 16),
                       decoration: BoxDecoration(
-                        color: Colors.green.withOpacity(0.1),
+                        color: AppColors.success.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: Colors.green),
+                        border: Border.all(color: AppColors.success),
                       ),
                       child: Row(
                         children: [
-                          const Icon(Icons.check_circle, color: Colors.green),
+                          const Icon(Icons.check_circle, color: AppColors.success),
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
                               _successMessage,
-                              style: const TextStyle(color: Colors.green),
+                              style: const TextStyle(color: AppColors.success),
                             ),
                           ),
                         ],
@@ -175,18 +175,18 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                       padding: const EdgeInsets.all(12),
                       margin: const EdgeInsets.only(bottom: 16),
                       decoration: BoxDecoration(
-                        color: Colors.red.withOpacity(0.1),
+                        color: AppColors.error.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: Colors.red),
+                        border: Border.all(color: AppColors.error),
                       ),
                       child: Row(
                         children: [
-                          const Icon(Icons.error, color: Colors.red),
+                          const Icon(Icons.error, color: AppColors.error),
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
                               _errorMessage,
-                              style: const TextStyle(color: Colors.red),
+                              style: const TextStyle(color: AppColors.error),
                             ),
                           ),
                         ],
@@ -376,8 +376,8 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                     child: ElevatedButton(
                       onPressed: _saveSettings,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: theme.colorScheme.primary,
-                        foregroundColor: theme.colorScheme.onPrimary,
+                        backgroundColor: AppColors.primary,
+                        foregroundColor: AppColors.onPrimary,
                         padding: const EdgeInsets.symmetric(vertical: 16),
                       ),
                       child: const Text(
@@ -415,7 +415,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
   ) {
     return Row(
       children: [
-        Icon(icon, color: theme.colorScheme.primary),
+        Icon(icon, color: AppColors.primary),
         const SizedBox(width: 16),
         Expanded(
           child: Column(
@@ -428,7 +428,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
               Text(
                 subtitle,
                 style: theme.textTheme.bodySmall?.copyWith(
-                  color: Colors.grey.shade600,
+                  color: AppColors.textSecondary,
                 ),
               ),
             ],
@@ -437,7 +437,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
         Switch(
           value: value,
           onChanged: onChanged,
-          activeColor: theme.colorScheme.primary,
+          activeColor: AppColors.primary,
         ),
       ],
     );
@@ -446,7 +446,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
   Widget _buildLanguageSetting(ThemeData theme) {
     return Row(
       children: [
-        Icon(Icons.language, color: theme.colorScheme.primary),
+        Icon(Icons.language, color: AppColors.primary),
         const SizedBox(width: 16),
         Expanded(
           child: Column(
@@ -459,7 +459,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
               Text(
                 'اختر لغة التطبيق',
                 style: theme.textTheme.bodySmall?.copyWith(
-                  color: Colors.grey.shade600,
+                  color: AppColors.textSecondary,
                 ),
               ),
             ],

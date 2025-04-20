@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../core/constants/route_constants.dart';
-import '../../../core/widgets/app_widgets.dart';
+import '../../../../core/constants/route_constants.dart';
+import '../../../../core/widgets/app_widgets.dart';
+import '../../../../core/theme/app_colors.dart';
 
 /// صفحة الملف الشخصي للبائع
 class SellerProfilePage extends ConsumerStatefulWidget {
@@ -81,8 +82,8 @@ class _SellerProfilePageState extends ConsumerState<SellerProfilePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('الملف الشخصي'),
-        backgroundColor: theme.colorScheme.primary,
-        foregroundColor: theme.colorScheme.onPrimary,
+        backgroundColor: AppColors.primary,
+        foregroundColor: AppColors.onPrimary,
         actions: [
           IconButton(
             icon: const Icon(Icons.edit),
@@ -146,7 +147,7 @@ class _SellerProfilePageState extends ConsumerState<SellerProfilePage> {
             // صورة الملف الشخصي
             CircleAvatar(
               radius: 40,
-              backgroundColor: theme.colorScheme.primary.withOpacity(0.1),
+              backgroundColor: AppColors.primary.withOpacity(0.1),
               backgroundImage: _sellerProfileImage.isNotEmpty
                   ? NetworkImage(_sellerProfileImage)
                   : null,
@@ -154,7 +155,7 @@ class _SellerProfilePageState extends ConsumerState<SellerProfilePage> {
                   ? Icon(
                       Icons.person,
                       size: 40,
-                      color: theme.colorScheme.primary,
+                      color: AppColors.primary,
                     )
                   : null,
             ),
@@ -177,13 +178,13 @@ class _SellerProfilePageState extends ConsumerState<SellerProfilePage> {
                       Icon(
                         Icons.email,
                         size: 16,
-                        color: Colors.grey.shade600,
+                        color: AppColors.textSecondary,
                       ),
                       const SizedBox(width: 4),
                       Text(
                         _sellerEmail,
                         style: theme.textTheme.bodyMedium?.copyWith(
-                          color: Colors.grey.shade600,
+                          color: AppColors.textSecondary,
                         ),
                       ),
                     ],
@@ -194,13 +195,13 @@ class _SellerProfilePageState extends ConsumerState<SellerProfilePage> {
                       Icon(
                         Icons.phone,
                         size: 16,
-                        color: Colors.grey.shade600,
+                        color: AppColors.textSecondary,
                       ),
                       const SizedBox(width: 4),
                       Text(
                         _sellerPhone,
                         style: theme.textTheme.bodyMedium?.copyWith(
-                          color: Colors.grey.shade600,
+                          color: AppColors.textSecondary,
                         ),
                       ),
                     ],
@@ -211,14 +212,14 @@ class _SellerProfilePageState extends ConsumerState<SellerProfilePage> {
                       Icon(
                         Icons.location_on,
                         size: 16,
-                        color: Colors.grey.shade600,
+                        color: AppColors.textSecondary,
                       ),
                       const SizedBox(width: 4),
                       Expanded(
                         child: Text(
                           _sellerAddress,
                           style: theme.textTheme.bodyMedium?.copyWith(
-                            color: Colors.grey.shade600,
+                            color: AppColors.textSecondary,
                           ),
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
@@ -250,7 +251,7 @@ class _SellerProfilePageState extends ConsumerState<SellerProfilePage> {
               children: [
                 Icon(
                   Icons.store,
-                  color: theme.colorScheme.primary,
+                  color: AppColors.primary,
                 ),
                 const SizedBox(width: 8),
                 Text(
@@ -263,13 +264,13 @@ class _SellerProfilePageState extends ConsumerState<SellerProfilePage> {
                 Container(
                   padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
-                    color: theme.colorScheme.primary.withOpacity(0.1),
+                    color: AppColors.primary.withOpacity(0.1),
                     borderRadius: BorderRadius.circular(16),
                   ),
                   child: Text(
                     _storeCategory,
                     style: theme.textTheme.bodySmall?.copyWith(
-                      color: theme.colorScheme.primary,
+                      color: AppColors.primary,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
@@ -287,13 +288,13 @@ class _SellerProfilePageState extends ConsumerState<SellerProfilePage> {
                 Icon(
                   Icons.calendar_today,
                   size: 16,
-                  color: Colors.grey.shade600,
+                  color: AppColors.textSecondary,
                 ),
                 const SizedBox(width: 4),
                 Text(
                   'تاريخ الإنشاء: $_storeCreationDate',
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: Colors.grey.shade600,
+                    color: AppColors.textSecondary,
                   ),
                 ),
               ],
@@ -304,13 +305,13 @@ class _SellerProfilePageState extends ConsumerState<SellerProfilePage> {
                 Icon(
                   Icons.star,
                   size: 16,
-                  color: Colors.amber,
+                  color: AppColors.warning,
                 ),
                 const SizedBox(width: 4),
                 Text(
                   'التقييم: $_rating/5',
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: Colors.grey.shade600,
+                    color: AppColors.textSecondary,
                   ),
                 ),
               ],
@@ -336,27 +337,27 @@ class _SellerProfilePageState extends ConsumerState<SellerProfilePage> {
           _totalProducts.toString(),
           Icons.inventory,
           Colors.blue,
-        ),
+          AppColors.info,
         _buildStatCard(
           theme,
           'الطلبات',
           _totalOrders.toString(),
           Icons.shopping_bag,
-          Colors.green,
+          AppColors.success,
         ),
         _buildStatCard(
           theme,
           'الإيرادات',
           '${_totalRevenue.toStringAsFixed(2)} ر.س',
           Icons.attach_money,
-          Colors.purple,
+          AppColors.secondary,
         ),
         _buildStatCard(
           theme,
           'التقييم',
           '$_rating/5',
           Icons.star,
-          Colors.amber,
+          AppColors.warning,
         ),
       ],
     );
@@ -420,7 +421,7 @@ class _SellerProfilePageState extends ConsumerState<SellerProfilePage> {
               theme,
               'إضافة منتج جديد',
               Icons.add_circle,
-              Colors.green,
+              AppColors.success,
               () => context.push(RouteConstants.addProduct),
             ),
             const Divider(),
@@ -428,7 +429,7 @@ class _SellerProfilePageState extends ConsumerState<SellerProfilePage> {
               theme,
               'إدارة المخزون',
               Icons.inventory,
-              Colors.blue,
+              AppColors.info,
               () => context.push(RouteConstants.inventory),
             ),
             const Divider(),
@@ -436,7 +437,7 @@ class _SellerProfilePageState extends ConsumerState<SellerProfilePage> {
               theme,
               'عرض الطلبات الجديدة',
               Icons.shopping_bag,
-              Colors.orange,
+              AppColors.warning,
               () => context.push(RouteConstants.orders),
             ),
             const Divider(),
@@ -444,7 +445,7 @@ class _SellerProfilePageState extends ConsumerState<SellerProfilePage> {
               theme,
               'عرض الإحصائيات',
               Icons.bar_chart,
-              Colors.purple,
+              AppColors.secondary,
               () => context.push(RouteConstants.statistics),
             ),
           ],
@@ -477,7 +478,7 @@ class _SellerProfilePageState extends ConsumerState<SellerProfilePage> {
             Icon(
               Icons.arrow_forward_ios,
               size: 16,
-              color: Colors.grey.shade400,
+              color: AppColors.textSecondary,
             ),
           ],
         ),
