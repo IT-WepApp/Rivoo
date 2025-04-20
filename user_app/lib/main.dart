@@ -1,12 +1,19 @@
+import 'dart:ui';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:firebase_performance/firebase_performance.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:user_app/l10n/l10n.dart';
-import 'package:user_app/router.dart';
-import 'package:user_app/core/services/crashlytics_service.dart';
-import 'package:user_app/core/state/app_state_provider.dart';
-import 'package:user_app/core/state/connectivity_provider.dart';
+
+import 'core/monitoring/analytics_monitor.dart';
+import 'core/services/crashlytics_service.dart';
+import 'l10n/l10n.dart';
+import 'router.dart';
+import 'theme/app_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,14 +21,21 @@ void main() async {
   await Firebase.initializeApp();
   
   // تهيئة Crashlytics
-  await CrashlyticsService.initialize();
-
-  // التقاط الأخطاء غير المعالجة
-  FlutterError.onError = (details) {
-    CrashlyticsService.recordError(details.exception, details.stack!);
-  };
-
-  runApp(const ProviderScope(child: MyApp()));
+  if (!kDebugMode) {
+    await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
+    FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
+    PlatformDispatcher.instance.onError = (error, stack) {
+      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+      return true;
+    };
+  }
+  
+  // تهيئة Performance Monitoring
+  await FirebasePerformance.instance.setPerformanceCollectionEnabled(true);
+  
+  runApp(
+    const ProviderScope(child: MyApp()),
+  );
 }
 
 class MyApp extends ConsumerWidget {
@@ -29,35 +43,17 @@ class MyApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // متابعة حالة الاتصال
-    ref.listen(connectivityNotifierProvider, (prev, result) {
-      result.whenData((status) {
-        ref.read(appStateProvider.notifier).updateConnectionStatus(status != ConnectivityResult.none);
-      });
-    });
-    
-    // سمة وتوجه
-    final isDark = ref.watch(isDarkModeProvider);
-    final localeCode = ref.watch(currentLocaleProvider);
+    final appRouter = ref.watch(appRouterProvider);
+    final analyticsObserver = ref.watch(analyticsObserverProvider);
+    final themeMode = ref.watch(themeModeProvider);
+    final locale = ref.watch(localeProvider);
 
     return MaterialApp.router(
       title: 'RivooSy',
-      debugShowCheckedModeBanner: false,
-      routerConfig: appRouter,
-      theme: ThemeData(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal, brightness: Brightness.light),
-        fontFamily: 'Cairo',
-        appBarTheme: const AppBarTheme(centerTitle: true, elevation: 0),
-      ),
-      darkTheme: ThemeData(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal, brightness: Brightness.dark),
-        fontFamily: 'Cairo',
-        appBarTheme: const AppBarTheme(centerTitle: true, elevation: 0),
-      ),
-      themeMode: isDark ? ThemeMode.dark : ThemeMode.light,
-      locale: Locale(localeCode),
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: themeMode,
+      locale: locale,
       supportedLocales: L10n.supportedLocales,
       localizationsDelegates: const [
         AppLocalizations.delegate,
@@ -65,10 +61,20 @@ class MyApp extends ConsumerWidget {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
+      routerConfig: appRouter,
+      navigatorObservers: [
+        analyticsObserver,
+        FirebaseAnalyticsObserver(analytics: FirebaseAnalytics.instance),
+      ],
+      debugShowCheckedModeBanner: false,
     );
   }
 }
 
-// مزودات الحالة
-final isDarkModeProvider = StateProvider<bool>((ref) => false);
-final currentLocaleProvider = StateProvider<String>((ref) => L10n.supportedLocales.first.languageCode);
+// مزودات التطبيق
+final themeModeProvider = StateProvider<ThemeMode>((ref) => ThemeMode.system);
+final localeProvider = StateProvider<Locale?>((ref) => null);
+
+// مزودات التوجيه والمراقبة
+final appRouterProvider = Provider((ref) => appRouter);
+final analyticsObserverProvider = Provider<NavigatorObserver>((ref) => AnalyticsMonitor(ref.read));

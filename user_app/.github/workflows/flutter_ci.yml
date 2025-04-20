@@ -2,11 +2,13 @@ name: Flutter CI/CD
 
 on:
   push:
-    branches: [main, develop]
+    branches: [ main, develop, feature/enhanced-improvements ]
+    tags:
+      - 'v*.*.*'
     paths:
       - 'user_app/**'
   pull_request:
-    branches: [main, develop]
+    branches: [ main, develop ]
     paths:
       - 'user_app/**'
   workflow_dispatch:
@@ -153,9 +155,9 @@ jobs:
           retention-days: 7
 
   deploy_firebase:
-    name: نشر على Firebase App Distribution
-    needs: build_android
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
+    name: نشر التطبيق على Firebase App Distribution
+    needs: [ build_android, build_ios ]
+    if: github.ref == 'refs/heads/develop' || startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
 
     steps:
@@ -168,29 +170,170 @@ jobs:
           name: release-apk
           path: apk
 
-      - name: نشر على Firebase App Distribution
+      - name: تنزيل IPA
+        uses: actions/download-artifact@v3
+        with:
+          name: unsigned-ipa
+          path: ipa
+
+      - name: نشر Android على Firebase App Distribution
         uses: wzieba/Firebase-Distribution-Github-Action@v1
         with:
-          appId: ${{ secrets.FIREBASE_APP_ID }}
-          serviceCredentialsFileContent: ${{ secrets.FIREBASE_SERVICE_CREDENTIALS }}
+          appId: ${{ secrets.FIREBASE_ANDROID_APP_ID }}
+          serviceCredentialsFileContent: ${{ secrets.CREDENTIAL_FILE_CONTENT }}
           groups: testers
           file: apk/app-release.apk
           releaseNotes: |
-            تم النشر تلقائياً من خلال GitHub Actions
-            الفرع: ${{ github.ref_name }}
+            تم النشر تلقائيًا من خلال GitHub Actions
+            الفرع/الإصدار: ${{ github.ref_name }}
             الالتزام: ${{ github.sha }}
-            #${{ github.run_number }}
+
+      - name: نشر iOS على Firebase App Distribution
+        uses: wzieba/Firebase-Distribution-Github-Action@v1
+        with:
+          appId: ${{ secrets.FIREBASE_IOS_APP_ID }}
+          serviceCredentialsFileContent: ${{ secrets.CREDENTIAL_FILE_CONTENT }}
+          groups: testers
+          file: ipa/app-release.ipa
+          releaseNotes: |
+            تم النشر تلقائيًا من خلال GitHub Actions
+            الفرع/الإصدار: ${{ github.ref_name }}
+            الالتزام: ${{ github.sha }}
+
+  github_release:
+    name: نشر إصدار على GitHub
+    needs: [ build_android, build_ios ]
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: استنساخ المستودع
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: تنزيل APK
+        uses: actions/download-artifact@v3
+        with:
+          name: release-apk
+          path: artifacts
+
+      - name: تنزيل AAB
+        uses: actions/download-artifact@v3
+        with:
+          name: release-aab
+          path: artifacts
+
+      - name: تنزيل IPA
+        uses: actions/download-artifact@v3
+        with:
+          name: unsigned-ipa
+          path: artifacts
+
+      - name: استخراج ملاحظات الإصدار من CHANGELOG
+        id: changelog
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          CHANGELOG_CONTENT=$(sed -n "/## \[$VERSION\]/,/## \[/p" user_app/CHANGELOG.md | sed '1d;$d')
+          echo "CHANGELOG_CONTENT<<EOF" >> $GITHUB_ENV
+          echo "$CHANGELOG_CONTENT" >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: إنشاء إصدار GitHub
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            artifacts/app-release.apk
+            artifacts/app-release.aab
+            artifacts/app-release.ipa
+          body: |
+            # إصدار ${{ github.ref_name }}
+            
+            ${{ env.CHANGELOG_CONTENT }}
+            
+            ## ملفات التثبيت
+            - **Android APK**: تطبيق Android للتثبيت المباشر
+            - **Android AAB**: حزمة تطبيق Android للنشر على Google Play
+            - **iOS IPA**: تطبيق iOS (غير موقع)
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  deploy_playstore:
+    name: نشر التطبيق على Google Play
+    needs: build_android
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: استنساخ المستودع
+        uses: actions/checkout@v3
+
+      - name: تنزيل AAB
+        uses: actions/download-artifact@v3
+        with:
+          name: release-aab
+          path: aab
+
+      - name: إعداد Google Play Publisher
+        uses: r0adkll/upload-google-play@v1
+        with:
+          serviceAccountJsonPlainText: ${{ secrets.PLAY_STORE_CONFIG_JSON }}
+          packageName: com.rivoosyflutter.userapp
+          releaseFiles: aab/app-release.aab
+          track: internal
+          status: completed
+          whatsNewDirectory: user_app/distribution/whatsnew
+          mappingFile: user_app/build/app/outputs/mapping/release/mapping.txt
+
+  deploy_testflight:
+    name: نشر التطبيق على TestFlight
+    needs: build_ios
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: macos-latest
+
+    steps:
+      - name: استنساخ المستودع
+        uses: actions/checkout@v3
+
+      - name: إعداد Xcode
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
+
+      - name: إعداد Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.0'
+          bundler-cache: true
+
+      - name: تثبيت Fastlane
+        run: |
+          cd user_app/ios
+          gem install fastlane
+
+      - name: تنزيل ملف التوزيع
+        run: |
+          echo "${{ secrets.APPSTORE_API_KEY_JSON }}" > user_app/ios/fastlane/api_key.json
+
+      - name: نشر على TestFlight
+        run: |
+          cd user_app/ios
+          fastlane beta
+        env:
+          MATCH_PASSWORD: ${{ secrets.MATCH_PASSWORD }}
+          FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD: ${{ secrets.FASTLANE_APPLE_APPLICATION_SPECIFIC_PASSWORD }}
 
   notify_slack:
     name: إرسال إشعار إلى Slack
-    needs: [build_android, build_ios]
+    needs: [ build_android, build_ios, deploy_firebase, github_release ]
     if: always()
     runs-on: ubuntu-latest
 
     steps:
       - name: إرسال إشعار إلى Slack
         uses: 8398a7/action-slack@v3
-        if: always()
         with:
           status: ${{ job.status }}
           fields: repo,message,commit,author,action,eventName,ref,workflow,job,took
@@ -224,7 +367,7 @@ jobs:
 
       - name: رفع رموز التصحيح إلى Crashlytics
         run: |
-          firebase crashlytics:symbols:upload \
-            --app=${{ secrets.FIREBASE_APP_ID }} apk_contents
+          firebase crashlytics:symbols:upload --app=${{ secrets.FIREBASE_ANDROID_APP_ID }} apk_contents
         env:
-          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}```
+
