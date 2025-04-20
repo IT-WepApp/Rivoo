@@ -13,6 +13,8 @@ class Product extends Equatable {
   final String imageUrl;
   final String categoryId;
   final String sellerId;
+  final String? storeId; // ✅ مضاف لدعم معرف المتجر
+  final String? notes; // ✅ مضاف لدعم الملاحظات
   final String status; // ✅ مضاف
   final bool hasPromotion;
   final PromotionType? promotionType;
@@ -28,6 +30,8 @@ class Product extends Equatable {
     required this.imageUrl,
     required this.categoryId,
     required this.sellerId,
+    this.storeId,
+    this.notes,
     this.status = 'active',
     this.hasPromotion = false,
     this.promotionType,
@@ -75,6 +79,8 @@ class Product extends Equatable {
     String? imageUrl,
     String? categoryId,
     String? sellerId,
+    String? storeId,
+    String? notes,
     String? status,
     bool? hasPromotion,
     PromotionType? promotionType,
@@ -90,6 +96,8 @@ class Product extends Equatable {
       imageUrl: imageUrl ?? this.imageUrl,
       categoryId: categoryId ?? this.categoryId,
       sellerId: sellerId ?? this.sellerId,
+      storeId: storeId ?? this.storeId,
+      notes: notes ?? this.notes,
       status: status ?? this.status,
       hasPromotion: hasPromotion ?? this.hasPromotion,
       promotionType: promotionType ?? this.promotionType,
@@ -112,6 +120,8 @@ class Product extends Equatable {
         imageUrl,
         categoryId,
         sellerId,
+        storeId,
+        notes,
         status,
         hasPromotion,
         promotionType,
