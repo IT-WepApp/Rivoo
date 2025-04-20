@@ -8,6 +8,9 @@ import '../../../../core/constants/app_constants.dart';
 import '../../../../core/services/product_service.dart';
 import '../../../../core/widgets/app_widgets.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../domain/repositories/product_repository.dart';
+import '../../data/repositories/product_repository_impl.dart';
+import '../../data/datasources/product_firebase_datasource.dart';
 
 /// صفحة إضافة منتج جديد
 class AddProductPage extends ConsumerStatefulWidget {
@@ -32,13 +35,25 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
   bool _hasDiscount = false;
   double _discountPercentage = 0;
   
-  File? _imageFile;
-  String _imageUrl = '';
+  // تعديل: استخدام قائمة من الملفات بدلاً من ملف واحد
+  List<File> _imageFiles = [];
+  List<String> _imageUrls = [];
   bool _isUploading = false;
   double _uploadProgress = 0;
+  int _currentUploadIndex = 0;
   
   bool _isSubmitting = false;
   String _errorMessage = '';
+
+  // مستودع المنتجات
+  late final ProductRepository _productRepository;
+
+  @override
+  void initState() {
+    super.initState();
+    // تهيئة مستودع المنتجات
+    _productRepository = ProductRepositoryImpl(ProductFirebaseDataSource());
+  }
 
   @override
   void dispose() {
@@ -49,63 +64,80 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
     super.dispose();
   }
 
+  // تعديل: اختيار صورة واحدة وإضافتها إلى القائمة
   Future<void> _pickImage() async {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
     
     if (pickedFile != null) {
       setState(() {
-        _imageFile = File(pickedFile.path);
+        _imageFiles.add(File(pickedFile.path));
       });
     }
   }
 
-  Future<String> _uploadImage() async {
-    if (_imageFile == null) {
-      return '';
+  // تعديل: اختيار عدة صور دفعة واحدة
+  Future<void> _pickMultipleImages() async {
+    final picker = ImagePicker();
+    final pickedFiles = await picker.pickMultiImage();
+    
+    if (pickedFiles.isNotEmpty) {
+      setState(() {
+        for (var pickedFile in pickedFiles) {
+          _imageFiles.add(File(pickedFile.path));
+        }
+      });
+    }
+  }
+
+  // تعديل: حذف صورة من القائمة
+  void _removeImage(int index) {
+    setState(() {
+      _imageFiles.removeAt(index);
+    });
+  }
+
+  // تعديل: رفع جميع الصور
+  Future<List<String>> _uploadImages(String productId) async {
+    if (_imageFiles.isEmpty) {
+      return [];
     }
     
     setState(() {
       _isUploading = true;
       _uploadProgress = 0;
+      _currentUploadIndex = 0;
     });
     
     try {
-      final fileName = 'product_${DateTime.now().millisecondsSinceEpoch}.jpg';
-      final storageRef = FirebaseStorage.instance
-          .ref()
-          .child(AppConstants.productImagesPath)
-          .child(fileName);
-      
-      final uploadTask = storageRef.putFile(_imageFile!);
-      
-      uploadTask.snapshotEvents.listen((TaskSnapshot snapshot) {
-        setState(() {
-          _uploadProgress = snapshot.bytesTransferred / snapshot.totalBytes;
-        });
-      });
-      
-      await uploadTask;
-      
-      final downloadUrl = await storageRef.getDownloadURL();
+      // استخدام مستودع المنتجات لرفع الصور
+      List<String> localPaths = _imageFiles.map((file) => file.path).toList();
+      List<String> urls = await _productRepository.uploadProductImages(productId, localPaths);
       
       setState(() {
         _isUploading = false;
-        _imageUrl = downloadUrl;
+        _imageUrls = urls;
       });
       
-      return downloadUrl;
+      return urls;
     } catch (e) {
       setState(() {
         _isUploading = false;
-        _errorMessage = 'فشل رفع الصورة: $e';
+        _errorMessage = 'فشل رفع الصور: $e';
       });
-      return '';
+      return [];
     }
   }
 
   Future<void> _submitForm() async {
     if (!_formKey.currentState!.validate()) {
+      return;
+    }
+    
+    if (_imageFiles.isEmpty) {
+      setState(() {
+        _errorMessage = 'يرجى إضافة صورة واحدة على الأقل للمنتج';
+      });
       return;
     }
     
@@ -115,18 +147,6 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
     });
     
     try {
-      // رفع الصورة إذا تم اختيارها
-      String imageUrl = _imageUrl;
-      if (_imageFile != null && _imageUrl.isEmpty) {
-        imageUrl = await _uploadImage();
-        if (imageUrl.isEmpty && _errorMessage.isNotEmpty) {
-          setState(() {
-            _isSubmitting = false;
-          });
-          return;
-        }
-      }
-      
       // إعداد بيانات المنتج
       final productData = {
         'name': _nameController.text,
@@ -136,7 +156,7 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
         'stockQuantity': int.parse(_stockQuantityController.text),
         'isAvailable': _isAvailable,
         'isFeatured': _isFeatured,
-        'imageUrl': imageUrl,
+        'imageUrls': [], // سيتم تحديثها بعد رفع الصور
       };
       
       // إضافة بيانات الخصم إذا كان مفعلاً
@@ -149,6 +169,16 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
       // إضافة المنتج إلى Firestore
       final productService = ref.read(productServiceProvider);
       final productId = await productService.addProduct(productData);
+      
+      // رفع الصور بعد إنشاء المنتج
+      final imageUrls = await _uploadImages(productId);
+      
+      if (imageUrls.isNotEmpty) {
+        // تحديث المنتج بروابط الصور
+        await _firestore.collection('products').doc(productId).update({
+          'imageUrls': imageUrls,
+        });
+      }
       
       setState(() {
         _isSubmitting = false;
@@ -196,8 +226,8 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
       child: ListView(
         padding: const EdgeInsets.all(16),
         children: [
-          // صورة المنتج
-          _buildImagePicker(theme),
+          // صور المنتج
+          _buildImagesPicker(theme),
           const SizedBox(height: 24),
           
           // معلومات المنتج الأساسية
@@ -431,97 +461,166 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
     );
   }
 
-  Widget _buildImagePicker(ThemeData theme) {
+  // تعديل: بناء واجهة اختيار الصور المتعددة
+  Widget _buildImagesPicker(ThemeData theme) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'صورة المنتج',
+          'صور المنتج',
           style: theme.textTheme.titleLarge,
         ),
         const SizedBox(height: 8),
         const Text(
-          'اختر صورة واضحة للمنتج بحجم مناسب',
+          'يمكنك إضافة حتى 5 صور للمنتج. الصورة الأولى ستكون الصورة الرئيسية.',
           style: TextStyle(color: Colors.grey),
         ),
         const SizedBox(height: 16),
         
-        // عرض الصورة المختارة أو زر اختيار الصورة
-        GestureDetector(
-          onTap: _pickImage,
-          child: Container(
-            height: 200,
-            width: double.infinity,
-            decoration: BoxDecoration(
-              color: theme.colorScheme.surface,
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: AppColors.border),
-            ),
-            child: _isUploading
-                ? _buildUploadProgress(theme)
-                : _imageFile != null
-                    ? ClipRRect(
+        // عرض الصور المختارة
+        if (_imageFiles.isNotEmpty)
+          Container(
+            height: 120,
+            child: ListView.builder(
+              scrollDirection: Axis.horizontal,
+              itemCount: _imageFiles.length,
+              itemBuilder: (context, index) {
+                return Stack(
+                  children: [
+                    Container(
+                      width: 120,
+                      height: 120,
+                      margin: const EdgeInsets.only(right: 8),
+                      decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color: index == 0 ? theme.colorScheme.primary : AppColors.border,
+                          width: index == 0 ? 2 : 1,
+                        ),
+                      ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.circular(7),
                         child: Image.file(
-                          _imageFile!,
+                          _imageFiles[index],
                           fit: BoxFit.cover,
                         ),
-                      )
-                    : _imageUrl.isNotEmpty
-                        ? ClipRRect(
-                            borderRadius: BorderRadius.circular(8),
-                            child: Image.network(
-                              _imageUrl,
-                              fit: BoxFit.cover,
-                            ),
-                          )
-                        : Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.add_photo_alternate,
-                                size: 64,
-                                color: theme.colorScheme.primary,
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                'انقر لاختيار صورة',
-                                style: TextStyle(
-                                  color: theme.colorScheme.primary,
-                                ),
-                              ),
-                            ],
+                      ),
+                    ),
+                    Positioned(
+                      top: 4,
+                      right: 12,
+                      child: GestureDetector(
+                        onTap: () => _removeImage(index),
+                        child: Container(
+                          padding: const EdgeInsets.all(4),
+                          decoration: BoxDecoration(
+                            color: Colors.black.withOpacity(0.5),
+                            shape: BoxShape.circle,
                           ),
+                          child: const Icon(
+                            Icons.close,
+                            size: 16,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ),
+                    if (index == 0)
+                      Positioned(
+                        bottom: 4,
+                        left: 4,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: theme.colorScheme.primary,
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: const Text(
+                            'رئيسية',
+                            style: TextStyle(
+                              color: Colors.white,
+                              fontSize: 10,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
+                );
+              },
+            ),
           ),
+        
+        const SizedBox(height: 16),
+        
+        // أزرار إضافة الصور
+        Row(
+          children: [
+            Expanded(
+              child: ElevatedButton.icon(
+                onPressed: _imageFiles.length >= 5 ? null : _pickImage,
+                icon: const Icon(Icons.add_photo_alternate),
+                label: const Text('إضافة صورة'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: theme.colorScheme.primary,
+                  foregroundColor: theme.colorScheme.onPrimary,
+                ),
+              ),
+            ),
+            const SizedBox(width: 8),
+            Expanded(
+              child: ElevatedButton.icon(
+                onPressed: _imageFiles.length >= 5 ? null : _pickMultipleImages,
+                icon: const Icon(Icons.photo_library),
+                label: const Text('إضافة عدة صور'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: theme.colorScheme.secondary,
+                  foregroundColor: theme.colorScheme.onSecondary,
+                ),
+              ),
+            ),
+          ],
         ),
         
-        // زر تغيير الصورة إذا تم اختيار صورة
-        if (_imageFile != null || _imageUrl.isNotEmpty)
+        // مؤشر التقدم أثناء الرفع
+        if (_isUploading)
           Padding(
-            padding: const EdgeInsets.only(top: 8),
-            child: TextButton.icon(
-              onPressed: _pickImage,
-              icon: const Icon(Icons.edit),
-              label: const Text('تغيير الصورة'),
+            padding: const EdgeInsets.only(top: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'جاري رفع الصور (${_currentUploadIndex + 1}/${_imageFiles.length})',
+                  style: const TextStyle(fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 8),
+                LinearProgressIndicator(
+                  value: _uploadProgress,
+                  backgroundColor: Colors.grey.shade300,
+                  valueColor: AlwaysStoppedAnimation<Color>(theme.colorScheme.primary),
+                ),
+              ],
             ),
           ),
       ],
     );
   }
 
+  // مؤشر تقدم الرفع
   Widget _buildUploadProgress(ThemeData theme) {
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         CircularProgressIndicator(
           value: _uploadProgress,
-          color: theme.colorScheme.primary,
+          valueColor: AlwaysStoppedAnimation<Color>(theme.colorScheme.primary),
         ),
         const SizedBox(height: 16),
         Text(
-          'جاري رفع الصورة... ${(_uploadProgress * 100).toStringAsFixed(0)}%',
+          'جاري رفع الصور (${(_uploadProgress * 100).toStringAsFixed(0)}%)',
           style: TextStyle(
             color: theme.colorScheme.primary,
+            fontWeight: FontWeight.bold,
           ),
         ),
       ],

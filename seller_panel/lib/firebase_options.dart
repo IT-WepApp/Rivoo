@@ -1,35 +1,39 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/foundation.dart'; // إضافة لاستيراد kIsWeb و defaultTargetPlatform
 
+/// إعدادات Firebase للتطبيق
+/// ملاحظة: يجب استبدال هذه القيم بالقيم الفعلية من لوحة تحكم Firebase الخاصة بك
+/// https://console.firebase.google.com/
 class DefaultFirebaseOptions {
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'your_api_key', 
-    appId: 'your_app_id',
-    messagingSenderId: 'your_sender_id',
-    projectId: 'your_project_id',
-    storageBucket: 'your_storage_bucket',
+    apiKey: 'AIzaSyBRivooSy_example_key_android', 
+    appId: '1:123456789012:android:a1b2c3d4e5f6g7h8',
+    messagingSenderId: '123456789012',
+    projectId: 'rivoosy-app',
+    storageBucket: 'rivoosy-app.appspot.com',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'your_api_key',
-    appId: 'your_app_id',
-    messagingSenderId: 'your_sender_id',
-    projectId: 'your_project_id',
-    storageBucket: 'your_storage_bucket',
-    iosClientId: 'your_ios_client_id',
-    iosBundleId: 'com.example.your_app',
+    apiKey: 'AIzaSyBRivooSy_example_key_ios',
+    appId: '1:123456789012:ios:a1b2c3d4e5f6g7h8',
+    messagingSenderId: '123456789012',
+    projectId: 'rivoosy-app',
+    storageBucket: 'rivoosy-app.appspot.com',
+    iosClientId: '123456789012-abcdefghijklmnopqrstuvwxyz.apps.googleusercontent.com',
+    iosBundleId: 'com.rivoosy.sellerPanel',
   );
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'your_api_key',
-    appId: 'your_app_id',
-    messagingSenderId: 'your_sender_id',
-    projectId: 'your_project_id',
-    authDomain: 'your_project_id.firebaseapp.com',
-    storageBucket: 'your_storage_bucket',
-    measurementId: 'your_measurement_id',
+    apiKey: 'AIzaSyBRivooSy_example_key_web',
+    appId: '1:123456789012:web:a1b2c3d4e5f6g7h8',
+    messagingSenderId: '123456789012',
+    projectId: 'rivoosy-app',
+    authDomain: 'rivoosy-app.firebaseapp.com',
+    storageBucket: 'rivoosy-app.appspot.com',
+    measurementId: 'G-MEASUREMENT_ID',
   );
 
+  /// الحصول على إعدادات Firebase المناسبة للمنصة الحالية
   static FirebaseOptions get currentPlatform {
     if (kIsWeb) {
       return web;
@@ -40,7 +44,7 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       default:
-        throw UnsupportedError('Unsupported platform');
+        throw UnsupportedError('المنصة غير مدعومة: ${defaultTargetPlatform}');
     }
   }
 }
