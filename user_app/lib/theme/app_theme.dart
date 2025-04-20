@@ -105,6 +105,19 @@ class AppDimensions {
   static const Duration animationDurationSlow = Duration(milliseconds: 500);
 }
 
+/// فئة سمات التطبيق
+class AppTheme {
+  /// الحصول على سمة التطبيق الفاتحة
+  static ThemeData lightTheme() {
+    return getLightTheme();
+  }
+
+  /// الحصول على سمة التطبيق الداكنة
+  static ThemeData darkTheme() {
+    return getDarkTheme();
+  }
+}
+
 /// سمة التطبيق الفاتحة
 ThemeData getLightTheme() {
   return ThemeData(
@@ -718,9 +731,9 @@ ThemeData getDarkTheme() {
       }),
       trackColor: MaterialStateProperty.resolveWith((states) {
         if (states.contains(MaterialState.selected)) {
-          return const Color(0x801B5E20);
+          return const Color(0xFF388E3C);
         }
-        return Colors.grey.shade800;
+        return Colors.grey.shade700;
       }),
     ),
     
@@ -769,15 +782,4 @@ ThemeData getDarkTheme() {
     // اتجاه النص
     textDirection: TextDirection.rtl,
   );
-}
-
-/// مزود سمة التطبيق
-class AppTheme {
-  static ThemeData light = getLightTheme();
-  static ThemeData dark = getDarkTheme();
-  
-  /// الحصول على سمة التطبيق بناءً على الوضع
-  static ThemeData getTheme(bool isDarkMode) {
-    return isDarkMode ? dark : light;
-  }
 }

@@ -1,119 +1,106 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_widgets/shared_widgets.dart';
-import 'package:user_app/features/profile/domain/models/shipping_address.dart';
-import 'package:user_app/features/profile/application/shipping_address_notifier.dart';
 
-class ShippingAddressFormPage extends ConsumerStatefulWidget {
-  final ShippingAddress? address;
-  
+/// صفحة نموذج عنوان الشحن
+///
+/// تستخدم هذه الصفحة لإضافة أو تعديل عنوان الشحن
+class ShippingAddressFormPage extends StatefulWidget {
+  /// معرف العنوان (اختياري، يستخدم في حالة التعديل)
+  final String? addressId;
+
+  /// عنوان الصفحة
+  final String title;
+
+  /// وظيفة تنفذ عند الحفظ
+  final Function(Map<String, dynamic> addressData) onSave;
+
+  /// بيانات العنوان الأولية (اختيارية)
+  final Map<String, dynamic>? initialData;
+
+  /// إنشاء صفحة نموذج عنوان الشحن
   const ShippingAddressFormPage({
-    super.key,
-    this.address,
-  });
+    Key? key,
+    this.addressId,
+    this.title = 'عنوان الشحن',
+    required this.onSave,
+    this.initialData,
+  }) : super(key: key);
 
   @override
-  ConsumerState<ShippingAddressFormPage> createState() => _ShippingAddressFormPageState();
+  State<ShippingAddressFormPage> createState() => _ShippingAddressFormPageState();
 }
 
-class _ShippingAddressFormPageState extends ConsumerState<ShippingAddressFormPage> {
+class _ShippingAddressFormPageState extends State<ShippingAddressFormPage> {
   final _formKey = GlobalKey<FormState>();
   
+  // وحدات التحكم في النص
   late final TextEditingController _nameController;
-  late final TextEditingController _streetController;
+  late final TextEditingController _phoneController;
+  late final TextEditingController _addressLine1Controller;
+  late final TextEditingController _addressLine2Controller;
   late final TextEditingController _cityController;
   late final TextEditingController _stateController;
   late final TextEditingController _postalCodeController;
-  late final TextEditingController _countryController;
-  late final TextEditingController _phoneNumberController;
-  late final TextEditingController _additionalInfoController;
   
-  bool _isDefault = false;
+  // حالة التحميل
   bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
     
-    // Initialize controllers with existing data if editing
-    final address = widget.address;
-    _nameController = TextEditingController(text: address?.name ?? '');
-    _streetController = TextEditingController(text: address?.street ?? '');
-    _cityController = TextEditingController(text: address?.city ?? '');
-    _stateController = TextEditingController(text: address?.state ?? '');
-    _postalCodeController = TextEditingController(text: address?.postalCode ?? '');
-    _countryController = TextEditingController(text: address?.country ?? 'المملكة العربية السعودية');
-    _phoneNumberController = TextEditingController(text: address?.phoneNumber ?? '');
-    _additionalInfoController = TextEditingController(text: address?.additionalInfo ?? '');
-    
-    _isDefault = address?.isDefault ?? false;
+    // تهيئة وحدات التحكم في النص مع البيانات الأولية إذا كانت متوفرة
+    _nameController = TextEditingController(text: widget.initialData?['name'] ?? '');
+    _phoneController = TextEditingController(text: widget.initialData?['phone'] ?? '');
+    _addressLine1Controller = TextEditingController(text: widget.initialData?['addressLine1'] ?? '');
+    _addressLine2Controller = TextEditingController(text: widget.initialData?['addressLine2'] ?? '');
+    _cityController = TextEditingController(text: widget.initialData?['city'] ?? '');
+    _stateController = TextEditingController(text: widget.initialData?['state'] ?? '');
+    _postalCodeController = TextEditingController(text: widget.initialData?['postalCode'] ?? '');
   }
 
   @override
   void dispose() {
+    // التخلص من وحدات التحكم في النص
     _nameController.dispose();
-    _streetController.dispose();
+    _phoneController.dispose();
+    _addressLine1Controller.dispose();
+    _addressLine2Controller.dispose();
     _cityController.dispose();
     _stateController.dispose();
     _postalCodeController.dispose();
-    _countryController.dispose();
-    _phoneNumberController.dispose();
-    _additionalInfoController.dispose();
     super.dispose();
   }
 
-  Future<void> _saveAddress() async {
-    if (_formKey.currentState?.validate() ?? false) {
+  // حفظ بيانات النموذج
+  void _saveForm() {
+    if (_formKey.currentState!.validate()) {
       setState(() {
         _isLoading = true;
       });
-
-      try {
-        final addressNotifier = ref.read(shippingAddressProvider.notifier);
-        
-        final newAddress = ShippingAddress(
-          id: widget.address?.id ?? '', // Empty ID for new addresses
-          userId: widget.address?.userId ?? '', // Will be set in the notifier
-          name: _nameController.text.trim(),
-          street: _streetController.text.trim(),
-          city: _cityController.text.trim(),
-          state: _stateController.text.trim(),
-          postalCode: _postalCodeController.text.trim(),
-          country: _countryController.text.trim(),
-          phoneNumber: _phoneNumberController.text.trim(),
-          isDefault: _isDefault,
-          additionalInfo: _additionalInfoController.text.trim().isEmpty 
-              ? null 
-              : _additionalInfoController.text.trim(),
-        );
-        
-        if (widget.address == null) {
-          // Adding new address
-          await addressNotifier.addAddress(newAddress);
-        } else {
-          // Updating existing address
-          await addressNotifier.updateAddress(newAddress);
-        }
-        
-        if (mounted) {
-          Navigator.of(context).pop(true); // Return success
-        }
-      } catch (e) {
-        if (mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('حدث خطأ: ${e.toString()}'),
-              backgroundColor: Colors.red,
-            ),
-          );
-        }
-      } finally {
-        if (mounted) {
-          setState(() {
-            _isLoading = false;
-          });
-        }
+      
+      // تجميع بيانات العنوان
+      final addressData = {
+        'name': _nameController.text,
+        'phone': _phoneController.text,
+        'addressLine1': _addressLine1Controller.text,
+        'addressLine2': _addressLine2Controller.text,
+        'city': _cityController.text,
+        'state': _stateController.text,
+        'postalCode': _postalCodeController.text,
+      };
+      
+      // إضافة معرف العنوان إذا كان متوفرًا (في حالة التعديل)
+      if (widget.addressId != null) {
+        addressData['id'] = widget.addressId;
       }
+      
+      // استدعاء وظيفة الحفظ
+      widget.onSave(addressData);
+      
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -121,142 +108,110 @@ class _ShippingAddressFormPageState extends ConsumerState<ShippingAddressFormPag
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.address == null ? 'إضافة عنوان جديد' : 'تعديل العنوان'),
+        title: Text(widget.title),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
+      body: Form(
+        key: _formKey,
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(16.0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              // اسم المستلم
               AppTextField(
+                label: 'اسم المستلم',
                 controller: _nameController,
-                label: 'الاسم الكامل',
-                hintText: 'أدخل الاسم الكامل للمستلم',
-                validator: (value) => (value?.isEmpty ?? true) 
-                    ? 'يرجى إدخال الاسم الكامل' 
-                    : null,
+                keyboardType: TextInputType.name,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'يرجى إدخال اسم المستلم';
+                  }
+                  return null;
+                },
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 16.0),
               
+              // رقم الهاتف
               AppTextField(
-                controller: _streetController,
-                label: 'الشارع والحي',
-                hintText: 'أدخل اسم الشارع والحي',
-                validator: (value) => (value?.isEmpty ?? true) 
-                    ? 'يرجى إدخال الشارع والحي' 
-                    : null,
-              ),
-              const SizedBox(height: 16),
-              
-              AppTextField(
-                controller: _cityController,
-                label: 'المدينة',
-                hintText: 'أدخل اسم المدينة',
-                validator: (value) => (value?.isEmpty ?? true) 
-                    ? 'يرجى إدخال المدينة' 
-                    : null,
-              ),
-              const SizedBox(height: 16),
-              
-              Row(
-                children: [
-                  Expanded(
-                    child: AppTextField(
-                      controller: _stateController,
-                      label: 'المنطقة/المحافظة',
-                      hintText: 'أدخل المنطقة',
-                      validator: (value) => (value?.isEmpty ?? true) 
-                          ? 'يرجى إدخال المنطقة' 
-                          : null,
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: AppTextField(
-                      controller: _postalCodeController,
-                      label: 'الرمز البريدي',
-                      hintText: 'أدخل الرمز البريدي',
-                      keyboardType: TextInputType.number,
-                      validator: (value) => (value?.isEmpty ?? true) 
-                          ? 'يرجى إدخال الرمز البريدي' 
-                          : null,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-              
-              AppTextField(
-                controller: _countryController,
-                label: 'الدولة',
-                hintText: 'أدخل اسم الدولة',
-                validator: (value) => (value?.isEmpty ?? true) 
-                    ? 'يرجى إدخال الدولة' 
-                    : null,
-              ),
-              const SizedBox(height: 16),
-              
-              AppTextField(
-                controller: _phoneNumberController,
                 label: 'رقم الهاتف',
-                hintText: 'أدخل رقم الهاتف',
+                controller: _phoneController,
                 keyboardType: TextInputType.phone,
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'يرجى إدخال رقم الهاتف';
                   }
-                  // Simple phone validation
-                  if (!RegExp(r'^\+?[0-9]{10,15}$').hasMatch(value)) {
-                    return 'يرجى إدخال رقم هاتف صحيح';
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16.0),
+              
+              // سطر العنوان 1
+              AppTextField(
+                label: 'العنوان (السطر 1)',
+                controller: _addressLine1Controller,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'يرجى إدخال العنوان';
                   }
                   return null;
                 },
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 16.0),
               
+              // سطر العنوان 2 (اختياري)
               AppTextField(
-                controller: _additionalInfoController,
-                label: 'معلومات إضافية (اختياري)',
-                hintText: 'أي معلومات إضافية تساعد في الوصول للعنوان',
-                maxLines: 3,
+                label: 'العنوان (السطر 2) - اختياري',
+                controller: _addressLine2Controller,
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 16.0),
               
-              Row(
-                children: [
-                  Checkbox(
-                    value: _isDefault,
-                    onChanged: (value) {
-                      setState(() {
-                        _isDefault = value ?? false;
-                      });
-                    },
-                  ),
-                  Expanded(
-                    child: GestureDetector(
-                      onTap: () {
-                        setState(() {
-                          _isDefault = !_isDefault;
-                        });
-                      },
-                      child: const Text(
-                        'تعيين كعنوان افتراضي',
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    ),
-                  ),
-                ],
+              // المدينة
+              AppTextField(
+                label: 'المدينة',
+                controller: _cityController,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'يرجى إدخال المدينة';
+                  }
+                  return null;
+                },
               ),
-              const SizedBox(height: 24),
+              const SizedBox(height: 16.0),
               
-              _isLoading
-                  ? const Center(child: CircularProgressIndicator())
-                  : AppButton(
-                      onPressed: _saveAddress,
-                      text: widget.address == null ? 'إضافة العنوان' : 'حفظ التغييرات',
-                    ),
+              // المحافظة/الولاية
+              AppTextField(
+                label: 'المحافظة/الولاية',
+                controller: _stateController,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'يرجى إدخال المحافظة/الولاية';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 16.0),
+              
+              // الرمز البريدي
+              AppTextField(
+                label: 'الرمز البريدي',
+                controller: _postalCodeController,
+                keyboardType: TextInputType.number,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'يرجى إدخال الرمز البريدي';
+                  }
+                  return null;
+                },
+              ),
+              const SizedBox(height: 24.0),
+              
+              // زر الحفظ
+              AppButton(
+                text: widget.addressId != null ? 'تحديث العنوان' : 'إضافة العنوان',
+                onPressed: _saveForm,
+                isLoading: _isLoading,
+                icon: Icons.save,
+              ),
             ],
           ),
         ),
