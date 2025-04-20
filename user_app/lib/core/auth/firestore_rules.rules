@@ -1,0 +1,175 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // قواعد المصادقة العامة
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // التحقق من أن المستخدم هو مالك البيانات
+    function isOwner(userId) {
+      return isAuthenticated() && request.auth.uid == userId;
+    }
+    
+    // التحقق من أن المستخدم هو مسؤول
+    function isAdmin() {
+      return isAuthenticated() && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+    
+    // التحقق من أن المستخدم هو مسؤول أو مالك البيانات
+    function isAdminOrOwner(userId) {
+      return isAuthenticated() && (isAdmin() || request.auth.uid == userId);
+    }
+    
+    // التحقق من صحة بيانات المستخدم
+    function isValidUser(userData) {
+      return userData.size() <= 10
+        && 'email' in userData
+        && 'displayName' in userData
+        && 'createdAt' in userData;
+    }
+    
+    // التحقق من صحة بيانات المنتج
+    function isValidProduct(productData) {
+      return productData.size() <= 20
+        && 'name' in productData
+        && 'price' in productData
+        && 'description' in productData
+        && 'imageUrl' in productData
+        && 'createdAt' in productData;
+    }
+    
+    // التحقق من صحة بيانات الطلب
+    function isValidOrder(orderData) {
+      return orderData.size() <= 20
+        && 'userId' in orderData
+        && 'items' in orderData
+        && 'totalAmount' in orderData
+        && 'status' in orderData
+        && 'orderDate' in orderData
+        && 'shippingAddress' in orderData;
+    }
+    
+    // التحقق من صحة بيانات التقييم
+    function isValidRating(ratingData) {
+      return ratingData.size() <= 10
+        && 'userId' in ratingData
+        && 'productId' in ratingData
+        && 'rating' in ratingData
+        && 'createdAt' in ratingData;
+    }
+    
+    // قواعد المستخدمين
+    match /users/{userId} {
+      // يمكن للمستخدم قراءة بياناته الخاصة فقط
+      // يمكن للمسؤول قراءة بيانات جميع المستخدمين
+      allow read: if isAdminOrOwner(userId);
+      
+      // يمكن للمستخدم إنشاء حسابه الخاص فقط
+      allow create: if isOwner(userId) && isValidUser(request.resource.data);
+      
+      // يمكن للمستخدم تحديث بياناته الخاصة فقط
+      // يمكن للمسؤول تحديث بيانات جميع المستخدمين
+      allow update: if isAdminOrOwner(userId) && isValidUser(request.resource.data);
+      
+      // يمكن للمسؤول فقط حذف المستخدمين
+      allow delete: if isAdmin();
+    }
+    
+    // قواعد المنتجات
+    match /products/{productId} {
+      // يمكن لأي مستخدم قراءة المنتجات
+      allow read: if true;
+      
+      // يمكن للمسؤول فقط إنشاء وتحديث وحذف المنتجات
+      allow create, update: if isAdmin() && isValidProduct(request.resource.data);
+      allow delete: if isAdmin();
+    }
+    
+    // قواعد الطلبات
+    match /orders/{orderId} {
+      // يمكن للمستخدم قراءة طلباته الخاصة فقط
+      // يمكن للمسؤول قراءة جميع الطلبات
+      allow read: if isAuthenticated() && (
+        isAdmin() || request.auth.uid == resource.data.userId
+      );
+      
+      // يمكن للمستخدم إنشاء طلباته الخاصة فقط
+      allow create: if isAuthenticated() && 
+        request.auth.uid == request.resource.data.userId && 
+        isValidOrder(request.resource.data);
+      
+      // يمكن للمستخدم تحديث حالة طلباته الخاصة فقط (مثل إلغاء الطلب)
+      // يمكن للمسؤول تحديث حالة جميع الطلبات
+      allow update: if isAuthenticated() && (
+        (request.auth.uid == resource.data.userId && 
+         request.resource.data.diff(resource.data).affectedKeys().hasOnly(['status'])) ||
+        isAdmin()
+      );
+      
+      // يمكن للمسؤول فقط حذف الطلبات
+      allow delete: if isAdmin();
+    }
+    
+    // قواعد التقييمات
+    match /ratings/{ratingId} {
+      // يمكن لأي مستخدم قراءة التقييمات
+      allow read: if true;
+      
+      // يمكن للمستخدم إنشاء تقييماته الخاصة فقط
+      allow create: if isAuthenticated() && 
+        request.auth.uid == request.resource.data.userId && 
+        isValidRating(request.resource.data);
+      
+      // يمكن للمستخدم تحديث تقييماته الخاصة فقط
+      allow update: if isAuthenticated() && 
+        request.auth.uid == resource.data.userId &&
+        request.resource.data.userId == resource.data.userId &&
+        request.resource.data.productId == resource.data.productId;
+      
+      // يمكن للمستخدم حذف تقييماته الخاصة فقط
+      // يمكن للمسؤول حذف أي تقييم
+      allow delete: if isAuthenticated() && (
+        request.auth.uid == resource.data.userId || isAdmin()
+      );
+    }
+    
+    // قواعد ملخصات التقييمات
+    match /rating_summaries/{productId} {
+      // يمكن لأي مستخدم قراءة ملخصات التقييمات
+      allow read: if true;
+      
+      // لا يمكن لأي مستخدم إنشاء أو تحديث أو حذف ملخصات التقييمات مباشرة
+      // يتم تحديثها فقط من خلال وظائف Cloud Functions
+      allow create, update, delete: if false;
+    }
+    
+    // قواعد سلة التسوق
+    match /carts/{userId} {
+      // يمكن للمستخدم قراءة وتحديث سلة التسوق الخاصة به فقط
+      allow read, write: if isOwner(userId);
+    }
+    
+    // قواعد تذاكر الدعم الفني
+    match /support_tickets/{ticketId} {
+      // يمكن للمستخدم قراءة تذاكر الدعم الفني الخاصة به فقط
+      // يمكن للمسؤول قراءة جميع تذاكر الدعم الفني
+      allow read: if isAuthenticated() && (
+        isAdmin() || request.auth.uid == resource.data.userId
+      );
+      
+      // يمكن للمستخدم إنشاء تذاكر الدعم الفني الخاصة به فقط
+      allow create: if isAuthenticated() && 
+        request.auth.uid == request.resource.data.userId;
+      
+      // يمكن للمستخدم تحديث تذاكر الدعم الفني الخاصة به فقط (مثل إضافة رسائل جديدة)
+      // يمكن للمسؤول تحديث جميع تذاكر الدعم الفني
+      allow update: if isAuthenticated() && (
+        request.auth.uid == resource.data.userId || isAdmin()
+      );
+      
+      // يمكن للمسؤول فقط حذف تذاكر الدعم الفني
+      allow delete: if isAdmin();
+    }
+  }
+}

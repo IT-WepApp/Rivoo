@@ -1,91 +1,76 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:firebase_performance/firebase_performance.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:user_app/router.dart';
-import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:user_app/core/theme/theme_provider.dart';
-import 'package:user_app/features/auth/presentation/viewmodels/auth_view_model.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+
+import 'core/monitoring/analytics_monitor.dart';
+import 'core/services/crashlytics_service.dart';
+import 'l10n/l10n.dart';
+import 'router.dart';
+import 'theme/app_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
-  // تهيئة خدمات Firebase
-  // await Firebase.initializeApp(
-  //   options: DefaultFirebaseOptions.currentPlatform,
-  // );
-  
-  // تهيئة Stripe
-  // Stripe.publishableKey = 'pk_test_your_key';
-  // await Stripe.instance.applySettings();
+  // تهيئة Firebase
+  await Firebase.initializeApp();
   
   // تهيئة Crashlytics
-  // await CrashlyticsService.initialize();
+  if (!kDebugMode) {
+    await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
+    FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
+    
+    // التقاط الأخطاء غير المعالجة في Dart
+    PlatformDispatcher.instance.onError = (error, stack) {
+      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+      return true;
+    };
+  }
   
-  runApp(const ProviderScope(child: MyApp()));
+  // تهيئة Performance Monitoring
+  await FirebasePerformance.instance.setPerformanceCollectionEnabled(true);
+  
+  runApp(
+    const ProviderScope(
+      child: MyApp(),
+    ),
+  );
 }
 
-class MyApp extends ConsumerStatefulWidget {
+class MyApp extends ConsumerWidget {
   const MyApp({Key? key}) : super(key: key);
 
   @override
-  ConsumerState<MyApp> createState() => _MyAppState();
-}
-
-class _MyAppState extends ConsumerState<MyApp> {
-  @override
-  void initState() {
-    super.initState();
-    
-    // التحقق من حالة المصادقة عند بدء التطبيق
-    Future.microtask(() {
-      ref.read(authViewModelProvider.notifier).checkAuthStatus();
-    });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final router = ref.watch(routerProvider);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final appRouter = ref.watch(appRouterProvider);
+    final analyticsObserver = ref.watch(analyticsObserverProvider);
     final themeMode = ref.watch(themeModeProvider);
     final locale = ref.watch(localeProvider);
     
-    return MaterialApp(
+    return MaterialApp.router(
       title: 'RivooSy',
-      theme: lightTheme,
-      darkTheme: darkTheme,
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
       themeMode: themeMode,
       locale: locale,
+      supportedLocales: L10n.supportedLocales,
       localizationsDelegates: const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      supportedLocales: AppLocalizations.supportedLocales,
-      onGenerateRoute: router.onGenerateRoute,
+      routerConfig: appRouter,
+      navigatorObservers: [
+        analyticsObserver,
+        FirebaseAnalyticsObserver(analytics: FirebaseAnalytics.instance),
+      ],
       debugShowCheckedModeBanner: false,
     );
   }
 }
-
-// سمات التطبيق
-final lightTheme = ThemeData(
-  useMaterial3: true,
-  colorScheme: ColorScheme.fromSeed(
-    seedColor: Colors.blue,
-    brightness: Brightness.light,
-  ),
-  fontFamily: 'Cairo',
-);
-
-final darkTheme = ThemeData(
-  useMaterial3: true,
-  colorScheme: ColorScheme.fromSeed(
-    seedColor: Colors.blue,
-    brightness: Brightness.dark,
-  ),
-  fontFamily: 'Cairo',
-);
-
-// مزودات السمات واللغة
-final themeModeProvider = StateProvider<ThemeMode>((ref) => ThemeMode.system);
-final localeProvider = StateProvider<Locale?>((ref) => null);

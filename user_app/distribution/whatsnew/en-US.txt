@@ -1,0 +1,7 @@
+App update features:
+
+- Improved user interface and experience
+- Fixed performance issues
+- Support for new languages
+- Payment system improvements
+- Added new features for users
