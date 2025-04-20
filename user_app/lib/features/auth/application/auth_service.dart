@@ -1,7 +1,8 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:user_app/core/services/secure_storage_service.dart';
-import 'package:user_app/core/constants/app_constants.dart';
+import 'package:flutter/material.dart';
+import '../../../core/services/secure_storage_service.dart';
+import '../../../core/constants/app_constants.dart';
 
 /// مزود خدمة التخزين الآمن
 final secureStorageServiceProvider = Provider<SecureStorageService>((ref) {
@@ -300,8 +301,8 @@ class AuthService {
     try {
       final user = _auth.currentUser;
       if (user != null) {
-        await user.updateEmail(newEmail);
-        await user.sendEmailVerification();
+        // استخدام الأسلوب الموصى به بدلاً من الأسلوب المهمل
+        await user.verifyBeforeUpdateEmail(newEmail);
       } else {
         throw Exception('لا يوجد مستخدم حالي');
       }
