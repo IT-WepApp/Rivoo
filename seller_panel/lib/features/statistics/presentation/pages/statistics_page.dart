@@ -1,224 +1,814 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import '../../../core/constants/route_constants.dart';
+import '../../../core/services/order_service.dart';
+import '../../../core/widgets/app_widgets.dart';
 import 'package:fl_chart/fl_chart.dart';
-import 'package:intl/intl.dart'; // For date formatting
 
-// Use main export for shared_models
-import 'package:shared_models/shared_models.dart'; 
-
-import '../../application/statistics_notifier.dart'; // Import seller stats notifier
-
+/// صفحة الإحصائيات والتحليلات للبائع
 class StatisticsPage extends ConsumerStatefulWidget {
-  const StatisticsPage({super.key});
+  const StatisticsPage({Key? key}) : super(key: key);
 
   @override
   ConsumerState<StatisticsPage> createState() => _StatisticsPageState();
 }
 
-class _StatisticsPageState extends ConsumerState<StatisticsPage> {
-  DateTimeRange _selectedDateRange = DateTimeRange(
-    start: DateTime.now().subtract(const Duration(days: 30)),
-    end: DateTime.now(),
-  );
+class _StatisticsPageState extends ConsumerState<StatisticsPage> with SingleTickerProviderStateMixin {
+  bool _isLoading = true;
+  String _errorMessage = '';
+  
+  late TabController _tabController;
+  
+  // بيانات الإحصائيات
+  Map<String, dynamic> _salesData = {};
+  Map<String, dynamic> _productsData = {};
+  Map<String, dynamic> _customersData = {};
+  
+  // فلاتر
+  String _timeRange = 'week'; // يوم، أسبوع، شهر، سنة
+  
+  @override
+  void initState() {
+    super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+    _loadStatistics();
+  }
+  
+  @override
+  void dispose() {
+    _tabController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _loadStatistics() async {
+    setState(() {
+      _isLoading = true;
+      _errorMessage = '';
+    });
+
+    try {
+      final orderService = ref.read(orderServiceProvider);
+      
+      // تحميل بيانات المبيعات
+      final salesData = await orderService.getSellerSalesStatistics(timeRange: _timeRange);
+      
+      // تحميل بيانات المنتجات
+      final productsData = await orderService.getSellerProductsStatistics(timeRange: _timeRange);
+      
+      // تحميل بيانات العملاء
+      final customersData = await orderService.getSellerCustomersStatistics(timeRange: _timeRange);
+      
+      setState(() {
+        _salesData = salesData;
+        _productsData = productsData;
+        _customersData = customersData;
+        _isLoading = false;
+      });
+    } catch (e) {
+      setState(() {
+        _isLoading = false;
+        _errorMessage = 'حدث خطأ أثناء تحميل البيانات: $e';
+      });
+    }
+  }
+
+  void _changeTimeRange(String range) {
+    setState(() {
+      _timeRange = range;
+    });
+    _loadStatistics();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final statisticsState = ref.watch(sellerStatisticsProvider);
     final theme = Theme.of(context);
-
-    // Listen for errors
-    ref.listen<SellerStatisticsState>(sellerStatisticsProvider, (previous, next) {
-      String? errorMessage;
-      if (next.salesData is AsyncError && next.salesData != previous?.salesData) {
-        errorMessage = 'Error loading sales data: ${next.salesData.error}';
-      } else if (next.topSellingProducts is AsyncError && next.topSellingProducts != previous?.topSellingProducts) {
-        errorMessage = 'Error loading top products: ${next.topSellingProducts.error}';
-      }
-
-      if (errorMessage != null && mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(errorMessage), backgroundColor: Colors.red),
-        );
-      }
-    });
-
+    
     return Scaffold(
-      appBar: AppBar(title: const Text('Sales Statistics')),
-      body: RefreshIndicator(
-        onRefresh: () async {
-          final notifier = ref.read(sellerStatisticsProvider.notifier);
-          await Future.wait([
-            notifier.fetchSalesData(_selectedDateRange),
-            notifier.fetchTopSellingProducts(_selectedDateRange),
-            // Add other data fetching futures here
-          ]);
-        },
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              _buildTimePeriodSelector(context, ref),
-              const SizedBox(height: 24),
-              Text('Sales Trend', style: theme.textTheme.headlineSmall),
-              const SizedBox(height: 8),
-              _buildSalesChart(statisticsState.salesData),
-              const SizedBox(height: 24),
-              Text('Top Selling Products', style: theme.textTheme.headlineSmall),
-              const SizedBox(height: 8),
-              _buildTopSellingProductsList(statisticsState.topSellingProducts),
-            ],
+      appBar: AppBar(
+        title: const Text('الإحصائيات والتحليلات'),
+        backgroundColor: theme.colorScheme.primary,
+        foregroundColor: theme.colorScheme.onPrimary,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.refresh),
+            onPressed: _loadStatistics,
+            tooltip: 'تحديث',
           ),
+        ],
+        bottom: TabBar(
+          controller: _tabController,
+          labelColor: theme.colorScheme.onPrimary,
+          unselectedLabelColor: theme.colorScheme.onPrimary.withOpacity(0.7),
+          indicatorColor: theme.colorScheme.onPrimary,
+          tabs: const [
+            Tab(text: 'المبيعات'),
+            Tab(text: 'المنتجات'),
+            Tab(text: 'العملاء'),
+          ],
         ),
+      ),
+      body: _isLoading
+          ? AppWidgets.loadingIndicator(message: 'جاري تحميل البيانات...')
+          : _errorMessage.isNotEmpty
+              ? AppWidgets.errorMessage(
+                  message: _errorMessage,
+                  onRetry: _loadStatistics,
+                )
+              : Column(
+                  children: [
+                    // فلاتر الوقت
+                    _buildTimeRangeFilter(theme),
+                    
+                    // محتوى التبويبات
+                    Expanded(
+                      child: TabBarView(
+                        controller: _tabController,
+                        children: [
+                          _buildSalesTab(theme),
+                          _buildProductsTab(theme),
+                          _buildCustomersTab(theme),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+    );
+  }
+
+  Widget _buildTimeRangeFilter(ThemeData theme) {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      color: theme.colorScheme.surface,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        children: [
+          _buildTimeRangeButton(theme, 'day', 'يوم'),
+          _buildTimeRangeButton(theme, 'week', 'أسبوع'),
+          _buildTimeRangeButton(theme, 'month', 'شهر'),
+          _buildTimeRangeButton(theme, 'year', 'سنة'),
+        ],
       ),
     );
   }
 
-  Widget _buildTimePeriodSelector(BuildContext context, WidgetRef ref) {
-    final DateFormat formatter = DateFormat('yyyy-MM-dd');
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        Text(
-          '${formatter.format(_selectedDateRange.start)} - ${formatter.format(_selectedDateRange.end)}',
+  Widget _buildTimeRangeButton(ThemeData theme, String value, String label) {
+    final isSelected = _timeRange == value;
+    
+    return ElevatedButton(
+      onPressed: () => _changeTimeRange(value),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: isSelected ? theme.colorScheme.primary : theme.colorScheme.surface,
+        foregroundColor: isSelected ? theme.colorScheme.onPrimary : theme.colorScheme.onSurface,
+        elevation: isSelected ? 2 : 0,
+        side: BorderSide(
+          color: isSelected ? theme.colorScheme.primary : theme.colorScheme.outline,
+          width: 1,
         ),
-        IconButton(
-          icon: const Icon(Icons.calendar_today), // Removed const here
-          tooltip: 'Select Date Range',
-          onPressed: () async {
-            final pickedRange = await showDateRangePicker(
-              context: context,
-              firstDate: DateTime(2020),
-              lastDate: DateTime.now(),
-              initialDateRange: _selectedDateRange,
-            );
-            if (pickedRange != null && pickedRange != _selectedDateRange) {
-              setState(() {
-                _selectedDateRange = pickedRange;
-              });
-              final notifier = ref.read(sellerStatisticsProvider.notifier);
-              notifier.fetchSalesData(_selectedDateRange);
-              notifier.fetchTopSellingProducts(_selectedDateRange);
-            }
-          },
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      ),
+      child: Text(label),
+    );
+  }
+
+  Widget _buildSalesTab(ThemeData theme) {
+    if (_salesData.isEmpty) {
+      return const Center(
+        child: Text('لا توجد بيانات مبيعات متاحة'),
+      );
+    }
+    
+    final totalSales = _salesData['totalSales'] as num? ?? 0;
+    final totalOrders = _salesData['totalOrders'] as int? ?? 0;
+    final averageOrderValue = _salesData['averageOrderValue'] as num? ?? 0;
+    final salesGrowth = _salesData['salesGrowth'] as num? ?? 0;
+    final salesByDay = _salesData['salesByDay'] as List<dynamic>? ?? [];
+    final salesByCategory = _salesData['salesByCategory'] as List<dynamic>? ?? [];
+    
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        // بطاقات الإحصائيات الرئيسية
+        _buildStatsCards(
+          theme,
+          [
+            {
+              'title': 'إجمالي المبيعات',
+              'value': '${totalSales.toStringAsFixed(2)} ر.س',
+              'icon': Icons.attach_money,
+              'color': Colors.green,
+            },
+            {
+              'title': 'عدد الطلبات',
+              'value': totalOrders.toString(),
+              'icon': Icons.shopping_bag,
+              'color': Colors.blue,
+            },
+            {
+              'title': 'متوسط قيمة الطلب',
+              'value': '${averageOrderValue.toStringAsFixed(2)} ر.س',
+              'icon': Icons.trending_up,
+              'color': Colors.purple,
+            },
+            {
+              'title': 'نمو المبيعات',
+              'value': '${salesGrowth >= 0 ? '+' : ''}${salesGrowth.toStringAsFixed(1)}%',
+              'icon': salesGrowth >= 0 ? Icons.arrow_upward : Icons.arrow_downward,
+              'color': salesGrowth >= 0 ? Colors.green : Colors.red,
+            },
+          ],
+        ),
+        const SizedBox(height: 24),
+        
+        // رسم بياني للمبيعات حسب اليوم
+        _buildSectionTitle(theme, 'المبيعات حسب اليوم'),
+        const SizedBox(height: 8),
+        SizedBox(
+          height: 250,
+          child: _buildSalesByDayChart(theme, salesByDay),
+        ),
+        const SizedBox(height: 24),
+        
+        // رسم بياني للمبيعات حسب الفئة
+        _buildSectionTitle(theme, 'المبيعات حسب الفئة'),
+        const SizedBox(height: 8),
+        SizedBox(
+          height: 250,
+          child: _buildSalesByCategoryChart(theme, salesByCategory),
         ),
       ],
     );
   }
 
-  Widget _buildSalesChart(AsyncValue<List<SalesData>> salesDataAsync) {
-    return salesDataAsync.when(
-      data: (salesData) {
-        if (salesData.isEmpty) return const Center(child: Text('No sales data for selected period.'));
+  Widget _buildProductsTab(ThemeData theme) {
+    if (_productsData.isEmpty) {
+      return const Center(
+        child: Text('لا توجد بيانات منتجات متاحة'),
+      );
+    }
+    
+    final totalProducts = _productsData['totalProducts'] as int? ?? 0;
+    final outOfStockProducts = _productsData['outOfStockProducts'] as int? ?? 0;
+    final lowStockProducts = _productsData['lowStockProducts'] as int? ?? 0;
+    final topSellingProducts = _productsData['topSellingProducts'] as List<dynamic>? ?? [];
+    
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        // بطاقات الإحصائيات الرئيسية
+        _buildStatsCards(
+          theme,
+          [
+            {
+              'title': 'إجمالي المنتجات',
+              'value': totalProducts.toString(),
+              'icon': Icons.inventory,
+              'color': Colors.blue,
+            },
+            {
+              'title': 'نفاد المخزون',
+              'value': outOfStockProducts.toString(),
+              'icon': Icons.remove_shopping_cart,
+              'color': Colors.red,
+            },
+            {
+              'title': 'مخزون منخفض',
+              'value': lowStockProducts.toString(),
+              'icon': Icons.warning,
+              'color': Colors.orange,
+            },
+          ],
+        ),
+        const SizedBox(height: 24),
+        
+        // قائمة المنتجات الأكثر مبيعاً
+        _buildSectionTitle(theme, 'المنتجات الأكثر مبيعاً'),
+        const SizedBox(height: 8),
+        _buildTopSellingProductsList(theme, topSellingProducts),
+      ],
+    );
+  }
+
+  Widget _buildCustomersTab(ThemeData theme) {
+    if (_customersData.isEmpty) {
+      return const Center(
+        child: Text('لا توجد بيانات عملاء متاحة'),
+      );
+    }
+    
+    final totalCustomers = _customersData['totalCustomers'] as int? ?? 0;
+    final newCustomers = _customersData['newCustomers'] as int? ?? 0;
+    final returningCustomers = _customersData['returningCustomers'] as int? ?? 0;
+    final customerRetentionRate = _customersData['customerRetentionRate'] as num? ?? 0;
+    final topCustomers = _customersData['topCustomers'] as List<dynamic>? ?? [];
+    
+    return ListView(
+      padding: const EdgeInsets.all(16),
+      children: [
+        // بطاقات الإحصائيات الرئيسية
+        _buildStatsCards(
+          theme,
+          [
+            {
+              'title': 'إجمالي العملاء',
+              'value': totalCustomers.toString(),
+              'icon': Icons.people,
+              'color': Colors.blue,
+            },
+            {
+              'title': 'عملاء جدد',
+              'value': newCustomers.toString(),
+              'icon': Icons.person_add,
+              'color': Colors.green,
+            },
+            {
+              'title': 'عملاء عائدون',
+              'value': returningCustomers.toString(),
+              'icon': Icons.repeat,
+              'color': Colors.purple,
+            },
+            {
+              'title': 'معدل الاحتفاظ',
+              'value': '${customerRetentionRate.toStringAsFixed(1)}%',
+              'icon': Icons.favorite,
+              'color': Colors.red,
+            },
+          ],
+        ),
+        const SizedBox(height: 24),
+        
+        // قائمة العملاء الأكثر شراءً
+        _buildSectionTitle(theme, 'العملاء الأكثر شراءً'),
+        const SizedBox(height: 8),
+        _buildTopCustomersList(theme, topCustomers),
+      ],
+    );
+  }
+
+  Widget _buildStatsCards(ThemeData theme, List<Map<String, dynamic>> stats) {
+    return GridView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
+        crossAxisSpacing: 16,
+        mainAxisSpacing: 16,
+        childAspectRatio: 1.5,
+      ),
+      itemCount: stats.length,
+      itemBuilder: (context, index) {
+        final stat = stats[index];
+        final title = stat['title'] as String;
+        final value = stat['value'] as String;
+        final icon = stat['icon'] as IconData;
+        final color = stat['color'] as Color;
+        
         return Card(
           elevation: 2,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
           child: Padding(
-            padding: const EdgeInsets.fromLTRB(16, 16, 16, 8),
-            child: SizedBox(
-              height: 250,
-              child: LineChart(
-                LineChartData(
-                  gridData: FlGridData(show: false),
-                  titlesData: FlTitlesData(
-                    leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: true, reservedSize: 40)),
-                    bottomTitles: AxisTitles(
-                      sideTitles: SideTitles(
-                        showTitles: true,
-                        reservedSize: 30,
-                        getTitlesWidget: (value, meta) => _bottomTitleWidgets(value, meta, salesData.length, salesData),
-                        interval: _calculateTitleInterval(salesData.length),
-                      ),
-                    ),
-                    topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                    rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                  ),
-                  borderData: FlBorderData(show: true, border: Border.all(color: Colors.grey.shade300)),
-                  minY: 0,
-                  maxX: (salesData.length - 1).toDouble(),
-                  lineBarsData: [
-                    LineChartBarData(
-                      spots: _generateFlSpots(salesData),
-                      isCurved: true,
-                      color: Theme.of(context).primaryColor,
-                      barWidth: 3,
-                      isStrokeCapRound: true,
-                      dotData: FlDotData(show: false),
-                      belowBarData: BarAreaData(
-                        show: true,
-                        color: Theme.of(context).primaryColor.withOpacity(0.2),
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Row(
+                  children: [
+                    Icon(icon, color: color, size: 24),
+                    const SizedBox(width: 8),
+                    Text(
+                      title,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: Colors.grey.shade600,
                       ),
                     ),
                   ],
                 ),
-              ),
+                const SizedBox(height: 8),
+                Text(
+                  value,
+                  style: theme.textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: theme.colorScheme.onSurface,
+                  ),
+                ),
+              ],
             ),
           ),
         );
       },
-      loading: () => const SizedBox(height: 250, child: Center(child: CircularProgressIndicator())),
-      error: (error, _) => SizedBox(height: 250, child: Center(child: Text('Error loading chart: $error'))),
     );
   }
 
-  List<FlSpot> _generateFlSpots(List<SalesData> salesData) {
-    return salesData.asMap().entries.map((entry) {
-      return FlSpot(entry.key.toDouble(), entry.value.sales);
-    }).toList();
+  Widget _buildSectionTitle(ThemeData theme, String title) {
+    return Text(
+      title,
+      style: theme.textTheme.titleLarge?.copyWith(
+        fontWeight: FontWeight.bold,
+      ),
+    );
   }
 
-  Widget _buildTopSellingProductsList(AsyncValue<List<Product>> topProductsAsync) {
-    return topProductsAsync.when(
-      data: (products) {
-        if (products.isEmpty) return const Center(child: Text('No top selling products found.'));
-        return Card(
-          elevation: 2,
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Column(
-              children: products.map((product) {
-                return ListTile(
-                  leading: CircleAvatar(
-                    backgroundColor: Colors.grey.shade200,
-                    child:  product.imageUrl.isNotEmpty
-                        ? ClipOval(child: Image.network(product.imageUrl, fit: BoxFit.cover, width: 40, height: 40))
-                        : const Icon(Icons.inventory_2_outlined, size: 20) ,
+  Widget _buildSalesByDayChart(ThemeData theme, List<dynamic> salesByDay) {
+    if (salesByDay.isEmpty) {
+      return const Center(
+        child: Text('لا توجد بيانات متاحة'),
+      );
+    }
+    
+    // تحويل البيانات إلى تنسيق مناسب للرسم البياني
+    final spots = <FlSpot>[];
+    final labels = <String>[];
+    
+    for (int i = 0; i < salesByDay.length; i++) {
+      final item = salesByDay[i] as Map<String, dynamic>;
+      final sales = item['sales'] as num? ?? 0;
+      final day = item['day'] as String? ?? '';
+      
+      spots.add(FlSpot(i.toDouble(), sales.toDouble()));
+      labels.add(day);
+    }
+    
+    return LineChart(
+      LineChartData(
+        gridData: FlGridData(
+          show: true,
+          drawVerticalLine: true,
+          horizontalInterval: 1,
+          verticalInterval: 1,
+          getDrawingHorizontalLine: (value) {
+            return FlLine(
+              color: Colors.grey.shade300,
+              strokeWidth: 1,
+            );
+          },
+          getDrawingVerticalLine: (value) {
+            return FlLine(
+              color: Colors.grey.shade300,
+              strokeWidth: 1,
+            );
+          },
+        ),
+        titlesData: FlTitlesData(
+          show: true,
+          rightTitles: AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+          topTitles: AxisTitles(
+            sideTitles: SideTitles(showTitles: false),
+          ),
+          bottomTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              reservedSize: 30,
+              interval: 1,
+              getTitlesWidget: (value, meta) {
+                if (value.toInt() >= 0 && value.toInt() < labels.length) {
+                  return SideTitleWidget(
+                    axisSide: meta.axisSide,
+                    space: 8.0,
+                    child: Text(
+                      labels[value.toInt()],
+                      style: theme.textTheme.bodySmall,
+                    ),
+                  );
+                }
+                return const SizedBox.shrink();
+              },
+            ),
+          ),
+          leftTitles: AxisTitles(
+            sideTitles: SideTitles(
+              showTitles: true,
+              interval: 1,
+              getTitlesWidget: (value, meta) {
+                return SideTitleWidget(
+                  axisSide: meta.axisSide,
+                  space: 8.0,
+                  child: Text(
+                    value.toInt().toString(),
+                    style: theme.textTheme.bodySmall,
                   ),
-                  title: Text(product.name),
-                  trailing: Text('\$${product.price.toStringAsFixed(2)}'),
                 );
-              }).toList(),
+              },
+              reservedSize: 42,
+            ),
+          ),
+        ),
+        borderData: FlBorderData(
+          show: true,
+          border: Border.all(color: Colors.grey.shade300),
+        ),
+        minX: 0,
+        maxX: (salesByDay.length - 1).toDouble(),
+        minY: 0,
+        lineBarsData: [
+          LineChartBarData(
+            spots: spots,
+            isCurved: true,
+            gradient: LinearGradient(
+              colors: [
+                theme.colorScheme.primary.withOpacity(0.8),
+                theme.colorScheme.primary,
+              ],
+            ),
+            barWidth: 3,
+            isStrokeCapRound: true,
+            dotData: FlDotData(
+              show: true,
+              getDotPainter: (spot, percent, barData, index) {
+                return FlDotCirclePainter(
+                  radius: 4,
+                  color: theme.colorScheme.primary,
+                  strokeWidth: 2,
+                  strokeColor: Colors.white,
+                );
+              },
+            ),
+            belowBarData: BarAreaData(
+              show: true,
+              gradient: LinearGradient(
+                colors: [
+                  theme.colorScheme.primary.withOpacity(0.3),
+                  theme.colorScheme.primary.withOpacity(0.0),
+                ],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSalesByCategoryChart(ThemeData theme, List<dynamic> salesByCategory) {
+    if (salesByCategory.isEmpty) {
+      return const Center(
+        child: Text('لا توجد بيانات متاحة'),
+      );
+    }
+    
+    // تحويل البيانات إلى تنسيق مناسب للرسم البياني
+    final sections = <PieChartSectionData>[];
+    final legends = <Widget>[];
+    
+    final colors = [
+      Colors.blue,
+      Colors.green,
+      Colors.orange,
+      Colors.purple,
+      Colors.red,
+      Colors.teal,
+      Colors.amber,
+      Colors.pink,
+    ];
+    
+    for (int i = 0; i < salesByCategory.length; i++) {
+      final item = salesByCategory[i] as Map<String, dynamic>;
+      final category = item['category'] as String? ?? '';
+      final sales = item['sales'] as num? ?? 0;
+      final percentage = item['percentage'] as num? ?? 0;
+      
+      final color = colors[i % colors.length];
+      
+      sections.add(
+        PieChartSectionData(
+          color: color,
+          value: sales.toDouble(),
+          title: '${percentage.toStringAsFixed(1)}%',
+          radius: 100,
+          titleStyle: const TextStyle(
+            fontSize: 12,
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+      );
+      
+      legends.add(
+        Padding(
+          padding: const EdgeInsets.only(bottom: 4),
+          child: Row(
+            children: [
+              Container(
+                width: 16,
+                height: 16,
+                decoration: BoxDecoration(
+                  color: color,
+                  shape: BoxShape.circle,
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: Text(
+                  category,
+                  style: theme.textTheme.bodyMedium,
+                ),
+              ),
+              Text(
+                '${sales.toStringAsFixed(0)} ر.س',
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+    
+    return Row(
+      children: [
+        // الرسم البياني الدائري
+        Expanded(
+          flex: 3,
+          child: PieChart(
+            PieChartData(
+              sections: sections,
+              centerSpaceRadius: 40,
+              sectionsSpace: 2,
+            ),
+          ),
+        ),
+        
+        // مفتاح الرسم البياني
+        Expanded(
+          flex: 2,
+          child: Padding(
+            padding: const EdgeInsets.only(left: 16),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: legends,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildTopSellingProductsList(ThemeData theme, List<dynamic> products) {
+    if (products.isEmpty) {
+      return const Center(
+        child: Padding(
+          padding: EdgeInsets.all(16),
+          child: Text('لا توجد بيانات متاحة'),
+        ),
+      );
+    }
+    
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: products.length,
+      itemBuilder: (context, index) {
+        final product = products[index] as Map<String, dynamic>;
+        final productId = product['id'] as String? ?? '';
+        final name = product['name'] as String? ?? '';
+        final imageUrl = product['imageUrl'] as String? ?? '';
+        final sales = product['sales'] as num? ?? 0;
+        final quantity = product['quantity'] as int? ?? 0;
+        final stock = product['stock'] as int? ?? 0;
+        
+        return Card(
+          margin: const EdgeInsets.only(bottom: 8),
+          child: ListTile(
+            contentPadding: const EdgeInsets.all(12),
+            leading: imageUrl.isNotEmpty
+                ? ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.network(
+                      imageUrl,
+                      width: 50,
+                      height: 50,
+                      fit: BoxFit.cover,
+                      errorBuilder: (context, error, stackTrace) {
+                        return Container(
+                          width: 50,
+                          height: 50,
+                          color: Colors.grey.shade200,
+                          child: const Icon(Icons.image_not_supported, color: Colors.grey),
+                        );
+                      },
+                    ),
+                  )
+                : Container(
+                    width: 50,
+                    height: 50,
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade200,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: const Icon(Icons.inventory, color: Colors.grey),
+                  ),
+            title: Text(
+              name,
+              style: theme.textTheme.titleMedium,
+            ),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 4),
+                Text(
+                  'المبيعات: ${sales.toStringAsFixed(2)} ر.س',
+                  style: theme.textTheme.bodySmall,
+                ),
+                Text(
+                  'الكمية المباعة: $quantity',
+                  style: theme.textTheme.bodySmall,
+                ),
+                Text(
+                  'المخزون المتبقي: $stock',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    color: stock <= 5 ? Colors.red : null,
+                  ),
+                ),
+              ],
+            ),
+            trailing: IconButton(
+              icon: const Icon(Icons.arrow_forward),
+              onPressed: () => context.push('${RouteConstants.editProduct}/$productId'),
+              tooltip: 'عرض المنتج',
             ),
           ),
         );
-      }, 
-      loading: () => const SizedBox(height: 100, child: Center(child: CircularProgressIndicator())),
-      error: (error, _) => SizedBox(height: 100, child: Center(child: Text('Error loading top products: $error'))),
+      },
     );
   }
 
-  Widget _bottomTitleWidgets(double value, TitleMeta meta, int dataLength, List<SalesData> salesData) {
-    final style = TextStyle(
-      color: Theme.of(context).colorScheme.onSurfaceVariant,
-      fontWeight: FontWeight.bold,
-      fontSize: 10,
-    );
-    String text = '';
-    final index = value.toInt();
-    if (index >= 0 && index < dataLength) {
-        text = salesData[index].month;
+  Widget _buildTopCustomersList(ThemeData theme, List<dynamic> customers) {
+    if (customers.isEmpty) {
+      return const Center(
+        child: Padding(
+          padding: EdgeInsets.all(16),
+          child: Text('لا توجد بيانات متاحة'),
+        ),
+      );
     }
-   
-    return SideTitleWidget(
-      axisSide: meta.axisSide,
-      space: 4.0,
-      child: Text(text, style: style),
+    
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: customers.length,
+      itemBuilder: (context, index) {
+        final customer = customers[index] as Map<String, dynamic>;
+        final name = customer['name'] as String? ?? '';
+        final email = customer['email'] as String? ?? '';
+        final phone = customer['phone'] as String? ?? '';
+        final totalSpent = customer['totalSpent'] as num? ?? 0;
+        final ordersCount = customer['ordersCount'] as int? ?? 0;
+        
+        return Card(
+          margin: const EdgeInsets.only(bottom: 8),
+          child: ListTile(
+            contentPadding: const EdgeInsets.all(12),
+            leading: CircleAvatar(
+              backgroundColor: theme.colorScheme.primary.withOpacity(0.1),
+              child: Text(
+                name.isNotEmpty ? name[0].toUpperCase() : '?',
+                style: TextStyle(
+                  color: theme.colorScheme.primary,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+            title: Text(
+              name,
+              style: theme.textTheme.titleMedium,
+            ),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 4),
+                if (email.isNotEmpty)
+                  Text(
+                    email,
+                    style: theme.textTheme.bodySmall,
+                  ),
+                if (phone.isNotEmpty)
+                  Text(
+                    phone,
+                    style: theme.textTheme.bodySmall,
+                  ),
+                const SizedBox(height: 4),
+                Text(
+                  'إجمالي الإنفاق: ${totalSpent.toStringAsFixed(2)} ر.س',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Text(
+                  'عدد الطلبات: $ordersCount',
+                  style: theme.textTheme.bodySmall,
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
-  }
-
-  double _calculateTitleInterval(int dataLength) {
-    if (dataLength <= 7) return 1;
-    if (dataLength <= 14) return 2;
-    if (dataLength <= 31) return 5;
-    return (dataLength / 6).floorToDouble();
   }
 }

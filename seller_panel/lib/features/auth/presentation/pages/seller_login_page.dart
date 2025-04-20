@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:firebase_auth/firebase_auth.dart'; // Import Firebase Auth
-import 'package:shared_services/shared_services.dart';
-// Import shared services
-import 'package:shared_widgets/shared_widgets.dart'; // Import shared widgets
-import 'package:go_router/go_router.dart'; // Import GoRouter
-// Import specific auth notifier
+import 'package:go_router/go_router.dart';
+import '../../../../core/constants/route_constants.dart';
+import '../../../../core/services/auth_service.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/app_widgets.dart';
 
-class SellerLoginPage extends ConsumerStatefulWidget { // Change to StatefulWidget
+class SellerLoginPage extends ConsumerStatefulWidget {
   const SellerLoginPage({Key? key}) : super(key: key);
 
   @override
@@ -19,6 +18,7 @@ class _SellerLoginPageState extends ConsumerState<SellerLoginPage> {
   final _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
+  bool _obscurePassword = true;
 
   @override
   void dispose() {
@@ -27,11 +27,21 @@ class _SellerLoginPageState extends ConsumerState<SellerLoginPage> {
     super.dispose();
   }
 
- void _showErrorSnackBar(String message) {
+  void _showErrorSnackBar(String message) {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message), backgroundColor: Colors.red),
+      SnackBar(
+        content: Text(message),
+        backgroundColor: AppColors.error,
+        behavior: SnackBarBehavior.floating,
+      ),
     );
+  }
+
+  void _togglePasswordVisibility() {
+    setState(() {
+      _obscurePassword = !_obscurePassword;
+    });
   }
 
   Future<void> _login() async {
@@ -40,41 +50,55 @@ class _SellerLoginPageState extends ConsumerState<SellerLoginPage> {
     setState(() => _isLoading = true);
 
     try {
-       // Use Firebase Auth for login
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
-        email: _emailController.text.trim(),
-        password: _passwordController.text.trim(),
+      // استخدام خدمة المصادقة للتسجيل
+      final authService = ref.read(authServiceProvider);
+      final user = await authService.signInWithEmailAndPassword(
+        _emailController.text.trim(),
+        _passwordController.text.trim(),
       );
 
       if (!mounted) return;
 
-      // Optionally: Verify user role after successful Firebase login
-      final user = FirebaseAuth.instance.currentUser;
       if (user != null) {
-          // Fetch user data from your backend/service to check role
-          final userService = ref.read(userServiceProvider); // Access UserService via provider
-          final userData = await userService.getUser(user.uid);
-          if (mounted && userData != null && userData.role == 'seller') {
-             // Update Riverpod state if needed (though maybe not necessary just for login)
-             // ref.read(sellerAuthProvider.notifier).updateState(userData); 
-              context.go('/sellerHome'); // Navigate on successful login and role check
-          } else if (mounted) {
-              _showErrorSnackBar('Login successful, but user is not a seller.');
-              await FirebaseAuth.instance.signOut(); // Sign out if role is incorrect
-          }
-      } else if (mounted) {
-         _showErrorSnackBar('Authentication error occurred.');
+        // التنقل إلى الصفحة الرئيسية بعد تسجيل الدخول بنجاح
+        context.go(RouteConstants.sellerDashboard);
+      } else {
+        _showErrorSnackBar('فشل تسجيل الدخول. يرجى التحقق من بيانات الاعتماد الخاصة بك.');
       }
-
-    } on FirebaseAuthException catch (e) {
-      if (!mounted) return;
-      final errorMessage = (e.code == 'user-not-found' || e.code == 'invalid-credential')
-          ? 'Incorrect email or password.'
-          : 'Login failed: ${e.message}';
-      _showErrorSnackBar(errorMessage);
     } catch (e) {
-       if (!mounted) return;
-       _showErrorSnackBar('An unexpected error occurred: $e');
+      if (!mounted) return;
+      _showErrorSnackBar('حدث خطأ: ${e.toString()}');
+    } finally {
+      if (mounted) {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+
+  Future<void> _forgotPassword() async {
+    if (_emailController.text.isEmpty) {
+      _showErrorSnackBar('يرجى إدخال عنوان البريد الإلكتروني أولاً');
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    try {
+      final authService = ref.read(authServiceProvider);
+      await authService.sendPasswordResetEmail(_emailController.text.trim());
+      
+      if (!mounted) return;
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني'),
+          backgroundColor: AppColors.success,
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      _showErrorSnackBar('فشل إرسال رابط إعادة تعيين كلمة المرور: ${e.toString()}');
     } finally {
       if (mounted) {
         setState(() => _isLoading = false);
@@ -88,7 +112,7 @@ class _SellerLoginPageState extends ConsumerState<SellerLoginPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Seller Login'),
+        title: const Text('تسجيل دخول البائع'),
         backgroundColor: theme.colorScheme.primary,
         foregroundColor: theme.colorScheme.onPrimary,
       ),
@@ -101,49 +125,129 @@ class _SellerLoginPageState extends ConsumerState<SellerLoginPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Text('Welcome, Seller!', style: theme.textTheme.headlineMedium, textAlign: TextAlign.center),
-                 const SizedBox(height: 32),
-                AppTextField(
-                  controller: _emailController,
-                  label: 'Email',
-                  keyboardType: TextInputType.emailAddress,
-                  prefixIcon: Icons.email_outlined,
-                  validator: (value) {
-                    if (value == null || value.isEmpty || !value.contains('@')) {
-                      return 'Please enter a valid email';
-                    }
-                    return null;
-                  },
+                // شعار أو صورة التطبيق
+                Container(
+                  height: 120,
+                  width: 120,
+                  alignment: Alignment.center,
+                  child: Image.asset(
+                    'assets/images/seller_logo.png',
+                    errorBuilder: (context, error, stackTrace) => Icon(
+                      Icons.store,
+                      size: 80,
+                      color: theme.colorScheme.primary,
+                    ),
+                  ),
                 ),
-                const SizedBox(height: 16),
-                AppTextField(
-                  controller: _passwordController,
-                  label: 'Password',
-                  obscureText: true,
-                   prefixIcon: Icons.lock_outline,
+                
+                const SizedBox(height: 24),
+                
+                // عنوان الصفحة
+                Text(
+                  'مرحباً بك في لوحة تحكم البائع',
+                  style: theme.textTheme.headlineSmall,
+                  textAlign: TextAlign.center,
+                ),
+                
+                const SizedBox(height: 8),
+                
+                Text(
+                  'يرجى تسجيل الدخول للوصول إلى حسابك',
+                  style: theme.textTheme.bodyMedium?.copyWith(
+                    color: AppColors.textSecondary,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                
+                const SizedBox(height: 32),
+                
+                // حقل البريد الإلكتروني
+                AppWidgets.appTextField(
+                  controller: _emailController,
+                  label: 'البريد الإلكتروني',
+                  hint: 'أدخل بريدك الإلكتروني',
+                  prefixIcon: Icons.email_outlined,
+                  keyboardType: TextInputType.emailAddress,
+                  textInputAction: TextInputAction.next,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
-                      return 'Please enter your password';
+                      return 'يرجى إدخال البريد الإلكتروني';
                     }
-                     if (value.length < 6) {
-                      return 'Password must be at least 6 characters';
+                    if (!value.contains('@') || !value.contains('.')) {
+                      return 'يرجى إدخال بريد إلكتروني صالح';
                     }
                     return null;
                   },
                 ),
+                
+                const SizedBox(height: 16),
+                
+                // حقل كلمة المرور
+                AppWidgets.appTextField(
+                  controller: _passwordController,
+                  label: 'كلمة المرور',
+                  hint: 'أدخل كلمة المرور',
+                  prefixIcon: Icons.lock_outline,
+                  obscureText: _obscurePassword,
+                  textInputAction: TextInputAction.done,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'يرجى إدخال كلمة المرور';
+                    }
+                    if (value.length < 6) {
+                      return 'كلمة المرور يجب أن تكون 6 أحرف على الأقل';
+                    }
+                    return null;
+                  },
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _obscurePassword ? Icons.visibility : Icons.visibility_off,
+                    ),
+                    onPressed: _togglePasswordVisibility,
+                  ),
+                  onSubmitted: (_) => _login(),
+                ),
+                
+                const SizedBox(height: 24),
+                
+                // زر نسيت كلمة المرور
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: TextButton(
+                    onPressed: _forgotPassword,
+                    child: const Text('نسيت كلمة المرور؟'),
+                  ),
+                ),
+                
                 const SizedBox(height: 32),
+                
+                // زر تسجيل الدخول
                 _isLoading
                     ? const Center(child: CircularProgressIndicator())
-                    : AppButton(
-                        text: 'Login',
+                    : AppWidgets.appButton(
+                        text: 'تسجيل الدخول',
                         onPressed: _login,
+                        icon: Icons.login,
+                        backgroundColor: theme.colorScheme.primary,
+                        textColor: theme.colorScheme.onPrimary,
                       ),
-                 // Add link for registration or password reset if applicable
-                 const SizedBox(height: 16),
-                 TextButton(
-                   onPressed: () { /* Implement registration/forgot password navigation */ },
-                   child: const Text('Forgot Password? / Register'),
-                 ),
+                
+                const SizedBox(height: 24),
+                
+                // رابط التسجيل كبائع جديد
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Text('ليس لديك حساب؟'),
+                    TextButton(
+                      onPressed: () {
+                        // التنقل إلى صفحة التسجيل
+                        // context.push(RouteConstants.sellerRegister);
+                      },
+                      child: const Text('سجل كبائع جديد'),
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
