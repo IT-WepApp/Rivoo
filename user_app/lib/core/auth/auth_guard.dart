@@ -1,133 +1,106 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:user_app/features/auth/presentation/viewmodels/auth_view_model.dart';
+import 'package:user_app/core/state/auth_state_provider.dart';
+import 'package:user_app/features/auth/domain/user_model.dart';
 
-/// حارس المصادقة
-/// يستخدم للتحقق من حالة المصادقة قبل الوصول إلى الصفحات المحمية
+/// حارس المصادقة للتحقق من صلاحيات الوصول للمسارات
 class AuthGuard {
-  final WidgetRef ref;
-  
-  AuthGuard(this.ref);
-  
-  /// التحقق من حالة المصادقة
-  bool isAuthenticated() {
-    final authState = ref.read(authViewModelProvider);
-    return authState.isAuthenticated;
-  }
-  
-  /// التحقق من دور المستخدم
-  bool hasRole(String role) {
-    final authState = ref.read(authViewModelProvider);
-    if (!authState.isAuthenticated || authState.userData == null) {
-      return false;
-    }
+  /// التحقق من حالة تسجيل الدخول
+  static Future<String?> guardAuth(
+    BuildContext context,
+    GoRouterState state,
+    WidgetRef ref,
+  ) async {
+    final authState = ref.read(authStateProvider);
     
-    return authState.userData!.role == role;
-  }
-  
-  /// التحقق من وجود أي من الأدوار المحددة
-  bool hasAnyRole(List<String> roles) {
-    final authState = ref.read(authViewModelProvider);
-    if (!authState.isAuthenticated || authState.userData == null) {
-      return false;
+    if (authState.isAuthenticated) {
+      // المستخدم مسجل الدخول، السماح بالوصول
+      return null;
     }
-    
-    return roles.contains(authState.userData!.role);
+    // المستخدم غير مسجل الدخول، إعادة التوجيه إلى صفحة تسجيل الدخول
+    return '/auth/login';
   }
-}
 
-/// مغلف حارس المصادقة
-/// يستخدم لتغليف الصفحات المحمية بحارس المصادقة
-class AuthGuardWrapper extends ConsumerWidget {
-  final Widget child;
-  final String? requiredRole;
-  final List<String>? requiredRoles;
-  final String redirectRoute;
-  
-  const AuthGuardWrapper({
-    Key? key,
-    required this.child,
-    this.requiredRole,
-    this.requiredRoles,
-    this.redirectRoute = '/login',
-  }) : super(key: key);
-  
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final authGuard = AuthGuard(ref);
+  /// التحقق من حالة عدم تسجيل الدخول
+  static Future<String?> guardUnauth(
+    BuildContext context,
+    GoRouterState state,
+    WidgetRef ref,
+  ) async {
+    final authState = ref.read(authStateProvider);
     
-    // التحقق من حالة المصادقة
-    if (!authGuard.isAuthenticated()) {
-      // إعادة التوجيه إلى صفحة تسجيل الدخول
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        Navigator.of(context).pushReplacementNamed(redirectRoute);
-      });
-      
-      // عرض شاشة تحميل مؤقتة
-      return const Scaffold(
-        body: Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
+    if (!authState.isAuthenticated) {
+      // المستخدم غير مسجل الدخول، السماح بالوصول
+      return null;
     }
-    
-    // التحقق من الدور المطلوب
-    if (requiredRole != null && !authGuard.hasRole(requiredRole!)) {
-      // إعادة التوجيه إلى صفحة غير مصرح بها
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        Navigator.of(context).pushReplacementNamed('/unauthorized');
-      });
-      
-      // عرض شاشة تحميل مؤقتة
-      return const Scaffold(
-        body: Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
-    }
-    
-    // التحقق من الأدوار المطلوبة
-    if (requiredRoles != null && !authGuard.hasAnyRole(requiredRoles!)) {
-      // إعادة التوجيه إلى صفحة غير مصرح بها
-      WidgetsBinding.instance.addPostFrameCallback((_) {
-        Navigator.of(context).pushReplacementNamed('/unauthorized');
-      });
-      
-      // عرض شاشة تحميل مؤقتة
-      return const Scaffold(
-        body: Center(
-          child: CircularProgressIndicator(),
-        ),
-      );
-    }
-    
-    // عرض الصفحة المحمية
-    return child;
+    // المستخدم مسجل الدخول، إعادة التوجيه إلى الصفحة الرئيسية
+    return '/home';
   }
-}
 
-/// مغلف حارس المصادقة للمسارات
-/// يستخدم لتغليف المسارات المحمية بحارس المصادقة
-class AuthGuardRoute<T> extends MaterialPageRoute<T> {
-  final String? requiredRole;
-  final List<String>? requiredRoles;
-  final String redirectRoute;
-  
-  AuthGuardRoute({
-    required WidgetBuilder builder,
-    RouteSettings? settings,
-    this.requiredRole,
-    this.requiredRoles,
-    this.redirectRoute = '/login',
-  }) : super(
-    builder: (context) => Consumer(
-      builder: (context, ref, _) => AuthGuardWrapper(
-        requiredRole: requiredRole,
-        requiredRoles: requiredRoles,
-        redirectRoute: redirectRoute,
-        child: builder(context),
-      ),
-    ),
-    settings: settings,
-  );
+  /// التحقق من صلاحيات المستخدم
+  static Future<String?> guardRole(
+    BuildContext context,
+    GoRouterState state,
+    WidgetRef ref,
+    List<UserRole> allowedRoles,
+  ) async {
+    final authState = ref.read(authStateProvider);
+    
+    if (!authState.isAuthenticated) {
+      // غير مصدق، إعادة توجيه لتسجيل الدخول
+      return '/auth/login';
+    }
+    if (authState.user != null && allowedRoles.contains(authState.user!.role)) {
+      // لديه الصلاحيات المطلوبة
+      return null;
+    }
+    // لا يملك الصلاحيات المطلوبة
+    return '/unauthorized';
+  }
+
+  /// التحقق من صلاحيات المسؤول
+  static Future<String?> guardAdmin(
+    BuildContext context,
+    GoRouterState state,
+    WidgetRef ref,
+  ) async {
+    return guardRole(context, state, ref, [UserRole.admin]);
+  }
+
+  /// التحقق من صلاحيات العميل
+  static Future<String?> guardCustomer(
+    BuildContext context,
+    GoRouterState state,
+    WidgetRef ref,
+  ) async {
+    return guardRole(context, state, ref, [UserRole.customer]);
+  }
+
+  /// التحقق من صلاحيات السائق
+  static Future<String?> guardDriver(
+    BuildContext context,
+    GoRouterState state,
+    WidgetRef ref,
+  ) async {
+    return guardRole(context, state, ref, [UserRole.driver]);
+  }
+
+  /// التحقق من صلاحيات المسؤول أو العميل
+  static Future<String?> guardAdminOrCustomer(
+    BuildContext context,
+    GoRouterState state,
+    WidgetRef ref,
+  ) async {
+    return guardRole(context, state, ref, [UserRole.admin, UserRole.customer]);
+  }
+
+  /// التحقق من صلاحيات المسؤول أو السائق
+  static Future<String?> guardAdminOrDriver(
+    BuildContext context,
+    GoRouterState state,
+    WidgetRef ref,
+  ) async {
+    return guardRole(context, state, ref, [UserRole.admin, UserRole.driver]);
+  }
 }

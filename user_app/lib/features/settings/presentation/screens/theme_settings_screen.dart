@@ -1,345 +1,226 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:user_app/theme/app_theme.dart';
-
-/// مزود حالة الوضع الليلي
-final themeProvider = StateNotifierProvider<ThemeNotifier, bool>((ref) {
-  return ThemeNotifier();
-});
-
-/// مدير حالة الوضع الليلي
-class ThemeNotifier extends StateNotifier<bool> {
-  ThemeNotifier() : super(false) {
-    _loadThemePreference();
-  }
-
-  /// تحميل تفضيل الوضع الليلي
-  Future<void> _loadThemePreference() async {
-    final prefs = await SharedPreferences.getInstance();
-    final isDarkMode = prefs.getBool('isDarkMode') ?? false;
-    state = isDarkMode;
-  }
-
-  /// تبديل وضع السمة
-  Future<void> toggleTheme() async {
-    final prefs = await SharedPreferences.getInstance();
-    state = !state;
-    await prefs.setBool('isDarkMode', state);
-  }
-
-  /// تعيين وضع السمة
-  Future<void> setTheme(bool isDarkMode) async {
-    final prefs = await SharedPreferences.getInstance();
-    state = isDarkMode;
-    await prefs.setBool('isDarkMode', isDarkMode);
-  }
-}
+import 'package:user_app/core/theme/theme_provider.dart';
+import 'package:user_app/core/widgets/responsive_builder.dart';
 
 /// شاشة إعدادات السمة
+/// تتيح للمستخدم تغيير وضع السمة (فاتح/داكن/النظام)
 class ThemeSettingsScreen extends ConsumerWidget {
-  const ThemeSettingsScreen({super.key});
+  /// مسار الشاشة للتوجيه
+  static const String routeName = '/settings/theme';
+
+  const ThemeSettingsScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isDarkMode = ref.watch(themeProvider);
+    final themeMode = ref.watch(themeProvider);
+    final themeNotifier = ref.read(themeProvider.notifier);
     final l10n = AppLocalizations.of(context)!;
-    final theme = Theme.of(context);
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n.themeSettings),
+        title: Text(l10n.theme),
         elevation: 0,
       ),
-      body: SafeArea(
+      body: ResponsiveBuilder(
+        mobile: _buildMobileLayout(context, themeMode, themeNotifier, l10n),
+        tablet: _buildTabletLayout(context, themeMode, themeNotifier, l10n),
+        desktop: _buildDesktopLayout(context, themeMode, themeNotifier, l10n),
+      ),
+    );
+  }
+
+  /// بناء تخطيط الهاتف المحمول
+  Widget _buildMobileLayout(
+    BuildContext context,
+    ThemeMode themeMode,
+    ThemeNotifier themeNotifier,
+    AppLocalizations l10n,
+  ) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildThemeHeader(context, l10n),
+          const SizedBox(height: 24),
+          _buildThemeOptions(context, themeMode, themeNotifier, l10n),
+        ],
+      ),
+    );
+  }
+
+  /// بناء تخطيط الجهاز اللوحي
+  Widget _buildTabletLayout(
+    BuildContext context,
+    ThemeMode themeMode,
+    ThemeNotifier themeNotifier,
+    AppLocalizations l10n,
+  ) {
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildThemeHeader(context, l10n),
+          const SizedBox(height: 32),
+          _buildThemeOptions(context, themeMode, themeNotifier, l10n),
+        ],
+      ),
+    );
+  }
+
+  /// بناء تخطيط سطح المكتب
+  Widget _buildDesktopLayout(
+    BuildContext context,
+    ThemeMode themeMode,
+    ThemeNotifier themeNotifier,
+    AppLocalizations l10n,
+  ) {
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 800),
         child: SingleChildScrollView(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(32),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // شرح إعدادات السمة
-              Card(
-                elevation: 2,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Padding(
-                  padding: const EdgeInsets.all(16.0),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(
-                        children: [
-                          Icon(Icons.info_outline, 
-                            color: theme.colorScheme.primary,
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            l10n.themeInfo,
-                            style: theme.textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        l10n.themeDescription,
-                        style: theme.textTheme.bodyMedium,
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-              
-              const SizedBox(height: 24),
-              
-              // اختيار الوضع
-              Text(
-                l10n.chooseTheme,
-                style: theme.textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 16),
-              
-              // بطاقات اختيار الوضع
-              Row(
-                children: [
-                  // وضع النهار
-                  Expanded(
-                    child: _ThemeOptionCard(
-                      title: l10n.lightTheme,
-                      icon: Icons.wb_sunny_rounded,
-                      isSelected: !isDarkMode,
-                      colors: [
-                        AppColors.primary,
-                        AppColors.primaryLight,
-                        AppColors.accent,
-                      ],
-                      onTap: () {
-                        ref.read(themeProvider.notifier).setTheme(false);
-                      },
-                    ),
-                  ),
-                  const SizedBox(width: 16),
-                  // وضع الليل
-                  Expanded(
-                    child: _ThemeOptionCard(
-                      title: l10n.darkTheme,
-                      icon: Icons.nightlight_round,
-                      isSelected: isDarkMode,
-                      colors: [
-                        const Color(0xFF121212),
-                        const Color(0xFF1E1E1E),
-                        const Color(0xFF81C784),
-                      ],
-                      onTap: () {
-                        ref.read(themeProvider.notifier).setTheme(true);
-                      },
-                    ),
-                  ),
-                ],
-              ),
-              
-              const SizedBox(height: 32),
-              
-              // تبديل الوضع
-              Card(
-                elevation: 2,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: SwitchListTile(
-                  title: Text(l10n.darkMode),
-                  subtitle: Text(l10n.darkModeDescription),
-                  value: isDarkMode,
-                  onChanged: (value) {
-                    ref.read(themeProvider.notifier).setTheme(value);
-                  },
-                  secondary: Icon(
-                    isDarkMode ? Icons.nightlight_round : Icons.wb_sunny_rounded,
-                    color: theme.colorScheme.primary,
-                  ),
-                ),
-              ),
-              
-              const SizedBox(height: 16),
-              
-              // معلومات إضافية
-              if (isDarkMode)
-                _InfoCard(
-                  title: l10n.batteryTip,
-                  description: l10n.batteryTipDescription,
-                  icon: Icons.battery_charging_full,
-                )
-              else
-                _InfoCard(
-                  title: l10n.eyeComfortTip,
-                  description: l10n.eyeComfortTipDescription,
-                  icon: Icons.remove_red_eye,
-                ),
+              _buildThemeHeader(context, l10n),
+              const SizedBox(height: 40),
+              _buildThemeOptions(context, themeMode, themeNotifier, l10n),
             ],
           ),
         ),
       ),
     );
   }
-}
 
-/// بطاقة خيار السمة
-class _ThemeOptionCard extends StatelessWidget {
-  final String title;
-  final IconData icon;
-  final bool isSelected;
-  final List<Color> colors;
-  final VoidCallback onTap;
-
-  const _ThemeOptionCard({
-    required this.title,
-    required this.icon,
-    required this.isSelected,
-    required this.colors,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    
-    return GestureDetector(
-      onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 300),
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(
-            color: isSelected ? theme.colorScheme.primary : Colors.transparent,
-            width: 2,
-          ),
-          color: theme.cardColor,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withOpacity(0.05),
-              blurRadius: 10,
-              offset: const Offset(0, 4),
-            ),
-          ],
+  /// بناء رأس صفحة السمة
+  Widget _buildThemeHeader(BuildContext context, AppLocalizations l10n) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          l10n.theme,
+          style: Theme.of(context).textTheme.headlineMedium,
         ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              icon,
-              size: 40,
-              color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface.withOpacity(0.6),
-            ),
-            const SizedBox(height: 12),
-            Text(
-              title,
-              style: theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.bold,
-                color: isSelected ? theme.colorScheme.primary : theme.colorScheme.onSurface,
-              ),
-            ),
-            const SizedBox(height: 16),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: colors.map((color) {
-                return Container(
-                  width: 24,
-                  height: 24,
-                  margin: const EdgeInsets.symmetric(horizontal: 4),
-                  decoration: BoxDecoration(
-                    color: color,
-                    shape: BoxShape.circle,
-                  ),
-                );
-              }).toList(),
-            ),
-            const SizedBox(height: 12),
-            if (isSelected)
+        const SizedBox(height: 8),
+        Text(
+          l10n.languageDescription,
+          style: Theme.of(context).textTheme.bodyMedium,
+        ),
+      ],
+    );
+  }
+
+  /// بناء خيارات السمة
+  Widget _buildThemeOptions(
+    BuildContext context,
+    ThemeMode themeMode,
+    ThemeNotifier themeNotifier,
+    AppLocalizations l10n,
+  ) {
+    return Column(
+      children: [
+        _buildThemeOption(
+          context,
+          title: l10n.lightMode,
+          description: l10n.lightModeDescription,
+          icon: Icons.wb_sunny_rounded,
+          isSelected: themeMode == ThemeMode.light,
+          onTap: () => themeNotifier.setThemeMode(ThemeMode.light),
+        ),
+        const SizedBox(height: 16),
+        _buildThemeOption(
+          context,
+          title: l10n.darkMode,
+          description: l10n.darkModeDescription,
+          icon: Icons.nightlight_round,
+          isSelected: themeMode == ThemeMode.dark,
+          onTap: () => themeNotifier.setThemeMode(ThemeMode.dark),
+        ),
+        const SizedBox(height: 16),
+        _buildThemeOption(
+          context,
+          title: l10n.systemDefault,
+          description: l10n.systemDefaultDescription,
+          icon: Icons.settings_brightness,
+          isSelected: themeMode == ThemeMode.system,
+          onTap: () => themeNotifier.setThemeMode(ThemeMode.system),
+        ),
+      ],
+    );
+  }
+
+  /// بناء خيار سمة واحد
+  Widget _buildThemeOption(
+    BuildContext context, {
+    required String title,
+    required String description,
+    required IconData icon,
+    required bool isSelected,
+    required VoidCallback onTap,
+  }) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return Card(
+      elevation: isSelected ? 4 : 1,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: isSelected
+            ? BorderSide(color: colorScheme.primary, width: 2)
+            : BorderSide.none,
+      ),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.all(16),
+          child: Row(
+            children: [
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.primary.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(16),
+                  color: isSelected
+                      ? colorScheme.primary.withOpacity(0.1)
+                      : theme.dividerColor.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(8),
                 ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
+                child: Icon(
+                  icon,
+                  color: isSelected ? colorScheme.primary : null,
+                  size: 24,
+                ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Icon(
-                      Icons.check_circle,
-                      size: 16,
-                      color: theme.colorScheme.primary,
-                    ),
-                    const SizedBox(width: 4),
                     Text(
-                      AppLocalizations.of(context)!.selected,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: theme.colorScheme.primary,
-                        fontWeight: FontWeight.bold,
+                      title,
+                      style: theme.textTheme.titleMedium?.copyWith(
+                        color: isSelected ? colorScheme.primary : null,
+                        fontWeight: isSelected ? FontWeight.bold : null,
                       ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      description,
+                      style: theme.textTheme.bodySmall,
                     ),
                   ],
                 ),
               ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-/// بطاقة معلومات
-class _InfoCard extends StatelessWidget {
-  final String title;
-  final String description;
-  final IconData icon;
-
-  const _InfoCard({
-    required this.title,
-    required this.description,
-    required this.icon,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    
-    return Card(
-      elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
+              if (isSelected)
                 Icon(
-                  icon,
-                  color: theme.colorScheme.secondary,
+                  Icons.check_circle,
+                  color: colorScheme.primary,
                 ),
-                const SizedBox(width: 8),
-                Text(
-                  title,
-                  style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 8),
-            Text(
-              description,
-              style: theme.textTheme.bodyMedium,
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );

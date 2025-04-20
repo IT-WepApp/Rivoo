@@ -2,9 +2,13 @@ name: Flutter CI/CD
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [main, develop]
+    paths:
+      - 'user_app/**'
   pull_request:
-    branches: [ main, develop ]
+    branches: [main, develop]
+    paths:
+      - 'user_app/**'
   workflow_dispatch:
 
 jobs:
@@ -13,158 +17,180 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./user_app
-    
+        working-directory: user_app
+
     steps:
-      - uses: actions/checkout@v3
-      
+      - name: استنساخ المستودع
+        uses: actions/checkout@v3
+
       - name: إعداد Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.19.0'
           channel: 'stable'
           cache: true
-      
+
       - name: تثبيت التبعيات
         run: flutter pub get
-      
+
+      - name: توليد ملفات الكود
+        run: flutter pub run build_runner build --delete-conflicting-outputs
+
       - name: تحليل الكود
         run: flutter analyze
-      
-      - name: تشغيل اختبارات الوحدة
+
+      - name: تشغيل اختبارات الوحدة مع التغطية
         run: flutter test --coverage
-      
-      - name: تحميل تقرير التغطية
+
+      - name: إنشاء تقرير التغطية بصيغة LCOV
+        run: |
+          flutter pub global activate coverage
+          flutter pub global run coverage:format_coverage \
+            --lcov --in=coverage --out=coverage/lcov.info \
+            --packages=.packages --report-on=lib
+
+      - name: تحميل تقرير التغطية إلى Codecov
         uses: codecov/codecov-action@v3
         with:
-          file: ./user_app/coverage/lcov.info
+          file: user_app/coverage/lcov.info
           fail_ci_if_error: false
-      
+
       - name: تشغيل اختبارات التكامل
         run: flutter test integration_test
-        
+
   build_android:
     name: بناء تطبيق Android
     needs: analyze_and_test
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: ./user_app
-    
+        working-directory: user_app
+
     steps:
-      - uses: actions/checkout@v3
-      
+      - name: استنساخ المستودع
+        uses: actions/checkout@v3
+
       - name: إعداد Java
         uses: actions/setup-java@v3
         with:
           distribution: 'zulu'
           java-version: '17'
-      
+
       - name: إعداد Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.19.0'
           channel: 'stable'
           cache: true
-      
+
       - name: تثبيت التبعيات
         run: flutter pub get
-      
+
+      - name: توليد ملفات الكود
+        run: flutter pub run build_runner build --delete-conflicting-outputs
+
       - name: بناء APK للتصحيح
         run: flutter build apk --debug
-      
+
       - name: بناء APK للإصدار
         run: flutter build apk --release
-      
-      - name: بناء حزمة تطبيق Android (AAB)
+
+      - name: بناء App Bundle للإصدار
         run: flutter build appbundle --release
-      
-      - name: أرشفة ملفات APK
+
+      - name: أرشفة APK
         uses: actions/upload-artifact@v3
         with:
           name: release-apk
-          path: user_app/build/app/outputs/flutter-apk/app-release.apk
-      
-      - name: أرشفة ملفات AAB
+          path: build/app/outputs/flutter-apk/app-release.apk
+          retention-days: 7
+
+      - name: أرشفة App Bundle
         uses: actions/upload-artifact@v3
         with:
           name: release-aab
-          path: user_app/build/app/outputs/bundle/release/app-release.aab
-  
+          path: build/app/outputs/bundle/release/app-release.aab
+          retention-days: 7
+
   build_ios:
     name: بناء تطبيق iOS
     needs: analyze_and_test
     runs-on: macos-latest
     defaults:
       run:
-        working-directory: ./user_app
-    
+        working-directory: user_app
+
     steps:
-      - uses: actions/checkout@v3
-      
+      - name: استنساخ المستودع
+        uses: actions/checkout@v3
+
       - name: إعداد Flutter
         uses: subosito/flutter-action@v2
         with:
           flutter-version: '3.19.0'
           channel: 'stable'
           cache: true
-      
+
       - name: تثبيت التبعيات
         run: flutter pub get
-      
-      - name: بناء iOS للتصحيح
-        run: flutter build ios --debug --no-codesign
-      
-      - name: بناء iOS للإصدار (بدون توقيع)
+
+      - name: توليد ملفات الكود
+        run: flutter pub run build_runner build --delete-conflicting-outputs
+
+      - name: بناء iOS (بدون توقيع)
         run: |
           flutter build ios --release --no-codesign
           cd build/ios/iphoneos
           mkdir -p Payload
           cp -r Runner.app Payload
           zip -r app-release.ipa Payload
-      
-      - name: أرشفة ملفات IPA
+
+      - name: أرشفة IPA
         uses: actions/upload-artifact@v3
         with:
           name: unsigned-ipa
-          path: user_app/build/ios/iphoneos/app-release.ipa
-  
+          path: build/ios/iphoneos/app-release.ipa
+          retention-days: 7
+
   deploy_firebase:
-    name: نشر التطبيق على Firebase App Distribution
+    name: نشر على Firebase App Distribution
     needs: build_android
-    if: github.ref == 'refs/heads/develop'
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
     runs-on: ubuntu-latest
-    
+
     steps:
-      - uses: actions/checkout@v3
-      
+      - name: استنساخ المستودع
+        uses: actions/checkout@v3
+
       - name: تنزيل APK
         uses: actions/download-artifact@v3
         with:
           name: release-apk
           path: apk
-      
+
       - name: نشر على Firebase App Distribution
         uses: wzieba/Firebase-Distribution-Github-Action@v1
         with:
           appId: ${{ secrets.FIREBASE_APP_ID }}
-          serviceCredentialsFileContent: ${{ secrets.CREDENTIAL_FILE_CONTENT }}
+          serviceCredentialsFileContent: ${{ secrets.FIREBASE_SERVICE_CREDENTIALS }}
           groups: testers
           file: apk/app-release.apk
           releaseNotes: |
             تم النشر تلقائياً من خلال GitHub Actions
             الفرع: ${{ github.ref_name }}
             الالتزام: ${{ github.sha }}
-  
+            #${{ github.run_number }}
+
   notify_slack:
     name: إرسال إشعار إلى Slack
     needs: [build_android, build_ios]
     if: always()
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: إرسال إشعار إلى Slack
         uses: 8398a7/action-slack@v3
+        if: always()
         with:
           status: ${{ job.status }}
           fields: repo,message,commit,author,action,eventName,ref,workflow,job,took
@@ -172,32 +198,33 @@ jobs:
           if_mention: failure
         env:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
-        if: always()
 
   crashlytics_upload:
     name: رفع رموز التصحيح إلى Crashlytics
     needs: build_android
     runs-on: ubuntu-latest
-    
+
     steps:
-      - uses: actions/checkout@v3
-      
+      - name: استنساخ المستودع
+        uses: actions/checkout@v3
+
       - name: تنزيل APK
         uses: actions/download-artifact@v3
         with:
           name: release-apk
           path: apk
-      
+
       - name: إعداد Firebase CLI
         run: npm install -g firebase-tools
-      
+
       - name: استخراج رموز التصحيح
         run: |
           unzip -q apk/app-release.apk -d apk_contents
           ls -la apk_contents
-      
+
       - name: رفع رموز التصحيح إلى Crashlytics
         run: |
-          firebase crashlytics:symbols:upload --app=${{ secrets.FIREBASE_APP_ID }} apk_contents
+          firebase crashlytics:symbols:upload \
+            --app=${{ secrets.FIREBASE_APP_ID }} apk_contents
         env:
           GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}

@@ -1,151 +1,94 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:user_app/features/payment/domain/payment_entity.dart';
-import 'package:user_app/features/payment/presentation/viewmodels/payment_view_model.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:user_app/core/widgets/responsive_builder.dart';
+import 'package:user_app/features/payment/data/payment_model.dart';
 
-class PaymentResultScreen extends ConsumerWidget {
-  final String orderId;
-  final int amount;
-  final String currency;
+/// شاشة نتيجة الدفع
+/// تعرض نتيجة عملية الدفع (نجاح/فشل)
+class PaymentResultScreen extends StatelessWidget {
+  /// بيانات الدفع
+  final PaymentModel payment;
 
+  /// إنشاء شاشة نتيجة الدفع
   const PaymentResultScreen({
     Key? key,
-    required this.orderId,
-    required this.amount,
-    required this.currency,
+    required this.payment,
   }) : super(key: key);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
-    final localizations = AppLocalizations.of(context)!;
-    final paymentState = ref.watch(paymentViewModelProvider);
-    
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: Text(localizations.paymentResult),
+        title: Text(l10n.paymentResult),
         elevation: 0,
       ),
       body: ResponsiveBuilder(
-        mobile: _buildMobileLayout(context, theme, localizations, paymentState),
-        tablet: _buildTabletLayout(context, theme, localizations, paymentState),
-        desktop: _buildDesktopLayout(context, theme, localizations, paymentState),
+        mobile: _buildMobileLayout(context, l10n),
+        tablet: _buildTabletLayout(context, l10n),
+        desktop: _buildDesktopLayout(context, l10n),
       ),
     );
   }
 
-  Widget _buildMobileLayout(
-    BuildContext context,
-    ThemeData theme,
-    AppLocalizations localizations,
-    PaymentState paymentState,
-  ) {
+  Widget _buildMobileLayout(BuildContext context, AppLocalizations l10n) {
     return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const SizedBox(height: 24),
-            _buildResultIcon(paymentState, theme, 80),
-            const SizedBox(height: 24),
-            _buildResultTitle(paymentState, theme, localizations),
-            const SizedBox(height: 16),
-            _buildResultMessage(paymentState, theme, localizations),
-            const SizedBox(height: 32),
-            _buildOrderDetails(theme, localizations),
-            const SizedBox(height: 32),
-            _buildActionButtons(context, theme, localizations),
-          ],
-        ),
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          _buildResultIcon(context),
+          const SizedBox(height: 24),
+          _buildResultTitle(context, l10n),
+          const SizedBox(height: 16),
+          _buildResultMessage(context, l10n),
+          const SizedBox(height: 32),
+          _buildPaymentDetails(context, l10n),
+          const SizedBox(height: 32),
+          _buildActionButtons(context, l10n),
+        ],
       ),
     );
   }
 
-  Widget _buildTabletLayout(
-    BuildContext context,
-    ThemeData theme,
-    AppLocalizations localizations,
-    PaymentState paymentState,
-  ) {
+  Widget _buildTabletLayout(BuildContext context, AppLocalizations l10n) {
     return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const SizedBox(height: 32),
-            _buildResultIcon(paymentState, theme, 120),
-            const SizedBox(height: 32),
-            _buildResultTitle(paymentState, theme, localizations),
-            const SizedBox(height: 24),
-            _buildResultMessage(paymentState, theme, localizations),
-            const SizedBox(height: 48),
-            Container(
-              width: 500,
-              padding: const EdgeInsets.all(24),
-              decoration: BoxDecoration(
-                color: theme.colorScheme.surface,
-                borderRadius: BorderRadius.circular(16),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.05),
-                    blurRadius: 10,
-                    offset: const Offset(0, 5),
-                  ),
-                ],
-              ),
-              child: _buildOrderDetails(theme, localizations),
-            ),
-            const SizedBox(height: 48),
-            _buildActionButtons(context, theme, localizations),
-          ],
-        ),
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          _buildResultIcon(context),
+          const SizedBox(height: 32),
+          _buildResultTitle(context, l10n),
+          const SizedBox(height: 24),
+          _buildResultMessage(context, l10n),
+          const SizedBox(height: 40),
+          _buildPaymentDetails(context, l10n),
+          const SizedBox(height: 40),
+          _buildActionButtons(context, l10n),
+        ],
       ),
     );
   }
 
-  Widget _buildDesktopLayout(
-    BuildContext context,
-    ThemeData theme,
-    AppLocalizations localizations,
-    PaymentState paymentState,
-  ) {
+  Widget _buildDesktopLayout(BuildContext context, AppLocalizations l10n) {
     return Center(
-      child: SingleChildScrollView(
-        child: Container(
-          constraints: const BoxConstraints(maxWidth: 800),
-          padding: const EdgeInsets.all(48),
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 800),
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(32),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              const SizedBox(height: 48),
-              _buildResultIcon(paymentState, theme, 150),
+              _buildResultIcon(context),
               const SizedBox(height: 40),
-              _buildResultTitle(paymentState, theme, localizations),
+              _buildResultTitle(context, l10n),
               const SizedBox(height: 24),
-              _buildResultMessage(paymentState, theme, localizations),
-              const SizedBox(height: 64),
-              Container(
-                width: 600,
-                padding: const EdgeInsets.all(32),
-                decoration: BoxDecoration(
-                  color: theme.colorScheme.surface,
-                  borderRadius: BorderRadius.circular(20),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.08),
-                      blurRadius: 15,
-                      offset: const Offset(0, 8),
-                    ),
-                  ],
-                ),
-                child: _buildOrderDetails(theme, localizations),
-              ),
-              const SizedBox(height: 64),
-              _buildActionButtons(context, theme, localizations),
+              _buildResultMessage(context, l10n),
+              const SizedBox(height: 48),
+              _buildPaymentDetails(context, l10n),
+              const SizedBox(height: 48),
+              _buildActionButtons(context, l10n),
             ],
           ),
         ),
@@ -153,49 +96,45 @@ class PaymentResultScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildResultIcon(PaymentState paymentState, ThemeData theme, double size) {
-    final isSuccess = paymentState.paymentResult?.success ?? false;
-    
-    return AnimatedContainer(
-      duration: const Duration(milliseconds: 500),
-      curve: Curves.easeInOut,
-      width: size,
-      height: size,
+  /// بناء أيقونة نتيجة الدفع
+  Widget _buildResultIcon(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    final success = _isSuccessful();
+    return Container(
+      width: 120,
+      height: 120,
       decoration: BoxDecoration(
-        color: isSuccess
-            ? theme.colorScheme.primary.withOpacity(0.1)
-            : theme.colorScheme.error.withOpacity(0.1),
+        color: success ? colorScheme.primary.withOpacity(0.1) : colorScheme.error.withOpacity(0.1),
         shape: BoxShape.circle,
       ),
-      child: Center(
-        child: Icon(
-          isSuccess ? Icons.check_circle : Icons.error,
-          size: size * 0.6,
-          color: isSuccess ? theme.colorScheme.primary : theme.colorScheme.error,
-        ),
+      child: Icon(
+        success ? Icons.check_circle : Icons.error,
+        color: success ? colorScheme.primary : colorScheme.error,
+        size: 80,
       ),
     );
   }
 
-  Widget _buildResultTitle(PaymentState paymentState, ThemeData theme, AppLocalizations localizations) {
-    final isSuccess = paymentState.paymentResult?.success ?? false;
-    
+  /// بناء عنوان النتيجة
+  Widget _buildResultTitle(BuildContext context, AppLocalizations l10n) {
+    final theme = Theme.of(context);
+    final color = _isSuccessful() ? theme.colorScheme.primary : theme.colorScheme.error;
     return Text(
-      isSuccess ? localizations.paymentSuccessful : localizations.paymentFailed,
-      style: theme.textTheme.headlineMedium?.copyWith(
-        color: isSuccess ? theme.colorScheme.primary : theme.colorScheme.error,
-        fontWeight: FontWeight.bold,
-      ),
+      _isSuccessful() ? l10n.paymentSuccessful : l10n.paymentFailed,
+      style: theme.textTheme.headlineMedium?.copyWith(color: color, fontWeight: FontWeight.bold),
       textAlign: TextAlign.center,
     );
   }
 
-  Widget _buildResultMessage(PaymentState paymentState, ThemeData theme, AppLocalizations localizations) {
-    final isSuccess = paymentState.paymentResult?.success ?? false;
-    final message = isSuccess
-        ? localizations.paymentSuccessMessage
-        : paymentState.paymentResult?.errorMessage ?? localizations.paymentFailedMessage;
-    
+  /// بناء رسالة النتيجة
+  Widget _buildResultMessage(BuildContext context, AppLocalizations l10n) {
+    final theme = Theme.of(context);
+    final message = _isSuccessful()
+        ? payment.method == PaymentMethod.cashOnDelivery
+            ? l10n.cashOnDeliveryMessage
+            : l10n.paymentSuccessMessage
+        : payment.errorMessage ?? l10n.paymentFailedMessage;
     return Text(
       message,
       style: theme.textTheme.bodyLarge,
@@ -203,116 +142,98 @@ class PaymentResultScreen extends ConsumerWidget {
     );
   }
 
-  Widget _buildOrderDetails(ThemeData theme, AppLocalizations localizations) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          localizations.orderDetails,
-          style: theme.textTheme.titleLarge,
-        ),
-        const SizedBox(height: 16),
-        _buildDetailRow(
-          localizations.orderId,
-          orderId,
-          theme,
-        ),
-        const Divider(),
-        _buildDetailRow(
-          localizations.amount,
-          _formatCurrency(amount, currency),
-          theme,
-        ),
-        const Divider(),
-        _buildDetailRow(
-          localizations.date,
-          _formatDate(DateTime.now()),
-          theme,
-        ),
-        const Divider(),
-        _buildDetailRow(
-          localizations.paymentMethod,
-          _getPaymentMethodName(),
-          theme,
-        ),
-      ],
-    );
-  }
-
-  Widget _buildDetailRow(String label, String value, ThemeData theme) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Text(
-            label,
-            style: theme.textTheme.bodyLarge,
-          ),
-          Text(
-            value,
-            style: theme.textTheme.bodyLarge?.copyWith(
-              fontWeight: FontWeight.bold,
+  /// بناء تفاصيل الدفع
+  Widget _buildPaymentDetails(BuildContext context, AppLocalizations l10n) {
+    final theme = Theme.of(context);
+    return Card(
+      elevation: 2,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(l10n.paymentDetails, style: theme.textTheme.titleLarge),
+            const Divider(height: 24),
+            _buildDetailRow(context, label: l10n.orderId, value: payment.orderId),
+            const SizedBox(height: 12),
+            _buildDetailRow(context, label: l10n.paymentMethod, value: payment.method.getName()),
+            const SizedBox(height: 12),
+            _buildDetailRow(context, label: l10n.amount, value: '${payment.amount} ${payment.currency}'),
+            const SizedBox(height: 12),
+            _buildDetailRow(
+              context,
+              label: l10n.status,
+              value: payment.status.getName(),
+              valueColor: _getStatusColor(context),
             ),
-          ),
-        ],
+            if (payment.transactionId != null) ...[
+              const SizedBox(height: 12),
+              _buildDetailRow(context, label: l10n.transactionId, value: payment.transactionId!),
+            ],
+            const SizedBox(height: 12),
+            _buildDetailRow(context, label: l10n.date, value: _formatDate(payment.updatedAt)),
+          ],
+        ),
       ),
     );
   }
 
-  Widget _buildActionButtons(BuildContext context, ThemeData theme, AppLocalizations localizations) {
+  Widget _buildDetailRow(
+    BuildContext context, {
+    required String label,
+    required String value,
+    Color? valueColor,
+  }) {
+    final theme = Theme.of(context);
     return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
-        OutlinedButton(
-          onPressed: () {
-            Navigator.of(context).popUntil((route) => route.isFirst);
-          },
-          style: OutlinedButton.styleFrom(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-          ),
-          child: Text(localizations.backToHome),
-        ),
-        const SizedBox(width: 16),
+        Text(label, style: theme.textTheme.titleMedium),
+        Text(value, style: theme.textTheme.titleMedium?.copyWith(color: valueColor, fontWeight: valueColor != null ? FontWeight.bold : null)),
+      ],
+    );
+  }
+
+  Widget _buildActionButtons(BuildContext context, AppLocalizations l10n) {
+    return Column(
+      children: [
         ElevatedButton(
-          onPressed: () {
-            Navigator.of(context).pushNamed('/orders');
-          },
-          style: ElevatedButton.styleFrom(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-          ),
-          child: Text(localizations.viewOrders),
+          onPressed: () => Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false),
+          style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 32), minimumSize: const Size(200, 50)),
+          child: Text(l10n.backToHome, style: const TextStyle(fontSize: 18)),
+        ),
+        const SizedBox(height: 16),
+        TextButton(
+          onPressed: () => Navigator.pushNamed(context, '/orders'),
+          child: Text(l10n.viewOrders),
         ),
       ],
     );
   }
 
-  String _formatCurrency(num amount, String currency) {
-    // تنسيق المبلغ حسب العملة
-    switch (currency.toUpperCase()) {
-      case 'USD':
-        return '\$${(amount / 100).toStringAsFixed(2)}';
-      case 'EUR':
-        return '€${(amount / 100).toStringAsFixed(2)}';
-      case 'GBP':
-        return '£${(amount / 100).toStringAsFixed(2)}';
-      case 'SAR':
-        return '${(amount / 100).toStringAsFixed(2)} ر.س';
-      case 'AED':
-        return '${(amount / 100).toStringAsFixed(2)} د.إ';
-      case 'EGP':
-        return '${(amount / 100).toStringAsFixed(2)} ج.م';
-      default:
-        return '${(amount / 100).toStringAsFixed(2)} $currency';
+  bool _isSuccessful() =>
+      payment.status == PaymentStatus.completed ||
+      (payment.status == PaymentStatus.pending && payment.method == PaymentMethod.cashOnDelivery);
+
+  Color _getStatusColor(BuildContext context) {
+    switch (payment.status) {
+      case PaymentStatus.completed:
+        return Colors.green;
+      case PaymentStatus.pending:
+        return Colors.orange;
+      case PaymentStatus.processing:
+        return Colors.blue;
+      case PaymentStatus.failed:
+        return Colors.red;
+      case PaymentStatus.cancelled:
+        return Colors.grey;
+      case PaymentStatus.refunded:
+        return Colors.purple;
     }
   }
 
-  String _formatDate(DateTime date) {
-    return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')} ${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
-  }
-
-  String _getPaymentMethodName() {
-    // في التطبيق الحقيقي، يجب الحصول على اسم طريقة الدفع من حالة الدفع
-    return 'Credit Card';
-  }
+  String _formatDate(DateTime date) =>
+      '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')} ' +
+      '${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
 }
