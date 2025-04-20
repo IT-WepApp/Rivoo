@@ -1,0 +1,117 @@
+{
+  "@@locale": "fr",
+  "appTitle": "RivooSy",
+  
+  "homeTitle": "Accueil",
+  "storesNearby": "Magasins à proximité",
+  "popularProducts": "Produits populaires",
+  "viewAll": "Voir tout",
+  "search": "Rechercher",
+  
+  "cartTitle": "Panier",
+  "cartEmpty": "Votre panier est vide",
+  "startShopping": "Commencer les achats",
+  "checkout": "Passer à la caisse",
+  "totalAmount": "Montant total",
+  
+  "profileTitle": "Profil",
+  "myOrders": "Mes commandes",
+  "myAddresses": "Mes adresses",
+  "settings": "Paramètres",
+  "logout": "Déconnexion",
+  
+  "ordersTitle": "Commandes",
+  "orderDetails": "Détails de la commande",
+  "orderStatus": "Statut de la commande",
+  "orderDate": "Date de commande",
+  "orderNumber": "Numéro de commande",
+  "trackOrder": "Suivre la commande",
+  
+  "orderStatusPending": "En attente",
+  "orderStatusProcessing": "En cours de traitement",
+  "orderStatusShipped": "Expédié",
+  "orderStatusDelivered": "Livré",
+  "orderStatusCancelled": "Annulé",
+  
+  "productDetails": "Détails du produit",
+  "addToCart": "Ajouter au panier",
+  "buyNow": "Acheter maintenant",
+  "quantity": "Quantité",
+  "availability": "Disponibilité",
+  "description": "Description",
+  "reviews": "Avis",
+  "addReview": "Ajouter un avis",
+  
+  "paymentTitle": "Paiement",
+  "paymentMethod": "Méthode de paiement",
+  "creditCard": "Carte de crédit",
+  "cashOnDelivery": "Paiement à la livraison",
+  "applePay": "Apple Pay",
+  "paymentSummary": "Résumé du paiement",
+  "paymentSuccess": "Paiement réussi",
+  "paymentFailed": "Échec du paiement",
+  
+  "ratingTitle": "Évaluation",
+  "yourRating": "Votre évaluation",
+  "writeReview": "Écrivez votre avis",
+  "submitReview": "Soumettre l'avis",
+  "editReview": "Modifier l'avis",
+  "deleteReview": "Supprimer l'avis",
+  "reviewsCount": "{count} avis",
+  "@reviewsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  
+  "trackingTitle": "Suivi de commande",
+  "estimatedArrival": "Arrivée estimée",
+  "deliveryPerson": "Livreur",
+  "deliveryAddress": "Adresse de livraison",
+  "contactDelivery": "Contacter le livreur",
+  
+  "supportTitle": "Support client",
+  "contactUs": "Contactez-nous",
+  "faq": "FAQ",
+  "helpCenter": "Centre d'aide",
+  
+  "settingsTitle": "Paramètres",
+  "language": "Langue",
+  "darkMode": "Mode sombre",
+  "notifications": "Notifications",
+  "about": "À propos",
+  
+  "loginTitle": "Connexion",
+  "registerTitle": "Inscription",
+  "email": "Email",
+  "password": "Mot de passe",
+  "confirmPassword": "Confirmer le mot de passe",
+  "forgotPassword": "Mot de passe oublié?",
+  "dontHaveAccount": "Vous n'avez pas de compte?",
+  "createAccount": "Créer un compte",
+  "alreadyHaveAccount": "Vous avez déjà un compte?",
+  "login": "Se connecter",
+  
+  "errorTitle": "Erreur",
+  "successTitle": "Succès",
+  "warningTitle": "Avertissement",
+  "infoTitle": "Information",
+  "cancel": "Annuler",
+  "ok": "OK",
+  "yes": "Oui",
+  "no": "Non",
+  "retry": "Réessayer",
+  "save": "Enregistrer",
+  "delete": "Supprimer",
+  "edit": "Modifier",
+  "next": "Suivant",
+  "back": "Retour",
+  "done": "Terminé",
+  
+  "networkError": "Erreur de réseau",
+  "serverError": "Erreur de serveur",
+  "unknownError": "Erreur inconnue",
+  "tryAgainLater": "Veuillez réessayer plus tard"
+}

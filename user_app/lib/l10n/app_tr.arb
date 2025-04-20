@@ -1,0 +1,117 @@
+{
+  "@@locale": "tr",
+  "appTitle": "RivooSy",
+  
+  "homeTitle": "Ana Sayfa",
+  "storesNearby": "Yakındaki Mağazalar",
+  "popularProducts": "Popüler Ürünler",
+  "viewAll": "Tümünü Görüntüle",
+  "search": "Ara",
+  
+  "cartTitle": "Alışveriş Sepeti",
+  "cartEmpty": "Sepetiniz boş",
+  "startShopping": "Alışverişe Başla",
+  "checkout": "Ödeme",
+  "totalAmount": "Toplam Tutar",
+  
+  "profileTitle": "Profil",
+  "myOrders": "Siparişlerim",
+  "myAddresses": "Adreslerim",
+  "settings": "Ayarlar",
+  "logout": "Çıkış Yap",
+  
+  "ordersTitle": "Siparişler",
+  "orderDetails": "Sipariş Detayları",
+  "orderStatus": "Sipariş Durumu",
+  "orderDate": "Sipariş Tarihi",
+  "orderNumber": "Sipariş Numarası",
+  "trackOrder": "Siparişi Takip Et",
+  
+  "orderStatusPending": "Beklemede",
+  "orderStatusProcessing": "İşleniyor",
+  "orderStatusShipped": "Gönderildi",
+  "orderStatusDelivered": "Teslim Edildi",
+  "orderStatusCancelled": "İptal Edildi",
+  
+  "productDetails": "Ürün Detayları",
+  "addToCart": "Sepete Ekle",
+  "buyNow": "Hemen Satın Al",
+  "quantity": "Miktar",
+  "availability": "Stok Durumu",
+  "description": "Açıklama",
+  "reviews": "Değerlendirmeler",
+  "addReview": "Değerlendirme Ekle",
+  
+  "paymentTitle": "Ödeme",
+  "paymentMethod": "Ödeme Yöntemi",
+  "creditCard": "Kredi Kartı",
+  "cashOnDelivery": "Kapıda Ödeme",
+  "applePay": "Apple Pay",
+  "paymentSummary": "Ödeme Özeti",
+  "paymentSuccess": "Ödeme Başarılı",
+  "paymentFailed": "Ödeme Başarısız",
+  
+  "ratingTitle": "Değerlendirme",
+  "yourRating": "Değerlendirmeniz",
+  "writeReview": "Değerlendirmenizi Yazın",
+  "submitReview": "Değerlendirmeyi Gönder",
+  "editReview": "Değerlendirmeyi Düzenle",
+  "deleteReview": "Değerlendirmeyi Sil",
+  "reviewsCount": "{count} Değerlendirme",
+  "@reviewsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  
+  "trackingTitle": "Sipariş Takibi",
+  "estimatedArrival": "Tahmini Varış",
+  "deliveryPerson": "Kurye",
+  "deliveryAddress": "Teslimat Adresi",
+  "contactDelivery": "Kurye ile İletişime Geç",
+  
+  "supportTitle": "Müşteri Desteği",
+  "contactUs": "Bize Ulaşın",
+  "faq": "SSS",
+  "helpCenter": "Yardım Merkezi",
+  
+  "settingsTitle": "Ayarlar",
+  "language": "Dil",
+  "darkMode": "Karanlık Mod",
+  "notifications": "Bildirimler",
+  "about": "Hakkında",
+  
+  "loginTitle": "Giriş Yap",
+  "registerTitle": "Kayıt Ol",
+  "email": "E-posta",
+  "password": "Şifre",
+  "confirmPassword": "Şifreyi Onayla",
+  "forgotPassword": "Şifremi Unuttum?",
+  "dontHaveAccount": "Hesabınız yok mu?",
+  "createAccount": "Hesap Oluştur",
+  "alreadyHaveAccount": "Zaten hesabınız var mı?",
+  "login": "Giriş Yap",
+  
+  "errorTitle": "Hata",
+  "successTitle": "Başarılı",
+  "warningTitle": "Uyarı",
+  "infoTitle": "Bilgi",
+  "cancel": "İptal",
+  "ok": "Tamam",
+  "yes": "Evet",
+  "no": "Hayır",
+  "retry": "Tekrar Dene",
+  "save": "Kaydet",
+  "delete": "Sil",
+  "edit": "Düzenle",
+  "next": "İleri",
+  "back": "Geri",
+  "done": "Tamam",
+  
+  "networkError": "Ağ Hatası",
+  "serverError": "Sunucu Hatası",
+  "unknownError": "Bilinmeyen Hata",
+  "tryAgainLater": "Lütfen daha sonra tekrar deneyin"
+}

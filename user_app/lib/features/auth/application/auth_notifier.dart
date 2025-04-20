@@ -1,143 +1,260 @@
-import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb_auth;
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:user_app/features/auth/application/auth_state.dart';
+import 'package:user_app/features/auth/application/auth_service.dart';
 
-// Notifier for the currently logged-in user state (Firebase User)
-class AuthNotifier extends StateNotifier<fb_auth.User?> {
-  final fb_auth.FirebaseAuth _firebaseAuth = fb_auth.FirebaseAuth.instance;
-  late final StreamSubscription<fb_auth.User?> _authStateChangesSubscription;
-  final FlutterSecureStorage _secureStorage = const FlutterSecureStorage();
+/// مزود لحالة المصادقة
+final authStateNotifierProvider = StateNotifierProvider<AuthNotifier, AuthState>((ref) {
+  final authService = ref.watch(authServiceProvider);
+  return AuthNotifier(authService);
+});
 
-  AuthNotifier() : super(fb_auth.FirebaseAuth.instance.currentUser) {
-    _authStateChangesSubscription = _firebaseAuth.authStateChanges().listen((user) {
-       state = user;
-    });
-  }
+/// مزود لحالة المصادقة الحالية
+final currentAuthStateProvider = Provider<AuthState>((ref) {
+  return ref.watch(authStateNotifierProvider);
+});
 
-  String? get currentUserId => state?.uid;
+/// مزود للتحقق من حالة تسجيل الدخول
+final isAuthenticatedProvider = Provider<bool>((ref) {
+  return ref.watch(authStateNotifierProvider).isAuthenticated;
+});
+
+/// مزود للتحقق من تأكيد البريد الإلكتروني
+final isEmailVerifiedProvider = Provider<bool>((ref) {
+  return ref.watch(authStateNotifierProvider).isEmailVerified;
+});
+
+/// مزود للتحقق من دور المستخدم
+final hasRoleProvider = Provider.family<bool, UserRole>((ref, role) {
+  return ref.watch(authStateNotifierProvider).hasRole(role);
+});
+
+/// مزود للتحقق من أي من الأدوار المحددة
+final hasAnyRoleProvider = Provider.family<bool, List<UserRole>>((ref, roles) {
+  return ref.watch(authStateNotifierProvider).hasAnyRole(roles);
+});
+
+/// مدير حالة المصادقة
+class AuthNotifier extends StateNotifier<AuthState> {
+  final AuthService _authService;
   
-  bool get isEmailVerified => state?.emailVerified ?? false;
-
+  AuthNotifier(this._authService) : super(const AuthState()) {
+    _initAuthState();
+  }
+  
+  /// تهيئة حالة المصادقة
+  Future<void> _initAuthState() async {
+    state = state.copyWith(status: AuthenticationStatus.loading);
+    
+    try {
+      // الاستماع لتغييرات حالة المصادقة
+      _authService.authStateChanges.listen((fb_auth.User? user) async {
+        if (user != null) {
+          // الحصول على دور المستخدم
+          final role = await _authService.getUserRole(user.uid);
+          
+          // إنشاء نموذج بيانات المستخدم
+          final userData = UserData(
+            uid: user.uid,
+            email: user.email,
+            displayName: user.displayName,
+            photoURL: user.photoURL,
+            role: role,
+            isEmailVerified: user.emailVerified,
+          );
+          
+          state = state.copyWith(
+            status: AuthenticationStatus.authenticated,
+            userData: userData,
+            firebaseUser: user,
+            isLoading: false,
+            errorMessage: null,
+          );
+        } else {
+          state = state.copyWith(
+            status: AuthenticationStatus.unauthenticated,
+            userData: null,
+            firebaseUser: null,
+            isLoading: false,
+            errorMessage: null,
+          );
+        }
+      });
+    } catch (e) {
+      state = state.copyWith(
+        status: AuthenticationStatus.error,
+        isLoading: false,
+        errorMessage: e.toString(),
+      );
+    }
+  }
+  
+  /// تسجيل الدخول باستخدام البريد الإلكتروني وكلمة المرور
   Future<void> signIn(String email, String password) async {
     try {
-      final userCredential = await _firebaseAuth.signInWithEmailAndPassword(
-        email: email, 
-        password: password
+      state = state.copyWith(isLoading: true, status: AuthenticationStatus.loading);
+      await _authService.signIn(email, password);
+      // لا نحتاج لتحديث الحالة هنا لأن مستمع authStateChanges سيقوم بذلك
+    } catch (e) {
+      state = state.copyWith(
+        status: AuthenticationStatus.error,
+        isLoading: false,
+        errorMessage: e.toString(),
       );
-      
-      // Store refresh token securely
-      if (userCredential.user != null) {
-        final idTokenResult = await userCredential.user!.getIdTokenResult();
-        await _secureStorage.write(
-          key: 'refresh_token',
-          value: idTokenResult.token,
-        );
-        
-        // Clear password from memory after successful login
-        password = '';
-      }
-    } catch (e) {
-       rethrow;
     }
   }
-
-  Future<void> signUp(String email, String password) async {
+  
+  /// إنشاء حساب جديد باستخدام البريد الإلكتروني وكلمة المرور
+  Future<void> signUp(String email, String password, {UserRole role = UserRole.customer}) async {
     try {
-      final userCredential = await _firebaseAuth.createUserWithEmailAndPassword(
-        email: email, 
-        password: password
+      state = state.copyWith(isLoading: true, status: AuthenticationStatus.loading);
+      await _authService.signUp(email, password, role: role);
+      // لا نحتاج لتحديث الحالة هنا لأن مستمع authStateChanges سيقوم بذلك
+    } catch (e) {
+      state = state.copyWith(
+        status: AuthenticationStatus.error,
+        isLoading: false,
+        errorMessage: e.toString(),
       );
-      
-      // Send email verification
-      if (userCredential.user != null) {
-        await userCredential.user!.sendEmailVerification();
-        
-        // Store refresh token securely
-        final idTokenResult = await userCredential.user!.getIdTokenResult();
-        await _secureStorage.write(
-          key: 'refresh_token',
-          value: idTokenResult.token,
-        );
-        
-        // Clear password from memory after successful signup
-        password = '';
-      }
-    } catch (e) {
-      rethrow;
     }
   }
-
-  Future<void> sendEmailVerification() async {
-    try {
-      final user = _firebaseAuth.currentUser;
-      if (user != null && !user.emailVerified) {
-        await user.sendEmailVerification();
-      }
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  Future<void> checkEmailVerification() async {
-    try {
-      final user = _firebaseAuth.currentUser;
-      if (user != null) {
-        await user.reload();
-        state = _firebaseAuth.currentUser;
-      }
-    } catch (e) {
-      rethrow;
-    }
-  }
-
-  Future<void> resetPassword(String email) async {
-    try {
-      await _firebaseAuth.sendPasswordResetEmail(email: email);
-    } catch (e) {
-      rethrow;
-    }
-  }
-
+  
+  /// تسجيل الخروج
   Future<void> signOut() async {
     try {
-      // Clear secure storage
-      await _secureStorage.delete(key: 'refresh_token');
-      
-      // Sign out from Firebase
-      await _firebaseAuth.signOut();
+      state = state.copyWith(isLoading: true, status: AuthenticationStatus.loading);
+      await _authService.signOut();
+      // لا نحتاج لتحديث الحالة هنا لأن مستمع authStateChanges سيقوم بذلك
     } catch (e) {
-      rethrow;
+      state = state.copyWith(
+        status: AuthenticationStatus.error,
+        isLoading: false,
+        errorMessage: e.toString(),
+      );
     }
   }
-
-  @override
-  void dispose() {
-    _authStateChangesSubscription.cancel();
-    super.dispose();
+  
+  /// إرسال رابط إعادة تعيين كلمة المرور
+  Future<void> sendPasswordResetEmail(String email) async {
+    try {
+      state = state.copyWith(isLoading: true, status: AuthenticationStatus.loading);
+      await _authService.sendPasswordResetEmail(email);
+      state = state.copyWith(
+        isLoading: false,
+        status: AuthenticationStatus.unauthenticated,
+      );
+    } catch (e) {
+      state = state.copyWith(
+        status: AuthenticationStatus.error,
+        isLoading: false,
+        errorMessage: e.toString(),
+      );
+    }
+  }
+  
+  /// إرسال بريد تأكيد البريد الإلكتروني
+  Future<void> sendEmailVerification() async {
+    try {
+      state = state.copyWith(isLoading: true, status: AuthenticationStatus.loading);
+      await _authService.sendEmailVerification();
+      state = state.copyWith(
+        isLoading: false,
+        status: AuthenticationStatus.authenticated,
+      );
+    } catch (e) {
+      state = state.copyWith(
+        status: AuthenticationStatus.error,
+        isLoading: false,
+        errorMessage: e.toString(),
+      );
+    }
+  }
+  
+  /// التحقق من حالة تأكيد البريد الإلكتروني
+  Future<void> checkEmailVerification() async {
+    try {
+      state = state.copyWith(isLoading: true, status: AuthenticationStatus.verifying);
+      final isVerified = await _authService.isEmailVerified();
+      
+      if (state.userData != null) {
+        final updatedUserData = state.userData!.copyWith(isEmailVerified: isVerified);
+        
+        state = state.copyWith(
+          isLoading: false,
+          status: isVerified ? AuthenticationStatus.authenticated : AuthenticationStatus.verifying,
+          userData: updatedUserData,
+        );
+      } else {
+        state = state.copyWith(
+          isLoading: false,
+          status: AuthenticationStatus.unauthenticated,
+        );
+      }
+    } catch (e) {
+      state = state.copyWith(
+        status: AuthenticationStatus.error,
+        isLoading: false,
+        errorMessage: e.toString(),
+      );
+    }
+  }
+  
+  /// تحديث دور المستخدم
+  Future<void> updateUserRole(String userId, UserRole role) async {
+    try {
+      state = state.copyWith(isLoading: true);
+      await _authService.updateUserRole(userId, role);
+      
+      if (state.userData != null && userId == state.userData!.uid) {
+        final updatedUserData = state.userData!.copyWith(role: role);
+        
+        state = state.copyWith(
+          isLoading: false,
+          userData: updatedUserData,
+        );
+      } else {
+        state = state.copyWith(isLoading: false);
+      }
+    } catch (e) {
+      state = state.copyWith(
+        status: AuthenticationStatus.error,
+        isLoading: false,
+        errorMessage: e.toString(),
+      );
+    }
+  }
+  
+  /// تحديث بيانات المستخدم
+  Future<void> updateProfile({String? displayName, String? photoURL}) async {
+    try {
+      state = state.copyWith(isLoading: true);
+      await _authService.updateProfile(displayName: displayName, photoURL: photoURL);
+      
+      if (state.userData != null) {
+        final updatedUserData = state.userData!.copyWith(
+          displayName: displayName ?? state.userData!.displayName,
+          photoURL: photoURL ?? state.userData!.photoURL,
+        );
+        
+        state = state.copyWith(
+          isLoading: false,
+          userData: updatedUserData,
+        );
+      } else {
+        state = state.copyWith(isLoading: false);
+      }
+    } catch (e) {
+      state = state.copyWith(
+        status: AuthenticationStatus.error,
+        isLoading: false,
+        errorMessage: e.toString(),
+      );
+    }
+  }
+  
+  /// التحقق من صلاحيات المستخدم
+  bool hasPermission(List<UserRole> allowedRoles) {
+    return state.hasAnyRole(allowedRoles);
   }
 }
-
-// Provider for the AuthNotifier
-final authProvider = StateNotifierProvider<AuthNotifier, fb_auth.User?>((ref) {
-  return AuthNotifier();
-});
-
-// Provider that exposes the auth state stream directly
-final authStateChangesProvider = StreamProvider<fb_auth.User?>((ref) {
-  return fb_auth.FirebaseAuth.instance.authStateChanges();
-});
-
-// Provider to easily access the current user ID based on the auth state stream
-final userIdProvider = Provider<String?>((ref) {
-  // Watch the stream provider's async value
-  final authState = ref.watch(authStateChangesProvider);
-  // Return the uid when data is available, otherwise null
-  return authState.valueOrNull?.uid;
-});
-
-// Provider to check if email is verified
-final isEmailVerifiedProvider = Provider<bool>((ref) {
-  final authState = ref.watch(authStateChangesProvider);
-  return authState.valueOrNull?.emailVerified ?? false;
-});

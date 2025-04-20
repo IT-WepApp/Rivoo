@@ -2,16 +2,13 @@ name: user_app
 description: تطبيق المستخدم لعرض المتاجر والمنتجات.
 publish_to: "none"
 version: 1.0.0+1
-
 environment:
   sdk: ">=3.2.0 <4.0.0"
-
 dependencies:
   flutter:
     sdk: flutter
   flutter_localizations:
     sdk: flutter
-
   # Dependencies
   flutter_riverpod: any
   go_router: any
@@ -19,23 +16,22 @@ dependencies:
   location: ^5.0.3
   flutter_native_splash: ^2.3.10
   timeago: ^3.6.1
-
+  # نظام الدفع
+  flutter_stripe: ^9.5.0+1
+  http: ^1.1.0
   # Firebase حزم
   firebase_core: ^3.13.0
   firebase_auth: ^5.5.2
   firebase_messaging: ^15.2.5
   cloud_firestore: ^5.6.6
-
   # إشعارات وتخزين محلي
   flutter_local_notifications: ^19.1.0
   overlay_support: ^2.0.0
   shared_preferences: ^2.2.2
   flutter_secure_storage: ^9.0.0
-
   # واجهة المستخدم
   cached_network_image: ^3.3.1
   intl: ^0.20.2
-
   # Shared Modules
   shared_models:
     path: ../shared_modules/shared_models
@@ -43,11 +39,12 @@ dependencies:
     path: ../shared_modules/shared_services
   shared_widgets:
     path: ../shared_modules/shared_widgets
-
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^2.0.0
-
 flutter:
   uses-material-design: true
+  generate: true # إضافة هذا السطر لتفعيل توليد ملفات الترجمة
+flutter_intl:
+  enabled: true # إضافة هذا القسم لتفعيل أداة flutter_intl
