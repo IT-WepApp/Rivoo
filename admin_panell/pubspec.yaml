@@ -1,0 +1,35 @@
+name: admin_panell # Corrected name
+description: تطبيق لوحة إدارة النظام.
+publish_to: "none"
+version: 1.0.0+1
+
+environment:
+  sdk: ">=2.17.0 <3.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # Added missing dependencies
+  flutter_riverpod: any
+  go_router: any
+  intl: any
+  fl_chart: any
+  firebase_core: any # Added firebase_core dependency
+  # End of added dependencies
+
+  shared_models:
+    path: ../shared_modules/shared_models
+  shared_services:
+    path: ../shared_modules/shared_services
+  shared_widgets:
+    path: ../shared_modules/shared_widgets
+  firebase_auth: ^5.5.2
+
+dev_dependencies:
+  flutter_lints: ^2.0.0
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true

@@ -1,6 +1,4 @@
-# melos_managed_dependency_overrides: shared_models,shared_widgets
+# melos_managed_dependency_overrides: shared_models
 dependency_overrides:
   shared_models:
     path: ../shared_models
-  shared_widgets:
-    path: ../shared_widgets

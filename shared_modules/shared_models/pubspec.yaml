@@ -10,13 +10,21 @@ dependencies:
   flutter:
     sdk: flutter
 
+  # Added missing dependencies
+  equatable: any
+  json_annotation: ^4.8.1
+  # End of added dependencies
+
   # إضافة تخزين Cloud Firestore لتدعم import في هذا الموديول
-  cloud_firestore: ^5.6.6
+  cloud_firestore: any
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^2.0.0
+  # Added build runner dependencies
+  build_runner: ^2.4.6
+  json_serializable: ^6.7.1
 
 flutter:
   uses-material-design: true

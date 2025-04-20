@@ -11,6 +11,10 @@ dependencies:
   flutter:
     sdk: flutter
 
+  # Added missing dependencies
+  connectivity_plus: any
+  # End of added dependencies
+
   shared_models:
     path: ../shared_models
   shared_services:

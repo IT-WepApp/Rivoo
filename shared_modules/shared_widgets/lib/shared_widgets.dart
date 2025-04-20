@@ -1,22 +1,18 @@
 library shared_widgets;
 
-import 'package:flutter/material.dart';
+export 'src/widgets/app_button.dart';
+export 'src/widgets/app_card.dart';
+export 'src/widgets/app_text_field.dart';
+export 'src/widgets/connection_status_indicator.dart';
+export 'src/widgets/delivery_stopwatch.dart';
+export 'src/widgets/home_choice_page.dart';
+// Export other widgets here
 
-class SharedCustomButton extends StatelessWidget {
-  final String title;
-  final VoidCallback onPressed;
+// Also export theme related files if they are intended for public use
+// Assuming theme and utils are now in src/
+export 'src/theme/colors.dart';
+export 'src/theme/theme.dart';
 
-  const SharedCustomButton({super.key, required this.title, required this.onPressed});
-
-  @override
-  Widget build(BuildContext context) {
-    return ElevatedButton(
-      onPressed: onPressed,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: Colors.green,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      ),
-      child: Text(title),
-    );
-  }
-}
+// Export utils if needed
+export 'src/utils/error_handling.dart';
+// export 'src/widgets/screen_templates.dart'; // Removed based on analysis error

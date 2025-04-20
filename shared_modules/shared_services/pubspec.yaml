@@ -10,13 +10,15 @@ dependencies:
   flutter:
     sdk: flutter
 
+  # Added dependencies
+  firebase_auth: any
   flutter_secure_storage: ^9.0.0
-  cloud_firestore: ^5.6.6
-  firebase_auth: ^5.5.2
+  cloud_firestore: any
+  flutter_riverpod: any
 
   # إضافة shared_models كموديول محلي
   shared_models:
-    path: ../shared_models
+    path: ../shared_models  # المسار النسبي للموديول
 
 dev_dependencies:
   flutter_test:

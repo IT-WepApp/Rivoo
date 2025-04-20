@@ -10,16 +10,24 @@ dependencies:
   flutter:
     sdk: flutter
 
-  # Firebase حزم
-  firebase_core: ^3.13.0
-  firebase_auth: ^5.5.2
-  firebase_messaging: ^15.2.5
-  cloud_firestore: ^5.6.6
+  # Added missing dependencies
+  flutter_riverpod: any
+  go_router: any
+  firebase_core: any # Added for Firebase initialization
+  # End of added dependencies
 
-  # إشعارات وتخزين محلي
-  flutter_local_notifications: ^19.1.0
+    # Firebase حزم
+  firebase_auth: ^5.5.2
+  firebase_messaging: any
+  cloud_firestore: any
+
+    # إشعارات وتخزين محلي
   overlay_support: ^2.0.0
+  flutter_local_notifications: ^15.0.0
   shared_preferences: ^2.2.2
+
+  # Charts
+  fl_chart: ^0.62.0
 
   # واجهة المستخدم
   cached_network_image: ^3.3.1
