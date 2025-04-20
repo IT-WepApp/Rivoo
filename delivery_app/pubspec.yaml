@@ -26,6 +26,7 @@ dependencies:
   firebase_auth: ^5.5.2
   firebase_messaging: any
   cloud_firestore: any
+  firebase_crashlytics: ^3.4.8
 
   # إشعارات وتخزين محلي
   flutter_local_notifications: ^19.1.0

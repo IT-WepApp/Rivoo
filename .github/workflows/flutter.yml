@@ -1,0 +1,97 @@
+name: Flutter CI/CD
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    name: Test and Analyze
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.16.0'
+          channel: 'stable'
+      
+      - name: Install dependencies
+        run: |
+          cd delivery_app
+          flutter pub get
+      
+      - name: Verify formatting
+        run: |
+          cd delivery_app
+          flutter format --set-exit-if-changed .
+      
+      - name: Analyze project source
+        run: |
+          cd delivery_app
+          flutter analyze
+      
+      - name: Run tests
+        run: |
+          cd delivery_app
+          flutter test
+      
+      - name: Run integration tests
+        run: |
+          cd delivery_app
+          flutter test integration_test
+
+  build-android:
+    name: Build Android APK
+    needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.16.0'
+          channel: 'stable'
+      
+      - name: Install dependencies
+        run: |
+          cd delivery_app
+          flutter pub get
+      
+      - name: Build APK
+        run: |
+          cd delivery_app
+          flutter build apk --release
+      
+      - name: Upload APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: release-apk
+          path: delivery_app/build/app/outputs/flutter-apk/app-release.apk
+
+  build-ios:
+    name: Build iOS
+    needs: test
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.16.0'
+          channel: 'stable'
+      
+      - name: Install dependencies
+        run: |
+          cd delivery_app
+          flutter pub get
+      
+      - name: Build iOS
+        run: |
+          cd delivery_app
+          flutter build ios --release --no-codesign

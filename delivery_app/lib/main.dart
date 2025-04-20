@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:go_router/go_router.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'dart:convert';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_widgets/shared_widgets.dart'; // ✅ صح
 import 'package:delivery_app/presentation/theme/app_theme.dart';
@@ -103,9 +105,17 @@ Future<void> _sendFCMTokenToServerIfNeeded(String? deliveryPersonId, String? tok
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  // تهيئة Firebase
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  
+  // تكوين Firebase Crashlytics
+  await _setupCrashlytics();
+  
+  // إعداد الإشعارات
   await _setupNotifications();
 
+  // تسجيل رمز FCM
   FirebaseMessaging.instance.onTokenRefresh.listen((newToken) {
     final currentUserId = FirebaseAuth.instance.currentUser?.uid;
     _sendFCMTokenToServerIfNeeded(currentUserId, newToken);
@@ -116,6 +126,20 @@ Future<void> main() async {
   await _sendFCMTokenToServerIfNeeded(currentUserId, initialToken);
 
   runApp(const ProviderScope(child: DeliveryApp()));
+}
+
+Future<void> _setupCrashlytics() async {
+  // تمكين التقاط الأخطاء بواسطة Crashlytics في وضع الإنتاج فقط
+  await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(!kDebugMode);
+  
+  // التقاط أخطاء Flutter غير المعالجة
+  FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
+  
+  // التقاط أخطاء Dart غير المعالجة
+  PlatformDispatcher.instance.onError = (error, stack) {
+    FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+    return true;
+  };
 }
 
 final GoRouter _router = GoRouter(
