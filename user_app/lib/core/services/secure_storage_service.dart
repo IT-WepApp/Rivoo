@@ -1,246 +1,204 @@
-import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:crypto/crypto.dart';
 import 'dart:convert';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:crypto/crypto.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:user_app/core/utils/encryption_utils.dart';
 
-/// خدمة التخزين الآمن للبيانات الحساسة
+part 'secure_storage_service.g.dart';
+
+/// خدمة التخزين الآمن المحسنة
+/// توفر تخزينًا آمنًا للبيانات الحساسة مع تشفير إضافي
 class SecureStorageService {
-  final FlutterSecureStorage _storage;
-  final String _encryptionKey = 'RivooSy_SecureStorage_Key'; // مفتاح للتشفير المحلي
+  final FlutterSecureStorage _secureStorage;
+  final EncryptionUtils _encryptionUtils;
+  
+  // مفاتيح التخزين
+  static const String _tokenKey = 'auth_token';
+  static const String _refreshTokenKey = 'refresh_token';
+  static const String _userDataKey = 'user_data';
+  static const String _preferencesKey = 'user_preferences';
+  
+  SecureStorageService({
+    required FlutterSecureStorage secureStorage,
+    required EncryptionUtils encryptionUtils,
+  }) : 
+    _secureStorage = secureStorage,
+    _encryptionUtils = encryptionUtils;
 
-  /// إنشاء نسخة من خدمة التخزين الآمن
-  SecureStorageService() : _storage = const FlutterSecureStorage(
-    aOptions: AndroidOptions(
-      encryptedSharedPreferences: true,
-      resetOnError: true,
-      keyCipherAlgorithm: KeyCipherAlgorithm.RSA_ECB_PKCS1Padding,
-      storageCipherAlgorithm: StorageCipherAlgorithm.AES_GCM_NoPadding,
-    ),
-    iOptions: IOSOptions(
-      accessibility: KeychainAccessibility.first_unlock,
-      synchronizable: false,
-    ),
-  );
-
-  /// حفظ قيمة في التخزين الآمن
-  Future<void> write({required String key, required String value}) async {
-    // تشفير القيمة قبل التخزين
-    final encryptedValue = _encrypt(value);
-    await _storage.write(key: key, value: encryptedValue);
-  }
-
-  /// قراءة قيمة من التخزين الآمن
-  Future<String?> read({required String key}) async {
-    final encryptedValue = await _storage.read(key: key);
-    if (encryptedValue == null) return null;
+  /// حفظ رمز المصادقة بشكل آمن مع تشفير وتوقيت انتهاء الصلاحية
+  Future<void> saveAuthToken(String token, {int expiryMinutes = 60}) async {
+    final expiryTime = DateTime.now().add(Duration(minutes: expiryMinutes));
+    final tokenData = {
+      'token': token,
+      'expiry': expiryTime.toIso8601String(),
+    };
     
-    // فك تشفير القيمة
-    return _decrypt(encryptedValue);
+    final encryptedData = _encryptionUtils.encrypt(jsonEncode(tokenData));
+    await _secureStorage.write(key: _tokenKey, value: encryptedData);
   }
 
-  /// حذف قيمة من التخزين الآمن
-  Future<void> delete({required String key}) async {
-    await _storage.delete(key: key);
-  }
-
-  /// حذف جميع القيم من التخزين الآمن
-  Future<void> deleteAll() async {
-    await _storage.deleteAll();
-    
-    // حذف أي بيانات مخزنة في SharedPreferences أيضًا
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.clear();
-  }
-
-  /// التحقق من وجود قيمة في التخزين الآمن
-  Future<bool> containsKey({required String key}) async {
-    return await _storage.containsKey(key: key);
-  }
-
-  /// الحصول على جميع القيم من التخزين الآمن
-  Future<Map<String, String>> readAll() async {
-    final encryptedMap = await _storage.readAll();
-    final decryptedMap = <String, String>{};
-    
-    // فك تشفير جميع القيم
-    for (final entry in encryptedMap.entries) {
-      final decryptedValue = _decrypt(entry.value);
-      if (decryptedValue != null) {
-        decryptedMap[entry.key] = decryptedValue;
-      }
-    }
-    
-    return decryptedMap;
-  }
-
-  /// حفظ رمز المصادقة
-  Future<void> saveAuthToken(String token) async {
-    await write(key: 'auth_token', value: token);
-    
-    // حفظ تاريخ انتهاء الصلاحية (مثلاً بعد ساعة)
-    final expiryTime = DateTime.now().add(const Duration(hours: 1)).millisecondsSinceEpoch.toString();
-    await write(key: 'auth_token_expiry', value: expiryTime);
-  }
-
-  /// قراءة رمز المصادقة
+  /// استرجاع رمز المصادقة مع التحقق من صلاحيته
   Future<String?> getAuthToken() async {
-    // التحقق من انتهاء صلاحية الرمز
-    final expiryTimeStr = await read(key: 'auth_token_expiry');
-    if (expiryTimeStr != null) {
-      final expiryTime = int.tryParse(expiryTimeStr) ?? 0;
-      if (DateTime.now().millisecondsSinceEpoch > expiryTime) {
-        // الرمز منتهي الصلاحية، حذفه
-        await delete(key: 'auth_token');
-        await delete(key: 'auth_token_expiry');
-        return null;
-      }
-    }
-    
-    return await read(key: 'auth_token');
-  }
-
-  /// حفظ معرف المستخدم
-  Future<void> saveUserId(String userId) async {
-    await write(key: 'user_id', value: userId);
-  }
-
-  /// قراءة معرف المستخدم
-  Future<String?> getUserId() async {
-    return await read(key: 'user_id');
-  }
-
-  /// حفظ بريد المستخدم الإلكتروني
-  Future<void> saveUserEmail(String email) async {
-    await write(key: 'user_email', value: email);
-  }
-
-  /// قراءة بريد المستخدم الإلكتروني
-  Future<String?> getUserEmail() async {
-    return await read(key: 'user_email');
-  }
-
-  /// حفظ اسم المستخدم
-  Future<void> saveUserName(String name) async {
-    await write(key: 'user_name', value: name);
-  }
-
-  /// قراءة اسم المستخدم
-  Future<String?> getUserName() async {
-    return await read(key: 'user_name');
-  }
-
-  /// حفظ حالة تسجيل الدخول
-  Future<void> saveIsLoggedIn(bool isLoggedIn) async {
-    await write(key: 'is_logged_in', value: isLoggedIn.toString());
-  }
-
-  /// قراءة حالة تسجيل الدخول
-  Future<bool> getIsLoggedIn() async {
-    final value = await read(key: 'is_logged_in');
-    return value == 'true';
-  }
-
-  /// حفظ رمز FCM
-  Future<void> saveFCMToken(String token) async {
-    await write(key: 'fcm_token', value: token);
-  }
-
-  /// قراءة رمز FCM
-  Future<String?> getFCMToken() async {
-    return await read(key: 'fcm_token');
-  }
-
-  /// حفظ رمز تحديث المصادقة
-  Future<void> saveRefreshToken(String token) async {
-    await write(key: 'refresh_token', value: token);
-    
-    // حفظ تاريخ انتهاء الصلاحية (مثلاً بعد 30 يوم)
-    final expiryTime = DateTime.now().add(const Duration(days: 30)).millisecondsSinceEpoch.toString();
-    await write(key: 'refresh_token_expiry', value: expiryTime);
-  }
-
-  /// قراءة رمز تحديث المصادقة
-  Future<String?> getRefreshToken() async {
-    // التحقق من انتهاء صلاحية الرمز
-    final expiryTimeStr = await read(key: 'refresh_token_expiry');
-    if (expiryTimeStr != null) {
-      final expiryTime = int.tryParse(expiryTimeStr) ?? 0;
-      if (DateTime.now().millisecondsSinceEpoch > expiryTime) {
-        // الرمز منتهي الصلاحية، حذفه
-        await delete(key: 'refresh_token');
-        await delete(key: 'refresh_token_expiry');
-        return null;
-      }
-    }
-    
-    return await read(key: 'refresh_token');
-  }
-
-  /// حفظ دور المستخدم
-  Future<void> saveUserRole(String role) async {
-    await write(key: 'user_role', value: role);
-  }
-
-  /// قراءة دور المستخدم
-  Future<String?> getUserRole() async {
-    return await read(key: 'user_role');
-  }
-
-  /// مسح بيانات المصادقة
-  Future<void> clearAuthData() async {
-    await delete(key: 'auth_token');
-    await delete(key: 'auth_token_expiry');
-    await delete(key: 'refresh_token');
-    await delete(key: 'refresh_token_expiry');
-    await delete(key: 'user_id');
-    await delete(key: 'user_email');
-    await delete(key: 'user_name');
-    await delete(key: 'is_logged_in');
-    await delete(key: 'user_role');
-  }
-
-  /// تشفير البيانات
-  String _encrypt(String data) {
-    // استخدام SHA-256 لتشفير البيانات
-    // في التطبيق الحقيقي، يجب استخدام خوارزمية تشفير أكثر أمانًا مثل AES
-    final key = utf8.encode(_encryptionKey);
-    final bytes = utf8.encode(data);
-    final hmacSha256 = Hmac(sha256, key);
-    final digest = hmacSha256.convert(bytes);
-    
-    // دمج البيانات الأصلية مع قيمة التشفير
-    final combined = base64Encode(bytes) + '.' + digest.toString();
-    return combined;
-  }
-
-  /// فك تشفير البيانات
-  String? _decrypt(String encryptedData) {
     try {
-      // فصل البيانات المشفرة عن قيمة التشفير
-      final parts = encryptedData.split('.');
-      if (parts.length != 2) return null;
+      final encryptedData = await _secureStorage.read(key: _tokenKey);
+      if (encryptedData == null) return null;
       
-      final encodedData = parts[0];
-      final digestValue = parts[1];
+      final decryptedData = _encryptionUtils.decrypt(encryptedData);
+      final tokenData = jsonDecode(decryptedData) as Map<String, dynamic>;
       
-      // فك تشفير البيانات
-      final bytes = base64Decode(encodedData);
-      final data = utf8.decode(bytes);
-      
-      // التحقق من صحة البيانات
-      final key = utf8.encode(_encryptionKey);
-      final hmacSha256 = Hmac(sha256, key);
-      final digest = hmacSha256.convert(bytes);
-      
-      if (digest.toString() != digestValue) {
-        // البيانات قد تكون تم العبث بها
+      final expiryTime = DateTime.parse(tokenData['expiry']);
+      if (DateTime.now().isAfter(expiryTime)) {
+        // الرمز منتهي الصلاحية، قم بحذفه والعودة بقيمة فارغة
+        await _secureStorage.delete(key: _tokenKey);
         return null;
       }
       
-      return data;
+      return tokenData['token'] as String;
     } catch (e) {
-      print('Error decrypting data: $e');
+      // في حالة وجود أي خطأ، قم بحذف الرمز والعودة بقيمة فارغة
+      await _secureStorage.delete(key: _tokenKey);
       return null;
     }
   }
+
+  /// حفظ رمز التحديث بشكل آمن
+  Future<void> saveRefreshToken(String token) async {
+    final encryptedToken = _encryptionUtils.encrypt(token);
+    await _secureStorage.write(key: _refreshTokenKey, value: encryptedToken);
+  }
+
+  /// استرجاع رمز التحديث
+  Future<String?> getRefreshToken() async {
+    try {
+      final encryptedToken = await _secureStorage.read(key: _refreshTokenKey);
+      if (encryptedToken == null) return null;
+      
+      return _encryptionUtils.decrypt(encryptedToken);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  /// حفظ بيانات المستخدم بشكل آمن مع توقيع رقمي للتحقق من السلامة
+  Future<void> saveUserData(Map<String, dynamic> userData) async {
+    final userDataString = jsonEncode(userData);
+    
+    // إنشاء توقيع رقمي للبيانات للتحقق من سلامتها
+    final signature = _createSignature(userDataString);
+    
+    final dataWithSignature = {
+      'data': userDataString,
+      'signature': signature,
+    };
+    
+    final encryptedData = _encryptionUtils.encrypt(jsonEncode(dataWithSignature));
+    await _secureStorage.write(key: _userDataKey, value: encryptedData);
+  }
+
+  /// استرجاع بيانات المستخدم مع التحقق من سلامتها
+  Future<Map<String, dynamic>?> getUserData() async {
+    try {
+      final encryptedData = await _secureStorage.read(key: _userDataKey);
+      if (encryptedData == null) return null;
+      
+      final decryptedData = _encryptionUtils.decrypt(encryptedData);
+      final dataMap = jsonDecode(decryptedData) as Map<String, dynamic>;
+      
+      final userDataString = dataMap['data'] as String;
+      final signature = dataMap['signature'] as String;
+      
+      // التحقق من سلامة البيانات باستخدام التوقيع الرقمي
+      if (_verifySignature(userDataString, signature)) {
+        return jsonDecode(userDataString) as Map<String, dynamic>;
+      } else {
+        // البيانات قد تكون تعرضت للعبث، قم بحذفها
+        await _secureStorage.delete(key: _userDataKey);
+        return null;
+      }
+    } catch (e) {
+      return null;
+    }
+  }
+
+  /// حفظ تفضيلات المستخدم
+  Future<void> savePreferences(Map<String, dynamic> preferences) async {
+    final encryptedData = _encryptionUtils.encrypt(jsonEncode(preferences));
+    await _secureStorage.write(key: _preferencesKey, value: encryptedData);
+  }
+
+  /// استرجاع تفضيلات المستخدم
+  Future<Map<String, dynamic>?> getPreferences() async {
+    try {
+      final encryptedData = await _secureStorage.read(key: _preferencesKey);
+      if (encryptedData == null) return null;
+      
+      final decryptedData = _encryptionUtils.decrypt(encryptedData);
+      return jsonDecode(decryptedData) as Map<String, dynamic>;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  /// حفظ قيمة مخصصة بشكل آمن
+  Future<void> saveSecureValue(String key, String value) async {
+    final encryptedValue = _encryptionUtils.encrypt(value);
+    await _secureStorage.write(key: key, value: encryptedValue);
+  }
+
+  /// استرجاع قيمة مخصصة
+  Future<String?> getSecureValue(String key) async {
+    try {
+      final encryptedValue = await _secureStorage.read(key: key);
+      if (encryptedValue == null) return null;
+      
+      return _encryptionUtils.decrypt(encryptedValue);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  /// حذف قيمة مخصصة
+  Future<void> deleteSecureValue(String key) async {
+    await _secureStorage.delete(key: key);
+  }
+
+  /// حذف جميع البيانات المخزنة
+  Future<void> clearAll() async {
+    await _secureStorage.deleteAll();
+  }
+
+  /// إنشاء توقيع رقمي للبيانات باستخدام HMAC-SHA256
+  String _createSignature(String data) {
+    final key = _encryptionUtils.getSecretKey();
+    final hmac = Hmac(sha256, utf8.encode(key));
+    final digest = hmac.convert(utf8.encode(data));
+    return digest.toString();
+  }
+
+  /// التحقق من صحة التوقيع الرقمي
+  bool _verifySignature(String data, String signature) {
+    final computedSignature = _createSignature(data);
+    return computedSignature == signature;
+  }
+}
+
+/// مزود خدمة التخزين الآمن
+@riverpod
+SecureStorageService secureStorageService(SecureStorageServiceRef ref) {
+  final secureStorage = const FlutterSecureStorage(
+    aOptions: AndroidOptions(
+      encryptedSharedPreferences: true,
+      resetOnError: true,
+    ),
+    iOptions: IOSOptions(
+      accessibility: KeychainAccessibility.first_unlock,
+    ),
+  );
+  
+  final encryptionUtils = EncryptionUtils();
+  
+  return SecureStorageService(
+    secureStorage: secureStorage,
+    encryptionUtils: encryptionUtils,
+  );
 }

@@ -1,0 +1,185 @@
+name: Flutter CI/CD
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'user_app/**'
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'user_app/**'
+  workflow_dispatch:
+
+jobs:
+  analyze_and_test:
+    name: تحليل الكود والاختبارات
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: user_app
+
+    steps:
+      - name: استنساخ المستودع
+        uses: actions/checkout@v3
+
+      - name: إعداد Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.19.0'
+          channel: 'stable'
+          cache: true
+
+      - name: تثبيت التبعيات
+        run: flutter pub get
+
+      - name: تحليل الكود
+        run: flutter analyze
+
+      - name: تشغيل اختبارات الوحدة
+        run: flutter test
+
+      - name: توليد ملفات الكود
+        run: flutter pub run build_runner build --delete-conflicting-outputs
+
+  build_android:
+    name: بناء تطبيق Android
+    needs: analyze_and_test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: user_app
+
+    steps:
+      - name: استنساخ المستودع
+        uses: actions/checkout@v3
+
+      - name: إعداد Java
+        uses: actions/setup-java@v3
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: إعداد Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.19.0'
+          channel: 'stable'
+          cache: true
+
+      - name: تثبيت التبعيات
+        run: flutter pub get
+
+      - name: توليد ملفات الكود
+        run: flutter pub run build_runner build --delete-conflicting-outputs
+
+      - name: بناء APK
+        run: flutter build apk --release
+
+      - name: بناء App Bundle
+        run: flutter build appbundle --release
+
+      - name: أرشفة APK
+        uses: actions/upload-artifact@v3
+        with:
+          name: release-apk
+          path: user_app/build/app/outputs/flutter-apk/app-release.apk
+          retention-days: 7
+
+      - name: أرشفة App Bundle
+        uses: actions/upload-artifact@v3
+        with:
+          name: release-bundle
+          path: user_app/build/app/outputs/bundle/release/app-release.aab
+          retention-days: 7
+
+  build_ios:
+    name: بناء تطبيق iOS
+    needs: analyze_and_test
+    runs-on: macos-latest
+    defaults:
+      run:
+        working-directory: user_app
+
+    steps:
+      - name: استنساخ المستودع
+        uses: actions/checkout@v3
+
+      - name: إعداد Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.19.0'
+          channel: 'stable'
+          cache: true
+
+      - name: تثبيت التبعيات
+        run: flutter pub get
+
+      - name: توليد ملفات الكود
+        run: flutter pub run build_runner build --delete-conflicting-outputs
+
+      - name: بناء iOS
+        run: flutter build ios --release --no-codesign
+
+  deploy_firebase:
+    name: نشر التطبيق على Firebase App Distribution
+    needs: build_android
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: استنساخ المستودع
+        uses: actions/checkout@v3
+
+      - name: تنزيل APK
+        uses: actions/download-artifact@v3
+        with:
+          name: release-apk
+          path: apk
+
+      - name: نشر على Firebase App Distribution
+        uses: wzieba/Firebase-Distribution-Github-Action@v1
+        with:
+          appId: ${{ secrets.FIREBASE_APP_ID }}
+          serviceCredentialsFileContent: ${{ secrets.FIREBASE_SERVICE_CREDENTIALS }}
+          groups: testers
+          file: apk/app-release.apk
+          releaseNotes: |
+            تم النشر تلقائياً من خلال GitHub Actions
+            الفرع: ${{ github.ref_name }}
+            الإصدار: ${{ github.run_number }}
+
+  report_coverage:
+    name: إنشاء تقرير تغطية الاختبارات
+    needs: analyze_and_test
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: user_app
+
+    steps:
+      - name: استنساخ المستودع
+        uses: actions/checkout@v3
+
+      - name: إعداد Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.19.0'
+          channel: 'stable'
+          cache: true
+
+      - name: تثبيت التبعيات
+        run: |
+          flutter pub get
+          flutter pub global activate coverage
+
+      - name: إنشاء تقرير التغطية
+        run: |
+          flutter test --coverage
+          flutter pub global run coverage:format_coverage --lcov --in=coverage --out=coverage/lcov.info --packages=.packages --report-on=lib
+
+      - name: نشر تقرير التغطية
+        uses: codecov/codecov-action@v3
+        with:
+          file: user_app/coverage/lcov.info
+          fail_ci_if_error: false

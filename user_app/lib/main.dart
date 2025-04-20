@@ -1,60 +1,82 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import 'package:user_app/core/providers/app_providers.dart';
+import 'package:user_app/core/services/crashlytics_service.dart';
+import 'package:user_app/core/state/app_state_provider.dart';
+import 'package:user_app/core/state/connectivity_provider.dart';
 import 'package:user_app/l10n/l10n.dart';
 import 'package:user_app/router.dart';
-import 'package:user_app/theme/app_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
-  // تهيئة التفضيلات المشتركة
-  final sharedPreferences = await SharedPreferences.getInstance();
+  // تهيئة Firebase
+  await Firebase.initializeApp();
   
-  // تعيين اتجاه الشاشة للدعم في الوضع العمودي والأفقي
-  SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
-    DeviceOrientation.landscapeLeft,
-    DeviceOrientation.landscapeRight,
-  ]);
+  // تهيئة Crashlytics
+  final crashlytics = FirebaseCrashlytics.instance;
+  await crashlytics.setCrashlyticsCollectionEnabled(true);
   
+  // التقاط الأخطاء غير المعالجة
+  FlutterError.onError = (FlutterErrorDetails details) {
+    crashlytics.recordFlutterError(details);
+  };
+  
+  // بدء التطبيق داخل منطقة آمنة
   runApp(
     ProviderScope(
-      overrides: [
-        sharedPreferencesProvider.overrideWithValue(sharedPreferences),
-      ],
-      child: const MyApp(),
+      child: MyApp(),
     ),
   );
 }
 
 class MyApp extends ConsumerWidget {
-  const MyApp({Key? key}) : super(key: key);
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // الحصول على إعدادات السمة
-    final themeMode = ref.watch(themeModeProvider);
+    // مراقبة حالة الاتصال
+    ref.listen(connectivityNotifierProvider, (previous, next) {
+      next.whenData((connectivityResult) {
+        final isConnected = connectivityResult != ConnectivityResult.none;
+        ref.read(appStateProvider.notifier).updateConnectionStatus(isConnected);
+      });
+    });
     
-    // الحصول على إعدادات اللغة
-    final locale = ref.watch(localeProvider);
+    // الحصول على إعدادات السمة واللغة
+    final isDarkMode = ref.watch(isDarkModeProvider);
+    final currentLocale = ref.watch(currentLocaleProvider);
     
     return MaterialApp.router(
       title: 'RivooSy',
       debugShowCheckedModeBanner: false,
       
       // إعدادات السمة
-      theme: AppTheme.lightTheme,
-      darkTheme: AppTheme.darkTheme,
-      themeMode: themeMode,
+      themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
+      theme: ThemeData(
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.teal,
+          brightness: Brightness.light,
+        ),
+        appBarTheme: const AppBarTheme(
+          centerTitle: true,
+          elevation: 0,
+        ),
+      ),
+      darkTheme: ThemeData(
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(
+          seedColor: Colors.teal,
+          brightness: Brightness.dark,
+        ),
+        appBarTheme: const AppBarTheme(
+          centerTitle: true,
+          elevation: 0,
+        ),
+      ),
       
-      // إعدادات التوطين
-      locale: locale,
+      // إعدادات اللغة
+      locale: Locale(currentLocale),
       supportedLocales: L10n.supportedLocales,
       localizationsDelegates: const [
         AppLocalizations.delegate,
@@ -63,20 +85,8 @@ class MyApp extends ConsumerWidget {
         GlobalCupertinoLocalizations.delegate,
       ],
       
-      // توجيه التطبيق
+      // إعدادات التوجيه
       routerConfig: appRouter,
-      
-      // تكييف التطبيق مع الحجم الفعلي للشاشة
-      builder: (context, child) {
-        // ضبط مقياس النص ليكون متناسبًا مع إعدادات المستخدم
-        final mediaQueryData = MediaQuery.of(context);
-        final scale = mediaQueryData.textScaleFactor.clamp(0.8, 1.2);
-        
-        return MediaQuery(
-          data: mediaQueryData.copyWith(textScaleFactor: scale),
-          child: child!,
-        );
-      },
     );
   }
 }
