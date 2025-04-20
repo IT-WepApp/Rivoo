@@ -1,22 +1,31 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:user_app/features/payment/domain/payment_entity.dart';
-import 'package:user_app/features/payment/presentation/viewmodels/payment_view_model.dart';
-import 'package:user_app/features/payment/presentation/widgets/payment_method_card.dart';
-import 'package:user_app/features/payment/presentation/widgets/payment_summary.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:user_app/core/widgets/responsive_builder.dart';
+import 'package:user_app/features/payment/data/payment_model.dart';
+import 'package:user_app/features/payment/application/payment_service.dart';
+import 'package:user_app/features/payment/presentation/widgets/payment_method_card.dart';
+import 'package:user_app/features/payment/presentation/widgets/payment_summary.dart';
+import 'package:user_app/features/payment/presentation/screens/payment_result_screen.dart';
 
+/// شاشة الدفع الرئيسية
+/// تعرض ملخص الطلب وطرق الدفع المتاحة وتعالج الدفع عبر Stripe وخدمات أخرى
 class PaymentScreen extends ConsumerStatefulWidget {
-  final int amount;
-  final String currency;
+  /// معرف الطلب
   final String orderId;
+  /// المبلغ المطلوبدفعه
+  final double amount;
+  /// العملة (مثلاً USD)
+  final String currency;
+  /// بيانات إضافية (اختياري)
+  final Map<String, dynamic>? metadata;
 
   const PaymentScreen({
     Key? key,
-    required this.amount,
-    required this.currency,
     required this.orderId,
+    required this.amount,
+    this.currency = 'USD',
+    this.metadata,
   }) : super(key: key);
 
   @override
@@ -24,274 +33,182 @@ class PaymentScreen extends ConsumerStatefulWidget {
 }
 
 class _PaymentScreenState extends ConsumerState<PaymentScreen> {
+  /// طريقة الدفع المختارة
+  PaymentMethod? _selectedMethod;
+  /// حالة معالجة الدفع
+  bool _isProcessing = false;
+  /// متحكمات نموذج بطاقة الائتمان
+  final _cardNumberController = TextEditingController();
+  final _expiryMonthController = TextEditingController();
+  final _expiryYearController = TextEditingController();
+  final _cvcController = TextEditingController();
+
   @override
   void initState() {
     super.initState();
-    // تهيئة نموذج العرض عند بدء الشاشة
-    Future.microtask(() {
-      ref.read(paymentViewModelProvider.notifier).initialize();
-    });
+    // تهيئة خدمات الدفع
+    Future.microtask(() => ref.read(paymentServiceProvider).initializeStripe());
+  }
+
+  @override
+  void dispose() {
+    _cardNumberController.dispose();
+    _expiryMonthController.dispose();
+    _expiryYearController.dispose();
+    _cvcController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final localizations = AppLocalizations.of(context)!;
-    final paymentState = ref.watch(paymentViewModelProvider);
-    
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       appBar: AppBar(
-        title: Text(localizations.payment),
+        title: Text(l10n.payment),
         elevation: 0,
       ),
-      body: paymentState.isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : paymentState.isFailure
-              ? _buildErrorView(paymentState.failure?.message ?? localizations.somethingWentWrong)
-              : ResponsiveBuilder(
-                  mobile: _buildMobileLayout(context, theme, localizations, paymentState),
-                  tablet: _buildTabletLayout(context, theme, localizations, paymentState),
-                  desktop: _buildDesktopLayout(context, theme, localizations, paymentState),
-                ),
-    );
-  }
-
-  Widget _buildMobileLayout(
-    BuildContext context,
-    ThemeData theme,
-    AppLocalizations localizations,
-    PaymentState paymentState,
-  ) {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(16),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              localizations.selectPaymentMethod,
-              style: theme.textTheme.titleLarge,
-            ),
-            const SizedBox(height: 16),
-            _buildPaymentMethodsList(paymentState),
-            const SizedBox(height: 24),
-            PaymentSummary(
-              amount: widget.amount,
-              currency: widget.currency,
-              onProceedToPayment: () => _processPayment(paymentState),
-            ),
-          ],
-        ),
+      body: ResponsiveBuilder(
+        mobile: _buildMobile(context, l10n),
+        tablet: _buildTablet(context, l10n),
+        desktop: _buildDesktop(context, l10n),
       ),
     );
   }
 
-  Widget _buildTabletLayout(
-    BuildContext context,
-    ThemeData theme,
-    AppLocalizations localizations,
-    PaymentState paymentState,
-  ) {
+  Widget _buildMobile(BuildContext context, AppLocalizations l10n) {
     return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              localizations.selectPaymentMethod,
-              style: theme.textTheme.headlineSmall,
-            ),
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          PaymentSummary(
+            orderId: widget.orderId,
+            amount: widget.amount,
+            currency: widget.currency,
+          ),
+          const SizedBox(height: 24),
+          _buildPaymentMethods(context, l10n),
+          if (_selectedMethod == PaymentMethod.creditCard) ...[
             const SizedBox(height: 24),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  flex: 3,
-                  child: _buildPaymentMethodsList(paymentState),
-                ),
-                const SizedBox(width: 24),
-                Expanded(
-                  flex: 2,
-                  child: PaymentSummary(
-                    amount: widget.amount,
-                    currency: widget.currency,
-                    onProceedToPayment: () => _processPayment(paymentState),
-                  ),
-                ),
-              ],
-            ),
+            _buildCreditCardForm(context, l10n),
           ],
-        ),
+          const SizedBox(height: 24),
+          Center(child: _buildPayButton(context, l10n)),
+        ],
       ),
     );
   }
 
-  Widget _buildDesktopLayout(
-    BuildContext context,
-    ThemeData theme,
-    AppLocalizations localizations,
-    PaymentState paymentState,
-  ) {
+  Widget _buildTablet(BuildContext context, AppLocalizations l10n) {
     return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              localizations.selectPaymentMethod,
-              style: theme.textTheme.headlineMedium,
-            ),
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          PaymentSummary(
+            orderId: widget.orderId,
+            amount: widget.amount,
+            currency: widget.currency,
+          ),
+          const SizedBox(height: 32),
+          _buildPaymentMethods(context, l10n),
+          if (_selectedMethod == PaymentMethod.creditCard) ...[
             const SizedBox(height: 32),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  flex: 2,
-                  child: _buildPaymentMethodsList(paymentState),
-                ),
-                const SizedBox(width: 32),
-                Expanded(
-                  child: PaymentSummary(
-                    amount: widget.amount,
-                    currency: widget.currency,
-                    onProceedToPayment: () => _processPayment(paymentState),
-                  ),
-                ),
-              ],
-            ),
+            _buildCreditCardForm(context, l10n),
           ],
-        ),
+          const SizedBox(height: 32),
+          Center(child: _buildPayButton(context, l10n)),
+        ],
       ),
     );
   }
 
-  Widget _buildPaymentMethodsList(PaymentState paymentState) {
-    final localizations = AppLocalizations.of(context)!;
-    final theme = Theme.of(context);
-    
-    // دمج طرق الدفع المتاحة والمحفوظة
-    final allPaymentMethods = [
-      ...paymentState.savedPaymentMethods,
-      ...paymentState.availablePaymentMethods.where(
-        (method) => !paymentState.savedPaymentMethods.any((saved) => saved.type == method.type),
-      ),
-    ];
-    
-    if (allPaymentMethods.isEmpty) {
-      return Center(
+  Widget _buildDesktop(BuildContext context, AppLocalizations l10n) {
+    return Center(
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(maxWidth: 1200),
         child: Padding(
           padding: const EdgeInsets.all(32),
-          child: Column(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Icon(
-                Icons.credit_card_off,
-                size: 64,
-                color: theme.colorScheme.error,
+              Expanded(
+                flex: 3,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    PaymentSummary(
+                      orderId: widget.orderId,
+                      amount: widget.amount,
+                      currency: widget.currency,
+                    ),
+                    const SizedBox(height: 32),
+                    _buildPaymentMethods(context, l10n),
+                    if (_selectedMethod == PaymentMethod.creditCard) ...[
+                      const SizedBox(height: 32),
+                      _buildCreditCardForm(context, l10n),
+                    ],
+                  ],
+                ),
               ),
-              const SizedBox(height: 16),
-              Text(
-                localizations.noPaymentMethodsAvailable,
-                style: theme.textTheme.titleMedium,
-                textAlign: TextAlign.center,
+              const SizedBox(width: 32),
+              Expanded(
+                flex: 2,
+                child: Center(child: _buildPayButton(context, l10n)),
               ),
             ],
           ),
         ),
-      );
-    }
-    
-    return ListView.builder(
-      shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
-      itemCount: allPaymentMethods.length,
-      itemBuilder: (context, index) {
-        final paymentMethod = allPaymentMethods[index];
-        final isSelected = paymentState.selectedPaymentMethod?.id == paymentMethod.id;
-        final isSaved = paymentState.savedPaymentMethods.contains(paymentMethod);
-        
-        return PaymentMethodCard(
-          paymentMethod: paymentMethod,
-          isSelected: isSelected,
-          onTap: () {
-            ref.read(paymentViewModelProvider.notifier).selectPaymentMethod(paymentMethod);
-          },
-          onDelete: isSaved
-              ? () {
-                  ref.read(paymentViewModelProvider.notifier).deletePaymentMethod(paymentMethod.id);
-                }
-              : null,
-          onSetDefault: isSaved && !paymentMethod.isDefault
-              ? () {
-                  ref.read(paymentViewModelProvider.notifier).setDefaultPaymentMethod(paymentMethod.id);
-                }
-              : null,
-        );
-      },
-    );
-  }
-
-  Widget _buildErrorView(String errorMessage) {
-    final theme = Theme.of(context);
-    final localizations = AppLocalizations.of(context)!;
-    
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(
-              Icons.error_outline,
-              size: 64,
-              color: theme.colorScheme.error,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              errorMessage,
-              style: theme.textTheme.titleMedium,
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: () {
-                ref.read(paymentViewModelProvider.notifier).initialize();
-              },
-              child: Text(localizations.tryAgain),
-            ),
-          ],
-        ),
       ),
     );
   }
 
-  void _processPayment(PaymentState paymentState) {
-    if (paymentState.selectedPaymentMethod == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(AppLocalizations.of(context)!.pleaseSelectPaymentMethod),
-          backgroundColor: Theme.of(context).colorScheme.error,
+  Widget _buildPaymentMethods(BuildContext context, AppLocalizations l10n) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(l10n.selectPaymentMethod, style: Theme.of(context).textTheme.headlineSmall),
+        const SizedBox(height: 16),
+        Wrap(
+          spacing: 16,
+          runSpacing: 16,
+          children: PaymentMethod.values.map((method) {
+            return PaymentMethodCard(
+              method: method,
+              isSelected: _selectedMethod == method,
+              onTap: () => setState(() => _selectedMethod = method),
+            );
+          }).toList(),
         ),
-      );
-      return;
-    }
-    
-    // معالجة الدفع
-    ref.read(paymentViewModelProvider.notifier).processPayment(
-      amount: widget.amount,
-      currency: widget.currency,
-      paymentMethodId: paymentState.selectedPaymentMethod!.id,
-    );
-    
-    // الانتقال إلى شاشة نتيجة الدفع
-    Navigator.of(context).pushNamed(
-      '/payment/result',
-      arguments: {
-        'orderId': widget.orderId,
-        'amount': widget.amount,
-        'currency': widget.currency,
-      },
+      ],
     );
   }
-}
+
+  Widget _buildCreditCardForm(BuildContext context, AppLocalizations l10n) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(l10n.cardDetails, style: Theme.of(context).textTheme.headlineSmall),
+        const SizedBox(height: 16),
+        TextFormField(
+          controller: _cardNumberController,
+          decoration: InputDecoration(labelText: l10n.cardNumber, border: const OutlineInputBorder()),
+          keyboardType: TextInputType.number,
+          maxLength: 19,
+        ),
+        const SizedBox(height: 16),
+        Row(children: [
+          Expanded(
+            child: TextFormField(
+              controller: _expiryMonthController,
+              decoration: InputDecoration(labelText: l10n.expiryMonth, border: const OutlineInputBorder()),
+              keyboardType: TextInputType.number,
+              maxLength: 2,
+            ),
+          ),
+          const SizedBox(width: 16),
+          Expanded(
+            child: TextFormField(
+              controller: _expiryYearController,
+              decoration: InputDecoration(labelText: l10n.expiryYear, border: const OutlineInputBorder()),
+              keyboardType: TextInputType.number,

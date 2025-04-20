@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
@@ -16,7 +17,6 @@ import 'theme/app_theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
   // تهيئة Firebase
   await Firebase.initializeApp();
   
@@ -24,8 +24,6 @@ void main() async {
   if (!kDebugMode) {
     await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
     FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterError;
-    
-    // التقاط الأخطاء غير المعالجة في Dart
     PlatformDispatcher.instance.onError = (error, stack) {
       FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
       return true;
@@ -36,9 +34,7 @@ void main() async {
   await FirebasePerformance.instance.setPerformanceCollectionEnabled(true);
   
   runApp(
-    const ProviderScope(
-      child: MyApp(),
-    ),
+    const ProviderScope(child: MyApp()),
   );
 }
 
@@ -51,7 +47,7 @@ class MyApp extends ConsumerWidget {
     final analyticsObserver = ref.watch(analyticsObserverProvider);
     final themeMode = ref.watch(themeModeProvider);
     final locale = ref.watch(localeProvider);
-    
+
     return MaterialApp.router(
       title: 'RivooSy',
       theme: AppTheme.lightTheme,
@@ -74,3 +70,11 @@ class MyApp extends ConsumerWidget {
     );
   }
 }
+
+// مزودات التطبيق
+final themeModeProvider = StateProvider<ThemeMode>((ref) => ThemeMode.system);
+final localeProvider = StateProvider<Locale?>((ref) => null);
+
+// مزودات التوجيه والمراقبة
+final appRouterProvider = Provider((ref) => appRouter);
+final analyticsObserverProvider = Provider<NavigatorObserver>((ref) => AnalyticsMonitor(ref.read));
