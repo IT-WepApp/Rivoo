@@ -17,7 +17,7 @@ class ProfileNotifier extends StateNotifier<AsyncValue<SellerModel?>> {
     if (_sellerUserId != null) {
       fetchProfile();
     } else {
-      state = AsyncError('User ID not available', StackTrace.current);
+      state = AsyncError('معرف المستخدم غير متوفر', StackTrace.current);
     }
   }
 
@@ -35,12 +35,12 @@ class ProfileNotifier extends StateNotifier<AsyncValue<SellerModel?>> {
         );
         state = AsyncData(sellerModel);
       } else if (userModel == null) {
-        state = AsyncError('Seller profile not found', StackTrace.current);
+        state = AsyncError('لم يتم العثور على ملف البائع', StackTrace.current);
       } else {
-        state = AsyncError('User is not a seller', StackTrace.current);
+        state = AsyncError('المستخدم ليس بائعاً', StackTrace.current);
       }
     } catch (e, stacktrace) {
-      state = AsyncError('Failed to fetch profile: $e', stacktrace);
+      state = AsyncError('فشل في جلب الملف الشخصي: $e', stacktrace);
     }
   }
 
@@ -60,7 +60,7 @@ class ProfileNotifier extends StateNotifier<AsyncValue<SellerModel?>> {
       state = AsyncData(updatedSeller);
       return true;
     } catch (e, stacktrace) {
-      state = AsyncError('Failed to update profile: $e', stacktrace);
+      state = AsyncError('فشل في تحديث الملف الشخصي: $e', stacktrace);
       if (previousState is AsyncData) state = previousState;
       return false;
     }

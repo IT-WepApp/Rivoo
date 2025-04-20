@@ -16,7 +16,7 @@ class OrdersNotifier extends StateNotifier<AsyncValue<List<OrderModel>>> {
     if (_sellerId != null) {
       fetchOrders();
     } else {
-      state = AsyncError('Seller ID not available', StackTrace.current);
+      state = AsyncError('معرف البائع غير متوفر', StackTrace.current);
     }
   }
 
@@ -27,8 +27,8 @@ class OrdersNotifier extends StateNotifier<AsyncValue<List<OrderModel>>> {
       final orders = await _orderService.getOrdersBySeller(_sellerId);
       state = AsyncData(orders);
     } catch (e, stacktrace) {
-      log('Error fetching seller orders', error: e, stackTrace: stacktrace, name: 'SellerOrdersNotifier');
-      state = AsyncError('Failed to fetch orders: $e', stacktrace);
+      log('خطأ في جلب طلبات البائع', error: e, stackTrace: stacktrace, name: 'SellerOrdersNotifier');
+      state = AsyncError('فشل في جلب الطلبات: $e', stacktrace);
     }
   }
 
@@ -39,8 +39,8 @@ class OrdersNotifier extends StateNotifier<AsyncValue<List<OrderModel>>> {
       await fetchOrders();
       return true;
     } catch (e, stacktrace) {
-      log('Error updating order status by seller', error: e, stackTrace: stacktrace, name: 'SellerOrdersNotifier');
-      state = AsyncError('Failed to update order status: $e', stacktrace);
+      log('خطأ في تحديث حالة الطلب بواسطة البائع', error: e, stackTrace: stacktrace, name: 'SellerOrdersNotifier');
+      state = AsyncError('فشل في تحديث حالة الطلب: $e', stacktrace);
       if (previousState is AsyncData) state = previousState;
       return false;
     }

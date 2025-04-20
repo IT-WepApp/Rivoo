@@ -9,6 +9,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
 
   # Added missing dependencies
   flutter_riverpod: any
@@ -25,6 +27,7 @@ dependencies:
   overlay_support: ^2.0.0
   flutter_local_notifications: ^15.0.0
   shared_preferences: ^2.2.2
+  flutter_secure_storage: ^8.0.0 # تخزين آمن لبيانات المستخدم
 
   # Charts
   fl_chart: ^0.62.0
@@ -51,3 +54,6 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  
+  # إضافة دعم ملفات الترجمة
+  generate: true

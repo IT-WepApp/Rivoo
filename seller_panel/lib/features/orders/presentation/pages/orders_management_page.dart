@@ -22,7 +22,7 @@ class _OrdersManagementPageState extends ConsumerState<OrdersManagementPage> {
   List<Map<String, dynamic>> _orders = [];
   List<Map<String, dynamic>> _filteredOrders = [];
   
-  String _searchQuery = '';
+  final _searchController = TextEditingController();
   String _selectedStatus = 'الكل';
   List<String> _statusOptions = ['الكل', 'جديد', 'قيد التحضير', 'جاهز للتسليم', 'قيد التوصيل', 'تم التسليم', 'ملغي'];
   
@@ -33,6 +33,12 @@ class _OrdersManagementPageState extends ConsumerState<OrdersManagementPage> {
   void initState() {
     super.initState();
     _loadOrders();
+  }
+
+  @override
+  void dispose() {
+    _searchController.dispose();
+    super.dispose();
   }
 
   Future<void> _loadOrders() async {
@@ -62,11 +68,11 @@ class _OrdersManagementPageState extends ConsumerState<OrdersManagementPage> {
     List<Map<String, dynamic>> filtered = List.from(_orders);
     
     // تطبيق فلتر البحث
-    if (_searchQuery.isNotEmpty) {
+    if (_searchController.text.isNotEmpty) {
       filtered = filtered.where((order) {
         final orderNumber = order['orderNumber'] as String? ?? '';
         final customerName = order['customerName'] as String? ?? '';
-        final searchLower = _searchQuery.toLowerCase();
+        final searchLower = _searchController.text.toLowerCase();
         
         return orderNumber.toLowerCase().contains(searchLower) || 
                customerName.toLowerCase().contains(searchLower);
@@ -235,21 +241,14 @@ class _OrdersManagementPageState extends ConsumerState<OrdersManagementPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // شريط البحث
-          TextField(
-            decoration: InputDecoration(
-              hintText: 'البحث برقم الطلب أو اسم العميل...',
-              prefixIcon: const Icon(Icons.search),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-              contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-            ),
-            onChanged: (value) {
+          AppWidgets.searchBar(
+            controller: _searchController,
+            onSearch: (value) {
               setState(() {
-                _searchQuery = value;
                 _applyFilters();
               });
             },
+            hintText: 'البحث برقم الطلب أو اسم العميل...',
           ),
           const SizedBox(height: 16),
           
@@ -258,72 +257,82 @@ class _OrdersManagementPageState extends ConsumerState<OrdersManagementPage> {
             children: [
               // فلتر الحالة
               Expanded(
-                child: DropdownButtonFormField<String>(
-                  value: _selectedStatus,
-                  decoration: const InputDecoration(
-                    labelText: 'حالة الطلب',
-                    border: OutlineInputBorder(),
-                    contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: AppWidgets.appCard(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                  elevation: 0,
+                  child: DropdownButtonFormField<String>(
+                    value: _selectedStatus,
+                    decoration: const InputDecoration(
+                      labelText: 'حالة الطلب',
+                      border: OutlineInputBorder(),
+                      contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    ),
+                    items: _statusOptions.map((status) {
+                      return DropdownMenuItem<String>(
+                        value: status,
+                        child: Text(status),
+                      );
+                    }).toList(),
+                    onChanged: (value) {
+                      if (value != null) {
+                        setState(() {
+                          _selectedStatus = value;
+                          _applyFilters();
+                        });
+                      }
+                    },
                   ),
-                  items: _statusOptions.map((status) {
-                    return DropdownMenuItem<String>(
-                      value: status,
-                      child: Text(status),
-                    );
-                  }).toList(),
-                  onChanged: (value) {
-                    if (value != null) {
-                      setState(() {
-                        _selectedStatus = value;
-                        _applyFilters();
-                      });
-                    }
-                  },
                 ),
               ),
               const SizedBox(width: 16),
               
               // فلتر الترتيب
               Expanded(
-                child: DropdownButtonFormField<String>(
-                  value: _sortBy,
-                  decoration: const InputDecoration(
-                    labelText: 'ترتيب حسب',
-                    border: OutlineInputBorder(),
-                    contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                child: AppWidgets.appCard(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                  elevation: 0,
+                  child: DropdownButtonFormField<String>(
+                    value: _sortBy,
+                    decoration: const InputDecoration(
+                      labelText: 'ترتيب حسب',
+                      border: OutlineInputBorder(),
+                      contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    ),
+                    items: const [
+                      DropdownMenuItem<String>(
+                        value: 'date',
+                        child: Text('التاريخ'),
+                      ),
+                      DropdownMenuItem<String>(
+                        value: 'total',
+                        child: Text('المبلغ'),
+                      ),
+                    ],
+                    onChanged: (value) {
+                      if (value != null) {
+                        setState(() {
+                          _sortBy = value;
+                          _applyFilters();
+                        });
+                      }
+                    },
                   ),
-                  items: const [
-                    DropdownMenuItem<String>(
-                      value: 'date',
-                      child: Text('التاريخ'),
-                    ),
-                    DropdownMenuItem<String>(
-                      value: 'total',
-                      child: Text('المبلغ'),
-                    ),
-                  ],
-                  onChanged: (value) {
-                    if (value != null) {
-                      setState(() {
-                        _sortBy = value;
-                        _applyFilters();
-                      });
-                    }
-                  },
                 ),
               ),
               const SizedBox(width: 8),
               
               // زر تبديل اتجاه الترتيب
-              IconButton(
-                icon: Icon(_sortAscending ? Icons.arrow_upward : Icons.arrow_downward),
+              AppWidgets.appButton(
+                text: '',
+                width: 48,
+                height: 48,
+                icon: _sortAscending ? Icons.arrow_upward : Icons.arrow_downward,
                 onPressed: () {
                   setState(() {
                     _sortAscending = !_sortAscending;
                     _applyFilters();
                   });
                 },
-                tooltip: _sortAscending ? 'ترتيب تصاعدي' : 'ترتيب تنازلي',
               ),
             ],
           ),
@@ -345,7 +354,7 @@ class _OrdersManagementPageState extends ConsumerState<OrdersManagementPage> {
             ),
             const SizedBox(height: 16),
             Text(
-              _searchQuery.isNotEmpty || _selectedStatus != 'الكل'
+              _searchController.text.isNotEmpty || _selectedStatus != 'الكل'
                   ? 'لا توجد طلبات تطابق معايير البحث'
                   : 'لا توجد طلبات حالياً',
               style: theme.textTheme.titleMedium,
@@ -366,186 +375,16 @@ class _OrdersManagementPageState extends ConsumerState<OrdersManagementPage> {
         final orderDate = order['orderDate'] as DateTime? ?? DateTime.now();
         final totalAmount = order['totalAmount'] as num? ?? 0;
         final status = order['status'] as String? ?? 'جديد';
-        final itemsCount = order['items']?.length ?? 0;
         
-        return Card(
-          margin: const EdgeInsets.only(bottom: 16),
-          child: InkWell(
-            onTap: () => context.push('${RouteConstants.orderDetails}/$orderId'),
-            borderRadius: BorderRadius.circular(8),
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  // معلومات الطلب الأساسية
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      // رقم الطلب
-                      Text(
-                        'طلب #$orderNumber',
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      
-                      // حالة الطلب
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: _getStatusColor(status).withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(4),
-                          border: Border.all(
-                            color: _getStatusColor(status),
-                          ),
-                        ),
-                        child: Text(
-                          status,
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: _getStatusColor(status),
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  
-                  // معلومات العميل والتاريخ
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      // اسم العميل
-                      Row(
-                        children: [
-                          Icon(Icons.person, size: 16, color: AppColors.textSecondary),
-                          const SizedBox(width: 4),
-                          Text(
-                            customerName,
-                            style: theme.textTheme.bodyMedium,
-                          ),
-                        ],
-                      ),
-                      
-                      // تاريخ الطلب
-                      Row(
-                        children: [
-                          Icon(Icons.calendar_today, size: 16, color: AppColors.textSecondary),
-                          const SizedBox(width: 4),
-                          Text(
-                            '${orderDate.day}/${orderDate.month}/${orderDate.year} - ${orderDate.hour}:${orderDate.minute.toString().padLeft(2, '0')}',
-                            style: theme.textTheme.bodyMedium,
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  
-                  // المبلغ وعدد العناصر
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      // المبلغ الإجمالي
-                      Row(
-                        children: [
-                          Icon(Icons.attach_money, size: 16, color: AppColors.textSecondary),
-                          const SizedBox(width: 4),
-                          Text(
-                            '${totalAmount.toStringAsFixed(2)} ر.س',
-                            style: theme.textTheme.bodyMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
-                      
-                      // عدد العناصر
-                      Row(
-                        children: [
-                          Icon(Icons.shopping_bag, size: 16, color: AppColors.textSecondary),
-                          const SizedBox(width: 4),
-                          Text(
-                            '$itemsCount ${itemsCount == 1 ? 'منتج' : 'منتجات'}',
-                            style: theme.textTheme.bodyMedium,
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  
-                  const Divider(height: 24),
-                  
-                  // أزرار التحكم
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      // زر عرض التفاصيل
-                      OutlinedButton.icon(
-                        onPressed: () => context.push('${RouteConstants.orderDetails}/$orderId'),
-                        icon: const Icon(Icons.visibility),
-                        label: const Text('عرض التفاصيل'),
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: theme.colorScheme.primary,
-                          side: BorderSide(color: theme.colorScheme.primary),
-                        ),
-                      ),
-                      
-                      // زر تحديث الحالة
-                      _buildStatusUpdateButton(theme, orderId, status),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
+        return AppWidgets.orderListItem(
+          orderId: orderNumber,
+          status: status,
+          total: totalAmount.toDouble(),
+          date: orderDate,
+          customerName: customerName,
+          onTap: () => context.push('${RouteConstants.orderDetails}/$orderId'),
         );
       },
-    );
-  }
-
-  Widget _buildStatusUpdateButton(ThemeData theme, String orderId, String currentStatus) {
-    // تحديد الحالة التالية بناءً على الحالة الحالية
-    String nextStatus;
-    Color buttonColor;
-    
-    switch (currentStatus) {
-      case 'جديد':
-        nextStatus = 'قيد التحضير';
-        buttonColor = Colors.orange;
-        break;
-      case 'قيد التحضير':
-        nextStatus = 'جاهز للتسليم';
-        buttonColor = Colors.purple;
-        break;
-      case 'جاهز للتسليم':
-        nextStatus = 'قيد التوصيل';
-        buttonColor = Colors.amber;
-        break;
-      case 'قيد التوصيل':
-        nextStatus = 'تم التسليم';
-        buttonColor = Colors.green;
-        break;
-      case 'تم التسليم':
-        // لا يمكن تغيير الحالة بعد التسليم
-        return const SizedBox.shrink();
-      case 'ملغي':
-        // لا يمكن تغيير الحالة بعد الإلغاء
-        return const SizedBox.shrink();
-      default:
-        nextStatus = 'قيد التحضير';
-        buttonColor = Colors.orange;
-    }
-    
-    return ElevatedButton.icon(
-      onPressed: () => _updateOrderStatus(orderId, nextStatus),
-      icon: const Icon(Icons.arrow_forward),
-      label: Text('تحديث إلى $nextStatus'),
-      style: ElevatedButton.styleFrom(
-        backgroundColor: buttonColor,
-        foregroundColor: Colors.white,
-      ),
     );
   }
 }
