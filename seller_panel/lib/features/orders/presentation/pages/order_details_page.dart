@@ -210,206 +210,197 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
       padding: const EdgeInsets.all(16),
       children: [
         // بطاقة معلومات الطلب
-        Card(
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // عنوان البطاقة
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'معلومات الطلب',
-                      style: theme.textTheme.titleLarge,
-                    ),
-                    
-                    // حالة الطلب
-                    Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: _getStatusColor(status).withOpacity(0.1),
-                        borderRadius: BorderRadius.circular(4),
-                        border: Border.all(
-                          color: _getStatusColor(status),
-                        ),
-                      ),
-                      child: Text(
-                        status,
-                        style: theme.textTheme.bodySmall?.copyWith(
-                          color: _getStatusColor(status),
-                          fontWeight: FontWeight.bold,
-                        ),
+        AppWidgets.appCard(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // عنوان البطاقة
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'معلومات الطلب',
+                    style: theme.textTheme.titleLarge,
+                  ),
+                  
+                  // حالة الطلب
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: _getStatusColor(status).withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(4),
+                      border: Border.all(
+                        color: _getStatusColor(status),
                       ),
                     ),
-                  ],
-                ),
-                const Divider(height: 24),
-                
-                // معلومات الطلب
-                _buildInfoRow(theme, 'رقم الطلب', '#$orderNumber'),
-                const SizedBox(height: 8),
-                _buildInfoRow(
-                  theme, 
-                  'تاريخ الطلب', 
-                  '${orderDate.day}/${orderDate.month}/${orderDate.year} - ${orderDate.hour}:${orderDate.minute.toString().padLeft(2, '0')}'
-                ),
-                const SizedBox(height: 8),
-                _buildInfoRow(theme, 'طريقة الدفع', paymentMethod),
-                const SizedBox(height: 8),
-                _buildInfoRow(theme, 'المبلغ الإجمالي', '${totalAmount.toStringAsFixed(2)} ر.س'),
-              ],
-            ),
+                    child: Text(
+                      status,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: _getStatusColor(status),
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const Divider(height: 24),
+              
+              // معلومات الطلب
+              _buildInfoRow(theme, 'رقم الطلب', '#$orderNumber'),
+              const SizedBox(height: 8),
+              _buildInfoRow(
+                theme, 
+                'تاريخ الطلب', 
+                '${orderDate.day}/${orderDate.month}/${orderDate.year} - ${orderDate.hour}:${orderDate.minute.toString().padLeft(2, '0')}'
+              ),
+              const SizedBox(height: 8),
+              _buildInfoRow(theme, 'طريقة الدفع', paymentMethod),
+              const SizedBox(height: 8),
+              _buildInfoRow(theme, 'المبلغ الإجمالي', '${totalAmount.toStringAsFixed(2)} ر.س'),
+            ],
           ),
         ),
         const SizedBox(height: 16),
         
         // بطاقة معلومات العميل
-        Card(
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'معلومات العميل',
-                  style: theme.textTheme.titleLarge,
-                ),
-                const Divider(height: 24),
-                
-                // معلومات العميل
-                _buildInfoRow(theme, 'الاسم', customerName),
-                if (customerPhone.isNotEmpty) ...[
-                  const SizedBox(height: 8),
-                  _buildInfoRow(theme, 'رقم الهاتف', customerPhone),
-                ],
-                
-                // عنوان الشحن
-                if (shippingAddress.isNotEmpty) ...[
-                  const SizedBox(height: 16),
-                  Text(
-                    'عنوان الشحن',
-                    style: theme.textTheme.titleMedium,
-                  ),
-                  const SizedBox(height: 8),
-                  _buildAddressCard(theme, shippingAddress),
-                ],
+        AppWidgets.appCard(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'معلومات العميل',
+                style: theme.textTheme.titleLarge,
+              ),
+              const Divider(height: 24),
+              
+              // معلومات العميل
+              _buildInfoRow(theme, 'الاسم', customerName),
+              if (customerPhone.isNotEmpty) ...[
+                const SizedBox(height: 8),
+                _buildInfoRow(theme, 'رقم الهاتف', customerPhone),
               ],
-            ),
+              
+              // عنوان الشحن
+              if (shippingAddress.isNotEmpty) ...[
+                const SizedBox(height: 16),
+                Text(
+                  'عنوان الشحن',
+                  style: theme.textTheme.titleMedium,
+                ),
+                const SizedBox(height: 8),
+                _buildAddressCard(theme, shippingAddress),
+              ],
+            ],
           ),
         ),
         const SizedBox(height: 16),
         
         // بطاقة عناصر الطلب
-        Card(
-          child: Padding(
-            padding: const EdgeInsets.all(16),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'عناصر الطلب',
-                  style: theme.textTheme.titleLarge,
-                ),
-                const Divider(height: 24),
-                
-                // قائمة العناصر
-                if (items.isEmpty)
-                  const Center(
-                    child: Padding(
-                      padding: EdgeInsets.all(16),
-                      child: Text('لا توجد عناصر في هذا الطلب'),
-                    ),
-                  )
-                else
-                  ListView.separated(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: items.length,
-                    separatorBuilder: (context, index) => const Divider(height: 24),
-                    itemBuilder: (context, index) {
-                      final item = items[index] as Map<String, dynamic>;
-                      final productName = item['productName'] as String? ?? 'منتج';
-                      final quantity = item['quantity'] as int? ?? 1;
-                      final price = item['price'] as num? ?? 0;
-                      final totalPrice = item['totalPrice'] as num? ?? 0;
-                      final imageUrl = item['imageUrl'] as String? ?? '';
-                      
-                      return Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // صورة المنتج
-                          if (imageUrl.isNotEmpty)
-                            ClipRRect(
-                              borderRadius: BorderRadius.circular(8),
-                              child: Image.network(
-                                imageUrl,
-                                width: 60,
-                                height: 60,
-                                fit: BoxFit.cover,
-                                errorBuilder: (context, error, stackTrace) {
-                                  return Container(
-                                    width: 60,
-                                    height: 60,
-                                    color: AppColors.background,
-                                    child: Icon(Icons.image_not_supported, color: AppColors.textSecondary),
-                                  );
-                                },
-                              ),
-                            )
-                          else
-                            Container(
+        AppWidgets.appCard(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                'عناصر الطلب',
+                style: theme.textTheme.titleLarge,
+              ),
+              const Divider(height: 24),
+              
+              // قائمة العناصر
+              if (items.isEmpty)
+                const Center(
+                  child: Padding(
+                    padding: EdgeInsets.all(16),
+                    child: Text('لا توجد عناصر في هذا الطلب'),
+                  ),
+                )
+              else
+                ListView.separated(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  itemCount: items.length,
+                  separatorBuilder: (context, index) => const Divider(height: 24),
+                  itemBuilder: (context, index) {
+                    final item = items[index] as Map<String, dynamic>;
+                    final productName = item['productName'] as String? ?? 'منتج';
+                    final quantity = item['quantity'] as int? ?? 1;
+                    final price = item['price'] as num? ?? 0;
+                    final totalPrice = item['totalPrice'] as num? ?? 0;
+                    final imageUrl = item['imageUrl'] as String? ?? '';
+                    
+                    return Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // صورة المنتج
+                        if (imageUrl.isNotEmpty)
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: Image.network(
+                              imageUrl,
                               width: 60,
                               height: 60,
-                              decoration: BoxDecoration(
-                                color: AppColors.background,
-                                borderRadius: BorderRadius.circular(8),
+                              fit: BoxFit.cover,
+                              errorBuilder: (context, error, stackTrace) {
+                                return Container(
+                                  width: 60,
+                                  height: 60,
+                                  color: AppColors.background,
+                                  child: Icon(Icons.image_not_supported, color: AppColors.textSecondary),
+                                );
+                              },
+                            ),
+                          )
+                        else
+                          Container(
+                            width: 60,
+                            height: 60,
+                            decoration: BoxDecoration(
+                              color: AppColors.background,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Icon(Icons.image, color: AppColors.textSecondary),
+                          ),
+                        const SizedBox(width: 16),
+                        
+                        // معلومات المنتج
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                productName,
+                                style: theme.textTheme.titleMedium,
                               ),
-                              child: Icon(Icons.image, color: AppColors.textSecondary),
-                            ),
-                          const SizedBox(width: 16),
-                          
-                          // معلومات المنتج
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  productName,
-                                  style: theme.textTheme.titleMedium,
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  'السعر: ${price.toStringAsFixed(2)} ر.س',
-                                  style: theme.textTheme.bodyMedium,
-                                ),
-                                const SizedBox(height: 4),
-                                Text(
-                                  'الكمية: $quantity',
-                                  style: theme.textTheme.bodyMedium,
-                                ),
-                              ],
-                            ),
+                              const SizedBox(height: 4),
+                              Text(
+                                'السعر: ${price.toStringAsFixed(2)} ر.س',
+                                style: theme.textTheme.bodyMedium,
+                              ),
+                              const SizedBox(height: 4),
+                              Text(
+                                'الكمية: $quantity',
+                                style: theme.textTheme.bodyMedium,
+                              ),
+                            ],
                           ),
-                          
-                          // السعر الإجمالي
-                          Text(
-                            '${totalPrice.toStringAsFixed(2)} ر.س',
-                            style: theme.textTheme.titleMedium?.copyWith(
-                              color: AppColors.primary,
-                            ),
+                        ),
+                        
+                        // السعر الإجمالي
+                        Text(
+                          '${totalPrice.toStringAsFixed(2)} ر.س',
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            color: AppColors.primary,
                           ),
-                        ],
-                      );
-                    },
-                  ),
-                
-                // ملخص الأسعار
-                const Divider(height: 32),
-                _buildPriceSummary(theme, order),
-              ],
-            ),
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              
+              // ملخص الأسعار
+              const Divider(height: 32),
+              _buildPriceSummary(theme, order),
+            ],
           ),
         ),
         const SizedBox(height: 24),
@@ -468,13 +459,11 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
     final postalCode = address['postalCode'] as String? ?? '';
     final country = address['country'] as String? ?? '';
     
-    return Container(
+    return AppWidgets.appCard(
       padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: Colors.grey.shade300),
-      ),
+      elevation: 0,
+      backgroundColor: theme.colorScheme.surface,
+      borderColor: Colors.grey.shade300,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -592,30 +581,27 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
       children: [
         // زر تحديث الحالة
         Expanded(
-          child: ElevatedButton.icon(
+          child: AppWidgets.appButton(
+            text: 'تحديث إلى $nextStatus',
             onPressed: () => _updateOrderStatus(nextStatus),
-            icon: const Icon(Icons.arrow_forward),
-            label: Text('تحديث إلى $nextStatus'),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: nextStatusColor,
-              foregroundColor: Colors.white,
-              padding: const EdgeInsets.symmetric(vertical: 12),
-            ),
+            icon: Icons.arrow_forward,
+            backgroundColor: nextStatusColor,
+            textColor: Colors.white,
+            height: 48,
           ),
         ),
         const SizedBox(width: 16),
         
         // زر إلغاء الطلب
         Expanded(
-          child: OutlinedButton.icon(
+          child: AppWidgets.appButton(
+            text: 'إلغاء الطلب',
             onPressed: _cancelOrder,
-            icon: const Icon(Icons.cancel),
-            label: const Text('إلغاء الطلب'),
-            style: OutlinedButton.styleFrom(
-              foregroundColor: Colors.red,
-              side: const BorderSide(color: Colors.red),
-              padding: const EdgeInsets.symmetric(vertical: 12),
-            ),
+            icon: Icons.cancel,
+            backgroundColor: Colors.white,
+            textColor: Colors.red,
+            borderColor: Colors.red,
+            height: 48,
           ),
         ),
       ],

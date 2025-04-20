@@ -1,103 +1,127 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-import '../constants/app_constants.dart';
 
-/// خدمة التخزين الآمن للبيانات الحساسة
-class SecureStorageService {
-  static final SecureStorageService _instance = SecureStorageService._internal();
-  factory SecureStorageService() => _instance;
-  SecureStorageService._internal();
+/// واجهة لخدمة التخزين الآمن
+/// تتبع مبادئ Clean Architecture بفصل الواجهة عن التنفيذ
+abstract class SecureStorageService {
+  /// حفظ قيمة بشكل آمن
+  Future<void> write({required String key, required String value});
 
-  final FlutterSecureStorage _secureStorage = const FlutterSecureStorage(
-    aOptions: AndroidOptions(
-      encryptedSharedPreferences: true,
-    ),
+  /// قراءة قيمة مخزنة بشكل آمن
+  Future<String?> read({required String key});
+
+  /// حذف قيمة مخزنة
+  Future<void> delete({required String key});
+
+  /// حذف جميع القيم المخزنة
+  Future<void> deleteAll();
+
+  /// التحقق من وجود قيمة مخزنة
+  Future<bool> containsKey({required String key});
+
+  /// الحصول على جميع القيم المخزنة
+  Future<Map<String, String>> readAll();
+}
+
+/// تنفيذ خدمة التخزين الآمن باستخدام flutter_secure_storage
+class SecureStorageServiceImpl implements SecureStorageService {
+  final FlutterSecureStorage _storage;
+
+  /// مفاتيح التخزين المستخدمة في التطبيق
+  static const String userTokenKey = 'user_token';
+  static const String sellerIdKey = 'seller_id';
+  static const String userEmailKey = 'user_email';
+  static const String userNameKey = 'user_name';
+  static const String userRoleKey = 'user_role';
+  static const String lastLoginKey = 'last_login';
+
+  /// إعدادات التشفير للتخزين الآمن
+  static const AndroidOptions _androidOptions = AndroidOptions(
+    encryptedSharedPreferences: true,
+    resetOnError: true,
   );
 
-  // تخزين رمز المصادقة
-  Future<void> storeAuthToken(String token) async {
-    await _secureStorage.write(key: AppConstants.tokenKey, value: token);
+  static const IOSOptions _iosOptions = IOSOptions(
+    accessibility: KeychainAccessibility.first_unlock,
+    synchronizable: true,
+  );
+
+  /// إنشاء نسخة من خدمة التخزين الآمن
+  SecureStorageServiceImpl()
+      : _storage = FlutterSecureStorage(
+          aOptions: _androidOptions,
+          iOptions: _iosOptions,
+        );
+
+  @override
+  Future<void> write({required String key, required String value}) async {
+    await _storage.write(key: key, value: value);
   }
 
-  // استرجاع رمز المصادقة
-  Future<String?> getAuthToken() async {
-    return await _secureStorage.read(key: AppConstants.tokenKey);
+  @override
+  Future<String?> read({required String key}) async {
+    return await _storage.read(key: key);
   }
 
-  // تخزين معرف المستخدم
-  Future<void> storeUserId(String userId) async {
-    await _secureStorage.write(key: AppConstants.userIdKey, value: userId);
+  @override
+  Future<void> delete({required String key}) async {
+    await _storage.delete(key: key);
   }
 
-  // استرجاع معرف المستخدم
-  Future<String?> getUserId() async {
-    return await _secureStorage.read(key: AppConstants.userIdKey);
+  @override
+  Future<void> deleteAll() async {
+    await _storage.deleteAll();
   }
 
-  // تخزين رمز التحديث
-  Future<void> storeRefreshToken(String refreshToken) async {
-    await _secureStorage.write(key: AppConstants.refreshTokenKey, value: refreshToken);
+  @override
+  Future<bool> containsKey({required String key}) async {
+    return await _storage.containsKey(key: key);
   }
 
-  // استرجاع رمز التحديث
-  Future<String?> getRefreshToken() async {
-    return await _secureStorage.read(key: AppConstants.refreshTokenKey);
+  @override
+  Future<Map<String, String>> readAll() async {
+    return await _storage.readAll();
   }
 
-  // حذف جميع بيانات المصادقة
-  Future<void> clearAuthData() async {
-    await _secureStorage.delete(key: AppConstants.tokenKey);
-    await _secureStorage.delete(key: AppConstants.userIdKey);
-    await _secureStorage.delete(key: AppConstants.refreshTokenKey);
+  /// حفظ توكن المستخدم
+  Future<void> saveUserToken(String token) async {
+    await write(key: userTokenKey, value: token);
   }
 
-  // تخزين بيانات مشفرة عامة
-  Future<void> storeSecureData(String key, String value) async {
-    await _secureStorage.write(key: key, value: value);
+  /// قراءة توكن المستخدم
+  Future<String?> getUserToken() async {
+    return await read(key: userTokenKey);
   }
 
-  // استرجاع بيانات مشفرة عامة
-  Future<String?> getSecureData(String key) async {
-    return await _secureStorage.read(key: key);
+  /// حفظ معرف البائع
+  Future<void> saveSellerId(String sellerId) async {
+    await write(key: sellerIdKey, value: sellerId);
   }
 
-  // حذف بيانات مشفرة عامة
-  Future<void> deleteSecureData(String key) async {
-    await _secureStorage.delete(key: key);
+  /// قراءة معرف البائع
+  Future<String?> getSellerId() async {
+    return await read(key: sellerIdKey);
   }
 
-  // التحقق من وجود بيانات مشفرة
-  Future<bool> hasSecureData(String key) async {
-    final value = await _secureStorage.read(key: key);
-    return value != null;
+  /// حفظ بيانات المستخدم الأساسية
+  Future<void> saveUserData({
+    required String email,
+    required String name,
+    required String role,
+  }) async {
+    await write(key: userEmailKey, value: email);
+    await write(key: userNameKey, value: name);
+    await write(key: userRoleKey, value: role);
+    await write(key: lastLoginKey, value: DateTime.now().toIso8601String());
   }
 
-  // حذف جميع البيانات المشفرة
-  Future<void> clearAllSecureData() async {
-    await _secureStorage.deleteAll();
+  /// التحقق من وجود جلسة مستخدم نشطة
+  Future<bool> hasActiveSession() async {
+    final token = await getUserToken();
+    return token != null && token.isNotEmpty;
   }
 
-  // تخزين إعدادات المستخدم (غير حساسة) باستخدام SharedPreferences
-  Future<void> storeUserPreference(String key, String value) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(key, value);
-  }
-
-  // استرجاع إعدادات المستخدم (غير حساسة)
-  Future<String?> getUserPreference(String key) async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.getString(key);
-  }
-
-  // حذف إعدادات المستخدم (غير حساسة)
-  Future<void> deleteUserPreference(String key) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.remove(key);
-  }
-
-  // حذف جميع إعدادات المستخدم (غير حساسة)
-  Future<void> clearAllUserPreferences() async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.clear();
+  /// تسجيل خروج المستخدم (حذف جميع البيانات المخزنة)
+  Future<void> logout() async {
+    await deleteAll();
   }
 }

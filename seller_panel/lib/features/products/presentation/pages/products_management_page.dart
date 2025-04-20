@@ -212,15 +212,8 @@ class _ProductsManagementPageState extends ConsumerState<ProductsManagementPage>
       child: Column(
         children: [
           // شريط البحث
-          TextField(
-            decoration: InputDecoration(
-              hintText: 'البحث عن منتج...',
-              prefixIcon: const Icon(Icons.search),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(8),
-              ),
-              contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-            ),
+          AppWidgets.searchBar(
+            hintText: 'البحث عن منتج...',
             onChanged: (value) {
               setState(() {
                 _searchQuery = value;
@@ -289,15 +282,12 @@ class _ProductsManagementPageState extends ConsumerState<ProductsManagementPage>
               style: theme.textTheme.titleMedium,
             ),
             const SizedBox(height: 16),
-            ElevatedButton.icon(
+            AppWidgets.appButton(
+              text: 'إضافة منتج جديد',
               onPressed: () => context.push(RouteConstants.addProduct),
-              icon: const Icon(Icons.add),
-              label: const Text('إضافة منتج جديد'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: theme.colorScheme.primary,
-                foregroundColor: theme.colorScheme.onPrimary,
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              ),
+              icon: Icons.add,
+              backgroundColor: theme.colorScheme.primary,
+              textColor: theme.colorScheme.onPrimary,
             ),
           ],
         ),
@@ -326,7 +316,7 @@ class _ProductsManagementPageState extends ConsumerState<ProductsManagementPage>
     final isAvailable = product['isAvailable'] as bool? ?? true;
     final stockQuantity = product['stockQuantity'] as int? ?? 0;
     
-    return Card(
+    return AppWidgets.appCard(
       margin: const EdgeInsets.only(bottom: 16),
       child: Column(
         children: [
@@ -442,35 +432,35 @@ class _ProductsManagementPageState extends ConsumerState<ProductsManagementPage>
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
                     Expanded(
-                      child: OutlinedButton.icon(
+                      child: AppWidgets.appButton(
+                        text: 'تعديل',
                         onPressed: () => context.push('${RouteConstants.editProduct}/$id'),
-                        icon: const Icon(Icons.edit),
-                        label: const Text('تعديل'),
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: theme.colorScheme.primary,
-                        ),
+                        icon: Icons.edit,
+                        backgroundColor: Colors.white,
+                        textColor: theme.colorScheme.primary,
+                        borderColor: theme.colorScheme.primary,
                       ),
                     ),
                     const SizedBox(width: 8),
                     Expanded(
-                      child: OutlinedButton.icon(
+                      child: AppWidgets.appButton(
+                        text: isAvailable ? 'إخفاء' : 'إظهار',
                         onPressed: () => _toggleProductAvailability(id, isAvailable),
-                        icon: Icon(isAvailable ? Icons.visibility_off : Icons.visibility),
-                        label: Text(isAvailable ? 'إخفاء' : 'إظهار'),
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: isAvailable ? AppColors.warning : AppColors.success,
-                        ),
+                        icon: isAvailable ? Icons.visibility_off : Icons.visibility,
+                        backgroundColor: Colors.white,
+                        textColor: isAvailable ? AppColors.warning : AppColors.success,
+                        borderColor: isAvailable ? AppColors.warning : AppColors.success,
                       ),
                     ),
                     const SizedBox(width: 8),
                     Expanded(
-                      child: OutlinedButton.icon(
+                      child: AppWidgets.appButton(
+                        text: 'حذف',
                         onPressed: () => _deleteProduct(id),
-                        icon: const Icon(Icons.delete),
-                        label: const Text('حذف'),
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: Colors.red,
-                        ),
+                        icon: Icons.delete,
+                        backgroundColor: Colors.white,
+                        textColor: AppColors.error,
+                        borderColor: AppColors.error,
                       ),
                     ),
                   ],

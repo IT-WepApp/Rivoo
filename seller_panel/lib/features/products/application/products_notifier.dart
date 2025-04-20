@@ -18,7 +18,7 @@ class ProductsNotifier extends StateNotifier<AsyncValue<List<Product>>> {
     if (_sellerId != null) {
       fetchProducts();
     } else {
-      state = AsyncError('Seller ID not available', StackTrace.current);
+      state = AsyncError('معرف البائع غير متوفر', StackTrace.current);
     }
   }
 
@@ -29,8 +29,8 @@ class ProductsNotifier extends StateNotifier<AsyncValue<List<Product>>> {
       final products = await _productService.getProductsBySeller(_sellerId);
       state = AsyncData(products);
     } catch (e, stacktrace) {
-      log('Error fetching seller products', error: e, stackTrace: stacktrace, name: 'SellerProductsNotifier');
-      state = AsyncError('Failed to fetch products: $e', stacktrace);
+      log('خطأ في جلب منتجات البائع', error: e, stackTrace: stacktrace, name: 'SellerProductsNotifier');
+      state = AsyncError('فشل في جلب المنتجات: $e', stacktrace);
     }
   }
 
@@ -44,8 +44,8 @@ class ProductsNotifier extends StateNotifier<AsyncValue<List<Product>>> {
       await fetchProducts();
       return true;
     } catch (e, stacktrace) {
-      log('Error adding product', error: e, stackTrace: stacktrace, name: 'SellerProductsNotifier');
-      state = AsyncError('Failed to add product: $e', stacktrace);
+      log('خطأ في إضافة المنتج', error: e, stackTrace: stacktrace, name: 'SellerProductsNotifier');
+      state = AsyncError('فشل في إضافة المنتج: $e', stacktrace);
       if (previousState is AsyncData) state = previousState;
       return false;
     }
@@ -54,7 +54,7 @@ class ProductsNotifier extends StateNotifier<AsyncValue<List<Product>>> {
   Future<bool> editProduct(Product product) async {
     if (_sellerId == null || product.id.isEmpty) return false;
     if (product.sellerId != _sellerId) {
-      state = AsyncError('Permission denied: Cannot edit product belonging to another seller', StackTrace.current);
+      state = AsyncError('تم رفض الإذن: لا يمكن تعديل منتج ينتمي إلى بائع آخر', StackTrace.current);
       return false;
     }
     final previousState = state;
@@ -64,8 +64,8 @@ class ProductsNotifier extends StateNotifier<AsyncValue<List<Product>>> {
       await fetchProducts();
       return true;
     } catch (e, stacktrace) {
-      log('Error editing product', error: e, stackTrace: stacktrace, name: 'SellerProductsNotifier');
-      state = AsyncError('Failed to edit product: $e', stacktrace);
+      log('خطأ في تعديل المنتج', error: e, stackTrace: stacktrace, name: 'SellerProductsNotifier');
+      state = AsyncError('فشل في تعديل المنتج: $e', stacktrace);
       if (previousState is AsyncData) state = previousState;
       return false;
     }
@@ -80,8 +80,8 @@ class ProductsNotifier extends StateNotifier<AsyncValue<List<Product>>> {
       await fetchProducts();
       return true;
     } catch (e, stacktrace) {
-      log('Error deleting product', error: e, stackTrace: stacktrace, name: 'SellerProductsNotifier');
-      state = AsyncError('Failed to delete product: $e', stacktrace);
+      log('خطأ في حذف المنتج', error: e, stackTrace: stacktrace, name: 'SellerProductsNotifier');
+      state = AsyncError('فشل في حذف المنتج: $e', stacktrace);
       if (previousState is AsyncData) state = previousState;
       return false;
     }
