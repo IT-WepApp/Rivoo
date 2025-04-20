@@ -1,0 +1,117 @@
+{
+  "@@locale": "en",
+  "appTitle": "RivooSy",
+  
+  "homeTitle": "Home",
+  "storesNearby": "Stores Nearby",
+  "popularProducts": "Popular Products",
+  "viewAll": "View All",
+  "search": "Search",
+  
+  "cartTitle": "Shopping Cart",
+  "cartEmpty": "Your cart is empty",
+  "startShopping": "Start Shopping",
+  "checkout": "Checkout",
+  "totalAmount": "Total Amount",
+  
+  "profileTitle": "Profile",
+  "myOrders": "My Orders",
+  "myAddresses": "My Addresses",
+  "settings": "Settings",
+  "logout": "Logout",
+  
+  "ordersTitle": "Orders",
+  "orderDetails": "Order Details",
+  "orderStatus": "Order Status",
+  "orderDate": "Order Date",
+  "orderNumber": "Order Number",
+  "trackOrder": "Track Order",
+  
+  "orderStatusPending": "Pending",
+  "orderStatusProcessing": "Processing",
+  "orderStatusShipped": "Shipped",
+  "orderStatusDelivered": "Delivered",
+  "orderStatusCancelled": "Cancelled",
+  
+  "productDetails": "Product Details",
+  "addToCart": "Add to Cart",
+  "buyNow": "Buy Now",
+  "quantity": "Quantity",
+  "availability": "Availability",
+  "description": "Description",
+  "reviews": "Reviews",
+  "addReview": "Add Review",
+  
+  "paymentTitle": "Payment",
+  "paymentMethod": "Payment Method",
+  "creditCard": "Credit Card",
+  "cashOnDelivery": "Cash on Delivery",
+  "applePay": "Apple Pay",
+  "paymentSummary": "Payment Summary",
+  "paymentSuccess": "Payment Successful",
+  "paymentFailed": "Payment Failed",
+  
+  "ratingTitle": "Rating",
+  "yourRating": "Your Rating",
+  "writeReview": "Write Your Review",
+  "submitReview": "Submit Review",
+  "editReview": "Edit Review",
+  "deleteReview": "Delete Review",
+  "reviewsCount": "{count} Reviews",
+  "@reviewsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  
+  "trackingTitle": "Order Tracking",
+  "estimatedArrival": "Estimated Arrival",
+  "deliveryPerson": "Delivery Person",
+  "deliveryAddress": "Delivery Address",
+  "contactDelivery": "Contact Delivery Person",
+  
+  "supportTitle": "Customer Support",
+  "contactUs": "Contact Us",
+  "faq": "FAQ",
+  "helpCenter": "Help Center",
+  
+  "settingsTitle": "Settings",
+  "language": "Language",
+  "darkMode": "Dark Mode",
+  "notifications": "Notifications",
+  "about": "About",
+  
+  "loginTitle": "Login",
+  "registerTitle": "Register",
+  "email": "Email",
+  "password": "Password",
+  "confirmPassword": "Confirm Password",
+  "forgotPassword": "Forgot Password?",
+  "dontHaveAccount": "Don't have an account?",
+  "createAccount": "Create Account",
+  "alreadyHaveAccount": "Already have an account?",
+  "login": "Login",
+  
+  "errorTitle": "Error",
+  "successTitle": "Success",
+  "warningTitle": "Warning",
+  "infoTitle": "Information",
+  "cancel": "Cancel",
+  "ok": "OK",
+  "yes": "Yes",
+  "no": "No",
+  "retry": "Retry",
+  "save": "Save",
+  "delete": "Delete",
+  "edit": "Edit",
+  "next": "Next",
+  "back": "Back",
+  "done": "Done",
+  
+  "networkError": "Network Error",
+  "serverError": "Server Error",
+  "unknownError": "Unknown Error",
+  "tryAgainLater": "Please try again later"
+}

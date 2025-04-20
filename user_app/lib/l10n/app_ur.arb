@@ -1,0 +1,117 @@
+{
+  "@@locale": "ur",
+  "appTitle": "ریووسی",
+  
+  "homeTitle": "ہوم",
+  "storesNearby": "قریبی دکانیں",
+  "popularProducts": "مقبول مصنوعات",
+  "viewAll": "سب دیکھیں",
+  "search": "تلاش کریں",
+  
+  "cartTitle": "شاپنگ کارٹ",
+  "cartEmpty": "آپ کا کارٹ خالی ہے",
+  "startShopping": "شاپنگ شروع کریں",
+  "checkout": "چیک آؤٹ",
+  "totalAmount": "کل رقم",
+  
+  "profileTitle": "پروفائل",
+  "myOrders": "میرے آرڈرز",
+  "myAddresses": "میرے پتے",
+  "settings": "ترتیبات",
+  "logout": "لاگ آؤٹ",
+  
+  "ordersTitle": "آرڈرز",
+  "orderDetails": "آرڈر کی تفصیلات",
+  "orderStatus": "آرڈر کی حالت",
+  "orderDate": "آرڈر کی تاریخ",
+  "orderNumber": "آرڈر نمبر",
+  "trackOrder": "آرڈر ٹریک کریں",
+  
+  "orderStatusPending": "زیر التواء",
+  "orderStatusProcessing": "پروسیسنگ",
+  "orderStatusShipped": "بھیج دیا گیا",
+  "orderStatusDelivered": "پہنچا دیا گیا",
+  "orderStatusCancelled": "منسوخ",
+  
+  "productDetails": "مصنوعات کی تفصیلات",
+  "addToCart": "کارٹ میں شامل کریں",
+  "buyNow": "ابھی خریدیں",
+  "quantity": "مقدار",
+  "availability": "دستیابی",
+  "description": "تفصیل",
+  "reviews": "جائزے",
+  "addReview": "جائزہ شامل کریں",
+  
+  "paymentTitle": "ادائیگی",
+  "paymentMethod": "ادائیگی کا طریقہ",
+  "creditCard": "کریڈٹ کارڈ",
+  "cashOnDelivery": "ڈیلیوری پر نقد ادائیگی",
+  "applePay": "ایپل پے",
+  "paymentSummary": "ادائیگی کا خلاصہ",
+  "paymentSuccess": "ادائیگی کامیاب",
+  "paymentFailed": "ادائیگی ناکام",
+  
+  "ratingTitle": "درجہ بندی",
+  "yourRating": "آپ کی درجہ بندی",
+  "writeReview": "اپنا جائزہ لکھیں",
+  "submitReview": "جائزہ جمع کرائیں",
+  "editReview": "جائزہ میں ترمیم کریں",
+  "deleteReview": "جائزہ حذف کریں",
+  "reviewsCount": "{count} جائزے",
+  "@reviewsCount": {
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  
+  "trackingTitle": "آرڈر ٹریکنگ",
+  "estimatedArrival": "متوقع آمد",
+  "deliveryPerson": "ڈیلیوری شخص",
+  "deliveryAddress": "ڈیلیوری کا پتہ",
+  "contactDelivery": "ڈیلیوری شخص سے رابطہ کریں",
+  
+  "supportTitle": "کسٹمر سپورٹ",
+  "contactUs": "ہم سے رابطہ کریں",
+  "faq": "اکثر پوچھے گئے سوالات",
+  "helpCenter": "مدد مرکز",
+  
+  "settingsTitle": "ترتیبات",
+  "language": "زبان",
+  "darkMode": "ڈارک موڈ",
+  "notifications": "نوٹیفیکیشنز",
+  "about": "ہمارے بارے میں",
+  
+  "loginTitle": "لاگ ان",
+  "registerTitle": "رجسٹر",
+  "email": "ای میل",
+  "password": "پاس ورڈ",
+  "confirmPassword": "پاس ورڈ کی تصدیق کریں",
+  "forgotPassword": "پاس ورڈ بھول گئے؟",
+  "dontHaveAccount": "اکاؤنٹ نہیں ہے؟",
+  "createAccount": "اکاؤنٹ بنائیں",
+  "alreadyHaveAccount": "پہلے سے اکاؤنٹ ہے؟",
+  "login": "لاگ ان",
+  
+  "errorTitle": "خرابی",
+  "successTitle": "کامیابی",
+  "warningTitle": "انتباہ",
+  "infoTitle": "معلومات",
+  "cancel": "منسوخ کریں",
+  "ok": "ٹھیک ہے",
+  "yes": "ہاں",
+  "no": "نہیں",
+  "retry": "دوبارہ کوشش کریں",
+  "save": "محفوظ کریں",
+  "delete": "حذف کریں",
+  "edit": "ترمیم کریں",
+  "next": "اگلا",
+  "back": "پیچھے",
+  "done": "مکمل",
+  
+  "networkError": "نیٹ ورک میں خرابی",
+  "serverError": "سرور میں خرابی",
+  "unknownError": "نامعلوم خرابی",
+  "tryAgainLater": "براہ کرم بعد میں دوبارہ کوشش کریں"
+}
