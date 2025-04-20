@@ -1,4 +1,5 @@
 import 'package:dartz/dartz.dart';
+import 'package:equatable/equatable.dart';
 import 'package:user_app/core/architecture/domain/failure.dart';
 
 /// واجهة حالة الاستخدام الأساسية
@@ -10,25 +11,29 @@ abstract class UseCase<Type, Params> {
   Future<Either<Failure, Type>> call(Params params);
 }
 
-/// حالة استخدام لا تحتاج إلى معلمات
-abstract class NoParamsUseCase<Type> {
-  /// تنفيذ حالة الاستخدام بدون معلمات
-  Future<Either<Failure, Type>> call();
-}
-
-/// فئة تمثل عدم وجود معلمات لحالة الاستخدام
-class NoParams {
-  const NoParams();
-}
-
 /// واجهة حالة الاستخدام التي تعمل في الوقت الفعلي (Stream)
 abstract class StreamUseCase<Type, Params> {
   /// تنفيذ حالة الاستخدام التي تعيد تدفق من البيانات
   Stream<Either<Failure, Type>> call(Params params);
 }
 
+/// حالة استخدام لا تحتاج إلى معلمات
+abstract class NoParamsUseCase<Type> {
+  /// تنفيذ حالة الاستخدام بدون معلمات
+  Future<Either<Failure, Type>> call();
+}
+
 /// حالة استخدام تدفق بدون معلمات
 abstract class NoParamsStreamUseCase<Type> {
   /// تنفيذ حالة الاستخدام بدون معلمات
   Stream<Either<Failure, Type>> call();
+}
+
+/// فئة تمثل عدم وجود معلمات لحالة الاستخدام
+/// تستخدم Equatable لدعم المقارنة بين الحالات
+class NoParams extends Equatable {
+  const NoParams();
+
+  @override
+  List<Object?> get props => [];
 }

@@ -3,18 +3,15 @@ import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:intl/intl.dart';
 
 /// ملخص الدفع
-/// يعرض ملخص الطلب والمبلغ المطلوب دفعه
+/// يعرض ملخص الطلب ومعلومات المبلغ وبيانات إضافية مثل العناصر، الضريبة، والشحن
 class PaymentSummary extends StatelessWidget {
   /// معرف الطلب
   final String orderId;
-  
-  /// المبلغ المطلوب دفعه
+  /// المبلغ الفرعي (Subtotal)
   final double amount;
-  
-  /// العملة
+  /// العملة (رمز العملة)
   final String currency;
-  
-  /// بيانات إضافية
+  /// بيانات إضافية قد تتضمن عناصر، ضريبة، شحن، إلخ
   final Map<String, dynamic>? metadata;
 
   /// إنشاء ملخص الدفع
@@ -22,7 +19,7 @@ class PaymentSummary extends StatelessWidget {
     Key? key,
     required this.orderId,
     required this.amount,
-    required this.currency,
+    this.currency = 'USD',
     this.metadata,
   }) : super(key: key);
 
@@ -30,88 +27,58 @@ class PaymentSummary extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
-    
-    // تنسيق المبلغ حسب العملة
-    final formattedAmount = NumberFormat.currency(
+
+    // تنسيق المبلغ
+    final currencyFormat = NumberFormat.currency(
       symbol: _getCurrencySymbol(currency),
       decimalDigits: 2,
-    ).format(amount);
-    
+    );
+    final formattedAmount = currencyFormat.format(amount);
+
     return Card(
       elevation: 2,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-      ),
+      margin: const EdgeInsets.all(16),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              l10n.orderSummary,
-              style: theme.textTheme.headlineSmall,
-            ),
+            Text(l10n.orderSummary, style: theme.textTheme.headlineSmall),
             const Divider(height: 24),
-            _buildSummaryRow(
-              context,
-              label: l10n.orderId,
-              value: orderId,
-            ),
-            const SizedBox(height: 12),
-            if (metadata != null && metadata!.containsKey('items')) ...[
-              Text(
-                l10n.items,
-                style: theme.textTheme.titleMedium,
-              ),
+            _buildRow(context, label: l10n.orderId, value: orderId),
+            const SizedBox(height: 8),
+            if (metadata?['items'] is List) ...[
+              Text(l10n.items, style: theme.textTheme.titleMedium),
               const SizedBox(height: 8),
-              ...List.generate(
-                (metadata!['items'] as List).length,
-                (index) => _buildItemRow(
-                  context,
-                  item: metadata!['items'][index],
-                ),
+              ...List<Map<String, dynamic>>.from(metadata!['items']).map(
+                (item) => _buildItemRow(context, item, currencyFormat),
               ),
               const Divider(height: 24),
             ],
-            _buildSummaryRow(
-              context,
-              label: l10n.subtotal,
-              value: formattedAmount,
-              isTotal: true,
-            ),
-            if (metadata != null && metadata!.containsKey('tax')) ...[
+            _buildRow(context, label: l10n.subtotal, value: formattedAmount, isBold: true),
+            if (metadata?['tax'] != null) ...[
               const SizedBox(height: 8),
-              _buildSummaryRow(
+              _buildRow(
                 context,
                 label: l10n.tax,
-                value: NumberFormat.currency(
-                  symbol: _getCurrencySymbol(currency),
-                  decimalDigits: 2,
-                ).format(metadata!['tax']),
+                value: currencyFormat.format(metadata!['tax']),
               ),
             ],
-            if (metadata != null && metadata!.containsKey('shipping')) ...[
+            if (metadata?['shipping'] != null) ...[
               const SizedBox(height: 8),
-              _buildSummaryRow(
+              _buildRow(
                 context,
                 label: l10n.shipping,
-                value: NumberFormat.currency(
-                  symbol: _getCurrencySymbol(currency),
-                  decimalDigits: 2,
-                ).format(metadata!['shipping']),
+                value: currencyFormat.format(metadata!['shipping']),
               ),
             ],
-            if (metadata != null && 
-                (metadata!.containsKey('tax') || metadata!.containsKey('shipping'))) ...[
+            if (metadata?['tax'] != null || metadata?['shipping'] != null) ...[
               const Divider(height: 24),
-              _buildSummaryRow(
+              _buildRow(
                 context,
                 label: l10n.total,
-                value: NumberFormat.currency(
-                  symbol: _getCurrencySymbol(currency),
-                  decimalDigits: 2,
-                ).format(_calculateTotal()),
-                isTotal: true,
+                value: currencyFormat.format(_calculateTotal()),
                 isBold: true,
               ),
             ],
@@ -120,17 +87,14 @@ class PaymentSummary extends StatelessWidget {
       ),
     );
   }
-  
-  /// بناء صف في ملخص الدفع
-  Widget _buildSummaryRow(
+
+  Widget _buildRow(
     BuildContext context, {
     required String label,
     required String value,
-    bool isTotal = false,
     bool isBold = false,
   }) {
     final theme = Theme.of(context);
-    
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
@@ -138,95 +102,58 @@ class PaymentSummary extends StatelessWidget {
           label,
           style: isBold
               ? theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)
-              : theme.textTheme.titleMedium,
+              : theme.textTheme.bodyMedium,
         ),
         Text(
           value,
-          style: isTotal
-              ? theme.textTheme.titleLarge?.copyWith(
-                  color: theme.colorScheme.primary,
-                  fontWeight: isBold ? FontWeight.bold : null,
-                )
-              : theme.textTheme.titleMedium,
+          style: isBold
+              ? theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)
+              : theme.textTheme.bodyMedium,
         ),
       ],
     );
   }
-  
-  /// بناء صف عنصر في ملخص الدفع
+
   Widget _buildItemRow(
-    BuildContext context, {
-    required Map<String, dynamic> item,
-  }) {
+    BuildContext context,
+    Map<String, dynamic> item,
+    NumberFormat format,
+  ) {
     final theme = Theme.of(context);
-    
+    final name = item['name'] as String? ?? '';
+    final qty = item['quantity']?.toString() ?? '1';
+    final price = item['price'] != null ? format.format(item['price']) : '';
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
       child: Row(
         children: [
-          if (item.containsKey('quantity'))
-            Text(
-              '${item['quantity']}x',
-              style: theme.textTheme.bodyMedium?.copyWith(
-                color: theme.textTheme.bodyMedium?.color?.withOpacity(0.7),
-              ),
-            ),
+          Text('$qty x', style: theme.textTheme.bodyMedium),
           const SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              item['name'] ?? 'Unknown Item',
-              style: theme.textTheme.bodyMedium,
-            ),
-          ),
-          if (item.containsKey('price'))
-            Text(
-              NumberFormat.currency(
-                symbol: _getCurrencySymbol(currency),
-                decimalDigits: 2,
-              ).format(item['price']),
-              style: theme.textTheme.bodyMedium,
-            ),
+          Expanded(child: Text(name, style: theme.textTheme.bodyMedium)),
+          const SizedBox(width: 8),
+          Text(price, style: theme.textTheme.bodyMedium),
         ],
       ),
     );
   }
-  
-  /// الحصول على رمز العملة
-  String _getCurrencySymbol(String currencyCode) {
-    switch (currencyCode.toUpperCase()) {
-      case 'USD':
-        return '\$';
-      case 'EUR':
-        return '€';
-      case 'GBP':
-        return '£';
-      case 'JPY':
-        return '¥';
-      case 'SAR':
-        return 'ر.س';
-      case 'AED':
-        return 'د.إ';
-      case 'EGP':
-        return 'ج.م';
-      default:
-        return currencyCode;
-    }
-  }
-  
-  /// حساب المبلغ الإجمالي
+
   double _calculateTotal() {
     double total = amount;
-    
-    if (metadata != null) {
-      if (metadata!.containsKey('tax')) {
-        total += metadata!['tax'] as double;
-      }
-      
-      if (metadata!.containsKey('shipping')) {
-        total += metadata!['shipping'] as double;
-      }
-    }
-    
+    if (metadata?['tax'] != null) total += metadata!['tax'] as double;
+    if (metadata?['shipping'] != null) total += metadata!['shipping'] as double;
     return total;
+  }
+
+  String _getCurrencySymbol(String code) {
+    switch (code.toUpperCase()) {
+      case 'USD': return '\$';
+      case 'EUR': return '€';
+      case 'GBP': return '£';
+      case 'JPY': return '¥';
+      case 'SAR': return 'ر.س';
+      case 'AED': return 'د.إ';
+      case 'EGP': return 'ج.م';
+      default: return code;
+    }
   }
 }

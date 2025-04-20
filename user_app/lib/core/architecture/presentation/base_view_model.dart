@@ -72,7 +72,7 @@ class ViewState<T> {
 }
 
 /// نموذج المشاهدة الأساسي الذي يدير حالة واجهة المستخدم
-/// يستخدم مع Riverpod لإدارة الحالة
+/// يستخدم مع Riverpod لإدارة الحالة ويعتمد على الأسلوب الآلي Dispose
 abstract class BaseViewModel<T> extends AutoDisposeNotifier<ViewState<T>> {
   @override
   ViewState<T> build() {

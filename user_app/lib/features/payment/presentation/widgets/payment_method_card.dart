@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:user_app/features/payment/data/payment_model.dart';
 
 /// بطاقة طريقة الدفع
@@ -25,7 +26,7 @@ class PaymentMethodCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    
+
     return Card(
       elevation: isSelected ? 4 : 1,
       shape: RoundedRectangleBorder(
@@ -34,6 +35,7 @@ class PaymentMethodCard extends StatelessWidget {
             ? BorderSide(color: colorScheme.primary, width: 2)
             : BorderSide.none,
       ),
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(12),
@@ -67,7 +69,7 @@ class PaymentMethodCard extends StatelessWidget {
       ),
     );
   }
-  
+
   /// بناء أيقونة طريقة الدفع
   Widget _buildIcon(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;

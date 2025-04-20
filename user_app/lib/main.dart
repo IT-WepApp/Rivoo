@@ -2,81 +2,62 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:user_app/l10n/l10n.dart';
+import 'package:user_app/router.dart';
 import 'package:user_app/core/services/crashlytics_service.dart';
 import 'package:user_app/core/state/app_state_provider.dart';
 import 'package:user_app/core/state/connectivity_provider.dart';
-import 'package:user_app/l10n/l10n.dart';
-import 'package:user_app/router.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
   // تهيئة Firebase
   await Firebase.initializeApp();
   
   // تهيئة Crashlytics
-  final crashlytics = FirebaseCrashlytics.instance;
-  await crashlytics.setCrashlyticsCollectionEnabled(true);
-  
+  await CrashlyticsService.initialize();
+
   // التقاط الأخطاء غير المعالجة
-  FlutterError.onError = (FlutterErrorDetails details) {
-    crashlytics.recordFlutterError(details);
+  FlutterError.onError = (details) {
+    CrashlyticsService.recordError(details.exception, details.stack!);
   };
-  
-  // بدء التطبيق داخل منطقة آمنة
-  runApp(
-    ProviderScope(
-      child: MyApp(),
-    ),
-  );
+
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends ConsumerWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // مراقبة حالة الاتصال
-    ref.listen(connectivityNotifierProvider, (previous, next) {
-      next.whenData((connectivityResult) {
-        final isConnected = connectivityResult != ConnectivityResult.none;
-        ref.read(appStateProvider.notifier).updateConnectionStatus(isConnected);
+    // متابعة حالة الاتصال
+    ref.listen(connectivityNotifierProvider, (prev, result) {
+      result.whenData((status) {
+        ref.read(appStateProvider.notifier).updateConnectionStatus(status != ConnectivityResult.none);
       });
     });
     
-    // الحصول على إعدادات السمة واللغة
-    final isDarkMode = ref.watch(isDarkModeProvider);
-    final currentLocale = ref.watch(currentLocaleProvider);
-    
+    // سمة وتوجه
+    final isDark = ref.watch(isDarkModeProvider);
+    final localeCode = ref.watch(currentLocaleProvider);
+
     return MaterialApp.router(
       title: 'RivooSy',
       debugShowCheckedModeBanner: false,
-      
-      // إعدادات السمة
-      themeMode: isDarkMode ? ThemeMode.dark : ThemeMode.light,
+      routerConfig: appRouter,
       theme: ThemeData(
         useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.teal,
-          brightness: Brightness.light,
-        ),
-        appBarTheme: const AppBarTheme(
-          centerTitle: true,
-          elevation: 0,
-        ),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal, brightness: Brightness.light),
+        fontFamily: 'Cairo',
+        appBarTheme: const AppBarTheme(centerTitle: true, elevation: 0),
       ),
       darkTheme: ThemeData(
         useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: Colors.teal,
-          brightness: Brightness.dark,
-        ),
-        appBarTheme: const AppBarTheme(
-          centerTitle: true,
-          elevation: 0,
-        ),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.teal, brightness: Brightness.dark),
+        fontFamily: 'Cairo',
+        appBarTheme: const AppBarTheme(centerTitle: true, elevation: 0),
       ),
-      
-      // إعدادات اللغة
-      locale: Locale(currentLocale),
+      themeMode: isDark ? ThemeMode.dark : ThemeMode.light,
+      locale: Locale(localeCode),
       supportedLocales: L10n.supportedLocales,
       localizationsDelegates: const [
         AppLocalizations.delegate,
@@ -84,9 +65,10 @@ class MyApp extends ConsumerWidget {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      
-      // إعدادات التوجيه
-      routerConfig: appRouter,
     );
   }
 }
+
+// مزودات الحالة
+final isDarkModeProvider = StateProvider<bool>((ref) => false);
+final currentLocaleProvider = StateProvider<String>((ref) => L10n.supportedLocales.first.languageCode);

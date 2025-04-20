@@ -2,11 +2,11 @@ name: Flutter CI/CD
 
 on:
   push:
-    branches: [ main, develop ]
+    branches: [main, develop]
     paths:
       - 'user_app/**'
   pull_request:
-    branches: [ main, develop ]
+    branches: [main, develop]
     paths:
       - 'user_app/**'
   workflow_dispatch:
@@ -33,14 +33,30 @@ jobs:
       - name: تثبيت التبعيات
         run: flutter pub get
 
+      - name: توليد ملفات الكود
+        run: flutter pub run build_runner build --delete-conflicting-outputs
+
       - name: تحليل الكود
         run: flutter analyze
 
-      - name: تشغيل اختبارات الوحدة
-        run: flutter test
+      - name: تشغيل اختبارات الوحدة مع التغطية
+        run: flutter test --coverage
 
-      - name: توليد ملفات الكود
-        run: flutter pub run build_runner build --delete-conflicting-outputs
+      - name: إنشاء تقرير التغطية بصيغة LCOV
+        run: |
+          flutter pub global activate coverage
+          flutter pub global run coverage:format_coverage \
+            --lcov --in=coverage --out=coverage/lcov.info \
+            --packages=.packages --report-on=lib
+
+      - name: تحميل تقرير التغطية إلى Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          file: user_app/coverage/lcov.info
+          fail_ci_if_error: false
+
+      - name: تشغيل اختبارات التكامل
+        run: flutter test integration_test
 
   build_android:
     name: بناء تطبيق Android
@@ -73,24 +89,27 @@ jobs:
       - name: توليد ملفات الكود
         run: flutter pub run build_runner build --delete-conflicting-outputs
 
-      - name: بناء APK
+      - name: بناء APK للتصحيح
+        run: flutter build apk --debug
+
+      - name: بناء APK للإصدار
         run: flutter build apk --release
 
-      - name: بناء App Bundle
+      - name: بناء App Bundle للإصدار
         run: flutter build appbundle --release
 
       - name: أرشفة APK
         uses: actions/upload-artifact@v3
         with:
           name: release-apk
-          path: user_app/build/app/outputs/flutter-apk/app-release.apk
+          path: build/app/outputs/flutter-apk/app-release.apk
           retention-days: 7
 
       - name: أرشفة App Bundle
         uses: actions/upload-artifact@v3
         with:
-          name: release-bundle
-          path: user_app/build/app/outputs/bundle/release/app-release.aab
+          name: release-aab
+          path: build/app/outputs/bundle/release/app-release.aab
           retention-days: 7
 
   build_ios:
@@ -118,11 +137,23 @@ jobs:
       - name: توليد ملفات الكود
         run: flutter pub run build_runner build --delete-conflicting-outputs
 
-      - name: بناء iOS
-        run: flutter build ios --release --no-codesign
+      - name: بناء iOS (بدون توقيع)
+        run: |
+          flutter build ios --release --no-codesign
+          cd build/ios/iphoneos
+          mkdir -p Payload
+          cp -r Runner.app Payload
+          zip -r app-release.ipa Payload
+
+      - name: أرشفة IPA
+        uses: actions/upload-artifact@v3
+        with:
+          name: unsigned-ipa
+          path: build/ios/iphoneos/app-release.ipa
+          retention-days: 7
 
   deploy_firebase:
-    name: نشر التطبيق على Firebase App Distribution
+    name: نشر على Firebase App Distribution
     needs: build_android
     if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
     runs-on: ubuntu-latest
@@ -147,39 +178,53 @@ jobs:
           releaseNotes: |
             تم النشر تلقائياً من خلال GitHub Actions
             الفرع: ${{ github.ref_name }}
-            الإصدار: ${{ github.run_number }}
+            الالتزام: ${{ github.sha }}
+            #${{ github.run_number }}
 
-  report_coverage:
-    name: إنشاء تقرير تغطية الاختبارات
-    needs: analyze_and_test
+  notify_slack:
+    name: إرسال إشعار إلى Slack
+    needs: [build_android, build_ios]
+    if: always()
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: user_app
+
+    steps:
+      - name: إرسال إشعار إلى Slack
+        uses: 8398a7/action-slack@v3
+        if: always()
+        with:
+          status: ${{ job.status }}
+          fields: repo,message,commit,author,action,eventName,ref,workflow,job,took
+          mention: 'here'
+          if_mention: failure
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+  crashlytics_upload:
+    name: رفع رموز التصحيح إلى Crashlytics
+    needs: build_android
+    runs-on: ubuntu-latest
 
     steps:
       - name: استنساخ المستودع
         uses: actions/checkout@v3
 
-      - name: إعداد Flutter
-        uses: subosito/flutter-action@v2
+      - name: تنزيل APK
+        uses: actions/download-artifact@v3
         with:
-          flutter-version: '3.19.0'
-          channel: 'stable'
-          cache: true
+          name: release-apk
+          path: apk
 
-      - name: تثبيت التبعيات
+      - name: إعداد Firebase CLI
+        run: npm install -g firebase-tools
+
+      - name: استخراج رموز التصحيح
         run: |
-          flutter pub get
-          flutter pub global activate coverage
+          unzip -q apk/app-release.apk -d apk_contents
+          ls -la apk_contents
 
-      - name: إنشاء تقرير التغطية
+      - name: رفع رموز التصحيح إلى Crashlytics
         run: |
-          flutter test --coverage
-          flutter pub global run coverage:format_coverage --lcov --in=coverage --out=coverage/lcov.info --packages=.packages --report-on=lib
-
-      - name: نشر تقرير التغطية
-        uses: codecov/codecov-action@v3
-        with:
-          file: user_app/coverage/lcov.info
-          fail_ci_if_error: false
+          firebase crashlytics:symbols:upload \
+            --app=${{ secrets.FIREBASE_APP_ID }} apk_contents
+        env:
+          GOOGLE_APPLICATION_CREDENTIALS: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}

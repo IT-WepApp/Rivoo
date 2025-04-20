@@ -1,143 +1,177 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
+import 'package:user_app/core/auth/auth_guard.dart';
 import 'package:user_app/features/auth/presentation/screens/login_screen.dart';
 import 'package:user_app/features/auth/presentation/screens/register_screen.dart';
-import 'package:user_app/features/cart/presentation/screens/cart_screen.dart';
-import 'package:user_app/features/favorites/presentation/screens/favorites_screen.dart';
-import 'package:user_app/features/home/presentation/home_screen.dart';
-import 'package:user_app/features/notifications/presentation/screens/notifications_screen.dart';
-import 'package:user_app/features/orders/presentation/screens/order_details_screen.dart';
-import 'package:user_app/features/orders/presentation/screens/orders_screen.dart';
+import 'package:user_app/features/home/presentation/screens/home_screen.dart';
 import 'package:user_app/features/payment/presentation/screens/payment_screen.dart';
 import 'package:user_app/features/payment/presentation/screens/payment_result_screen.dart';
-import 'package:user_app/features/products/presentation/screens/product_details_screen.dart';
+import 'package:user_app/features/product_details/presentation/screens/product_details_screen.dart';
+import 'package:user_app/features/cart/presentation/screens/cart_screen.dart';
 import 'package:user_app/features/profile/presentation/screens/profile_screen.dart';
-import 'package:user_app/features/splash/presentation/splash_screen.dart';
-import 'package:user_app/features/store/presentation/store_screen.dart';
+import 'package:user_app/features/settings/presentation/screens/settings_screen.dart';
+import 'package:user_app/features/support/presentation/screens/support_tickets_screen.dart';
+import 'package:user_app/features/support/presentation/screens/create_ticket_screen.dart';
+import 'package:user_app/features/support/presentation/screens/ticket_details_screen.dart';
+import 'package:user_app/features/order_tracking/presentation/pages/order_tracking_page.dart';
+import 'package:user_app/features/ratings/presentation/screens/product_reviews_screen.dart';
+import 'package:user_app/features/ratings/presentation/screens/add_review_screen.dart';
+import 'package:user_app/features/auth/presentation/screens/unauthorized_screen.dart';
 
-// مزود للمسارات
-final routerProvider = Provider<GoRouter>((ref) {
-  return GoRouter(
-    initialLocation: '/',
-    routes: [
-      // شاشة البداية
-      GoRoute(
-        path: '/',
-        builder: (context, state) => const SplashScreen(),
-      ),
-      
-      // المصادقة
-      GoRoute(
-        path: '/login',
-        builder: (context, state) => const LoginScreen(),
-      ),
-      GoRoute(
-        path: '/register',
-        builder: (context, state) => const RegisterScreen(),
-      ),
-      
-      // الشاشة الرئيسية
-      GoRoute(
-        path: '/home',
-        builder: (context, state) => const HomeScreen(),
-      ),
-      
-      // المتجر
-      GoRoute(
-        path: '/store/:id',
-        builder: (context, state) {
-          final storeId = state.pathParameters['id']!;
-          return StoreScreen(storeId: storeId);
-        },
-      ),
-      
-      // تفاصيل المنتج
-      GoRoute(
-        path: '/product/:id',
-        builder: (context, state) {
-          final productId = state.pathParameters['id']!;
-          return ProductDetailsScreen(productId: productId);
-        },
-      ),
-      
-      // سلة التسوق
-      GoRoute(
-        path: '/cart',
-        builder: (context, state) => const CartScreen(),
-      ),
-      
-      // المفضلة
-      GoRoute(
-        path: '/favorites',
-        builder: (context, state) => const FavoritesScreen(),
-      ),
-      
-      // الإشعارات
-      GoRoute(
-        path: '/notifications',
-        builder: (context, state) => const NotificationsScreen(),
-      ),
-      
-      // الملف الشخصي
-      GoRoute(
-        path: '/profile',
-        builder: (context, state) => const ProfileScreen(),
-      ),
-      
-      // الطلبات
-      GoRoute(
-        path: '/orders',
-        builder: (context, state) => const OrdersScreen(),
-      ),
-      GoRoute(
-        path: '/order/:id',
-        builder: (context, state) {
-          final orderId = state.pathParameters['id']!;
-          return OrderDetailsScreen(orderId: orderId);
-        },
-      ),
-      
-      // الدفع
-      GoRoute(
-        path: '/payment',
-        builder: (context, state) {
-          final amount = double.parse(state.queryParameters['amount'] ?? '0');
-          final currency = state.queryParameters['currency'] ?? 'USD';
-          final orderId = state.queryParameters['orderId'] ?? '';
-          
-          return PaymentScreen(
-            amount: amount,
-            currency: currency,
-            orderId: orderId,
-          );
-        },
-      ),
-      GoRoute(
-        path: '/payment-result',
-        builder: (context, state) {
-          final isSuccess = state.queryParameters['success'] == 'true';
-          final orderId = state.queryParameters['orderId'] ?? '';
-          final amount = double.parse(state.queryParameters['amount'] ?? '0');
-          final currency = state.queryParameters['currency'] ?? 'USD';
-          final errorMessage = state.queryParameters['error'];
-          
-          return PaymentResultScreen(
-            isSuccess: isSuccess,
-            orderId: orderId,
-            amount: amount,
-            currency: currency,
-            errorMessage: errorMessage,
-          );
-        },
-      ),
-    ],
-    // إعادة توجيه المستخدم غير المصادق إلى صفحة تسجيل الدخول
-    redirect: (context, state) {
-      // يمكن إضافة منطق إعادة التوجيه هنا
-      return null;
-    },
-    // تكوين خيارات التنقل
-    debugLogDiagnostics: true,
-  );
-});
+/// مزود مسارات التطبيق
+final routerProvider = Provider<AppRouter>((ref) => AppRouter(ref));
+
+/// موجه التطبيق
+/// يتحكم في تسجيل وإنشاء المسارات في التطبيق
+class AppRouter {
+  final ProviderRef _ref;
+  
+  AppRouter(this._ref);
+  
+  /// إنشاء مسارات التطبيق
+  Route<dynamic> onGenerateRoute(RouteSettings settings) {
+    switch (settings.name) {
+      case '/':
+        return MaterialPageRoute(
+          builder: (context) => const HomeScreen(),
+          settings: settings,
+        );
+        
+      case '/login':
+        return MaterialPageRoute(
+          builder: (context) => const LoginScreen(),
+          settings: settings,
+        );
+        
+      case '/register':
+        return MaterialPageRoute(
+          builder: (context) => const RegisterScreen(),
+          settings: settings,
+        );
+        
+      case '/unauthorized':
+        return MaterialPageRoute(
+          builder: (context) => const UnauthorizedScreen(),
+          settings: settings,
+        );
+        
+      case '/product':
+        return MaterialPageRoute(
+          builder: (context) => ProductDetailsScreen(
+            productId: (settings.arguments as Map<String, dynamic>)['productId'] as String,
+          ),
+          settings: settings,
+        );
+        
+      case '/cart':
+        return AuthGuardRoute(
+          builder: (context) => const CartScreen(),
+          settings: settings,
+          requiredRoles: ['customer', 'admin'],
+        );
+        
+      case '/profile':
+        return AuthGuardRoute(
+          builder: (context) => const ProfileScreen(),
+          settings: settings,
+        );
+        
+      case '/settings':
+        return AuthGuardRoute(
+          builder: (context) => const SettingsScreen(),
+          settings: settings,
+        );
+        
+      case '/payment':
+        return AuthGuardRoute(
+          builder: (context) {
+            final args = settings.arguments as Map<String, dynamic>;
+            return PaymentScreen(
+              amount: args['amount'] as int,
+              currency: args['currency'] as String,
+              orderId: args['orderId'] as String,
+            );
+          },
+          settings: settings,
+          requiredRoles: ['customer', 'admin'],
+        );
+        
+      case '/payment/result':
+        return AuthGuardRoute(
+          builder: (context) {
+            final args = settings.arguments as Map<String, dynamic>;
+            return PaymentResultScreen(
+              orderId: args['orderId'] as String,
+              amount: args['amount'] as int,
+              currency: args['currency'] as String,
+            );
+          },
+          settings: settings,
+          requiredRoles: ['customer', 'admin'],
+        );
+        
+      case '/orders':
+        return AuthGuardRoute(
+          builder: (context) => const OrderTrackingPage(),
+          settings: settings,
+          requiredRoles: ['customer', 'admin'],
+        );
+        
+      case '/order':
+        return AuthGuardRoute(
+          builder: (context) => OrderTrackingPage(
+            orderId: (settings.arguments as Map<String, dynamic>)['orderId'] as String,
+          ),
+          settings: settings,
+          requiredRoles: ['customer', 'admin'],
+        );
+        
+      case '/reviews':
+        return MaterialPageRoute(
+          builder: (context) => ProductReviewsScreen(
+            productId: (settings.arguments as Map<String, dynamic>)['productId'] as String,
+          ),
+          settings: settings,
+        );
+        
+      case '/reviews/add':
+        return AuthGuardRoute(
+          builder: (context) => AddReviewScreen(
+            productId: (settings.arguments as Map<String, dynamic>)['productId'] as String,
+          ),
+          settings: settings,
+          requiredRoles: ['customer', 'admin'],
+        );
+        
+      case '/support':
+        return AuthGuardRoute(
+          builder: (context) => const SupportTicketsScreen(),
+          settings: settings,
+        );
+        
+      case '/support/create':
+        return AuthGuardRoute(
+          builder: (context) => const CreateTicketScreen(),
+          settings: settings,
+        );
+        
+      case '/support/ticket':
+        return AuthGuardRoute(
+          builder: (context) => TicketDetailsScreen(
+            ticketId: (settings.arguments as Map<String, dynamic>)['ticketId'] as String,
+          ),
+          settings: settings,
+        );
+        
+      default:
+        return MaterialPageRoute(
+          builder: (context) => const Scaffold(
+            body: Center(
+              child: Text('صفحة غير موجودة'),
+            ),
+          ),
+          settings: settings,
+        );
+    }
+  }
+}
