@@ -29,9 +29,15 @@ class AdminLoginPage extends ConsumerWidget {
                       // Example: Call signIn with dummy credentials
                       await authNotifier.signIn(
                           'admin@example.com', 'password');
+                      // إضافة فحص mounted قبل استخدام context بعد await
+                      if (!context.mounted) return;
+                      // يمكن استخدام context هنا بأمان
                     }
                   : () async {
                       await authNotifier.signOut();
+                      // إضافة فحص mounted قبل استخدام context بعد await
+                      if (!context.mounted) return;
+                      // يمكن استخدام context هنا بأمان
                     },
               child: Text(authState == null ? 'Sign In' : 'Sign Out'),
             ),

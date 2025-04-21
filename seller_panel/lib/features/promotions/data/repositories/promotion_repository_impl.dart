@@ -18,9 +18,9 @@ class PromotionRepositoryImpl implements PromotionRepository {
       final promotions = await dataSource.getPromotions(sellerId);
       return Right(promotions);
     } on ServerException {
-      return Left(ServerFailure());
+      return const Left(ServerFailure());
     } catch (e) {
-      return Left(UnexpectedFailure());
+      return const Left(UnexpectedFailure());
     }
   }
 
@@ -31,9 +31,9 @@ class PromotionRepositoryImpl implements PromotionRepository {
       final promotion = await dataSource.getPromotionDetails(promotionId);
       return Right(promotion);
     } on ServerException {
-      return Left(ServerFailure());
+      return const Left(ServerFailure());
     } catch (e) {
-      return Left(UnexpectedFailure());
+      return const Left(UnexpectedFailure());
     }
   }
 
@@ -44,9 +44,9 @@ class PromotionRepositoryImpl implements PromotionRepository {
       final createdPromotion = await dataSource.createPromotion(promotion);
       return Right(createdPromotion);
     } on ServerException {
-      return Left(ServerFailure());
+      return const Left(ServerFailure());
     } catch (e) {
-      return Left(UnexpectedFailure());
+      return const Left(UnexpectedFailure());
     }
   }
 
@@ -57,9 +57,9 @@ class PromotionRepositoryImpl implements PromotionRepository {
       final updatedPromotion = await dataSource.updatePromotion(promotion);
       return Right(updatedPromotion);
     } on ServerException {
-      return Left(ServerFailure());
+      return const Left(ServerFailure());
     } catch (e) {
-      return Left(UnexpectedFailure());
+      return const Left(UnexpectedFailure());
     }
   }
 
@@ -69,9 +69,9 @@ class PromotionRepositoryImpl implements PromotionRepository {
       final result = await dataSource.deletePromotion(promotionId);
       return Right(result);
     } on ServerException {
-      return Left(ServerFailure());
+      return const Left(ServerFailure());
     } catch (e) {
-      return Left(UnexpectedFailure());
+      return const Left(UnexpectedFailure());
     }
   }
 
@@ -83,9 +83,9 @@ class PromotionRepositoryImpl implements PromotionRepository {
           await dataSource.togglePromotionStatus(promotionId, isActive);
       return Right(updatedPromotion);
     } on ServerException {
-      return Left(ServerFailure());
+      return const Left(ServerFailure());
     } catch (e) {
-      return Left(UnexpectedFailure());
+      return const Left(UnexpectedFailure());
     }
   }
 }

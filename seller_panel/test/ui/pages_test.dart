@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mockito/mockito.dart';
-import '../../../features/dashboard/presentation/pages/seller_dashboard_page.dart';
-import '../../../features/products/presentation/pages/products_management_page.dart';
-import '../../../features/orders/presentation/pages/orders_management_page.dart';
-import '../../../features/statistics/presentation/pages/statistics_page.dart';
-import '../../../core/services/auth_service.dart';
-import '../../../core/services/product_service.dart';
-import '../../../core/services/order_service.dart';
+import '../../../lib/features/dashboard/presentation/pages/seller_dashboard_page.dart';
+import '../../../lib/features/products/presentation/pages/products_management_page.dart';
+import '../../../lib/features/orders/presentation/pages/orders_management_page.dart';
+import '../../../lib/features/statistics/presentation/pages/statistics_page.dart';
+import '../../../lib/core/services/auth_service.dart';
+import '../../../lib/core/services/product_service.dart';
+import '../../../lib/core/services/order_service.dart';
 
 /// اختبارات واجهة المستخدم للصفحات الرئيسية في تطبيق البائع
 class UITests {
@@ -27,7 +27,7 @@ class UITests {
               'email': 'seller@rivosy.com',
             });
 
-        when(mockOrderService.getRecentOrders()).thenAnswer((_) async => [
+        when(mockOrderService.getSellerOrders()).thenAnswer((_) async => [
               {
                 'id': '1',
                 'customerName': 'عميل 1',
@@ -44,7 +44,7 @@ class UITests {
               },
             ]);
 
-        when(mockOrderService.getSellerSummary()).thenAnswer((_) async => {
+        when(mockOrderService.getOrderStatistics()).thenAnswer((_) async => {
               'totalSales': 5000.0,
               'totalOrders': 25,
               'pendingOrders': 5,
@@ -99,7 +99,7 @@ class UITests {
         // Arrange
         final mockProductService = MockProductService();
 
-        when(mockProductService.getProducts()).thenAnswer((_) async => [
+        when(mockProductService.getSellerProducts()).thenAnswer((_) async => [
               {
                 'id': '1',
                 'name': 'منتج 1',
@@ -107,7 +107,7 @@ class UITests {
                 'description': 'وصف المنتج 1',
                 'category': 'فئة 1',
                 'imageUrl': 'https://example.com/image1.jpg',
-                'stock': 10,
+                'stockQuantity': 10,
               },
               {
                 'id': '2',
@@ -116,11 +116,11 @@ class UITests {
                 'description': 'وصف المنتج 2',
                 'category': 'فئة 2',
                 'imageUrl': 'https://example.com/image2.jpg',
-                'stock': 20,
+                'stockQuantity': 20,
               },
             ]);
 
-        when(mockProductService.getCategories()).thenAnswer((_) async => [
+        when(mockProductService.getProductCategories()).thenAnswer((_) async => [
               'فئة 1',
               'فئة 2',
               'فئة 3',
@@ -166,7 +166,7 @@ class UITests {
         // Arrange
         final mockOrderService = MockOrderService();
 
-        when(mockOrderService.getOrders()).thenAnswer((_) async => [
+        when(mockOrderService.getSellerOrders()).thenAnswer((_) async => [
               {
                 'id': '1',
                 'customerId': 'customer1',
@@ -244,7 +244,7 @@ class UITests {
         // Arrange
         final mockOrderService = MockOrderService();
 
-        when(mockOrderService.getSellerSalesStatistics(timeRange: 'week'))
+        when(mockOrderService.getSellerSalesStatistics())
             .thenAnswer((_) async => {
                   'totalSales': 5000.0,
                   'totalOrders': 25,
@@ -267,7 +267,7 @@ class UITests {
                   ],
                 });
 
-        when(mockOrderService.getSellerProductsStatistics(timeRange: 'week'))
+        when(mockOrderService.getSellerProductsStatistics())
             .thenAnswer((_) async => {
                   'totalProducts': 48,
                   'outOfStockProducts': 3,
@@ -297,7 +297,7 @@ class UITests {
                   ],
                 });
 
-        when(mockOrderService.getSellerCustomersStatistics(timeRange: 'week'))
+        when(mockOrderService.getSellerCustomersStatistics())
             .thenAnswer((_) async => {
                   'totalCustomers': 35,
                   'newCustomers': 8,

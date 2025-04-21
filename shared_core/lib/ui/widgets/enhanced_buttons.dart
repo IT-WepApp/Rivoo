@@ -199,19 +199,19 @@ class _EnhancedButtonState extends State<_EnhancedButton> {
   Widget build(BuildContext context) {
     final isDisabled = widget.onPressed == null;
     final effectiveBackgroundColor = isDisabled
-        ? widget.backgroundColor.withOpacity(0.6)
+        ? widget.backgroundColor.withValues(alpha: 153) // 0.6 * 255 = 153
         : _isPressed
-            ? widget.backgroundColor.withOpacity(0.8)
+            ? widget.backgroundColor.withValues(alpha: 204) // 0.8 * 255 = 204
             : _isHovered
-                ? widget.backgroundColor.withOpacity(0.9)
+                ? widget.backgroundColor.withValues(alpha: 230) // 0.9 * 255 = 230
                 : widget.backgroundColor;
 
     final effectiveTextColor =
-        isDisabled ? widget.textColor.withOpacity(0.6) : widget.textColor;
+        isDisabled ? widget.textColor.withValues(alpha: 153) : widget.textColor; // 0.6 * 255 = 153
 
     final effectiveBorderColor = widget.borderColor != null
         ? isDisabled
-            ? widget.borderColor!.withOpacity(0.6)
+            ? widget.borderColor!.withValues(alpha: 153) // 0.6 * 255 = 153
             : widget.borderColor
         : null;
 
@@ -249,7 +249,7 @@ class _EnhancedButtonState extends State<_EnhancedButton> {
               boxShadow: widget.elevation > 0 && !isDisabled
                   ? [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.2),
+                        color: Colors.black.withValues(alpha: 51), // 0.2 * 255 = 51
                         blurRadius: effectiveElevation * 2,
                         offset: Offset(0, effectiveElevation),
                       ),
@@ -261,8 +261,8 @@ class _EnhancedButtonState extends State<_EnhancedButton> {
               child: InkWell(
                 onTap: widget.onPressed,
                 borderRadius: BorderRadius.circular(widget.borderRadius),
-                splashColor: widget.textColor.withOpacity(0.1),
-                highlightColor: widget.textColor.withOpacity(0.05),
+                splashColor: widget.textColor.withValues(alpha: 26), // 0.1 * 255 = 26
+                highlightColor: widget.textColor.withValues(alpha: 13), // 0.05 * 255 = 13
                 child: Padding(
                   padding: widget.padding,
                   child: Row(
@@ -343,15 +343,15 @@ class _EnhancedIconButtonState extends State<_EnhancedIconButton> {
   Widget build(BuildContext context) {
     final isDisabled = widget.onPressed == null;
     final effectiveBackgroundColor = isDisabled
-        ? widget.backgroundColor.withOpacity(0.6)
+        ? widget.backgroundColor.withValues(alpha: 153) // 0.6 * 255 = 153
         : _isPressed
-            ? widget.backgroundColor.withOpacity(0.8)
+            ? widget.backgroundColor.withValues(alpha: 204) // 0.8 * 255 = 204
             : _isHovered
-                ? widget.backgroundColor.withOpacity(0.9)
+                ? widget.backgroundColor.withValues(alpha: 230) // 0.9 * 255 = 230
                 : widget.backgroundColor;
 
     final effectiveIconColor =
-        isDisabled ? widget.iconColor.withOpacity(0.6) : widget.iconColor;
+        isDisabled ? widget.iconColor.withValues(alpha: 153) : widget.iconColor; // 0.6 * 255 = 153
 
     final effectiveElevation = isDisabled
         ? 0.0
@@ -381,7 +381,7 @@ class _EnhancedIconButtonState extends State<_EnhancedIconButton> {
               boxShadow: widget.elevation > 0 && !isDisabled
                   ? [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.2),
+                        color: Colors.black.withValues(alpha: 51), // 0.2 * 255 = 51
                         blurRadius: effectiveElevation * 2,
                         offset: Offset(0, effectiveElevation),
                       ),
@@ -393,8 +393,8 @@ class _EnhancedIconButtonState extends State<_EnhancedIconButton> {
               child: InkWell(
                 onTap: widget.onPressed,
                 borderRadius: BorderRadius.circular(widget.size / 2),
-                splashColor: widget.iconColor.withOpacity(0.1),
-                highlightColor: widget.iconColor.withOpacity(0.05),
+                splashColor: widget.iconColor.withValues(alpha: 26), // 0.1 * 255 = 26
+                highlightColor: widget.iconColor.withValues(alpha: 13), // 0.05 * 255 = 13
                 child: Center(
                   child: widget.isLoading
                       ? SizedBox(

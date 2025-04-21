@@ -9,18 +9,19 @@ class ProductCategoriesPage extends ConsumerStatefulWidget {
   const ProductCategoriesPage({Key? key}) : super(key: key);
 
   @override
-  ConsumerState<ProductCategoriesPage> createState() => _ProductCategoriesPageState();
+  ConsumerState<ProductCategoriesPage> createState() =>
+      _ProductCategoriesPageState();
 }
 
 class _ProductCategoriesPageState extends ConsumerState<ProductCategoriesPage> {
   final _formKey = GlobalKey<FormState>();
   final _categoryController = TextEditingController();
   final _searchController = TextEditingController();
-  
+
   bool _isLoading = true;
   bool _isSubmitting = false;
   String _errorMessage = '';
-  
+
   List<String> _categories = [];
   List<Map<String, dynamic>> _products = [];
   String? _selectedCategory;
@@ -48,14 +49,14 @@ class _ProductCategoriesPageState extends ConsumerState<ProductCategoriesPage> {
     try {
       final productService = ref.read(productServiceProvider);
       final products = await productService.getSellerProducts();
-      
+
       // استخراج الفئات الفريدة
       final uniqueCategories = <String>{};
       for (final product in products) {
         final category = product['category'] as String? ?? 'أخرى';
         uniqueCategories.add(category);
       }
-      
+
       setState(() {
         _products = products;
         _categories = uniqueCategories.toList()..sort();
@@ -73,9 +74,9 @@ class _ProductCategoriesPageState extends ConsumerState<ProductCategoriesPage> {
     if (!_formKey.currentState!.validate()) {
       return;
     }
-    
+
     final newCategory = _categoryController.text.trim();
-    
+
     // التحقق من عدم وجود الفئة مسبقاً
     if (_categories.contains(newCategory)) {
       setState(() {
@@ -83,12 +84,12 @@ class _ProductCategoriesPageState extends ConsumerState<ProductCategoriesPage> {
       });
       return;
     }
-    
+
     setState(() {
       _isSubmitting = true;
       _errorMessage = '';
     });
-    
+
     try {
       // إضافة الفئة إلى القائمة المحلية
       setState(() {
@@ -98,7 +99,7 @@ class _ProductCategoriesPageState extends ConsumerState<ProductCategoriesPage> {
         _isSubmitting = false;
         _isEditing = false;
       });
-      
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -120,45 +121,46 @@ class _ProductCategoriesPageState extends ConsumerState<ProductCategoriesPage> {
     if (!_formKey.currentState!.validate() || _selectedCategory == null) {
       return;
     }
-    
+
     final newCategoryName = _categoryController.text.trim();
     final oldCategoryName = _selectedCategory!;
-    
+
     // التحقق من عدم وجود الفئة مسبقاً
-    if (newCategoryName != oldCategoryName && _categories.contains(newCategoryName)) {
+    if (newCategoryName != oldCategoryName &&
+        _categories.contains(newCategoryName)) {
       setState(() {
         _errorMessage = 'الفئة موجودة بالفعل';
       });
       return;
     }
-    
+
     setState(() {
       _isSubmitting = true;
       _errorMessage = '';
     });
-    
+
     try {
       final productService = ref.read(productServiceProvider);
-      
+
       // تحديث الفئة في جميع المنتجات التي تستخدمها
       final productsToUpdate = _products.where((product) {
         final productCategory = product['category'] as String?;
         return productCategory != null && productCategory == oldCategoryName;
       }).toList();
-      
+
       for (final product in productsToUpdate) {
         await productService.updateProduct(
           product['id'] as String,
           {'category': newCategoryName},
         );
       }
-      
+
       // تحديث القائمة المحلية
       setState(() {
         _categories.remove(oldCategoryName);
         _categories.add(newCategoryName);
         _categories.sort();
-        
+
         // تحديث المنتجات في القائمة المحلية
         for (final product in _products) {
           final productCategory = product['category'] as String?;
@@ -166,17 +168,18 @@ class _ProductCategoriesPageState extends ConsumerState<ProductCategoriesPage> {
             product['category'] = newCategoryName;
           }
         }
-        
+
         _categoryController.clear();
         _selectedCategory = null;
         _isSubmitting = false;
         _isEditing = false;
       });
-      
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('تم تحديث الفئة من "$oldCategoryName" إلى "$newCategoryName" بنجاح'),
+            content: Text(
+                'تم تحديث الفئة من "$oldCategoryName" إلى "$newCategoryName" بنجاح'),
             backgroundColor: AppColors.success,
             behavior: SnackBarBehavior.floating,
           ),
@@ -196,18 +199,19 @@ class _ProductCategoriesPageState extends ConsumerState<ProductCategoriesPage> {
       final productCategory = product['category'] as String?;
       return productCategory != null && productCategory == category;
     }).toList();
-    
+
     if (productsUsingCategory.isNotEmpty) {
       if (mounted) {
         final confirmed = await AppWidgets.showConfirmDialog(
           context: context,
           title: 'تحذير',
-          message: 'هناك ${productsUsingCategory.length} منتج يستخدم هذه الفئة. هل تريد تغيير فئة هذه المنتجات إلى "أخرى"؟',
+          message:
+              'هناك ${productsUsingCategory.length} منتج يستخدم هذه الفئة. هل تريد تغيير فئة هذه المنتجات إلى "أخرى"؟',
           confirmText: 'نعم، تغيير الفئة',
           cancelText: 'إلغاء',
           isDangerous: true,
         );
-        
+
         if (!confirmed) {
           return;
         }
@@ -224,7 +228,7 @@ class _ProductCategoriesPageState extends ConsumerState<ProductCategoriesPage> {
           cancelText: 'إلغاء',
           isDangerous: true,
         );
-        
+
         if (!confirmed) {
           return;
         }
@@ -232,15 +236,15 @@ class _ProductCategoriesPageState extends ConsumerState<ProductCategoriesPage> {
         return;
       }
     }
-    
+
     setState(() {
       _isSubmitting = true;
       _errorMessage = '';
     });
-    
+
     try {
       final productService = ref.read(productServiceProvider);
-      
+
       // تحديث الفئة في جميع المنتجات التي تستخدمها
       for (final product in productsUsingCategory) {
         await productService.updateProduct(
@@ -248,11 +252,11 @@ class _ProductCategoriesPageState extends ConsumerState<ProductCategoriesPage> {
           {'category': 'أخرى'},
         );
       }
-      
+
       // تحديث القائمة المحلية
       setState(() {
         _categories.remove(category);
-        
+
         // تحديث المنتجات في القائمة المحلية
         for (final product in _products) {
           final productCategory = product['category'] as String?;
@@ -260,10 +264,10 @@ class _ProductCategoriesPageState extends ConsumerState<ProductCategoriesPage> {
             product['category'] = 'أخرى';
           }
         }
-        
+
         _isSubmitting = false;
       });
-      
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -303,16 +307,16 @@ class _ProductCategoriesPageState extends ConsumerState<ProductCategoriesPage> {
     if (query.isEmpty) {
       return _categories;
     }
-    
-    return _categories.where((category) => 
-      category.toLowerCase().contains(query)
-    ).toList();
+
+    return _categories
+        .where((category) => category.toLowerCase().contains(query))
+        .toList();
   }
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('إدارة فئات المنتجات'),
@@ -334,7 +338,7 @@ class _ProductCategoriesPageState extends ConsumerState<ProductCategoriesPage> {
                   children: [
                     // نموذج إضافة/تعديل الفئة
                     _buildCategoryForm(theme),
-                    
+
                     // قائمة الفئات
                     Expanded(
                       child: _buildCategoriesList(theme),
@@ -358,7 +362,7 @@ class _ProductCategoriesPageState extends ConsumerState<ProductCategoriesPage> {
               style: theme.textTheme.titleLarge,
             ),
             const SizedBox(height: 16),
-            
+
             // حقل إدخال اسم الفئة
             TextFormField(
               controller: _categoryController,
@@ -381,7 +385,7 @@ class _ProductCategoriesPageState extends ConsumerState<ProductCategoriesPage> {
                 return null;
               },
             ),
-            
+
             // رسالة الخطأ
             if (_errorMessage.isNotEmpty)
               Padding(
@@ -391,9 +395,9 @@ class _ProductCategoriesPageState extends ConsumerState<ProductCategoriesPage> {
                   style: const TextStyle(color: AppColors.error),
                 ),
               ),
-            
+
             const SizedBox(height: 16),
-            
+
             // زر الإضافة/التعديل
             SizedBox(
               width: double.infinity,
@@ -427,14 +431,15 @@ class _ProductCategoriesPageState extends ConsumerState<ProductCategoriesPage> {
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
               ),
-              contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+              contentPadding:
+                  const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
             ),
             onChanged: (value) {
               setState(() {});
             },
           ),
         ),
-        
+
         // قائمة الفئات
         Expanded(
           child: filteredCategories.isEmpty
@@ -464,9 +469,10 @@ class _ProductCategoriesPageState extends ConsumerState<ProductCategoriesPage> {
                     final category = filteredCategories[index];
                     final productCount = _products.where((product) {
                       final productCategory = product['category'] as String?;
-                      return productCategory != null && productCategory == category;
+                      return productCategory != null &&
+                          productCategory == category;
                     }).length;
-                    
+
                     return Card(
                       margin: const EdgeInsets.only(bottom: 8),
                       child: ListTile(
@@ -482,7 +488,8 @@ class _ProductCategoriesPageState extends ConsumerState<ProductCategoriesPage> {
                               tooltip: 'تعديل',
                             ),
                             IconButton(
-                              icon: const Icon(Icons.delete, color: AppColors.error),
+                              icon: const Icon(Icons.delete,
+                                  color: AppColors.error),
                               onPressed: () => _deleteCategory(category),
                               tooltip: 'حذف',
                             ),

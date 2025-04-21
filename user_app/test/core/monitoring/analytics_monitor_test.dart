@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
@@ -179,7 +180,7 @@ void main() {
   });
 }
 
-class MockRoute extends Mock implements Route<dynamic> {
+class MockRoute extends Mock implements Route {
   @override
   RouteSettings get settings => super.noSuchMethod(
         Invocation.getter(#settings),

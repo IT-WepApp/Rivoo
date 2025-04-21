@@ -14,7 +14,8 @@ import 'products_provider_test.mocks.dart';
   CollectionReference,
   QuerySnapshot,
   DocumentSnapshot,
-  Query
+  Query,
+  DocumentReference
 ])
 void main() {
   late MockFirebaseFirestore mockFirestore;

@@ -184,6 +184,37 @@ class ProductService {
     }).toList();
   }
 
+  // الحصول على فئات المنتجات
+  Future<List<String>> getProductCategories() async {
+    final authService = AuthService();
+    final sellerId = await authService.getCurrentUserId();
+
+    if (sellerId == null) {
+      throw Exception('المستخدم غير مسجل الدخول');
+    }
+
+    // الحصول على فئات المنتجات الفريدة للبائع
+    final snapshot = await _firestore
+        .collection(AppConstants.productsCollection)
+        .where('sellerId', isEqualTo: sellerId)
+        .get();
+
+    final Set<String> categories = {};
+    for (final doc in snapshot.docs) {
+      final category = doc.data()['category'] as String?;
+      if (category != null && category.isNotEmpty) {
+        categories.add(category);
+      }
+    }
+
+    // إضافة الفئات الافتراضية إذا كانت القائمة فارغة
+    if (categories.isEmpty) {
+      return ['أخرى', 'طعام', 'مشروبات', 'إلكترونيات', 'ملابس', 'أدوات منزلية'];
+    }
+
+    return categories.toList()..sort();
+  }
+
   // التحقق من صحة بيانات المنتج
   void _validateProductData(Map<String, dynamic> productData) {
     if (productData['name'] == null || productData['name'].toString().isEmpty) {
@@ -232,4 +263,10 @@ final productsByCategoryProvider =
         (ref, category) async {
   final productService = ref.watch(productServiceProvider);
   return await productService.getProductsByCategory(category);
+});
+
+// مزود فئات المنتجات
+final productCategoriesProvider = FutureProvider<List<String>>((ref) async {
+  final productService = ref.watch(productServiceProvider);
+  return await productService.getProductCategories();
 });

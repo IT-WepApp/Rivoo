@@ -219,7 +219,7 @@ class AppWidgets {
       ),
     );
   }
-  
+
   // حقل إدخال نص
   static Widget appTextField({
     required TextEditingController controller,
@@ -274,7 +274,7 @@ class AppWidgets {
       ),
     );
   }
-  
+
   // زر تطبيق
   static Widget appButton({
     required String text,
@@ -292,7 +292,8 @@ class AppWidgets {
         ? OutlinedButton.styleFrom(
             foregroundColor: textColor,
             side: BorderSide(color: backgroundColor ?? Colors.blue),
-            padding: padding ?? const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+            padding: padding ??
+                const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(borderRadius ?? 8),
             ),
@@ -300,7 +301,8 @@ class AppWidgets {
         : ElevatedButton.styleFrom(
             backgroundColor: backgroundColor,
             foregroundColor: textColor,
-            padding: padding ?? const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+            padding: padding ??
+                const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(borderRadius ?? 8),
             ),
@@ -349,7 +351,7 @@ class AppWidgets {
           )
         : button;
   }
-  
+
   // مؤشر التحميل
   static Widget loadingIndicator({
     String? message,
@@ -384,7 +386,7 @@ class AppWidgets {
       ),
     );
   }
-  
+
   // رسالة خطأ
   static Widget errorMessage({
     required String message,
@@ -423,7 +425,7 @@ class AppWidgets {
       ),
     );
   }
-  
+
   // بطاقة تطبيق
   static Widget appCard({
     required Widget child,
@@ -446,7 +448,7 @@ class AppWidgets {
         child: child,
       ),
     );
-    
+
     if (onTap != null) {
       return InkWell(
         onTap: onTap,
@@ -454,10 +456,10 @@ class AppWidgets {
         child: card,
       );
     }
-    
+
     return card;
   }
-  
+
   // شريط البحث
   static Widget searchBar({
     required TextEditingController controller,
@@ -486,20 +488,22 @@ class AppWidgets {
         decoration: InputDecoration(
           hintText: hintText,
           prefixIcon: prefixIcon ?? const Icon(Icons.search),
-          suffixIcon: suffixIcon ?? (controller.text.isNotEmpty
-              ? IconButton(
-                  icon: const Icon(Icons.clear),
-                  onPressed: () {
-                    controller.clear();
-                    onSearch('');
-                  },
-                )
-              : null),
+          suffixIcon: suffixIcon ??
+              (controller.text.isNotEmpty
+                  ? IconButton(
+                      icon: const Icon(Icons.clear),
+                      onPressed: () {
+                        controller.clear();
+                        onSearch('');
+                      },
+                    )
+                  : null),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(borderRadius ?? 8),
             borderSide: BorderSide.none,
           ),
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         ),
         onChanged: onSearch,
         textInputAction: TextInputAction.search,
@@ -507,7 +511,7 @@ class AppWidgets {
       ),
     );
   }
-  
+
   // عنصر قائمة الطلبات
   static Widget orderListItem({
     required String orderId,
@@ -522,7 +526,7 @@ class AppWidgets {
   }) {
     Color statusColor;
     String statusText;
-    
+
     switch (status.toLowerCase()) {
       case 'pending':
         statusColor = Colors.orange;
@@ -548,7 +552,7 @@ class AppWidgets {
         statusColor = Colors.grey;
         statusText = status;
     }
-    
+
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
       elevation: 2,
@@ -574,7 +578,8 @@ class AppWidgets {
                     ),
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
                       color: statusColor.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(12),
@@ -594,7 +599,8 @@ class AppWidgets {
               const Divider(),
               Row(
                 children: [
-                  const Icon(Icons.person_outline, size: 16, color: Colors.grey),
+                  const Icon(Icons.person_outline,
+                      size: 16, color: Colors.grey),
                   const SizedBox(width: 8),
                   Expanded(
                     child: Text(
@@ -607,7 +613,8 @@ class AppWidgets {
               const SizedBox(height: 4),
               Row(
                 children: [
-                  const Icon(Icons.calendar_today, size: 16, color: Colors.grey),
+                  const Icon(Icons.calendar_today,
+                      size: 16, color: Colors.grey),
                   const SizedBox(width: 8),
                   Text(
                     '${orderDate.day}/${orderDate.month}/${orderDate.year} - ${orderDate.hour}:${orderDate.minute.toString().padLeft(2, '0')}',
@@ -619,7 +626,8 @@ class AppWidgets {
                 const SizedBox(height: 4),
                 Row(
                   children: [
-                    const Icon(Icons.shopping_bag_outlined, size: 16, color: Colors.grey),
+                    const Icon(Icons.shopping_bag_outlined,
+                        size: 16, color: Colors.grey),
                     const SizedBox(width: 8),
                     Text(
                       '$itemCount ${itemCount == 1 ? 'منتج' : 'منتجات'}',
@@ -632,7 +640,8 @@ class AppWidgets {
                 const SizedBox(height: 4),
                 Row(
                   children: [
-                    const Icon(Icons.location_on_outlined, size: 16, color: Colors.grey),
+                    const Icon(Icons.location_on_outlined,
+                        size: 16, color: Colors.grey),
                     const SizedBox(width: 8),
                     Expanded(
                       child: Text(
@@ -649,7 +658,8 @@ class AppWidgets {
                 const SizedBox(height: 4),
                 Row(
                   children: [
-                    const Icon(Icons.payment_outlined, size: 16, color: Colors.grey),
+                    const Icon(Icons.payment_outlined,
+                        size: 16, color: Colors.grey),
                     const SizedBox(width: 8),
                     Text(
                       paymentMethod,

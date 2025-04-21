@@ -41,22 +41,21 @@ class SignOutEvent extends AuthEvent {}
 class CheckAuthStatusEvent extends AuthEvent {}
 
 // مزود للوصول إلى حالة المصادقة
-class AuthNotifier extends StateNotifier<AuthState> {
-  final SignInUseCase _signInUseCase;
-  final SignOutUseCase _signOutUseCase;
-  final GetCurrentUserUseCase _getCurrentUserUseCase;
-  final IsSignedInUseCase _isSignedInUseCase;
+class AuthNotifier extends Notifier<AuthState> {
+  late final SignInUseCase _signInUseCase;
+  late final SignOutUseCase _signOutUseCase;
+  late final GetCurrentUserUseCase _getCurrentUserUseCase;
+  late final IsSignedInUseCase _isSignedInUseCase;
 
-  AuthNotifier({
-    required SignInUseCase signInUseCase,
-    required SignOutUseCase signOutUseCase,
-    required GetCurrentUserUseCase getCurrentUserUseCase,
-    required IsSignedInUseCase isSignedInUseCase,
-  })  : _signInUseCase = signInUseCase,
-        _signOutUseCase = signOutUseCase,
-        _getCurrentUserUseCase = getCurrentUserUseCase,
-        _isSignedInUseCase = isSignedInUseCase,
-        super(AuthInitial());
+  @override
+  AuthState build() {
+    _signInUseCase = ref.read(signInUseCaseProvider);
+    _signOutUseCase = ref.read(signOutUseCaseProvider);
+    _getCurrentUserUseCase = ref.read(getCurrentUserUseCaseProvider);
+    _isSignedInUseCase = ref.read(isSignedInUseCaseProvider);
+    
+    return AuthInitial();
+  }
 
   Future<void> handleEvent(AuthEvent event) async {
     if (event is SignInEvent) {
@@ -72,7 +71,8 @@ class AuthNotifier extends StateNotifier<AuthState> {
     state = AuthLoading();
 
     try {
-      final user = await _signInUseCase.execute(email: event.email, password: event.password);
+      final user = await _signInUseCase.execute(
+          email: event.email, password: event.password);
       state = AuthAuthenticated(user);
     } catch (e) {
       state = AuthError(e.toString());
@@ -112,3 +112,12 @@ class AuthNotifier extends StateNotifier<AuthState> {
     }
   }
 }
+
+// تعريف مزودات لحالات الاستخدام
+final signInUseCaseProvider = Provider<SignInUseCase>((ref) => throw UnimplementedError());
+final signOutUseCaseProvider = Provider<SignOutUseCase>((ref) => throw UnimplementedError());
+final getCurrentUserUseCaseProvider = Provider<GetCurrentUserUseCase>((ref) => throw UnimplementedError());
+final isSignedInUseCaseProvider = Provider<IsSignedInUseCase>((ref) => throw UnimplementedError());
+
+// تعريف مزود AuthNotifier
+final authNotifierProvider = NotifierProvider<AuthNotifier, AuthState>(() => AuthNotifier());

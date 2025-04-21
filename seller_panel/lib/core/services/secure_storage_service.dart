@@ -20,7 +20,7 @@ abstract class SecureStorageService {
 
   /// الحصول على جميع القيم المخزنة
   Future<Map<String, String>> readAll();
-  
+
   /// طرق إضافية مطلوبة من قبل AuthService
   Future<void> storeUserId(String userId);
   Future<void> storeAuthToken(String token);
@@ -132,28 +132,28 @@ class SecureStorageServiceImpl implements SecureStorageService {
   Future<void> logout() async {
     await deleteAll();
   }
-  
+
   @override
   Future<void> storeUserId(String userId) async {
     await write(key: userIdKey, value: userId);
   }
-  
+
   @override
   Future<void> storeAuthToken(String token) async {
     await write(key: userTokenKey, value: token);
   }
-  
+
   @override
   Future<void> clearAuthData() async {
     await delete(key: userIdKey);
     await delete(key: userTokenKey);
   }
-  
+
   @override
   Future<String?> getUserId() async {
     return await read(key: userIdKey);
   }
-  
+
   @override
   Future<String?> getAuthToken() async {
     return await read(key: userTokenKey);

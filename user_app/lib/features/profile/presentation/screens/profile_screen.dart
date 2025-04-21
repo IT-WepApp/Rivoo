@@ -202,7 +202,7 @@ class ProfileScreen extends ConsumerWidget {
         horizontal: 16.0,
       ),
       color: isCompact
-          ? Theme.of(context).colorScheme.primary.withOpacity(0.1)
+          ? Theme.of(context).colorScheme.primary.withValues(alpha: 26) // 0.1 * 255 = 26
           : Colors.transparent,
       child: Column(
         children: [
@@ -236,7 +236,7 @@ class ProfileScreen extends ConsumerWidget {
             'ahmed@example.com',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color:
-                      Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                      Theme.of(context).colorScheme.onSurface.withValues(alpha: 179), // 0.7 * 255 = 179
                 ),
             textAlign: TextAlign.center,
           ),
@@ -347,7 +347,7 @@ class ProfileScreen extends ConsumerWidget {
                         color: Theme.of(context)
                             .colorScheme
                             .onSurface
-                            .withOpacity(0.7),
+                            .withValues(alpha: 179), // 0.7 * 255 = 179
                       ),
                 ),
                 const SizedBox(height: 4),
@@ -455,14 +455,14 @@ class ProfileScreen extends ConsumerWidget {
     return Card(
       elevation: 0,
       color: isDestructive
-          ? Theme.of(context).colorScheme.error.withOpacity(0.1)
+          ? Theme.of(context).colorScheme.error.withValues(alpha: 26) // 0.1 * 255 = 26
           : Theme.of(context).colorScheme.surface,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
         side: BorderSide(
           color: isDestructive
-              ? Theme.of(context).colorScheme.error.withOpacity(0.3)
-              : Theme.of(context).colorScheme.outline.withOpacity(0.3),
+              ? Theme.of(context).colorScheme.error.withValues(alpha: 77) // 0.3 * 255 = 77
+              : Theme.of(context).colorScheme.outline.withValues(alpha: 77), // 0.3 * 255 = 77
           width: 1,
         ),
       ),
@@ -501,7 +501,7 @@ class ProfileScreen extends ConsumerWidget {
                             color: Theme.of(context)
                                 .colorScheme
                                 .onSurface
-                                .withOpacity(0.7),
+                                .withValues(alpha: 179), // 0.7 * 255 = 179
                           ),
                     ),
                   ],
@@ -510,7 +510,7 @@ class ProfileScreen extends ConsumerWidget {
               Icon(
                 Icons.arrow_forward_ios,
                 size: 16,
-                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 128), // 0.5 * 255 = 128
               ),
             ],
           ),
@@ -531,21 +531,14 @@ class ProfileScreen extends ConsumerWidget {
       onTap: onTap,
       child: Container(
         padding: const EdgeInsets.symmetric(
-          horizontal: 16.0,
+          horizontal: 24.0,
           vertical: 12.0,
         ),
         decoration: BoxDecoration(
           color: isSelected
-              ? Theme.of(context).colorScheme.primary.withOpacity(0.1)
+              ? Theme.of(context).colorScheme.primary.withValues(alpha: 26) // 0.1 * 255 = 26
               : Colors.transparent,
-          border: isSelected
-              ? Border(
-                  right: BorderSide(
-                    color: Theme.of(context).colorScheme.primary,
-                    width: 3,
-                  ),
-                )
-              : null,
+          borderRadius: BorderRadius.circular(8),
         ),
         child: Row(
           children: [
@@ -554,6 +547,7 @@ class ProfileScreen extends ConsumerWidget {
               color: isSelected
                   ? Theme.of(context).colorScheme.primary
                   : Theme.of(context).colorScheme.onSurface,
+              size: 20,
             ),
             const SizedBox(width: 16),
             Text(
@@ -562,8 +556,7 @@ class ProfileScreen extends ConsumerWidget {
                     color: isSelected
                         ? Theme.of(context).colorScheme.primary
                         : Theme.of(context).colorScheme.onSurface,
-                    fontWeight:
-                        isSelected ? FontWeight.bold : FontWeight.normal,
+                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
                   ),
             ),
           ],

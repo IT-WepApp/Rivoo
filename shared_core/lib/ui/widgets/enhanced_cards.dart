@@ -197,8 +197,8 @@ class _EnhancedCardState extends State<_EnhancedCard> {
                 : null,
             boxShadow: [
               BoxShadow(
-                color: effectiveShadowColor.withOpacity(
-                  _isHovered ? 0.3 : 0.2,
+                color: effectiveShadowColor.withValues(
+                  alpha: _isHovered ? 77 : 51, // 0.3 * 255 = 77, 0.2 * 255 = 51
                 ),
                 blurRadius: effectiveElevation * 2,
                 spreadRadius: effectiveElevation * 0.5,
@@ -304,8 +304,8 @@ class _EnhancedInfoCardState extends State<_EnhancedInfoCard> {
                 : null,
             boxShadow: [
               BoxShadow(
-                color: effectiveShadowColor.withOpacity(
-                  _isHovered ? 0.3 : 0.2,
+                color: effectiveShadowColor.withValues(
+                  alpha: _isHovered ? 77 : 51, // 0.3 * 255 = 77, 0.2 * 255 = 51
                 ),
                 blurRadius: effectiveElevation * 2,
                 spreadRadius: effectiveElevation * 0.5,
@@ -437,8 +437,8 @@ class _EnhancedActionCardState extends State<_EnhancedActionCard> {
                 : null,
             boxShadow: [
               BoxShadow(
-                color: effectiveShadowColor.withOpacity(
-                  _isHovered ? 0.3 : 0.2,
+                color: effectiveShadowColor.withValues(
+                  alpha: _isHovered ? 77 : 51, // 0.3 * 255 = 77, 0.2 * 255 = 51
                 ),
                 blurRadius: effectiveElevation * 2,
                 spreadRadius: effectiveElevation * 0.5,
@@ -581,8 +581,8 @@ class _EnhancedImageCardState extends State<_EnhancedImageCard> {
                 : null,
             boxShadow: [
               BoxShadow(
-                color: effectiveShadowColor.withOpacity(
-                  _isHovered ? 0.3 : 0.2,
+                color: effectiveShadowColor.withValues(
+                  alpha: _isHovered ? 77 : 51, // 0.3 * 255 = 77, 0.2 * 255 = 51
                 ),
                 blurRadius: effectiveElevation * 2,
                 spreadRadius: effectiveElevation * 0.5,
@@ -598,16 +598,19 @@ class _EnhancedImageCardState extends State<_EnhancedImageCard> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Image(
-                    image: widget.image,
+                  SizedBox(
                     height: widget.imageHeight,
                     width: double.infinity,
-                    fit: widget.imageFit,
+                    child: Image(
+                      image: widget.image,
+                      fit: widget.imageFit,
+                    ),
                   ),
                   Padding(
                     padding: widget.padding,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisSize: MainAxisSize.min,
                       children: [
                         Text(
                           widget.title,
@@ -618,7 +621,7 @@ class _EnhancedImageCardState extends State<_EnhancedImageCard> {
                           ),
                         ),
                         if (widget.content != null) ...[
-                          const SizedBox(height: 8),
+                          const SizedBox(height: 12),
                           widget.content!,
                         ],
                       ],

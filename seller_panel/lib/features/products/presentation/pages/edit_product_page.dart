@@ -207,12 +207,13 @@ class _EditProductPageState extends ConsumerState<EditProductPage> {
       if (_hasDiscount) {
         productData['hasDiscount'] = true;
         productData['discountPercentage'] = _discountPercentage;
-        productData['discountedPrice'] =
-            productData['price'] * (1 - _discountPercentage / 100);
+        // التأكد من أن price ليس null قبل استخدام عامل الضرب
+        final price = productData['price'] as double? ?? 0.0;
+        productData['discountedPrice'] = price * (1 - _discountPercentage / 100);
       } else {
         productData['hasDiscount'] = false;
         productData['discountPercentage'] = 0;
-        productData['discountedPrice'] = productData['price'];
+        productData['discountedPrice'] = productData['price'] ?? 0.0;
       }
 
       // تحديث المنتج في Firestore
@@ -527,20 +528,39 @@ class _EditProductPageState extends ConsumerState<EditProductPage> {
         GestureDetector(
           onTap: _pickImage,
           child: Container(
-            height: 200,
             width: double.infinity,
+            height: 200,
             decoration: BoxDecoration(
               color: theme.colorScheme.surface,
               borderRadius: BorderRadius.circular(8),
-              border: Border.all(color: AppColors.border),
+              border: Border.all(
+                color: theme.colorScheme.primary.withOpacity(0.3),
+              ),
             ),
             child: _isUploading
-                ? _buildUploadProgress(theme)
+                ? Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        CircularProgressIndicator(
+                          value: _uploadProgress,
+                          color: theme.colorScheme.primary,
+                        ),
+                        const SizedBox(height: 16),
+                        Text(
+                          'جاري رفع الصورة... ${(_uploadProgress * 100).toStringAsFixed(0)}%',
+                          style: theme.textTheme.bodyMedium,
+                        ),
+                      ],
+                    ),
+                  )
                 : _imageFile != null
                     ? ClipRRect(
                         borderRadius: BorderRadius.circular(8),
                         child: Image.file(
                           _imageFile!,
+                          width: double.infinity,
+                          height: 200,
                           fit: BoxFit.cover,
                         ),
                       )
@@ -549,89 +569,77 @@ class _EditProductPageState extends ConsumerState<EditProductPage> {
                             borderRadius: BorderRadius.circular(8),
                             child: Image.network(
                               _imageUrl,
+                              width: double.infinity,
+                              height: 200,
                               fit: BoxFit.cover,
-                              loadingBuilder:
-                                  (context, child, loadingProgress) {
+                              loadingBuilder: (context, child, loadingProgress) {
                                 if (loadingProgress == null) return child;
                                 return Center(
                                   child: CircularProgressIndicator(
                                     value: loadingProgress.expectedTotalBytes !=
                                             null
-                                        ? loadingProgress
-                                                .cumulativeBytesLoaded /
-                                            loadingProgress.expectedTotalBytes!
+                                        ? loadingProgress.cumulativeBytesLoaded /
+                                            (loadingProgress.expectedTotalBytes ??
+                                                1)
                                         : null,
+                                    color: theme.colorScheme.primary,
                                   ),
                                 );
                               },
                               errorBuilder: (context, error, stackTrace) {
-                                return Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    Icon(
-                                      Icons.error_outline,
-                                      size: 48,
-                                      color: Colors.red.shade300,
-                                    ),
-                                    const SizedBox(height: 8),
-                                    const Text(
-                                      'فشل تحميل الصورة',
-                                      style: TextStyle(color: Colors.red),
-                                    ),
-                                  ],
+                                return Center(
+                                  child: Column(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: [
+                                      Icon(
+                                        Icons.error,
+                                        color: theme.colorScheme.error,
+                                        size: 48,
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Text(
+                                        'فشل تحميل الصورة',
+                                        style: TextStyle(
+                                          color: theme.colorScheme.error,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 );
                               },
                             ),
                           )
-                        : Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              Icon(
-                                Icons.add_photo_alternate,
-                                size: 64,
-                                color: theme.colorScheme.primary,
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-                                'انقر لاختيار صورة',
-                                style: TextStyle(
+                        : Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(
+                                  Icons.add_photo_alternate,
+                                  size: 48,
                                   color: theme.colorScheme.primary,
                                 ),
-                              ),
-                            ],
+                                const SizedBox(height: 8),
+                                Text(
+                                  'انقر لاختيار صورة',
+                                  style: TextStyle(
+                                    color: theme.colorScheme.primary,
+                                  ),
+                                ),
+                              ],
+                            ),
                           ),
           ),
         ),
-
-        // زر تغيير الصورة إذا تم اختيار صورة
+        const SizedBox(height: 8),
         if (_imageFile != null || _imageUrl.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.only(top: 8),
-            child: TextButton.icon(
-              onPressed: _pickImage,
-              icon: const Icon(Icons.edit),
-              label: const Text('تغيير الصورة'),
+          TextButton.icon(
+            onPressed: _pickImage,
+            icon: const Icon(Icons.edit),
+            label: const Text('تغيير الصورة'),
+            style: TextButton.styleFrom(
+              foregroundColor: theme.colorScheme.primary,
             ),
           ),
-      ],
-    );
-  }
-
-  Widget _buildUploadProgress(ThemeData theme) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        CircularProgressIndicator(
-          value: _uploadProgress,
-          color: theme.colorScheme.primary,
-        ),
-        const SizedBox(height: 16),
-        Text(
-          'جاري رفع الصورة... ${(_uploadProgress * 100).toStringAsFixed(0)}%',
-          style: TextStyle(
-            color: theme.colorScheme.primary,
-          ),
-        ),
       ],
     );
   }

@@ -133,7 +133,7 @@ class FavoritesPage extends ConsumerWidget {
                     shape: BoxShape.circle,
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.1),
+                        color: Colors.black.withValues(alpha: 26), // 0.1 * 255 = 26
                         blurRadius: 4,
                         offset: const Offset(0, 2),
                       ),

@@ -6,7 +6,7 @@ abstract class SecureStorageService {
   Future<String?> read(String key);
   Future<void> delete(String key);
   Future<void> deleteAll();
-  
+
   // طرق إضافية مطلوبة من قبل AuthService
   Future<void> storeUserId(String userId);
   Future<void> storeAuthToken(String token);
@@ -18,7 +18,7 @@ abstract class SecureStorageService {
 /// تنفيذ خدمة التخزين الآمن باستخدام flutter_secure_storage
 class SecureStorageServiceImpl implements SecureStorageService {
   final FlutterSecureStorage _storage;
-  
+
   // مفاتيح التخزين
   static const String _userIdKey = 'user_id';
   static const String _authTokenKey = 'auth_token';
@@ -45,28 +45,28 @@ class SecureStorageServiceImpl implements SecureStorageService {
   Future<void> deleteAll() async {
     await _storage.deleteAll();
   }
-  
+
   @override
   Future<void> storeUserId(String userId) async {
     await write(_userIdKey, userId);
   }
-  
+
   @override
   Future<void> storeAuthToken(String token) async {
     await write(_authTokenKey, token);
   }
-  
+
   @override
   Future<void> clearAuthData() async {
     await delete(_userIdKey);
     await delete(_authTokenKey);
   }
-  
+
   @override
   Future<String?> getUserId() async {
     return await read(_userIdKey);
   }
-  
+
   @override
   Future<String?> getAuthToken() async {
     return await read(_authTokenKey);

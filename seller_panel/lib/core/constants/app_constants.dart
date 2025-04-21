@@ -37,6 +37,7 @@ class AppConstants {
     'png',
     'webp'
   ];
+  static const String productImagesPath = 'products/images';
 
   // ثوابت الإحصائيات
   static const int defaultStatsDays = 30;

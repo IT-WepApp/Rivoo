@@ -182,7 +182,7 @@ class AppTextField extends StatelessWidget {
             : null,
         suffixIcon: suffixIconWidget,
         labelStyle: labelStyle ??
-            TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.7)),
+            TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 179)), // 0.7 * 255 = 179
         hintStyle: hintStyle ?? TextStyle(color: theme.hintColor),
         errorStyle: TextStyle(color: theme.colorScheme.error),
         border: OutlineInputBorder(

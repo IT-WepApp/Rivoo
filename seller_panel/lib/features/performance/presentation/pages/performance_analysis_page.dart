@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../core/constants/route_constants.dart';
-import '../../../core/widgets/app_widgets.dart';
-import '../../../core/theme/app_colors.dart';
+import '../../../../core/constants/route_constants.dart';
+import '../../../../core/widgets/app_widgets.dart';
+import '../../../../core/theme/app_colors.dart';
 
 /// صفحة تحليل الأداء والتحسين للبائع
 class PerformanceAnalysisPage extends ConsumerStatefulWidget {
@@ -455,55 +455,41 @@ class _PerformanceAnalysisPageState
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(
-                    'بناءً على تحليل بيانات المتجر، نقترح التحسينات التالية:',
-                    style: theme.textTheme.bodyMedium,
-                  ),
-                  const SizedBox(height: 16),
                   for (int i = 0; i < improvementSuggestions.length; i++)
                     _buildSuggestionItem(
                       theme,
                       improvementSuggestions[i] as String? ?? '',
                       i + 1,
+                      i == improvementSuggestions.length - 1 ? false : true,
                     ),
-                  const SizedBox(height: 16),
-                  const Divider(),
-                  const SizedBox(height: 16),
-                  Text(
-                    'إجراءات موصى بها',
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 8),
-                  _buildActionButton(
-                    theme,
-                    'تحسين سرعة تحميل الصفحات',
-                    Icons.speed,
-                    Colors.blue,
-                  ),
-                  const SizedBox(height: 8),
-                  _buildActionButton(
-                    theme,
-                    'تبسيط عملية الدفع',
-                    Icons.payment,
-                    Colors.green,
-                  ),
-                  const SizedBox(height: 8),
-                  _buildActionButton(
-                    theme,
-                    'تحسين نتائج البحث',
-                    Icons.search,
-                    Colors.orange,
-                  ),
-                  const SizedBox(height: 8),
-                  _buildActionButton(
-                    theme,
-                    'إضافة توصيات منتجات',
-                    Icons.recommend,
-                    Colors.purple,
-                  ),
                 ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 24),
+
+          // زر تنفيذ التحسينات
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton.icon(
+              onPressed: () {
+                // هنا يمكن إضافة منطق لتنفيذ التحسينات المقترحة
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('جاري تنفيذ التحسينات المقترحة...'),
+                    duration: Duration(seconds: 2),
+                  ),
+                );
+              },
+              icon: const Icon(Icons.trending_up),
+              label: const Text('تنفيذ التحسينات المقترحة'),
+              style: ElevatedButton.styleFrom(
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                backgroundColor: theme.colorScheme.primary,
+                foregroundColor: theme.colorScheme.onPrimary,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
               ),
             ),
           ),
@@ -512,6 +498,7 @@ class _PerformanceAnalysisPageState
     );
   }
 
+  // بناء عنصر مؤشر أداء
   Widget _buildPerformanceIndicator(
     ThemeData theme,
     String title,
@@ -533,7 +520,11 @@ class _PerformanceAnalysisPageState
           children: [
             Row(
               children: [
-                Icon(icon, color: color),
+                Icon(
+                  icon,
+                  color: color,
+                  size: 24,
+                ),
                 const SizedBox(width: 8),
                 Text(
                   title,
@@ -572,6 +563,7 @@ class _PerformanceAnalysisPageState
     );
   }
 
+  // بناء عنصر كلمة بحث
   Widget _buildSearchTermItem(
     ThemeData theme,
     String term,
@@ -584,10 +576,10 @@ class _PerformanceAnalysisPageState
           padding: const EdgeInsets.symmetric(vertical: 8),
           child: Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.search,
-                size: 16,
-                color: Colors.grey.shade600,
+                color: Colors.grey,
+                size: 20,
               ),
               const SizedBox(width: 8),
               Expanded(
@@ -597,16 +589,17 @@ class _PerformanceAnalysisPageState
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 decoration: BoxDecoration(
-                  color: theme.colorScheme.primary.withOpacity(0.1),
-                  borderRadius: BorderRadius.circular(16),
+                  color: Colors.grey.shade200,
+                  borderRadius: BorderRadius.circular(12),
                 ),
                 child: Text(
-                  count.toString(),
+                  '$count',
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.primary,
                     fontWeight: FontWeight.bold,
+                    color: Colors.grey.shade700,
                   ),
                 ),
               ),
@@ -618,6 +611,7 @@ class _PerformanceAnalysisPageState
     );
   }
 
+  // بناء عنصر صفحة خروج
   Widget _buildExitPageItem(
     ThemeData theme,
     String page,
@@ -630,10 +624,10 @@ class _PerformanceAnalysisPageState
           padding: const EdgeInsets.symmetric(vertical: 8),
           child: Row(
             children: [
-              Icon(
+              const Icon(
                 Icons.exit_to_app,
-                size: 16,
-                color: Colors.grey.shade600,
+                color: Colors.grey,
+                size: 20,
               ),
               const SizedBox(width: 8),
               Expanded(
@@ -642,11 +636,19 @@ class _PerformanceAnalysisPageState
                   style: theme.textTheme.bodyMedium,
                 ),
               ),
-              Text(
-                '${exitRate.toStringAsFixed(1)}%',
-                style: theme.textTheme.bodyMedium?.copyWith(
-                  color: _getIndicatorColor(100 - exitRate, 80, 90),
-                  fontWeight: FontWeight.bold,
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                decoration: BoxDecoration(
+                  color: _getExitRateColor(exitRate).withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Text(
+                  '${exitRate.toStringAsFixed(1)}%',
+                  style: theme.textTheme.bodySmall?.copyWith(
+                    fontWeight: FontWeight.bold,
+                    color: _getExitRateColor(exitRate),
+                  ),
                 ),
               ),
             ],
@@ -657,84 +659,82 @@ class _PerformanceAnalysisPageState
     );
   }
 
+  // بناء عنصر اقتراح تحسين
   Widget _buildSuggestionItem(
     ThemeData theme,
     String suggestion,
     int index,
+    bool showDivider,
   ) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: 24,
-            height: 24,
-            decoration: BoxDecoration(
-              color: theme.colorScheme.primary,
-              shape: BoxShape.circle,
-            ),
-            child: Center(
-              child: Text(
-                index.toString(),
-                style: TextStyle(
-                  color: theme.colorScheme.onPrimary,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 12,
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.symmetric(vertical: 8),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 24,
+                height: 24,
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.primary,
+                  shape: BoxShape.circle,
+                ),
+                child: Center(
+                  child: Text(
+                    '$index',
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onPrimary,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                 ),
               ),
-            ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Text(
+                  suggestion,
+                  style: theme.textTheme.bodyMedium,
+                ),
+              ),
+            ],
           ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Text(
-              suggestion,
-              style: theme.textTheme.bodyMedium,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildActionButton(
-    ThemeData theme,
-    String title,
-    IconData icon,
-    Color color,
-  ) {
-    return ElevatedButton.icon(
-      onPressed: () {},
-      icon: Icon(icon, color: Colors.white),
-      label: Text(title),
-      style: ElevatedButton.styleFrom(
-        backgroundColor: color,
-        foregroundColor: Colors.white,
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(8),
         ),
-        minimumSize: const Size(double.infinity, 0),
-      ),
+        if (showDivider) const Divider(),
+      ],
     );
   }
 
-  Color _getIndicatorColor(double value, double threshold1, double threshold2) {
-    if (value < threshold1) {
-      return Colors.red;
-    } else if (value < threshold2) {
-      return Colors.orange;
-    } else {
-      return Colors.green;
-    }
-  }
-
+  // بناء عنوان قسم
   Widget _buildSectionTitle(ThemeData theme, String title) {
     return Text(
       title,
       style: theme.textTheme.titleLarge?.copyWith(
         fontWeight: FontWeight.bold,
+        color: theme.colorScheme.primary,
       ),
     );
+  }
+
+  // الحصول على لون المؤشر بناءً على القيمة
+  Color _getIndicatorColor(double value, double threshold1, double threshold2) {
+    if (value < threshold1) {
+      return AppColors.error;
+    } else if (value < threshold2) {
+      return AppColors.warning;
+    } else {
+      return AppColors.success;
+    }
+  }
+
+  // الحصول على لون معدل الخروج
+  Color _getExitRateColor(double exitRate) {
+    if (exitRate > 15) {
+      return AppColors.error;
+    } else if (exitRate > 8) {
+      return AppColors.warning;
+    } else {
+      return AppColors.success;
+    }
   }
 }

@@ -15,7 +15,8 @@ class SellerDashboardPage extends ConsumerStatefulWidget {
   const SellerDashboardPage({Key? key}) : super(key: key);
 
   @override
-  ConsumerState<SellerDashboardPage> createState() => _SellerDashboardPageState();
+  ConsumerState<SellerDashboardPage> createState() =>
+      _SellerDashboardPageState();
 }
 
 class _SellerDashboardPageState extends ConsumerState<SellerDashboardPage> {
@@ -28,7 +29,7 @@ class _SellerDashboardPageState extends ConsumerState<SellerDashboardPage> {
   void initState() {
     super.initState();
     _loadDashboardData();
-    
+
     // تهيئة خدمة الإشعارات
     final notificationService = ref.read(notificationServiceProvider);
     notificationService.initialize();
@@ -47,16 +48,16 @@ class _SellerDashboardPageState extends ConsumerState<SellerDashboardPage> {
 
       // الحصول على إحصائيات الطلبات
       final orderStats = await orderService.getOrderStatistics();
-      
+
       // الحصول على عدد المنتجات
       final products = await productService.getSellerProducts();
-      
+
       // الحصول على بيانات البائع
       final sellerData = await authService.getSellerData();
-      
+
       // الحصول على الطلبات الجديدة
       final newOrders = await orderService.getNewOrders();
-      
+
       setState(() {
         _dashboardData = {
           'orderStats': orderStats,
@@ -77,7 +78,7 @@ class _SellerDashboardPageState extends ConsumerState<SellerDashboardPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('لوحة تحكم البائع'),
@@ -110,13 +111,15 @@ class _SellerDashboardPageState extends ConsumerState<SellerDashboardPage> {
   }
 
   Widget _buildDashboardContent(BuildContext context, ThemeData theme) {
-    final orderStats = _dashboardData['orderStats'] as Map<String, dynamic>? ?? {};
+    final orderStats =
+        _dashboardData['orderStats'] as Map<String, dynamic>? ?? {};
     final productsCount = _dashboardData['productsCount'] as int? ?? 0;
-    final sellerData = _dashboardData['sellerData'] as Map<String, dynamic>? ?? {};
+    final sellerData =
+        _dashboardData['sellerData'] as Map<String, dynamic>? ?? {};
     final newOrders = _dashboardData['newOrders'] as List<dynamic>? ?? [];
-    
+
     final storeName = sellerData['storeName'] as String? ?? 'متجرك';
-    
+
     return RefreshIndicator(
       onRefresh: _loadDashboardData,
       child: ListView(
@@ -133,7 +136,7 @@ class _SellerDashboardPageState extends ConsumerState<SellerDashboardPage> {
             style: theme.textTheme.bodyMedium,
           ),
           const SizedBox(height: 24),
-          
+
           // بطاقات الإحصائيات
           Text(
             'نظرة عامة',
@@ -142,7 +145,7 @@ class _SellerDashboardPageState extends ConsumerState<SellerDashboardPage> {
           const SizedBox(height: 16),
           _buildStatisticsCards(context, theme, orderStats, productsCount),
           const SizedBox(height: 24),
-          
+
           // الإجراءات السريعة
           Text(
             'إجراءات سريعة',
@@ -151,7 +154,7 @@ class _SellerDashboardPageState extends ConsumerState<SellerDashboardPage> {
           const SizedBox(height: 16),
           _buildQuickActions(context, theme),
           const SizedBox(height: 24),
-          
+
           // الطلبات الجديدة
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -193,7 +196,7 @@ class _SellerDashboardPageState extends ConsumerState<SellerDashboardPage> {
     final pendingOrders = orderStats['pendingOrders'] as int? ?? 0;
     final totalSales = orderStats['totalSales'] as double? ?? 0.0;
     final todayOrders = orderStats['todayOrders'] as int? ?? 0;
-    
+
     return GridView.count(
       crossAxisCount: 2,
       crossAxisSpacing: 16,
@@ -332,8 +335,9 @@ class _SellerDashboardPageState extends ConsumerState<SellerDashboardPage> {
     final orderId = order['id'] as String? ?? '';
     final customerName = order['customerName'] as String? ?? 'عميل';
     final total = order['total'] as num? ?? 0;
-    final createdAt = (order['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now();
-    
+    final createdAt =
+        (order['createdAt'] as Timestamp?)?.toDate() ?? DateTime.now();
+
     return AppWidgets.appCard(
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(16),
@@ -373,7 +377,8 @@ class _SellerDashboardPageState extends ConsumerState<SellerDashboardPage> {
             children: [
               Row(
                 children: [
-                  const Icon(Icons.person_outline, size: 16, color: AppColors.textSecondary),
+                  const Icon(Icons.person_outline,
+                      size: 16, color: AppColors.textSecondary),
                   const SizedBox(width: 4),
                   Text(
                     customerName,
@@ -386,7 +391,8 @@ class _SellerDashboardPageState extends ConsumerState<SellerDashboardPage> {
               const SizedBox(height: 4),
               Row(
                 children: [
-                  const Icon(Icons.access_time, size: 16, color: AppColors.textSecondary),
+                  const Icon(Icons.access_time,
+                      size: 16, color: AppColors.textSecondary),
                   const SizedBox(width: 4),
                   Text(
                     '${createdAt.day}/${createdAt.month}/${createdAt.year} - ${createdAt.hour}:${createdAt.minute.toString().padLeft(2, '0')}',
@@ -399,7 +405,8 @@ class _SellerDashboardPageState extends ConsumerState<SellerDashboardPage> {
               const SizedBox(height: 4),
               Row(
                 children: [
-                  const Icon(Icons.attach_money, size: 16, color: AppColors.success),
+                  const Icon(Icons.attach_money,
+                      size: 16, color: AppColors.success),
                   const SizedBox(width: 4),
                   Text(
                     'المجموع: ${total.toStringAsFixed(2)} ر.س',
@@ -416,7 +423,8 @@ class _SellerDashboardPageState extends ConsumerState<SellerDashboardPage> {
           Align(
             alignment: Alignment.centerRight,
             child: TextButton.icon(
-              onPressed: () => context.push('${RouteConstants.orderDetails}/$orderId'),
+              onPressed: () =>
+                  context.push('${RouteConstants.orderDetails}/$orderId'),
               icon: const Icon(Icons.arrow_forward),
               label: const Text('عرض التفاصيل'),
               style: TextButton.styleFrom(
@@ -430,10 +438,11 @@ class _SellerDashboardPageState extends ConsumerState<SellerDashboardPage> {
   }
 
   Widget _buildDrawer(BuildContext context, ThemeData theme) {
-    final sellerData = _dashboardData['sellerData'] as Map<String, dynamic>? ?? {};
+    final sellerData =
+        _dashboardData['sellerData'] as Map<String, dynamic>? ?? {};
     final storeName = sellerData['storeName'] as String? ?? 'متجرك';
     final sellerName = sellerData['name'] as String? ?? 'البائع';
-    
+
     return Drawer(
       child: ListView(
         padding: EdgeInsets.zero,
@@ -556,7 +565,8 @@ class _SellerDashboardPageState extends ConsumerState<SellerDashboardPage> {
           const Divider(),
           ListTile(
             leading: const Icon(Icons.logout, color: Colors.red),
-            title: const Text('تسجيل الخروج', style: TextStyle(color: Colors.red)),
+            title:
+                const Text('تسجيل الخروج', style: TextStyle(color: Colors.red)),
             onTap: () async {
               final confirmed = await AppWidgets.showConfirmDialog(
                 context: context,
@@ -566,7 +576,7 @@ class _SellerDashboardPageState extends ConsumerState<SellerDashboardPage> {
                 cancelText: 'إلغاء',
                 isDangerous: true,
               );
-              
+
               if (confirmed && context.mounted) {
                 final authService = ref.read(authServiceProvider);
                 await authService.signOut();
@@ -588,7 +598,7 @@ class _SellerDashboardPageState extends ConsumerState<SellerDashboardPage> {
         setState(() {
           _selectedIndex = index;
         });
-        
+
         switch (index) {
           case 0:
             context.go(RouteConstants.home);

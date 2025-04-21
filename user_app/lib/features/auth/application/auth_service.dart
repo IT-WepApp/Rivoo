@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../core/services/secure_storage_service.dart';
 import '../../../core/constants/app_constants.dart';
+import '../../../core/utils/logger.dart';
 
 /// مزود خدمة التخزين الآمن
 final secureStorageServiceProvider = Provider<SecureStorageService>((ref) {
@@ -232,6 +233,7 @@ class AuthService {
   final SecureStorageService _secureStorage;
   final FirebaseAuth _auth;
   final FirebaseFirestore _firestore;
+  final AppLogger _logger = AppLogger();
 
   AuthService(this._secureStorage, this._auth, this._firestore);
 
@@ -532,7 +534,7 @@ class AuthService {
       }
       return UserRole.customer;
     } catch (e) {
-      print('Error getting user role: $e');
+      _logger.error('Error getting user role', e);
       return UserRole.customer;
     }
   }
@@ -553,19 +555,22 @@ class AuthService {
           break;
         default:
           roleString = 'customer';
+          break;
       }
 
-      // تحديث الدور في Firestore
+      // تحديث وثيقة المستخدم في Firestore
       await _firestore.collection('users').doc(userId).update({
         'role': roleString,
         'updatedAt': FieldValue.serverTimestamp(),
       });
 
-      // تحديث الدور في التخزين الآمن إذا كان المستخدم الحالي
-      final userData = await _secureStorage.getUserData();
-      if (userData != null && userData['uid'] == userId) {
-        userData['role'] = roleString;
-        await _secureStorage.saveUserData(userData);
+      // تحديث بيانات المستخدم في التخزين الآمن إذا كان المستخدم الحالي
+      if (userId == _auth.currentUser?.uid) {
+        final userData = await _secureStorage.getUserData();
+        if (userData != null) {
+          userData['role'] = roleString;
+          await _secureStorage.saveUserData(userData);
+        }
       }
     } catch (e) {
       throw Exception('فشل تحديث دور المستخدم: $e');
@@ -575,59 +580,78 @@ class AuthService {
   /// إنشاء وثيقة المستخدم في Firestore
   Future<void> _createUserDocument(
       String userId, String email, UserRole role) async {
-    String roleString;
-    switch (role) {
-      case UserRole.admin:
-        roleString = 'admin';
-        break;
-      case UserRole.driver:
-        roleString = 'driver';
-        break;
-      case UserRole.customer:
-        roleString = 'customer';
-        break;
-      default:
-        roleString = 'customer';
-    }
+    try {
+      String roleString;
+      switch (role) {
+        case UserRole.admin:
+          roleString = 'admin';
+          break;
+        case UserRole.driver:
+          roleString = 'driver';
+          break;
+        case UserRole.customer:
+          roleString = 'customer';
+          break;
+        default:
+          roleString = 'customer';
+          break;
+      }
 
-    await _firestore.collection('users').doc(userId).set({
-      'email': email,
-      'role': roleString,
-      'createdAt': FieldValue.serverTimestamp(),
-      'updatedAt': FieldValue.serverTimestamp(),
-      'lastLoginAt': FieldValue.serverTimestamp(),
-    });
+      await _firestore.collection('users').doc(userId).set({
+        'uid': userId,
+        'email': email,
+        'role': roleString,
+        'createdAt': FieldValue.serverTimestamp(),
+        'updatedAt': FieldValue.serverTimestamp(),
+        'lastLogin': FieldValue.serverTimestamp(),
+        'isActive': true,
+      });
+    } catch (e) {
+      throw Exception('فشل إنشاء وثيقة المستخدم: $e');
+    }
   }
 
   /// تحديث تاريخ تسجيل الدخول
   Future<void> _updateLoginTimestamp(String userId) async {
-    await _firestore.collection('users').doc(userId).update({
-      'lastLoginAt': FieldValue.serverTimestamp(),
-    });
+    try {
+      await _firestore.collection('users').doc(userId).update({
+        'lastLogin': FieldValue.serverTimestamp(),
+      });
+    } catch (e) {
+      _logger.error('فشل تحديث تاريخ تسجيل الدخول', e);
+    }
   }
 
   /// تسجيل محاولة تسجيل الدخول الفاشلة
   Future<void> _logFailedLoginAttempt(String email) async {
-    await _firestore.collection('failedLogins').add({
-      'email': email,
-      'timestamp': FieldValue.serverTimestamp(),
-      'ip': 'unknown', // في التطبيق الحقيقي، يمكن الحصول على عنوان IP من الخادم
-    });
+    try {
+      await _firestore.collection('failedLoginAttempts').add({
+        'email': email,
+        'timestamp': FieldValue.serverTimestamp(),
+        'ipAddress': 'unknown', // يمكن تحديث هذا إذا كان لديك طريقة للحصول على عنوان IP
+      });
+    } catch (e) {
+      _logger.error('فشل تسجيل محاولة تسجيل الدخول الفاشلة', e);
+    }
   }
 
-  /// الحصول على رمز تحديث المصادقة
+  /// الحصول على الرمز المميز للتحديث
   Future<String> _getRefreshToken(User user) async {
-    final idTokenResult = await user.getIdTokenResult();
-    return idTokenResult.token ?? '';
-  }
+    try {
+      // هذه طريقة مبسطة للحصول على رمز التحديث
+      // في التطبيق الحقيقي، يجب استخدام Firebase SDK للحصول على رمز التحديث
+      final idTokenResult = await user.getIdTokenResult();
+      final expirationTime = idTokenResult.expirationTime;
+      final expirySeconds =
+          expirationTime!.difference(DateTime.now()).inSeconds;
 
-  /// تشفير البيانات
-  String _encryptData(String data) {
-    // في التطبيق الحقيقي، يجب استخدام خوارزمية تشفير قوية مثل AES
-    // هذه مجرد محاكاة بسيطة باستخدام SHA-256
-    final bytes = utf8.encode(data);
-    final digest = sha256.convert(bytes);
-    return digest.toString();
+      // إنشاء رمز تحديث بسيط باستخدام معرف المستخدم وتاريخ انتهاء الصلاحية
+      final data = utf8.encode('${user.uid}:$expirySeconds');
+      final hash = sha256.convert(data);
+      return hash.toString();
+    } catch (e) {
+      throw Exception('فشل الحصول على رمز التحديث: $e');
+    }
   }
 
   /// التحقق من قوة كلمة المرور

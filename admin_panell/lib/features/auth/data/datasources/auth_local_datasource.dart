@@ -21,36 +21,36 @@ abstract class AuthLocalDataSource {
 /// تنفيذ مصدر البيانات المحلي للمصادقة
 class AuthLocalDataSourceImpl implements AuthLocalDataSource {
   final SecureStorageService secureStorage;
-  static const String USER_KEY = 'CACHED_USER';
+  static const String userKey = 'CACHED_USER';
 
   AuthLocalDataSourceImpl({required this.secureStorage});
 
   @override
   Future<void> cacheUser(UserEntity user) async {
     // تحويل كائن المستخدم إلى نموذج UserModel
-    final userModel = user is UserModel 
-        ? user 
+    final userModel = user is UserModel
+        ? user
         : UserModel(
             id: user.id,
             email: user.email,
             name: user.name,
             role: user.role,
           );
-    
+
     // تخزين بيانات المستخدم كسلسلة JSON
-    await secureStorage.write(USER_KEY, json.encode(userModel.toJson()));
+    await secureStorage.write(userKey, json.encode(userModel.toJson()));
   }
 
   @override
   Future<UserEntity?> getLastSignedInUser() async {
     try {
       // قراءة بيانات المستخدم المخزنة
-      final jsonString = await secureStorage.read(USER_KEY);
-      
+      final jsonString = await secureStorage.read(userKey);
+
       if (jsonString == null) {
         return null;
       }
-      
+
       // تحويل سلسلة JSON إلى كائن UserModel
       return UserModel.fromJson(json.decode(jsonString));
     } catch (e) {
@@ -60,6 +60,6 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
 
   @override
   Future<void> clearUser() async {
-    await secureStorage.delete(USER_KEY);
+    await secureStorage.delete(userKey);
   }
 }

@@ -20,9 +20,10 @@ class AuthRepositoryImpl implements AuthRepository {
   });
 
   @override
-  Future<UserEntity> signIn(String email, String password) async {
+  Future<UserEntity> signIn({required String email, required String password}) async {
     try {
-      final userModel = await remoteDataSource.signIn(email: email, password: password);
+      final userModel =
+          await remoteDataSource.signIn(email: email, password: password);
       await localDataSource.cacheUser(userModel);
 
       // تعيين معرف المستخدم في Crashlytics لتسهيل تتبع الأخطاء

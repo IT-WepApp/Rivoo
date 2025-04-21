@@ -232,9 +232,9 @@ class AppTheme {
         }),
         trackColor: WidgetStateProperty.resolveWith<Color>((states) {
           if (states.contains(WidgetState.selected)) {
-            return _primaryLight.withOpacity(0.5);
+            return _primaryLight.withValues(alpha: 128); // 0.5 * 255 = 128
           }
-          return Colors.grey.withOpacity(0.5);
+          return Colors.grey.withValues(alpha: 128); // 0.5 * 255 = 128
         }),
       ),
       checkboxTheme: CheckboxThemeData(
@@ -502,9 +502,9 @@ class AppTheme {
         }),
         trackColor: WidgetStateProperty.resolveWith<Color>((states) {
           if (states.contains(WidgetState.selected)) {
-            return _primaryDark.withOpacity(0.5);
+            return _primaryDark.withValues(alpha: 128); // 0.5 * 255 = 128
           }
-          return Colors.grey.withOpacity(0.5);
+          return Colors.grey.withValues(alpha: 128); // 0.5 * 255 = 128
         }),
       ),
       checkboxTheme: CheckboxThemeData(
