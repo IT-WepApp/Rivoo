@@ -1,17 +1,13 @@
-import 'package:flutter/material.dart';
-
 /// نموذج بيانات اللغة
 class Language {
   final String code;
   final String name;
   final String flag;
-
   const Language({
     required this.code,
     required this.name,
     required this.flag,
   });
-
   factory Language.fromJson(Map<String, dynamic> json) {
     return Language(
       code: json['code'] as String,
@@ -19,7 +15,6 @@ class Language {
       flag: json['flag'] as String,
     );
   }
-
   Map<String, dynamic> toJson() {
     return {
       'code': code,
@@ -28,7 +23,6 @@ class Language {
     };
   }
 }
-
 /// قائمة اللغات المدعومة في التطبيق
 class SupportedLanguages {
   static const List<Language> languages = [
@@ -38,7 +32,6 @@ class SupportedLanguages {
     Language(code: 'tr', name: 'Türkçe', flag: '🇹🇷'),
     Language(code: 'ur', name: 'اردو', flag: '🇵🇰'),
   ];
-
   static Language getLanguageByCode(String code) {
     return languages.firstWhere(
       (language) => language.code == code,

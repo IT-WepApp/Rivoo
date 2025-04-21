@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'app_colors.dart';
-
 /// نظام الخطوط الموحد للتطبيق
 class AppTextStyles {
   // خطوط العناوين

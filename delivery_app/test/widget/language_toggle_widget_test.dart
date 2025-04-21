@@ -5,15 +5,9 @@ import 'package:delivery_app/features/settings/presentation/widgets/language_tog
 import 'package:delivery_app/presentation/providers/locale_provider.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
-
 void main() {
   group('LanguageToggleWidget Tests', () {
     testWidgets('يجب أن يعرض قائمة اللغات المدعومة', (WidgetTester tester) async {
-      // إنشاء مزود وهمي للغة
-      final localeProvider = StateNotifierProvider<LocaleNotifier, Locale>((ref) {
-        return LocaleNotifier();
-      });
-      
       // بناء الواجهة للاختبار
       await tester.pumpWidget(
         ProviderScope(
@@ -50,11 +44,6 @@ void main() {
     });
     
     testWidgets('يجب أن يتم تحديد اللغة الحالية', (WidgetTester tester) async {
-      // إنشاء مزود وهمي للغة
-      final localeProvider = StateNotifierProvider<LocaleNotifier, Locale>((ref) {
-        return LocaleNotifier();
-      });
-      
       // بناء الواجهة للاختبار
       await tester.pumpWidget(
         ProviderScope(
@@ -87,11 +76,6 @@ void main() {
     });
     
     testWidgets('يجب أن يتم تغيير اللغة عند النقر على لغة أخرى', (WidgetTester tester) async {
-      // إنشاء مزود وهمي للغة
-      final localeProvider = StateNotifierProvider<LocaleNotifier, Locale>((ref) {
-        return LocaleNotifier();
-      });
-      
       // بناء الواجهة للاختبار
       await tester.pumpWidget(
         ProviderScope(

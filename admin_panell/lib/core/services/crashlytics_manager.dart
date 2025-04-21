@@ -1,54 +1,65 @@
-import 'dart:async';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 
-/// مدير Crashlytics للتعامل مع تسجيل الأخطاء والاستثناءات
+/// مدير تقارير الأعطال
+/// يوفر واجهة للتعامل مع خدمة Firebase Crashlytics لتسجيل الأخطاء والاستثناءات
 class CrashlyticsManager {
   final FirebaseCrashlytics _crashlytics;
 
+  /// إنشاء نسخة جديدة من مدير تقارير الأعطال
   CrashlyticsManager({FirebaseCrashlytics? crashlytics})
       : _crashlytics = crashlytics ?? FirebaseCrashlytics.instance;
 
-  /// تهيئة Crashlytics وإعداد التقاط الاستثناءات غير المعالجة
+  /// تهيئة خدمة تقارير الأعطال
   Future<void> initialize() async {
-    // تمكين جمع التقارير في وضع التطوير إذا كان مطلوباً
-    await _crashlytics.setCrashlyticsCollectionEnabled(!kDebugMode);
-
-    // تسجيل الاستثناءات غير المعالجة في Flutter
-    FlutterError.onError = (FlutterErrorDetails details) {
-      _crashlytics.recordFlutterError(details);
-    };
-
-    // تسجيل الاستثناءات غير المعالجة في Dart
-    PlatformDispatcher.instance.onError = (error, stack) {
-      _crashlytics.recordError(error, stack, fatal: true);
-      return true;
-    };
+    // تمكين جمع تقارير الأعطال في وضع التطوير
+    await _crashlytics.setCrashlyticsCollectionEnabled(true);
   }
 
-  /// تسجيل استثناء يدوياً
-  Future<void> recordError(dynamic exception, StackTrace? stack,
-      {bool fatal = false}) async {
-    await _crashlytics.recordError(exception, stack, fatal: fatal);
+  /// تسجيل معلومات المستخدم
+  /// 
+  /// [userId] معرف المستخدم
+  /// [email] البريد الإلكتروني للمستخدم
+  /// [name] اسم المستخدم
+  Future<void> setUserIdentifier({
+    String? userId,
+    String? email,
+    String? name,
+  }) async {
+    if (userId != null) {
+      await _crashlytics.setUserIdentifier(userId);
+    }
+    
+    // تسجيل معلومات إضافية عن المستخدم
+    if (email != null) {
+      await _crashlytics.setCustomKey('email', email);
+    }
+    
+    if (name != null) {
+      await _crashlytics.setCustomKey('name', name);
+    }
   }
 
-  /// تسجيل رسالة خطأ بسيطة
+  /// تسجيل خطأ
+  /// 
+  /// [error] الخطأ المراد تسجيله
+  /// [stackTrace] تتبع المكدس للخطأ
+  /// [reason] سبب الخطأ
+  Future<void> recordError(
+    dynamic error,
+    StackTrace stackTrace, {
+    String? reason,
+  }) async {
+    await _crashlytics.recordError(
+      error,
+      stackTrace,
+      reason: reason,
+    );
+  }
+
+  /// تسجيل رسالة خطأ
+  /// 
+  /// [message] رسالة الخطأ المراد تسجيلها
   Future<void> log(String message) async {
     await _crashlytics.log(message);
   }
-
-  /// تعيين معرف المستخدم لتسهيل تتبع الأخطاء
-  Future<void> setUserIdentifier(String userId) async {
-    await _crashlytics.setUserIdentifier(userId);
-  }
-
-  /// إضافة بيانات مخصصة للمساعدة في تشخيص المشكلات
-  Future<void> setCustomKey(String key, dynamic value) async {
-    await _crashlytics.setCustomKey(key, value);
-  }
 }
-
-// مزود للوصول إلى مدير Crashlytics من أي مكان في التطبيق
-final crashlyticsManagerProvider = CrashlyticsManager();
