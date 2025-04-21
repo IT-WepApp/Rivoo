@@ -1,150 +1,108 @@
 import 'package:flutter/material.dart';
-import 'package:user_app/features/support/domain/ticket.dart';
-import 'package:intl/intl.dart';
+import 'package:user_app/core/theme/app_theme.dart';
+import 'package:user_app/features/support/domain/entities/ticket.dart';
 
+/// بطاقة التذكرة
 class TicketCard extends StatelessWidget {
-  final SupportTicket ticket;
-  final VoidCallback onTap;
+  /// التذكرة
+  final Ticket ticket;
+  
+  /// دالة تنفذ عند النقر على البطاقة
+  final VoidCallback? onTap;
 
+  /// إنشاء بطاقة تذكرة
   const TicketCard({
     Key? key,
     required this.ticket,
-    required this.onTap,
+    this.onTap,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Card(
-      elevation: 2,
+      margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(12),
       ),
       child: InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(16),
+        borderRadius: BorderRadius.circular(12),
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // رأس البطاقة
+              // رقم التذكرة والحالة
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // رمز نوع التذكرة
-                  Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: Theme.of(context)
-                          .colorScheme
-                          .primary
-                          .withValues(alpha: 26), // 0.1 * 255 = 26
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      _getTicketTypeIcon(ticket.type),
-                      color: Theme.of(context).colorScheme.primary,
-                      size: 20,
+                  // رقم التذكرة
+                  Text(
+                    'تذكرة #${ticket.id.substring(0, 8)}',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
                     ),
                   ),
-                  const SizedBox(width: 12),
-
-                  // معلومات التذكرة
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          ticket.subject,
-                          style:
-                              Theme.of(context).textTheme.titleMedium?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'تذكرة #${ticket.id.substring(0, 8)} • ${_formatDate(ticket.createdAt)}',
-                          style:
-                              Theme.of(context).textTheme.bodySmall?.copyWith(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .onSurface
-                                        .withValues(alpha: 179), // 0.7 * 255 = 179
-                                  ),
-                        ),
-                      ],
-                    ),
-                  ),
-
+                  
                   // حالة التذكرة
-                  _buildStatusChip(context, ticket.status),
+                  _buildStatusChip(),
                 ],
               ),
-
-              const SizedBox(height: 16),
-
-              // وصف التذكرة
+              
+              const SizedBox(height: 12),
+              
+              // عنوان التذكرة
               Text(
-                ticket.description,
-                style: Theme.of(context).textTheme.bodyMedium,
+                ticket.title,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 18,
+                ),
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
-
-              const SizedBox(height: 16),
-
-              // معلومات إضافية
+              
+              const SizedBox(height: 8),
+              
+              // وصف التذكرة
+              Text(
+                ticket.description,
+                style: TextStyle(
+                  fontSize: 14,
+                  color: AppTheme.textSecondaryColor,
+                ),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
+              
+              const SizedBox(height: 12),
+              
+              // التاريخ والأولوية
               Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  // الأولوية
-                  _buildPriorityChip(context, ticket.priority),
-
-                  const Spacer(),
-
-                  // عدد الرسائل غير المقروءة
-                  if (ticket.unreadMessages > 0)
-                    Container(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 8, vertical: 4),
-                      decoration: BoxDecoration(
-                        color: Theme.of(context)
-                            .colorScheme
-                            .error
-                            .withValues(alpha: 26), // 0.1 * 255 = 26
-                        borderRadius: BorderRadius.circular(12),
+                  // تاريخ الإنشاء
+                  Row(
+                    children: [
+                      Icon(
+                        Icons.calendar_today,
+                        size: 16,
+                        color: AppTheme.textSecondaryColor,
                       ),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Icon(
-                            Icons.mark_email_unread,
-                            size: 16,
-                            color: Theme.of(context).colorScheme.error,
-                          ),
-                          const SizedBox(width: 4),
-                          Text(
-                            '${ticket.unreadMessages}',
-                            style: Theme.of(context)
-                                .textTheme
-                                .bodySmall
-                                ?.copyWith(
-                                  color: Theme.of(context).colorScheme.error,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                          ),
-                        ],
+                      const SizedBox(width: 4),
+                      Text(
+                        _formatDate(ticket.createdAt),
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: AppTheme.textSecondaryColor,
+                        ),
                       ),
-                    ),
-
-                  const SizedBox(width: 8),
-
-                  // زر الإجراءات
-                  Icon(
-                    Icons.arrow_forward_ios,
-                    size: 16,
-                    color: Theme.of(context).colorScheme.primary,
+                    ],
                   ),
+                  
+                  // الأولوية
+                  _buildPriorityChip(),
                 ],
               ),
             ],
@@ -154,112 +112,105 @@ class TicketCard extends StatelessWidget {
     );
   }
 
-  // بناء شريحة الحالة
-  Widget _buildStatusChip(BuildContext context, TicketStatus status) {
-    String label;
-    Color color;
-
-    switch (status) {
-      case TicketStatus.open:
-        label = 'مفتوحة';
-        color = Colors.blue;
+  /// بناء شريحة حالة التذكرة
+  Widget _buildStatusChip() {
+    Color backgroundColor;
+    Color textColor;
+    String statusText;
+    
+    switch (ticket.status) {
+      case TicketStatus.new_:
+        backgroundColor = Colors.blue.withOpacity(0.2);
+        textColor = Colors.blue;
+        statusText = 'جديدة';
         break;
-      case TicketStatus.pending:
-        label = 'قيد الانتظار';
-        color = Colors.orange;
+      case TicketStatus.inProgress:
+        backgroundColor = Colors.orange.withOpacity(0.2);
+        textColor = Colors.orange;
+        statusText = 'قيد المعالجة';
         break;
-      case TicketStatus.resolved:
-        label = 'تم الحل';
-        color = Colors.green;
+      case TicketStatus.waitingForUserResponse:
+        backgroundColor = Colors.purple.withOpacity(0.2);
+        textColor = Colors.purple;
+        statusText = 'بانتظار الرد';
         break;
       case TicketStatus.closed:
-        label = 'مغلقة';
-        color = Colors.grey;
+        backgroundColor = Colors.green.withOpacity(0.2);
+        textColor = Colors.green;
+        statusText = 'مغلقة';
+        break;
+      case TicketStatus.cancelled:
+        backgroundColor = Colors.red.withOpacity(0.2);
+        textColor = Colors.red;
+        statusText = 'ملغاة';
         break;
     }
-
+    
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 26), // 0.1 * 255 = 26
+        color: backgroundColor,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withValues(alpha: 128)), // 0.5 * 255 = 128
       ),
       child: Text(
-        label,
-        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: color,
-              fontWeight: FontWeight.bold,
-            ),
-        textAlign: TextAlign.center,
+        statusText,
+        style: TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.bold,
+          color: textColor,
+        ),
       ),
     );
   }
 
-  // بناء شريحة الأولوية
-  Widget _buildPriorityChip(BuildContext context, TicketPriority priority) {
-    String label;
-    Color color;
-
-    switch (priority) {
+  /// بناء شريحة أولوية التذكرة
+  Widget _buildPriorityChip() {
+    Color backgroundColor;
+    Color textColor;
+    String priorityText;
+    
+    switch (ticket.priority) {
       case TicketPriority.low:
-        label = 'منخفضة';
-        color = Colors.green;
+        backgroundColor = Colors.green.withOpacity(0.2);
+        textColor = Colors.green;
+        priorityText = 'منخفضة';
         break;
       case TicketPriority.medium:
-        label = 'متوسطة';
-        color = Colors.blue;
+        backgroundColor = Colors.blue.withOpacity(0.2);
+        textColor = Colors.blue;
+        priorityText = 'متوسطة';
         break;
       case TicketPriority.high:
-        label = 'عالية';
-        color = Colors.orange;
+        backgroundColor = Colors.orange.withOpacity(0.2);
+        textColor = Colors.orange;
+        priorityText = 'عالية';
         break;
-      case TicketPriority.urgent:
-        label = 'عاجلة';
-        color = Colors.red;
+      case TicketPriority.critical:
+        backgroundColor = Colors.red.withOpacity(0.2);
+        textColor = Colors.red;
+        priorityText = 'حرجة';
         break;
     }
-
+    
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withValues(alpha: 26), // 0.1 * 255 = 26
+        color: backgroundColor,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withValues(alpha: 128)), // 0.5 * 255 = 128
       ),
       child: Text(
-        label,
-        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: color,
-              fontWeight: FontWeight.bold,
-            ),
-        textAlign: TextAlign.center,
+        priorityText,
+        style: TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.bold,
+          color: textColor,
+        ),
       ),
     );
   }
 
-  // الحصول على أيقونة نوع التذكرة
-  IconData _getTicketTypeIcon(TicketType type) {
-    switch (type) {
-      case TicketType.general:
-        return Icons.help_outline;
-      case TicketType.orderIssue:
-        return Icons.shopping_bag;
-      case TicketType.paymentIssue:
-        return Icons.payment;
-      case TicketType.accountIssue:
-        return Icons.person;
-      case TicketType.appIssue:
-        return Icons.smartphone;
-      case TicketType.suggestion:
-        return Icons.lightbulb_outline;
-      case TicketType.other:
-        return Icons.more_horiz;
-    }
-  }
-
-  // تنسيق التاريخ
+  /// تنسيق التاريخ
   String _formatDate(DateTime date) {
-    return DateFormat('yyyy/MM/dd').format(date);
+    return '${date.day}/${date.month}/${date.year}';
   }
 }

@@ -1,25 +1,24 @@
-import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
+import 'package:user_app/core/architecture/domain/entity.dart';
+import 'package:user_app/core/architecture/domain/failure.dart';
+import 'package:dartz/dartz.dart';
 
-class Rating extends Equatable {
-  final String id;
+/// كيان التقييم
+class Rating extends Entity {
   final String userId;
   final String productId;
   final double rating;
-  final String? review;
+  final String comment;
   final DateTime createdAt;
-  final String? userDisplayName;
-  final bool isVerifiedPurchase;
 
-  const Rating({
-    required this.id,
+  Rating({
+    required String id,
     required this.userId,
     required this.productId,
     required this.rating,
-    this.review,
+    required this.comment,
     required this.createdAt,
-    this.userDisplayName,
-    required this.isVerifiedPurchase,
-  });
+  }) : super(id: id);
 
   @override
   List<Object?> get props => [
@@ -27,27 +26,25 @@ class Rating extends Equatable {
         userId,
         productId,
         rating,
-        review,
+        comment,
         createdAt,
-        userDisplayName,
-        isVerifiedPurchase,
       ];
 }
 
-class RatingSummary extends Equatable {
+/// ملخص التقييمات
+class RatingSummary {
   final String productId;
   final double averageRating;
   final int totalRatings;
   final Map<int, int> ratingDistribution;
 
-  const RatingSummary({
+  RatingSummary({
     required this.productId,
     required this.averageRating,
     required this.totalRatings,
     required this.ratingDistribution,
   });
 
-  @override
   List<Object?> get props => [
         productId,
         averageRating,

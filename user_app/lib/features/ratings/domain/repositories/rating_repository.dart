@@ -1,38 +1,36 @@
 import 'package:dartz/dartz.dart';
+import 'package:user_app/core/architecture/domain/failure.dart';
+import 'package:user_app/features/ratings/domain/entities/rating.dart';
 
-import '../../../../core/architecture/domain/failure.dart';
-import '../entities/rating.dart';
-
+/// واجهة مستودع التقييمات
 abstract class RatingRepository {
-  /// يجلب تقييمات منتج معين
+  /// الحصول على تقييمات منتج معين
   Future<Either<Failure, List<Rating>>> getProductRatings(String productId);
-
-  /// يجلب ملخص تقييمات منتج معين
+  
+  /// الحصول على ملخص تقييمات منتج معين
   Future<Either<Failure, RatingSummary>> getProductRatingSummary(String productId);
-
-  /// يضيف تقييم جديد لمنتج
+  
+  /// الحصول على تقييم محدد
+  Future<Either<Failure, Rating>> getRating(String ratingId);
+  
+  /// إضافة تقييم جديد
   Future<Either<Failure, Rating>> addRating({
+    required String userId,
     required String productId,
     required double rating,
-    String? review,
+    required String comment,
   });
-
-  /// يحدث تقييم موجود
+  
+  /// تحديث تقييم موجود
   Future<Either<Failure, Rating>> updateRating({
     required String ratingId,
     required double rating,
-    String? review,
+    required String comment,
   });
-
-  /// يحذف تقييم
+  
+  /// حذف تقييم
   Future<Either<Failure, Unit>> deleteRating(String ratingId);
-
-  /// يجلب تقييمات المستخدم الحالي
-  Future<Either<Failure, List<Rating>>> getUserRatings();
-
-  /// يتحقق مما إذا كان المستخدم قد قيم منتج معين
-  Future<Either<Failure, bool>> hasUserRatedProduct(String productId);
-
-  /// يجلب تقييم المستخدم لمنتج معين
-  Future<Either<Failure, Rating?>> getUserRatingForProduct(String productId);
+  
+  /// الحصول على تقييمات المستخدم
+  Future<Either<Failure, List<Rating>>> getUserRatings(String userId);
 }

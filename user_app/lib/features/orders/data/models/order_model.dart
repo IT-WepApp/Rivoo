@@ -1,102 +1,108 @@
-import '../domain/entities/order.dart';
+import 'package:flutter/material.dart';
+import 'package:user_app/features/orders/domain/entities/order.dart';
 
+/// نموذج الطلب
 class OrderModel extends Order {
-  const OrderModel({
+  OrderModel({
     required String id,
     required String userId,
     required List<OrderItemModel> items,
-    required double totalAmount,
-    required String status,
-    required DateTime orderDate,
     required String shippingAddress,
     required String paymentMethod,
-    String? trackingNumber,
-    DateTime? estimatedDeliveryDate,
+    required double totalAmount,
+    required String status,
+    required DateTime createdAt,
   }) : super(
           id: id,
           userId: userId,
           items: items,
-          totalAmount: totalAmount,
-          status: status,
-          orderDate: orderDate,
           shippingAddress: shippingAddress,
           paymentMethod: paymentMethod,
-          trackingNumber: trackingNumber,
-          estimatedDeliveryDate: estimatedDeliveryDate,
+          totalAmount: totalAmount,
+          status: status,
+          createdAt: createdAt,
         );
 
+  /// إنشاء نموذج من JSON
   factory OrderModel.fromJson(Map<String, dynamic> json) {
+    final List<dynamic> itemsJson = json['items'];
+    final List<OrderItemModel> items = itemsJson
+        .map((itemJson) => OrderItemModel.fromJson(itemJson))
+        .toList();
+
     return OrderModel(
-      id: json['id'] as String,
-      userId: json['userId'] as String,
-      items: (json['items'] as List<dynamic>)
-          .map((item) => OrderItemModel.fromJson(item as Map<String, dynamic>))
-          .toList(),
-      totalAmount: (json['totalAmount'] as num).toDouble(),
-      status: json['status'] as String,
-      orderDate: DateTime.parse(json['orderDate'] as String),
-      shippingAddress: json['shippingAddress'] as String,
-      paymentMethod: json['paymentMethod'] as String,
-      trackingNumber: json['trackingNumber'] as String?,
-      estimatedDeliveryDate: json['estimatedDeliveryDate'] != null
-          ? DateTime.parse(json['estimatedDeliveryDate'] as String)
-          : null,
+      id: json['id'],
+      userId: json['userId'],
+      items: items,
+      shippingAddress: json['shippingAddress'],
+      paymentMethod: json['paymentMethod'],
+      totalAmount: json['totalAmount'].toDouble(),
+      status: json['status'],
+      createdAt: DateTime.parse(json['createdAt']),
     );
   }
 
+  /// تحويل النموذج إلى JSON
   Map<String, dynamic> toJson() {
+    final List<Map<String, dynamic>> itemsJson =
+        items.map((item) => (item as OrderItemModel).toJson()).toList();
+
     return {
       'id': id,
       'userId': userId,
-      'items':
-          (items as List<OrderItemModel>).map((item) => item.toJson()).toList(),
-      'totalAmount': totalAmount,
-      'status': status,
-      'orderDate': orderDate.toIso8601String(),
+      'items': itemsJson,
       'shippingAddress': shippingAddress,
       'paymentMethod': paymentMethod,
-      'trackingNumber': trackingNumber,
-      'estimatedDeliveryDate': estimatedDeliveryDate?.toIso8601String(),
+      'totalAmount': totalAmount,
+      'status': status,
+      'createdAt': createdAt.toIso8601String(),
     };
   }
 }
 
+/// نموذج عنصر الطلب
 class OrderItemModel extends OrderItem {
-  const OrderItemModel({
+  OrderItemModel({
     required String id,
     required String productId,
     required String productName,
+    required String productImage,
     required double price,
     required int quantity,
-    String? imageUrl,
+    required double totalPrice,
   }) : super(
           id: id,
           productId: productId,
           productName: productName,
+          productImage: productImage,
           price: price,
           quantity: quantity,
-          imageUrl: imageUrl,
+          totalPrice: totalPrice,
         );
 
+  /// إنشاء نموذج من JSON
   factory OrderItemModel.fromJson(Map<String, dynamic> json) {
     return OrderItemModel(
-      id: json['id'] as String,
-      productId: json['productId'] as String,
-      productName: json['productName'] as String,
-      price: (json['price'] as num).toDouble(),
-      quantity: json['quantity'] as int,
-      imageUrl: json['imageUrl'] as String?,
+      id: json['id'],
+      productId: json['productId'],
+      productName: json['productName'],
+      productImage: json['productImage'],
+      price: json['price'].toDouble(),
+      quantity: json['quantity'],
+      totalPrice: json['totalPrice'].toDouble(),
     );
   }
 
+  /// تحويل النموذج إلى JSON
   Map<String, dynamic> toJson() {
     return {
       'id': id,
       'productId': productId,
       'productName': productName,
+      'productImage': productImage,
       'price': price,
       'quantity': quantity,
-      'imageUrl': imageUrl,
+      'totalPrice': totalPrice,
     };
   }
 }

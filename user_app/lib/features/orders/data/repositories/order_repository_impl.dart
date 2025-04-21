@@ -1,252 +1,216 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
+import 'package:user_app/features/orders/domain/entities/order.dart';
+import 'package:user_app/features/orders/domain/repositories/order_repository.dart';
 import 'package:dartz/dartz.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:uuid/uuid.dart';
+import 'package:user_app/core/architecture/domain/failure.dart';
 
-import '../../../../core/architecture/domain/failure.dart';
-import '../domain/entities/order.dart';
-import '../domain/repositories/order_repository.dart';
-import '../models/order_model.dart';
-
+/// تنفيذ مستودع الطلبات
 class OrderRepositoryImpl implements OrderRepository {
-  final FirebaseFirestore _firestore;
-  final FirebaseAuth _auth;
-  final Uuid _uuid;
+  final String baseUrl;
+  final Map<String, String> headers;
 
   OrderRepositoryImpl({
-    FirebaseFirestore? firestore,
-    FirebaseAuth? auth,
-    Uuid? uuid,
-  })  : _firestore = firestore ?? FirebaseFirestore.instance,
-        _auth = auth ?? FirebaseAuth.instance,
-        _uuid = uuid ?? const Uuid();
+    required this.baseUrl,
+    required this.headers,
+  });
 
   @override
-  Future<Either<Failure, List<Order>>> getUserOrders() async {
+  Future<Either<Failure, List<Order>>> getUserOrders(String userId) async {
     try {
-      final userId = _auth.currentUser?.uid;
-      if (userId == null) {
-        return const Left(AuthFailure(message: 'المستخدم غير مسجل الدخول'));
-      }
-
-      final ordersSnapshot = await _firestore
-          .collection('orders')
-          .where('userId', isEqualTo: userId)
-          .orderBy('orderDate', descending: true)
-          .get();
-
-      final orders = ordersSnapshot.docs.map((doc) {
-        final data = doc.data();
-        return OrderModel.fromJson(data);
-      }).toList();
-
+      // محاكاة طلب HTTP للحصول على طلبات المستخدم
+      await Future.delayed(const Duration(milliseconds: 800));
+      
+      // بيانات وهمية للطلبات
+      final orders = [
+        Order(
+          id: 'order1',
+          userId: userId,
+          items: [
+            OrderItem(
+              id: 'item1',
+              productId: 'product1',
+              productName: 'هاتف ذكي',
+              productImage: 'assets/images/smartphone.png',
+              price: 1200.0,
+              quantity: 1,
+              totalPrice: 1200.0,
+            ),
+          ],
+          shippingAddress: 'شارع الملك فهد، الرياض، المملكة العربية السعودية',
+          paymentMethod: 'بطاقة ائتمان',
+          totalAmount: 1200.0,
+          status: 'تم التسليم',
+          createdAt: DateTime.now().subtract(const Duration(days: 5)),
+        ),
+        Order(
+          id: 'order2',
+          userId: userId,
+          items: [
+            OrderItem(
+              id: 'item2',
+              productId: 'product2',
+              productName: 'سماعات لاسلكية',
+              productImage: 'assets/images/headphones.png',
+              price: 300.0,
+              quantity: 1,
+              totalPrice: 300.0,
+            ),
+            OrderItem(
+              id: 'item3',
+              productId: 'product3',
+              productName: 'شاحن سريع',
+              productImage: 'assets/images/charger.png',
+              price: 100.0,
+              quantity: 2,
+              totalPrice: 200.0,
+            ),
+          ],
+          shippingAddress: 'شارع الملك فهد، الرياض، المملكة العربية السعودية',
+          paymentMethod: 'الدفع عند الاستلام',
+          totalAmount: 500.0,
+          status: 'قيد التوصيل',
+          createdAt: DateTime.now().subtract(const Duration(days: 2)),
+        ),
+      ];
+      
       return Right(orders);
     } catch (e) {
-      return Left(ServerFailure(message: e.toString()));
+      return Left(ServerFailure(message: 'فشل في الحصول على طلبات المستخدم: ${e.toString()}'));
     }
   }
 
   @override
   Future<Either<Failure, Order>> getOrderDetails(String orderId) async {
     try {
-      final userId = _auth.currentUser?.uid;
-      if (userId == null) {
-        return const Left(AuthFailure(message: 'المستخدم غير مسجل الدخول'));
-      }
-
-      final orderDoc = await _firestore.collection('orders').doc(orderId).get();
-
-      if (!orderDoc.exists) {
-        return Left(NotFoundFailure(message: 'الطلب غير موجود'));
-      }
-
-      final orderData = orderDoc.data()!;
-      if (orderData['userId'] != userId) {
-        return const Left(
-            AuthFailure(message: 'ليس لديك صلاحية للوصول إلى هذا الطلب'));
-      }
-
-      final order = OrderModel.fromJson(orderData);
+      // محاكاة طلب HTTP للحصول على تفاصيل الطلب
+      await Future.delayed(const Duration(milliseconds: 500));
+      
+      // بيانات وهمية لتفاصيل الطلب
+      final order = Order(
+        id: orderId,
+        userId: 'user1',
+        items: [
+          OrderItem(
+            id: 'item1',
+            productId: 'product1',
+            productName: 'هاتف ذكي',
+            productImage: 'assets/images/smartphone.png',
+            price: 1200.0,
+            quantity: 1,
+            totalPrice: 1200.0,
+          ),
+        ],
+        shippingAddress: 'شارع الملك فهد، الرياض، المملكة العربية السعودية',
+        paymentMethod: 'بطاقة ائتمان',
+        totalAmount: 1200.0,
+        status: 'تم التسليم',
+        createdAt: DateTime.now().subtract(const Duration(days: 5)),
+      );
+      
       return Right(order);
     } catch (e) {
-      return Left(ServerFailure(message: e.toString()));
+      return Left(ServerFailure(message: 'فشل في الحصول على تفاصيل الطلب: ${e.toString()}'));
     }
   }
 
   @override
   Future<Either<Failure, Order>> createOrder({
-    required List<OrderItem> items,
-    required double totalAmount,
+    required String userId,
+    required List<Map<String, dynamic>> items,
     required String shippingAddress,
     required String paymentMethod,
   }) async {
     try {
-      final userId = _auth.currentUser?.uid;
-      if (userId == null) {
-        return const Left(AuthFailure(message: 'المستخدم غير مسجل الدخول'));
-      }
-
-      final orderId = _uuid.v4();
-      final now = DateTime.now();
-      final estimatedDelivery = now.add(const Duration(days: 7));
-
-      final orderItems = items.map((item) {
-        if (item is OrderItemModel) {
-          return item;
-        } else {
-          return OrderItemModel(
-            id: _uuid.v4(),
-            productId: item.productId,
-            productName: item.productName,
-            price: item.price,
-            quantity: item.quantity,
-            imageUrl: item.imageUrl,
-          );
-        }
-      }).toList();
-
-      final order = OrderModel(
-        id: orderId,
+      // محاكاة طلب HTTP لإنشاء طلب جديد
+      await Future.delayed(const Duration(milliseconds: 1000));
+      
+      // تحويل العناصر إلى كائنات OrderItem
+      final orderItems = items.map((item) => OrderItem(
+        id: 'item_${DateTime.now().millisecondsSinceEpoch}',
+        productId: item['productId'],
+        productName: item['productName'],
+        productImage: item['productImage'],
+        price: item['price'],
+        quantity: item['quantity'],
+        totalPrice: item['price'] * item['quantity'],
+      )).toList();
+      
+      // حساب المبلغ الإجمالي
+      final totalAmount = orderItems.fold<double>(
+        0,
+        (previousValue, item) => previousValue + item.totalPrice,
+      );
+      
+      // بيانات الطلب الجديد
+      final order = Order(
+        id: 'order_${DateTime.now().millisecondsSinceEpoch}',
         userId: userId,
         items: orderItems,
-        totalAmount: totalAmount,
-        status: 'pending',
-        orderDate: now,
         shippingAddress: shippingAddress,
         paymentMethod: paymentMethod,
-        estimatedDeliveryDate: estimatedDelivery,
+        totalAmount: totalAmount,
+        status: 'تم الطلب',
+        createdAt: DateTime.now(),
       );
-
-      await _firestore.collection('orders').doc(orderId).set(order.toJson());
-
+      
       return Right(order);
     } catch (e) {
-      return Left(ServerFailure(message: e.toString()));
+      return Left(ServerFailure(message: 'فشل في إنشاء الطلب: ${e.toString()}'));
     }
   }
 
   @override
   Future<Either<Failure, Unit>> cancelOrder(String orderId) async {
     try {
-      final userId = _auth.currentUser?.uid;
-      if (userId == null) {
-        return const Left(AuthFailure(message: 'المستخدم غير مسجل الدخول'));
-      }
-
-      final orderDoc = await _firestore.collection('orders').doc(orderId).get();
-
-      if (!orderDoc.exists) {
-        return Left(NotFoundFailure(message: 'الطلب غير موجود'));
-      }
-
-      final orderData = orderDoc.data()!;
-      if (orderData['userId'] != userId) {
-        return const Left(
-            AuthFailure(message: 'ليس لديك صلاحية لإلغاء هذا الطلب'));
-      }
-
-      if (orderData['status'] != 'pending' &&
-          orderData['status'] != 'processing') {
-        return const Left(
-            ValidationFailure(message: 'لا يمكن إلغاء الطلب في هذه المرحلة'));
-      }
-
-      await _firestore.collection('orders').doc(orderId).update({
-        'status': 'cancelled',
-      });
-
+      // محاكاة طلب HTTP لإلغاء الطلب
+      await Future.delayed(const Duration(milliseconds: 800));
+      
       return const Right(unit);
     } catch (e) {
-      return Left(ServerFailure(message: e.toString()));
+      return Left(ServerFailure(message: 'فشل في إلغاء الطلب: ${e.toString()}'));
     }
   }
 
   @override
-  Future<Either<Failure, String>> trackOrder(String orderId) async {
+  Future<Either<Failure, Map<String, dynamic>>> trackOrder(String orderId) async {
     try {
-      final userId = _auth.currentUser?.uid;
-      if (userId == null) {
-        return const Left(AuthFailure(message: 'المستخدم غير مسجل الدخول'));
-      }
-
-      final orderDoc = await _firestore.collection('orders').doc(orderId).get();
-
-      if (!orderDoc.exists) {
-        return Left(NotFoundFailure(message: 'الطلب غير موجود'));
-      }
-
-      final orderData = orderDoc.data()!;
-      if (orderData['userId'] != userId) {
-        return const Left(
-            AuthFailure(message: 'ليس لديك صلاحية لتتبع هذا الطلب'));
-      }
-
-      final status = orderData['status'] as String;
-      final trackingNumber = orderData['trackingNumber'] as String?;
-
-      String trackingInfo;
-      switch (status) {
-        case 'pending':
-          trackingInfo = 'الطلب قيد المعالجة';
-          break;
-        case 'processing':
-          trackingInfo = 'جاري تجهيز الطلب';
-          break;
-        case 'shipped':
-          trackingInfo = 'تم شحن الطلب';
-          if (trackingNumber != null) {
-            trackingInfo += ' - رقم التتبع: $trackingNumber';
-          }
-          break;
-        case 'delivered':
-          trackingInfo = 'تم تسليم الطلب';
-          break;
-        case 'cancelled':
-          trackingInfo = 'تم إلغاء الطلب';
-          break;
-        default:
-          trackingInfo = 'حالة الطلب: $status';
-      }
-
+      // محاكاة طلب HTTP لتتبع حالة الطلب
+      await Future.delayed(const Duration(milliseconds: 600));
+      
+      // بيانات وهمية لتتبع الطلب
+      final trackingInfo = {
+        'orderId': orderId,
+        'status': 'قيد التوصيل',
+        'estimatedDelivery': DateTime.now().add(const Duration(days: 2)).toIso8601String(),
+        'currentLocation': 'مركز التوزيع - الرياض',
+        'trackingNumber': 'TRK123456789',
+        'trackingHistory': [
+          {
+            'status': 'تم الطلب',
+            'timestamp': DateTime.now().subtract(const Duration(days: 2)).toIso8601String(),
+            'location': 'المتجر الإلكتروني',
+          },
+          {
+            'status': 'تم التأكيد',
+            'timestamp': DateTime.now().subtract(const Duration(days: 1, hours: 12)).toIso8601String(),
+            'location': 'المتجر الإلكتروني',
+          },
+          {
+            'status': 'قيد التجهيز',
+            'timestamp': DateTime.now().subtract(const Duration(days: 1)).toIso8601String(),
+            'location': 'المستودع - الرياض',
+          },
+          {
+            'status': 'قيد التوصيل',
+            'timestamp': DateTime.now().subtract(const Duration(hours: 6)).toIso8601String(),
+            'location': 'مركز التوزيع - الرياض',
+          },
+        ],
+      };
+      
       return Right(trackingInfo);
     } catch (e) {
-      return Left(ServerFailure(message: e.toString()));
-    }
-  }
-
-  @override
-  Future<Either<Failure, Unit>> updateShippingAddress(
-      String orderId, String newAddress) async {
-    try {
-      final userId = _auth.currentUser?.uid;
-      if (userId == null) {
-        return const Left(AuthFailure(message: 'المستخدم غير مسجل الدخول'));
-      }
-
-      final orderDoc = await _firestore.collection('orders').doc(orderId).get();
-
-      if (!orderDoc.exists) {
-        return Left(NotFoundFailure(message: 'الطلب غير موجود'));
-      }
-
-      final orderData = orderDoc.data()!;
-      if (orderData['userId'] != userId) {
-        return const Left(
-            AuthFailure(message: 'ليس لديك صلاحية لتحديث هذا الطلب'));
-      }
-
-      if (orderData['status'] != 'pending') {
-        return const Left(ValidationFailure(
-            message: 'لا يمكن تحديث عنوان الشحن بعد بدء معالجة الطلب'));
-      }
-
-      await _firestore.collection('orders').doc(orderId).update({
-        'shippingAddress': newAddress,
-      });
-
-      return const Right(unit);
-    } catch (e) {
-      return Left(ServerFailure(message: e.toString()));
+      return Left(ServerFailure(message: 'فشل في تتبع الطلب: ${e.toString()}'));
     }
   }
 }

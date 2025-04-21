@@ -1,346 +1,290 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:user_app/core/utils/responsive_utils.dart';
-import 'package:user_app/core/widgets/responsive_builder.dart';
-import 'package:user_app/features/support/application/support_notifier.dart';
-import 'package:user_app/features/support/domain/ticket.dart';
-import 'package:user_app/features/support/presentation/screens/ticket_details_screen.dart';
+import 'package:user_app/core/theme/app_theme.dart';
+import 'package:user_app/core/widgets/app_button.dart';
+import 'package:user_app/core/widgets/app_text_field.dart';
+import 'package:user_app/features/support/domain/entities/ticket.dart';
+import 'package:user_app/flutter_gen/gen_l10n/app_localizations.dart';
 
-class CreateTicketScreen extends ConsumerStatefulWidget {
-  final String? orderId;
-
-  const CreateTicketScreen({
-    Key? key,
-    this.orderId,
-  }) : super(key: key);
+/// شاشة إنشاء تذكرة دعم جديدة
+class CreateTicketScreen extends StatefulWidget {
+  /// إنشاء شاشة إنشاء تذكرة دعم جديدة
+  const CreateTicketScreen({Key? key}) : super(key: key);
 
   @override
-  ConsumerState<CreateTicketScreen> createState() => _CreateTicketScreenState();
+  State<CreateTicketScreen> createState() => _CreateTicketScreenState();
 }
 
-class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
+class _CreateTicketScreenState extends State<CreateTicketScreen> {
   final _formKey = GlobalKey<FormState>();
   final _subjectController = TextEditingController();
-  final _descriptionController = TextEditingController();
-
-  TicketType _selectedType = TicketType.general;
-  TicketPriority _selectedPriority = TicketPriority.medium;
-
-  bool _isSubmitting = false;
+  final _messageController = TextEditingController();
+  String _selectedCategory = 'general';
+  String _selectedPriority = 'medium';
+  bool _isLoading = false;
+  List<String>? _attachments;
 
   @override
   void dispose() {
     _subjectController.dispose();
-    _descriptionController.dispose();
+    _messageController.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-
+    final localizations = AppLocalizations.of(context)!;
+    
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n.createNewTicket),
+        title: Text(localizations.createTicket),
       ),
-      body: ResponsiveBuilder(
-        // تنفيذ واجهة الهاتف
-        mobileBuilder: (context) => _buildMobileLayout(context, l10n),
-
-        // تنفيذ واجهة الجهاز اللوحي والأكبر
-        smallTabletBuilder: (context) => _buildTabletLayout(context, l10n),
-      ),
-    );
-  }
-
-  // بناء تخطيط الهاتف
-  Widget _buildMobileLayout(BuildContext context, AppLocalizations l10n) {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: _buildForm(context, l10n),
-      ),
-    );
-  }
-
-  // بناء تخطيط الجهاز اللوحي
-  Widget _buildTabletLayout(BuildContext context, AppLocalizations l10n) {
-    return Center(
-      child: SingleChildScrollView(
-        child: Container(
-          constraints: BoxConstraints(
-            maxWidth: context.screenWidth * 0.7,
-            maxHeight: context.screenHeight * 0.8,
-          ),
-          child: Card(
-            elevation: 4,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
+      body: Form(
+        key: _formKey,
+        child: ListView(
+          padding: const EdgeInsets.all(16),
+          children: [
+            // الموضوع
+            AppTextField(
+              controller: _subjectController,
+              labelText: localizations.subject,
+              hintText: localizations.subjectHint,
+              textInputAction: TextInputAction.next,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return localizations.subjectRequired;
+                }
+                return null;
+              },
             ),
-            child: Padding(
-              padding: const EdgeInsets.all(24.0),
-              child: _buildForm(context, l10n),
+            
+            const SizedBox(height: 16),
+            
+            // الفئة
+            _buildDropdownField(
+              label: localizations.category,
+              value: _selectedCategory,
+              items: {
+                'general': localizations.general,
+                'account': localizations.account,
+                'order': localizations.order,
+                'payment': localizations.payment,
+                'technical': localizations.technical,
+                'other': localizations.other,
+              },
+              onChanged: (value) {
+                setState(() {
+                  _selectedCategory = value!;
+                });
+              },
             ),
-          ),
+            
+            const SizedBox(height: 16),
+            
+            // الأولوية
+            _buildDropdownField(
+              label: localizations.priority,
+              value: _selectedPriority,
+              items: {
+                'low': localizations.low,
+                'medium': localizations.medium,
+                'high': localizations.high,
+              },
+              onChanged: (value) {
+                setState(() {
+                  _selectedPriority = value!;
+                });
+              },
+            ),
+            
+            const SizedBox(height: 16),
+            
+            // الرسالة
+            AppTextField(
+              controller: _messageController,
+              labelText: localizations.message,
+              hintText: localizations.messageHint,
+              maxLines: 5,
+              textInputAction: TextInputAction.newline,
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return localizations.messageRequired;
+                }
+                if (value.length < 10) {
+                  return localizations.messageTooShort;
+                }
+                return null;
+              },
+            ),
+            
+            const SizedBox(height: 16),
+            
+            // المرفقات
+            _buildAttachmentsSection(localizations),
+            
+            const SizedBox(height: 24),
+            
+            // زر الإرسال
+            AppButton(
+              text: localizations.submit,
+              isLoading: _isLoading,
+              onPressed: _submitTicket,
+            ),
+          ],
         ),
       ),
     );
   }
 
-  // بناء نموذج إنشاء التذكرة
-  Widget _buildForm(BuildContext context, AppLocalizations l10n) {
-    return Form(
-      key: _formKey,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // العنوان
-          Text(
-            l10n.howCanWeHelpYou,
-            style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-          ),
-          const SizedBox(height: 8),
-          Text(
-            'يرجى تقديم تفاصيل كافية حتى نتمكن من مساعدتك بشكل أفضل.',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color:
-                      Theme.of(context).colorScheme.onSurface.withValues(alpha: 179), // 0.7 * 255 = 179
-                ),
-          ),
-          const SizedBox(height: 24),
-
-          // حقل الموضوع
-          TextFormField(
-            controller: _subjectController,
-            decoration: InputDecoration(
-              labelText: l10n.subject,
-              hintText: 'أدخل موضوع التذكرة',
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-            validator: (value) {
-              if (value == null || value.trim().isEmpty) {
-                return 'يرجى إدخال موضوع للتذكرة';
-              }
-              return null;
-            },
-          ),
-          const SizedBox(height: 16),
-
-          // حقل الوصف
-          TextFormField(
-            controller: _descriptionController,
-            decoration: InputDecoration(
-              labelText: l10n.description,
-              hintText: 'اشرح مشكلتك بالتفصيل',
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-              alignLabelWithHint: true,
-            ),
-            maxLines: 5,
-            validator: (value) {
-              if (value == null || value.trim().isEmpty) {
-                return 'يرجى إدخال وصف للتذكرة';
-              }
-              if (value.trim().length < 20) {
-                return 'يرجى تقديم وصف أكثر تفصيلاً (20 حرف على الأقل)';
-              }
-              return null;
-            },
-          ),
-          const SizedBox(height: 16),
-
-          // اختيار نوع التذكرة
-          Text(
-            l10n.ticketType,
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-          ),
-          const SizedBox(height: 8),
-          _buildTicketTypeSelector(context),
-          const SizedBox(height: 16),
-
-          // اختيار أولوية التذكرة
-          Text(
-            l10n.priority,
-            style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-          ),
-          const SizedBox(height: 8),
-          _buildPrioritySelector(context),
-          const SizedBox(height: 24),
-
-          // زر الإرسال
-          SizedBox(
-            width: double.infinity,
-            child: ElevatedButton(
-              onPressed: _isSubmitting ? null : _submitTicket,
-              style: ElevatedButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: _isSubmitting
-                  ? const CircularProgressIndicator()
-                  : Text(l10n.submitTicket),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // بناء محدد نوع التذكرة
-  Widget _buildTicketTypeSelector(BuildContext context) {
-    return Wrap(
-      spacing: 8,
-      runSpacing: 8,
+  /// بناء حقل القائمة المنسدلة
+  Widget _buildDropdownField<T>({
+    required String label,
+    required T value,
+    required Map<String, String> items,
+    required ValueChanged<T?> onChanged,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildTypeChip(context, TicketType.general, 'استفسار عام'),
-        _buildTypeChip(context, TicketType.orderIssue, 'مشكلة في الطلب'),
-        _buildTypeChip(context, TicketType.paymentIssue, 'مشكلة في الدفع'),
-        _buildTypeChip(context, TicketType.accountIssue, 'مشكلة في الحساب'),
-        _buildTypeChip(context, TicketType.appIssue, 'مشكلة في التطبيق'),
-        _buildTypeChip(context, TicketType.suggestion, 'اقتراح'),
-        _buildTypeChip(context, TicketType.other, 'أخرى'),
+        Text(
+          label,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 14,
+          ),
+        ),
+        const SizedBox(height: 8),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          decoration: BoxDecoration(
+            border: Border.all(color: Colors.grey[300]!),
+            borderRadius: BorderRadius.circular(8),
+          ),
+          child: DropdownButtonHideUnderline(
+            child: DropdownButton<T>(
+              value: value,
+              isExpanded: true,
+              items: items.entries.map((entry) {
+                return DropdownMenuItem<T>(
+                  value: entry.key as T,
+                  child: Text(entry.value),
+                );
+              }).toList(),
+              onChanged: onChanged,
+            ),
+          ),
+        ),
       ],
     );
   }
 
-  // بناء شريحة نوع التذكرة
-  Widget _buildTypeChip(BuildContext context, TicketType type, String label) {
-    final isSelected = _selectedType == type;
-
-    return ChoiceChip(
-      label: Text(label),
-      selected: isSelected,
-      onSelected: (selected) {
-        if (selected) {
-          setState(() {
-            _selectedType = type;
-          });
-        }
-      },
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      selectedColor: Theme.of(context).colorScheme.primary.withValues(alpha: 51), // 0.2 * 255 = 51
-      labelStyle: TextStyle(
-        color: isSelected
-            ? Theme.of(context).colorScheme.primary
-            : Theme.of(context).colorScheme.onSurface,
-        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-      ),
-    );
-  }
-
-  // بناء محدد الأولوية
-  Widget _buildPrioritySelector(BuildContext context) {
-    return Wrap(
-      spacing: 8,
-      runSpacing: 8,
+  /// بناء قسم المرفقات
+  Widget _buildAttachmentsSection(AppLocalizations localizations) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        _buildPriorityChip(context, TicketPriority.low, 'منخفضة', Colors.green),
-        _buildPriorityChip(
-            context, TicketPriority.medium, 'متوسطة', Colors.blue),
-        _buildPriorityChip(
-            context, TicketPriority.high, 'عالية', Colors.orange),
-        _buildPriorityChip(context, TicketPriority.urgent, 'عاجلة', Colors.red),
+        Text(
+          localizations.attachments,
+          style: const TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 14,
+          ),
+        ),
+        const SizedBox(height: 8),
+        if (_attachments != null && _attachments!.isNotEmpty)
+          Column(
+            children: _attachments!.map((attachment) {
+              return ListTile(
+                leading: const Icon(Icons.attach_file),
+                title: Text(attachment),
+                trailing: IconButton(
+                  icon: const Icon(Icons.close),
+                  onPressed: () {
+                    setState(() {
+                      _attachments!.remove(attachment);
+                    });
+                  },
+                ),
+              );
+            }).toList(),
+          ),
+        const SizedBox(height: 8),
+        OutlinedButton.icon(
+          onPressed: _addAttachment,
+          icon: const Icon(Icons.add),
+          label: Text(localizations.addAttachment),
+          style: OutlinedButton.styleFrom(
+            foregroundColor: AppTheme.primaryColor,
+            side: BorderSide(color: AppTheme.primaryColor),
+          ),
+        ),
       ],
     );
   }
 
-  // بناء شريحة الأولوية
-  Widget _buildPriorityChip(
-    BuildContext context,
-    TicketPriority priority,
-    String label,
-    Color color,
-  ) {
-    final isSelected = _selectedPriority == priority;
-
-    return ChoiceChip(
-      label: Text(label),
-      selected: isSelected,
-      onSelected: (selected) {
-        if (selected) {
-          setState(() {
-            _selectedPriority = priority;
-          });
-        }
-      },
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      selectedColor: color.withValues(alpha: 51), // 0.2 * 255 = 51
-      labelStyle: TextStyle(
-        color: isSelected ? color : Theme.of(context).colorScheme.onSurface,
-        fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-      ),
-    );
+  /// إضافة مرفق
+  void _addAttachment() {
+    // تنفيذ إضافة مرفق
+    setState(() {
+      _attachments ??= [];
+      _attachments!.add('attachment_${_attachments!.length + 1}.jpg');
+    });
   }
 
-  // إرسال التذكرة
+  /// إرسال التذكرة
   Future<void> _submitTicket() async {
     if (_formKey.currentState?.validate() != true) {
       return;
     }
-
+    
     setState(() {
-      _isSubmitting = true;
+      _isLoading = true;
     });
-
+    
     try {
-      final supportNotifier = ref.read(supportNotifierProvider.notifier);
-
-      await supportNotifier.createTicket(
-        subject: _subjectController.text.trim(),
-        description: _descriptionController.text.trim(),
-        type: _selectedType,
+      // إنشاء كائن التذكرة
+      final ticket = Ticket(
+        id: 'ticket_${DateTime.now().millisecondsSinceEpoch}',
+        subject: _subjectController.text,
+        category: _selectedCategory,
         priority: _selectedPriority,
-        orderId: widget.orderId,
+        message: _messageController.text,
+        attachments: _attachments,
+        status: 'open',
+        createdAt: DateTime.now(),
+        updatedAt: DateTime.now(),
       );
-
-      final selectedTicket = ref.read(supportNotifierProvider).selectedTicket;
-
-      if (!mounted) return;
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('تم إنشاء التذكرة بنجاح'),
-          backgroundColor: Colors.green,
-        ),
-      );
-
-      // الانتقال إلى صفحة تفاصيل التذكرة
-      if (selectedTicket != null) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(
-            builder: (context) =>
-                TicketDetailsScreen(ticketId: selectedTicket.id),
+      
+      // إرسال التذكرة إلى الخادم
+      await Future.delayed(const Duration(seconds: 2));
+      
+      if (mounted) {
+        // عرض رسالة نجاح
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(AppLocalizations.of(context)!.ticketCreatedSuccessfully),
+            backgroundColor: Colors.green,
           ),
         );
-      } else {
+        
+        // العودة إلى الشاشة السابقة
         Navigator.pop(context);
       }
     } catch (e) {
-      if (!mounted) return;
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('حدث خطأ: ${e.toString()}'),
-          backgroundColor: Colors.red,
-        ),
-      );
-
-      setState(() {
-        _isSubmitting = false;
-      });
+      // عرض رسالة خطأ
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(e.toString()),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 }

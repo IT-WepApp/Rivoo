@@ -1,243 +1,141 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'dart:async';
-import 'package:shared_models/shared_models.dart';
-import 'package:shared_widgets/shared_widgets.dart';
-import 'package:user_app/features/order_tracking/application/order_tracking_notifier.dart';
-import 'package:location/location.dart';
-import 'package:go_router/go_router.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
+import 'package:user_app/l10n/app_localizations.dart';
+import 'package:user_app/features/orders/domain/entities/order.dart';
 
-class OrderTrackingPage extends ConsumerStatefulWidget {
+/// صفحة تتبع الطلب
+class OrderTrackingPage extends StatefulWidget {
   final String orderId;
 
-  const OrderTrackingPage({super.key, required this.orderId});
+  const OrderTrackingPage({
+    Key? key,
+    required this.orderId,
+  }) : super(key: key);
 
   @override
-  ConsumerState<OrderTrackingPage> createState() => _OrderTrackingPageState();
+  State<OrderTrackingPage> createState() => _OrderTrackingPageState();
 }
 
-class _OrderTrackingPageState extends ConsumerState<OrderTrackingPage> {
-  final Completer<GoogleMapController> _controller = Completer();
-  final Map<MarkerId, Marker> _markers = {};
-  final Set<Polyline> _polylines = {};
-  Timer? _refreshTimer;
-
-  // موقع افتراضي (مركز الرياض)
-  static const CameraPosition _kDefaultLocation = CameraPosition(
-    target: LatLng(24.7136, 46.6753),
-    zoom: 14.0,
-  );
+class _OrderTrackingPageState extends State<OrderTrackingPage> {
+  bool _isLoading = true;
+  Order? _order;
+  List<TrackingStep> _trackingSteps = [];
 
   @override
   void initState() {
     super.initState();
-    // تحديث الموقع كل 10 ثوانٍ
-    _refreshTimer = Timer.periodic(const Duration(seconds: 10), (_) {
-      _refreshTracking();
-    });
+    _loadOrderDetails();
   }
 
-  @override
-  void dispose() {
-    _refreshTimer?.cancel();
-    super.dispose();
-  }
-
-  void _refreshTracking() {
-    ref.invalidate(orderTrackingProvider(widget.orderId));
+  Future<void> _loadOrderDetails() async {
+    // محاكاة تحميل بيانات الطلب
+    await Future.delayed(const Duration(seconds: 1));
+    
+    if (mounted) {
+      setState(() {
+        _isLoading = false;
+        _order = Order(
+          id: widget.orderId,
+          userId: 'user123',
+          items: [
+            OrderItem(
+              id: 'item1',
+              productId: 'prod1',
+              productName: 'هاتف ذكي',
+              productImage: 'https://example.com/phone.jpg',
+              price: 1200,
+              quantity: 1,
+              totalPrice: 1200,
+            ),
+          ],
+          shippingAddress: 'شارع الملك فهد، الرياض، المملكة العربية السعودية',
+          paymentMethod: 'بطاقة ائتمان',
+          totalAmount: 1250,
+          status: 'قيد التوصيل',
+          createdAt: DateTime.now().subtract(const Duration(days: 2)),
+        );
+        
+        _trackingSteps = [
+          TrackingStep(
+            title: 'تم استلام الطلب',
+            description: 'تم استلام طلبك وهو قيد المعالجة',
+            date: DateTime.now().subtract(const Duration(days: 2)),
+            isCompleted: true,
+          ),
+          TrackingStep(
+            title: 'تم تأكيد الطلب',
+            description: 'تم تأكيد طلبك وتجهيزه للشحن',
+            date: DateTime.now().subtract(const Duration(days: 1, hours: 12)),
+            isCompleted: true,
+          ),
+          TrackingStep(
+            title: 'قيد الشحن',
+            description: 'تم شحن طلبك وهو في الطريق إليك',
+            date: DateTime.now().subtract(const Duration(hours: 6)),
+            isCompleted: true,
+          ),
+          TrackingStep(
+            title: 'قيد التوصيل',
+            description: 'طلبك مع مندوب التوصيل وسيصل إليك قريبًا',
+            date: DateTime.now(),
+            isCompleted: true,
+          ),
+          TrackingStep(
+            title: 'تم التسليم',
+            description: 'تم تسليم طلبك بنجاح',
+            date: null,
+            isCompleted: false,
+          ),
+        ];
+      });
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final trackingState = ref.watch(orderTrackingProvider(widget.orderId));
-    final orderDetails = trackingState.orderData;
-    final deliveryLocationAsync = trackingState.deliveryLocation;
-    final locationHistoryAsync = trackingState.locationHistory;
-    final l10n = AppLocalizations.of(context)!;
-
-    // تحديث العلامات والمسار عند تغير الموقع
-    ref.listen<AsyncValue<LocationData?>>(
-      orderTrackingProvider(widget.orderId).select((s) => s.deliveryLocation),
-      (_, next) {
-        next.whenData((location) {
-          if (location != null &&
-              location.latitude != null &&
-              location.longitude != null) {
-            _updateMarkers(location, orderDetails);
-            _moveCamera(location);
-          }
-        });
-      },
-    );
-
-    // تحديث المسار عند تغير سجل المواقع
-    ref.listen<AsyncValue<List<LocationData>>>(
-      orderTrackingProvider(widget.orderId).select((s) => s.locationHistory),
-      (_, next) {
-        next.whenData((locationHistory) {
-          if (locationHistory.isNotEmpty) {
-            _updatePolylines(locationHistory);
-          }
-        });
-      },
-    );
-
+    final theme = Theme.of(context);
+    
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n.trackingTitle),
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.refresh),
-            onPressed: _refreshTracking,
-            tooltip: l10n.retry,
-          ),
-        ],
+        title: const Text('تتبع الطلب'),
       ),
-      body: Column(
-        children: [
-          // منطقة الخريطة
-          Expanded(
-            flex: 3,
-            child: Stack(
-              children: [
-                GoogleMap(
-                  mapType: MapType.normal,
-                  initialCameraPosition: _kDefaultLocation,
-                  onMapCreated: (GoogleMapController controller) {
-                    if (!_controller.isCompleted) {
-                      _controller.complete(controller);
-                    }
-                  },
-                  markers: Set<Marker>.of(_markers.values),
-                  polylines: _polylines,
-                  myLocationEnabled: true,
-                  myLocationButtonEnabled: true,
-                  compassEnabled: true,
-                  zoomControlsEnabled: true,
-                  trafficEnabled: true,
-                ),
-                if (trackingState.isLoading)
-                  const Positioned(
-                    top: 10,
-                    right: 10,
-                    child: Card(
-                      child: Padding(
-                        padding: EdgeInsets.all(8.0),
-                        child: CircularProgressIndicator(strokeWidth: 2),
-                      ),
-                    ),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator())
+          : _order == null
+              ? Center(
+                  child: Text(
+                    'لا يمكن العثور على الطلب',
+                    style: theme.textTheme.titleMedium,
                   ),
-                // عرض الحالة الحالية للتتبع
-                Positioned(
-                  top: 10,
-                  left: 10,
-                  right: 10,
-                  child: Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: deliveryLocationAsync.when(
-                        data: (location) => location != null
-                            ? Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  const Icon(Icons.directions_car,
-                                      color: Colors.green),
-                                  const SizedBox(width: 8),
-                                  Text(
-                                    l10n.estimatedArrival,
-                                    style: const TextStyle(
-                                        fontWeight: FontWeight.bold),
-                                  ),
-                                  const SizedBox(width: 4),
-                                  Text('15-20 ${l10n.minutesAbbreviation}'),
-                                ],
-                              )
-                            : Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  const Icon(Icons.access_time,
-                                      color: Colors.orange),
-                                  const SizedBox(width: 8),
-                                  Text(l10n.waitingForDriver),
-                                ],
-                              ),
-                        loading: () => Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const SizedBox(
-                              width: 16,
-                              height: 16,
-                              child: CircularProgressIndicator(strokeWidth: 2),
-                            ),
-                            const SizedBox(width: 8),
-                            Text(l10n.loadingLocationData),
-                          ],
-                        ),
-                        error: (err, _) => Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            const Icon(Icons.error_outline, color: Colors.red),
-                            const SizedBox(width: 8),
-                            Text(l10n.locationError),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-              ],
-            ),
-          ),
-          // منطقة تفاصيل الطلب
-          Expanded(
-            flex: 2,
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: orderDetails.when(
-                data: (order) {
-                  if (order == null) {
-                    return Center(child: Text(l10n.orderInfoNotAvailable));
-                  }
-                  return _buildOrderDetailsCard(order, deliveryLocationAsync);
-                },
-                loading: () => const Center(child: CircularProgressIndicator()),
-                error: (err, st) => Center(
+                )
+              : SingleChildScrollView(
+                  padding: const EdgeInsets.all(16),
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Icon(Icons.error_outline,
-                          color: Colors.red, size: 48),
-                      const SizedBox(height: 16),
-                      Text('${l10n.errorLoadingOrder}: $err'),
-                      const SizedBox(height: 16),
-                      AppButton(
-                        text: l10n.retry,
-                        onPressed: _refreshTracking,
+                      _buildOrderInfoCard(theme),
+                      const SizedBox(height: 24),
+                      Text(
+                        'مسار التتبع',
+                        style: theme.textTheme.titleLarge?.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
+                      const SizedBox(height: 16),
+                      _buildTrackingTimeline(theme),
                     ],
                   ),
                 ),
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 
-  Widget _buildOrderDetailsCard(
-      OrderModel order, AsyncValue<LocationData?> deliveryLocationAsync) {
-    final l10n = AppLocalizations.of(context)!;
-    final estimatedTime = _calculateEstimatedTime(deliveryLocationAsync);
-
+  Widget _buildOrderInfoCard(ThemeData theme) {
     return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
       child: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -245,89 +143,58 @@ class _OrderTrackingPageState extends ConsumerState<OrderTrackingPage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  '${l10n.orderNumber}: ${order.id.substring(0, 8)}',
-                  style: Theme.of(context).textTheme.titleMedium,
+                  'رقم الطلب: ${_order!.id}',
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
                 Container(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 6,
+                  ),
                   decoration: BoxDecoration(
-                    color: _getStatusColor(order.status),
-                    borderRadius: BorderRadius.circular(12),
+                    color: _getStatusColor(theme).withValues(alpha: 26), // 0.1 * 255 = 26
+                    borderRadius: BorderRadius.circular(20),
                   ),
                   child: Text(
-                    _getStatusText(order.status),
-                    style: const TextStyle(
-                      color: Colors.white,
+                    _order!.status,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: _getStatusColor(theme),
                       fontWeight: FontWeight.bold,
-                      fontSize: 12,
                     ),
                   ),
                 ),
               ],
             ),
-            const Divider(height: 20),
-            Row(
-              children: [
-                const Icon(Icons.access_time, size: 20),
-                const SizedBox(width: 8),
-                Text(
-                  estimatedTime != null
-                      ? '${l10n.estimatedArrival}: $estimatedTime ${l10n.minutesAbbreviation}'
-                      : l10n.calculatingArrivalTime,
-                ),
-              ],
+            const Divider(height: 24),
+            Text(
+              'تاريخ الطلب: ${_formatDate(_order!.createdAt)}',
+              style: theme.textTheme.bodyMedium,
             ),
             const SizedBox(height: 8),
-            Row(
-              children: [
-                const Icon(Icons.location_on, size: 20),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: deliveryLocationAsync.when(
-                    data: (loc) => loc != null
-                        ? Text(l10n.driverOnTheWay)
-                        : Text(l10n.waitingForDriverLocation),
-                    loading: () => Text(l10n.trackingDriverLocation),
-                    error: (err, _) => Text('${l10n.locationError}: $err',
-                        style: const TextStyle(color: Colors.red)),
-                  ),
-                ),
-              ],
+            Text(
+              'طريقة الدفع: ${_order!.paymentMethod}',
+              style: theme.textTheme.bodyMedium,
             ),
             const SizedBox(height: 8),
-            Row(
-              children: [
-                const Icon(Icons.attach_money, size: 20),
-                const SizedBox(width: 8),
-                Text(
-                    '${l10n.totalAmount}: ${order.total.toStringAsFixed(2)} ${l10n.currencySymbol}'),
-              ],
+            Text(
+              'المبلغ الإجمالي: ${_order!.totalAmount} ريال',
+              style: theme.textTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
             ),
-            const Spacer(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Expanded(
-                  child: AppButton(
-                    text: l10n.orderDetails,
-                    onPressed: () {
-                      context.goNamed('order-details',
-                          pathParameters: {'orderId': order.id});
-                    },
-                  ),
-                ),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: AppButton(
-                    text: l10n.contactDelivery,
-                    onPressed: () {
-                      _showDeliveryPersonDialog(order);
-                    },
-                    backgroundColor: Theme.of(context).colorScheme.secondary,
-                  ),
-                ),
-              ],
+            const SizedBox(height: 8),
+            Text(
+              'عنوان التوصيل:',
+              style: theme.textTheme.bodyMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              _order!.shippingAddress,
+              style: theme.textTheme.bodyMedium,
             ),
           ],
         ),
@@ -335,210 +202,129 @@ class _OrderTrackingPageState extends ConsumerState<OrderTrackingPage> {
     );
   }
 
-  void _showDeliveryPersonDialog(OrderModel order) {
-    final l10n = AppLocalizations.of(context)!;
-
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: Text(l10n.deliveryPersonInfo),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
+  Widget _buildTrackingTimeline(ThemeData theme) {
+    return ListView.builder(
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      itemCount: _trackingSteps.length,
+      itemBuilder: (context, index) {
+        final step = _trackingSteps[index];
+        final isLast = index == _trackingSteps.length - 1;
+        
+        return Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const CircleAvatar(
-              radius: 40,
-              backgroundImage: AssetImage('assets/delivery_person.png'),
-              backgroundColor: Colors.grey,
-              child: Icon(Icons.person, size: 40, color: Colors.white),
-            ),
-            const SizedBox(height: 16),
-            const Text(
-              'أحمد محمد',
-              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-            ),
-            const SizedBox(height: 8),
-            const Text('تقييم: 4.8 ⭐'),
-            const SizedBox(height: 16),
-            AppButton(
-              text: l10n.call,
-              icon: Icons.phone,
-              onPressed: () {
-                Navigator.of(context).pop();
-                // تنفيذ الاتصال بالمندوب
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(l10n.callingDriver),
+            Column(
+              children: [
+                Container(
+                  width: 24,
+                  height: 24,
+                  decoration: BoxDecoration(
+                    shape: BoxShape.circle,
+                    color: step.isCompleted
+                        ? theme.colorScheme.primary
+                        : theme.colorScheme.surfaceVariant,
+                    border: Border.all(
+                      color: step.isCompleted
+                          ? theme.colorScheme.primary
+                          : theme.colorScheme.outline,
+                      width: 2,
+                    ),
                   ),
-                );
-              },
-            ),
-            const SizedBox(height: 8),
-            AppButton(
-              text: l10n.message,
-              icon: Icons.message,
-              onPressed: () {
-                Navigator.of(context).pop();
-                // تنفيذ إرسال رسالة للمندوب
-                ScaffoldMessenger.of(context).showSnackBar(
-                  SnackBar(
-                    content: Text(l10n.openingChatWithDriver),
+                  child: step.isCompleted
+                      ? Icon(
+                          Icons.check,
+                          size: 16,
+                          color: theme.colorScheme.onPrimary,
+                        )
+                      : null,
+                ),
+                if (!isLast)
+                  Container(
+                    width: 2,
+                    height: 50,
+                    color: step.isCompleted
+                        ? theme.colorScheme.primary
+                        : theme.colorScheme.surfaceVariant,
                   ),
-                );
-              },
-              backgroundColor: Theme.of(context).colorScheme.secondary,
+              ],
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    step.title,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: step.isCompleted
+                          ? theme.colorScheme.onSurface
+                          : theme.colorScheme.onSurface.withValues(alpha: 153), // 0.6 * 255 = 153
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    step.description,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: theme.colorScheme.onSurface.withValues(alpha: 153), // 0.6 * 255 = 153
+                    ),
+                  ),
+                  if (step.date != null)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 4),
+                      child: Text(
+                        _formatDateTime(step.date!),
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.onSurface.withValues(alpha: 128), // 0.5 * 255 = 128
+                        ),
+                      ),
+                    ),
+                  if (!isLast) const SizedBox(height: 24),
+                ],
+              ),
             ),
           ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: Text(l10n.close),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // تحديث العلامات على الخريطة
-  void _updateMarkers(
-      LocationData location, AsyncValue<OrderModel?> orderAsync) {
-    if (location.latitude == null || location.longitude == null) return;
-
-    const deliveryMarkerId = MarkerId('delivery_marker');
-    final deliveryMarker = Marker(
-      markerId: deliveryMarkerId,
-      position: LatLng(location.latitude!, location.longitude!),
-      infoWindow:
-          InfoWindow(title: AppLocalizations.of(context)!.driverLocation),
-      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
-      // إضافة تدوير العلامة حسب اتجاه السائق إذا كان متوفرًا
-      rotation: location.heading ?? 0.0,
-      flat: location.heading != null,
-    );
-
-    // إضافة علامة للعنوان المستهدف (عنوان العميل)
-    const destinationMarkerId = MarkerId('destination_marker');
-
-    // استخدام عنوان العميل من الطلب إذا كان متوفرًا
-    double destinationLat = 24.7136;
-    double destinationLng = 46.6753;
-
-    orderAsync.whenData((order) {
-      if (order?.deliveryAddress?.latitude != null &&
-          order?.deliveryAddress?.longitude != null) {
-        destinationLat = order!.deliveryAddress!.latitude!;
-        destinationLng = order.deliveryAddress!.longitude!;
-      }
-    });
-
-    final destinationMarker = Marker(
-      markerId: destinationMarkerId,
-      position: LatLng(destinationLat, destinationLng),
-      infoWindow:
-          InfoWindow(title: AppLocalizations.of(context)!.deliveryAddress),
-      icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
-    );
-
-    if (mounted) {
-      setState(() {
-        _markers[deliveryMarkerId] = deliveryMarker;
-        _markers[destinationMarkerId] = destinationMarker;
-      });
-    }
-  }
-
-  // تحديث المسار على الخريطة
-  void _updatePolylines(List<LocationData> locationHistory) {
-    if (locationHistory.length < 2) return;
-
-    final List<LatLng> points = locationHistory
-        .where((loc) => loc.latitude != null && loc.longitude != null)
-        .map((loc) => LatLng(loc.latitude!, loc.longitude!))
-        .toList();
-
-    final polyline = Polyline(
-      polylineId: const PolylineId('driver_path'),
-      color: Colors.blue,
-      points: points,
-      width: 5,
-      patterns: [PatternItem.dash(10), PatternItem.gap(5)],
-      startCap: Cap.roundCap,
-      endCap: Cap.roundCap,
-    );
-
-    if (mounted) {
-      setState(() {
-        _polylines.clear();
-        _polylines.add(polyline);
-      });
-    }
-  }
-
-  // تحريك الكاميرا لتتبع موقع المندوب
-  Future<void> _moveCamera(LocationData location) async {
-    if (location.latitude == null || location.longitude == null) return;
-
-    final controller = await _controller.future;
-    controller.animateCamera(
-      CameraUpdate.newLatLng(LatLng(location.latitude!, location.longitude!)),
-    );
-  }
-
-  // حساب الوقت المتوقع للوصول
-  String? _calculateEstimatedTime(AsyncValue<LocationData?> locationAsync) {
-    return locationAsync.when(
-      data: (location) {
-        if (location == null) return null;
-
-        // في التطبيق الحقيقي، سيتم استخدام خدمة حساب المسافة والوقت
-        // مثل Google Distance Matrix API
-        // هنا نستخدم قيمة ثابتة للتجربة
-        return '15-20';
+        );
       },
-      loading: () => null,
-      error: (_, __) => null,
     );
   }
 
-  Color _getStatusColor(String status) {
-    switch (status.toLowerCase()) {
-      case 'pending':
-        return Colors.orange;
-      case 'processing':
-      case 'accepted':
+  Color _getStatusColor(ThemeData theme) {
+    switch (_order!.status) {
+      case 'قيد المعالجة':
         return Colors.blue;
-      case 'shipped':
-      case 'out_for_delivery':
-        return Colors.purple;
-      case 'delivered':
+      case 'قيد التوصيل':
+        return Colors.orange;
+      case 'تم التسليم':
         return Colors.green;
-      case 'cancelled':
+      case 'ملغي':
         return Colors.red;
       default:
-        return Colors.grey;
+        return theme.colorScheme.primary;
     }
   }
 
-  String _getStatusText(String status) {
-    final l10n = AppLocalizations.of(context)!;
-
-    switch (status.toLowerCase()) {
-      case 'pending':
-        return l10n.orderStatusPending;
-      case 'processing':
-        return l10n.orderStatusProcessing;
-      case 'accepted':
-        return l10n.orderStatusAccepted;
-      case 'shipped':
-        return l10n.orderStatusShipped;
-      case 'out_for_delivery':
-        return l10n.orderStatusOutForDelivery;
-      case 'delivered':
-        return l10n.orderStatusDelivered;
-      case 'cancelled':
-        return l10n.orderStatusCancelled;
-      default:
-        return status;
-    }
+  String _formatDate(DateTime date) {
+    return '${date.day}/${date.month}/${date.year}';
   }
+
+  String _formatDateTime(DateTime date) {
+    return '${date.day}/${date.month}/${date.year} ${date.hour}:${date.minute.toString().padLeft(2, '0')}';
+  }
+}
+
+/// خطوة في مسار تتبع الطلب
+class TrackingStep {
+  final String title;
+  final String description;
+  final DateTime? date;
+  final bool isCompleted;
+
+  TrackingStep({
+    required this.title,
+    required this.description,
+    required this.date,
+    required this.isCompleted,
+  });
 }

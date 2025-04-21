@@ -1,34 +1,27 @@
 import 'package:dartz/dartz.dart';
-import '../entities/cart_item.dart';
-import '../../../../core/architecture/domain/failure.dart';
-import '../../../../core/architecture/domain/entity.dart';
+import 'package:user_app/core/architecture/domain/failure.dart';
+import 'package:user_app/features/cart/domain/entities/cart_item.dart';
 
+/// واجهة مستودع سلة التسوق
 abstract class CartRepository {
-  /// الحصول على جميع العناصر في سلة التسوق
+  /// الحصول على جميع عناصر سلة التسوق
   Future<Either<Failure, List<CartItem>>> getCartItems();
-
-  /// إضافة منتج إلى سلة التسوق
-  Future<Either<Failure, Unit>> addItem(Map<String, dynamic> product, {int quantity = 1});
-
-  /// إزالة عنصر من سلة التسوق
-  Future<Either<Failure, Unit>> removeItem(String cartItemId);
-
-  /// تحديث كمية عنصر في سلة التسوق
-  Future<Either<Failure, Unit>> updateQuantity(
-      String cartItemId, int newQuantity);
-
-  /// زيادة كمية عنصر في سلة التسوق
-  Future<Either<Failure, Unit>> incrementQuantity(String cartItemId);
-
-  /// تقليل كمية عنصر في سلة التسوق
-  Future<Either<Failure, Unit>> decrementQuantity(String cartItemId);
-
+  
+  /// إضافة عنصر إلى سلة التسوق
+  Future<Either<Failure, CartItem>> addCartItem(CartItem cartItem);
+  
+  /// تحديث عنصر في سلة التسوق
+  Future<Either<Failure, CartItem>> updateCartItem(CartItem cartItem);
+  
+  /// حذف عنصر من سلة التسوق
+  Future<Either<Failure, void>> removeCartItem(String cartItemId);
+  
   /// تفريغ سلة التسوق
-  Future<Either<Failure, Unit>> clearCart();
-
-  /// الحصول على إجمالي عدد العناصر في سلة التسوق
-  Future<Either<Failure, int>> getTotalItems();
-
-  /// الحصول على إجمالي سعر العناصر في سلة التسوق
-  Future<Either<Failure, double>> getTotalPrice();
+  Future<Either<Failure, void>> clearCart();
+  
+  /// الحصول على عدد عناصر سلة التسوق
+  Future<Either<Failure, int>> getCartItemsCount();
+  
+  /// الحصول على المبلغ الإجمالي لسلة التسوق
+  Future<Either<Failure, double>> getCartTotal();
 }

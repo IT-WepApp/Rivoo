@@ -1,63 +1,69 @@
-import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
+import 'package:user_app/core/architecture/domain/entity.dart';
+import 'package:user_app/core/architecture/domain/failure.dart';
+import 'package:dartz/dartz.dart';
 
-class Order extends Equatable {
-  final String id;
+/// كيان الطلب
+class Order extends Entity {
   final String userId;
   final List<OrderItem> items;
-  final double totalAmount;
-  final String status;
-  final DateTime orderDate;
   final String shippingAddress;
   final String paymentMethod;
-  final String? trackingNumber;
-  final DateTime? estimatedDeliveryDate;
+  final double totalAmount;
+  final String status;
+  final DateTime createdAt;
 
-  const Order({
-    required this.id,
+  Order({
+    required String id,
     required this.userId,
     required this.items,
-    required this.totalAmount,
-    required this.status,
-    required this.orderDate,
     required this.shippingAddress,
     required this.paymentMethod,
-    this.trackingNumber,
-    this.estimatedDeliveryDate,
-  });
+    required this.totalAmount,
+    required this.status,
+    required this.createdAt,
+  }) : super(id: id);
 
   @override
   List<Object?> get props => [
         id,
         userId,
         items,
-        totalAmount,
-        status,
-        orderDate,
         shippingAddress,
         paymentMethod,
-        trackingNumber,
-        estimatedDeliveryDate,
+        totalAmount,
+        status,
+        createdAt,
       ];
 }
 
-class OrderItem extends Equatable {
-  final String id;
+/// كيان عنصر الطلب
+class OrderItem extends Entity {
   final String productId;
   final String productName;
+  final String productImage;
   final double price;
   final int quantity;
-  final String? imageUrl;
+  final double totalPrice;
 
-  const OrderItem({
-    required this.id,
+  OrderItem({
+    required String id,
     required this.productId,
     required this.productName,
+    required this.productImage,
     required this.price,
     required this.quantity,
-    this.imageUrl,
-  });
+    required this.totalPrice,
+  }) : super(id: id);
 
   @override
-  List<Object?> get props =>
-      [id, productId, productName, price, quantity, imageUrl];
+  List<Object?> get props => [
+        id,
+        productId,
+        productName,
+        productImage,
+        price,
+        quantity,
+        totalPrice,
+      ];
 }

@@ -1,82 +1,53 @@
-import 'package:equatable/equatable.dart';
-import '../entities/cart_item.dart';
+import 'package:user_app/features/cart/domain/entities/cart_item.dart';
+import 'package:user_app/features/products/domain/product.dart';
 
+/// نموذج عنصر سلة التسوق
 class CartItemModel extends CartItem {
+  /// إنشاء نموذج عنصر سلة التسوق
   const CartItemModel({
     required String id,
-    required String productId,
-    required String name,
-    required double price,
-    required String imageUrl,
+    required Product product,
     required int quantity,
+    required DateTime addedAt,
   }) : super(
           id: id,
-          productId: productId,
-          name: name,
-          price: price,
-          imageUrl: imageUrl,
+          product: product,
           quantity: quantity,
+          addedAt: addedAt,
         );
 
-  factory CartItemModel.fromEntity(CartItem entity) {
+  /// إنشاء نموذج عنصر سلة التسوق من خريطة
+  factory CartItemModel.fromMap(Map<String, dynamic> map, Product product) {
     return CartItemModel(
-      id: entity.id,
-      productId: entity.productId,
-      name: entity.name,
-      price: entity.price,
-      imageUrl: entity.imageUrl,
-      quantity: entity.quantity,
+      id: map['id'] as String,
+      product: product,
+      quantity: map['quantity'] as int,
+      addedAt: DateTime.fromMillisecondsSinceEpoch(map['addedAt'] as int),
     );
   }
 
-  factory CartItemModel.fromProduct(Map<String, dynamic> product, {int quantity = 1}) {
-    return CartItemModel(
-      id: product['id'] as String,
-      productId: product['id'] as String,
-      name: product['name'] as String,
-      price: (product['price'] as num).toDouble(),
-      imageUrl: product['imageUrl'] as String,
-      quantity: quantity,
-    );
-  }
-
-  factory CartItemModel.fromJson(Map<String, dynamic> json) {
-    return CartItemModel(
-      id: json['id'] as String,
-      productId: json['productId'] as String,
-      name: json['name'] as String,
-      price: (json['price'] as num).toDouble(),
-      imageUrl: json['imageUrl'] as String,
-      quantity: json['quantity'] as int,
-    );
-  }
-
-  Map<String, dynamic> toJson() {
+  /// تحويل نموذج عنصر سلة التسوق إلى خريطة
+  Map<String, dynamic> toMap() {
     return {
       'id': id,
-      'productId': productId,
-      'name': name,
-      'price': price,
-      'imageUrl': imageUrl,
+      'productId': product.id,
       'quantity': quantity,
+      'addedAt': addedAt.millisecondsSinceEpoch,
     };
   }
 
+  /// إنشاء نسخة جديدة من نموذج عنصر سلة التسوق مع تحديث بعض الحقول
   CartItemModel copyWith({
     String? id,
-    String? productId,
-    String? name,
-    double? price,
-    String? imageUrl,
+    Product? product,
     int? quantity,
+    DateTime? addedAt,
   }) {
     return CartItemModel(
       id: id ?? this.id,
-      productId: productId ?? this.productId,
-      name: name ?? this.name,
-      price: price ?? this.price,
-      imageUrl: imageUrl ?? this.imageUrl,
+      product: product ?? this.product,
       quantity: quantity ?? this.quantity,
+      addedAt: addedAt ?? this.addedAt,
     );
   }
 }

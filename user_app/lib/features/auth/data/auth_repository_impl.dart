@@ -1,353 +1,250 @@
+import 'dart:async';
 import 'dart:convert';
-import 'package:dartz/dartz.dart';
-import 'package:firebase_auth/firebase_auth.dart' as firebase;
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:google_sign_in/google_sign_in.dart';
-import 'package:user_app/core/architecture/domain/failure.dart';
-import 'package:user_app/features/auth/domain/auth_repository.dart';
-import 'package:user_app/features/auth/domain/user_model.dart';
-import 'package:user_app/core/services/secure_storage_service.dart';
-import 'package:user_app/core/constants/app_constants.dart';
+
+import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
+import '../../../package/google_sign_in/google_sign_in.dart';
+import '../domain/entities/user.dart';
+import '../domain/repositories/auth_repository.dart';
+import 'datasources/auth_local_datasource.dart';
+import 'datasources/auth_remote_datasource.dart';
 
 /// تنفيذ مستودع المصادقة
-/// يطبق واجهة AuthRepository باستخدام Firebase Auth، Firestore وGoogle Sign-In
 class AuthRepositoryImpl implements AuthRepository {
-  final firebase.FirebaseAuth _firebaseAuth;
-  final FirebaseFirestore _firestore;
+  final AuthRemoteDatasource _remoteDatasource;
+  final AuthLocalDatasource _localDatasource;
   final GoogleSignIn _googleSignIn;
-  final SecureStorageService _secureStorage;
 
-  /// منشئ مستودع المصادقة
+  /// إنشاء نسخة جديدة من تنفيذ مستودع المصادقة
   AuthRepositoryImpl({
-    required firebase.FirebaseAuth firebaseAuth,
-    required FirebaseFirestore firestore,
-    required GoogleSignIn googleSignIn,
-    required SecureStorageService secureStorage,
-  })  : _firebaseAuth = firebaseAuth,
-        _firestore = firestore,
-        _googleSignIn = googleSignIn,
-        _secureStorage = secureStorage;
+    required AuthRemoteDatasource remoteDatasource,
+    required AuthLocalDatasource localDatasource,
+    GoogleSignIn? googleSignIn,
+  })  : _remoteDatasource = remoteDatasource,
+        _localDatasource = localDatasource,
+        _googleSignIn = googleSignIn ?? GoogleSignIn();
 
   @override
-  Future<Either<Failure, UserModel>> signInWithEmailAndPassword({
+  Future<Either<Failure, User>> signInWithEmailAndPassword({
     required String email,
     required String password,
   }) async {
     try {
-      final credential = await _firebaseAuth.signInWithEmailAndPassword(
+      // التحقق من صحة البريد الإلكتروني وكلمة المرور
+      if (email.isEmpty || password.isEmpty) {
+        return Either.left(AuthFailure('البريد الإلكتروني وكلمة المرور مطلوبان'));
+      }
+
+      // تسجيل الدخول باستخدام البريد الإلكتروني وكلمة المرور
+      final user = await _remoteDatasource.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
-      final user = credential.user;
-      if (user == null) {
-        return const Left(AuthFailure(
-          message: 'فشل تسجيل الدخول: لم يتم العثور على المستخدم',
-          code: 'USER_NOT_FOUND',
-        ));
-      }
-      // جلب وثيقة المستخدم
-      final doc = await _firestore.collection('users').doc(user.uid).get();
-      if (!doc.exists) {
-        return const Left(AuthFailure(
-          message: 'فشل تسجيل الدخول: لم يتم العثور على بيانات المستخدم',
-          code: 'USER_DATA_NOT_FOUND',
-        ));
-      }
-      // حفظ الرمز
-      final token = await user.getIdToken();
-      await _secureStorage.saveAuthToken(token, expiryMinutes: AppConstants.sessionTimeoutMinutes);
 
-      // إنشاء نموذج المستخدم
-      final data = doc.data() as Map<String, dynamic>;
-      final userModel = UserModel(
-        id: user.uid,
-        email: user.email!,
-        name: data['name'] ?? data['displayName'] ?? '',
-        phone: data['phone'],
-        role: data['role'] ?? 'customer',
-        photoUrl: user.photoURL,
-      );
-      await _secureStorage.saveUserData(userModel.toJson());
-      return Right(userModel);
-    } on firebase.FirebaseAuthException catch (e) {
-      return Left(_mapException(e));
+      // حفظ بيانات المستخدم
+      await _localDatasource.saveUserData(user);
+
+      return Either.right(user);
     } catch (e) {
-      return Left(UnexpectedFailure(
-        message: 'حدث خطأ غير متوقع: $e',
-        stackTrace: e,
-      ));
+      return Either.left(_mapException(e));
+    } on Exception catch (e) {
+      return Either.left(UnexpectedFailure(e.toString()));
     }
   }
 
   @override
-  Future<Either<Failure, UserModel>> signUpWithEmailAndPassword({
+  Future<Either<Failure, User>> createUserWithEmailAndPassword({
     required String email,
     required String password,
     required String name,
-    String? phone,
   }) async {
     try {
-      if (!_isStrongPassword(password)) {
-        return const Left(ValidationFailure(
-          message: 'كلمة المرور غير قوية بما فيه الكفاية',
-          errors: {},
-        ));
+      // التحقق من صحة البريد الإلكتروني وكلمة المرور والاسم
+      if (email.isEmpty || password.isEmpty || name.isEmpty) {
+        return Either.left(ValidationFailure('جميع الحقول مطلوبة'));
       }
-      final credential = await _firebaseAuth.createUserWithEmailAndPassword(
+
+      // التحقق من قوة كلمة المرور
+      if (!_isStrongPassword(password)) {
+        return Either.left(ValidationFailure('كلمة المرور ضعيفة جدًا. يجب أن تحتوي على 8 أحرف على الأقل وتتضمن أحرفًا كبيرة وصغيرة وأرقامًا ورموزًا.'));
+      }
+
+      // إنشاء حساب جديد
+      final user = await _remoteDatasource.createUserWithEmailAndPassword(
         email: email,
         password: password,
-      );
-      final user = credential.user;
-      if (user == null) {
-        return const Left(AuthFailure(
-          message: 'فشل إنشاء الحساب: لم يتم إنشاء المستخدم',
-          code: 'USER_NOT_CREATED',
-        ));
-      }
-      // إنشاء وثيقة جديدة
-      final now = FieldValue.serverTimestamp();
-      await _firestore.collection('users').doc(user.uid).set({
-        'name': name,
-        'email': email,
-        'phone': phone,
-        'role': 'customer',
-        'createdAt': now,
-        'updatedAt': now,
-      });
-      await user.updateDisplayName(name);
-      final token = await user.getIdToken();
-      await _secureStorage.saveAuthToken(token, expiryMinutes: AppConstants.sessionTimeoutMinutes);
-
-      final userModel = UserModel(
-        id: user.uid,
-        email: email,
         name: name,
-        phone: phone,
-        role: 'customer',
-        photoUrl: user.photoURL,
       );
-      await _secureStorage.saveUserData(userModel.toJson());
-      await user.sendEmailVerification();
-      return Right(userModel);
-    } on firebase.FirebaseAuthException catch (e) {
-      return Left(_mapException(e));
-    } catch (e) {
-      return Left(UnexpectedFailure(
-        message: 'حدث خطأ غير متوقع: $e',
-        stackTrace: e,
-      ));
-    }
-  }
 
-  @override
-  Future<Either<Failure, UserModel>> signInWithGoogle() async {
-    try {
-      final googleUser = await _googleSignIn.signIn();
-      if (googleUser == null) {
-        return const Left(AuthFailure(
-          message: 'تم إلغاء تسجيل الدخول بواسطة المستخدم',
-          code: 'SIGN_IN_CANCELLED',
-        ));
-      }
-      final auth = await googleUser.authentication;
-      final credential = firebase.GoogleAuthProvider.credential(
-        accessToken: auth.accessToken,
-        idToken: auth.idToken,
-      );
-      final userCred = await _firebaseAuth.signInWithCredential(credential);
-      final user = userCred.user!;
-      final docRef = _firestore.collection('users').doc(user.uid);
-      final doc = await docRef.get();
-      if (!doc.exists) {
-        await docRef.set({
-          'name': user.displayName ?? '',
-          'email': user.email ?? '',
-          'photoUrl': user.photoURL,
-          'role': 'customer',
-          'createdAt': FieldValue.serverTimestamp(),
-        });
-      }
-      final token = await user.getIdToken();
-      await _secureStorage.saveAuthToken(token, expiryMinutes: AppConstants.sessionTimeoutMinutes);
-      final data = (await docRef.get()).data() as Map<String, dynamic>;
-      final userModel = UserModel.fromJson({
-        'id': user.uid,
-        ...data,
-      });
-      await _secureStorage.saveUserData(userModel.toJson());
-      return Right(userModel);
-    } on firebase.FirebaseAuthException catch (e) {
-      return Left(_mapException(e));
+      // حفظ بيانات المستخدم
+      await _localDatasource.saveUserData(user);
+
+      return Either.right(user);
     } catch (e) {
-      return Left(UnexpectedFailure(
-        message: 'فشل تسجيل الدخول باستخدام Google: $e',
-        stackTrace: e,
-      ));
+      return Either.left(_mapException(e));
+    } on Exception catch (e) {
+      return Either.left(UnexpectedFailure(e.toString()));
     }
   }
 
   @override
   Future<Either<Failure, void>> signOut() async {
     try {
-      await _firebaseAuth.signOut();
-      if (await _googleSignIn.isSignedIn()) {
-        await _googleSignIn.signOut();
+      // الحصول على رمز المصادقة
+      final token = await _localDatasource.getAuthToken();
+
+      // تسجيل الخروج من الخادم
+      if (token != null) {
+        await _remoteDatasource.signOut(token);
       }
-      await _secureStorage.clearAll();
-      return const Right(null);
+
+      // حذف رمز المصادقة وبيانات المستخدم
+      await _localDatasource.deleteAuthToken();
+      await _localDatasource.deleteUserData();
+
+      // تسجيل الخروج من حساب جوجل إذا كان مستخدمًا
+      await _googleSignIn.signOut();
+
+      return Either.right(null);
     } catch (e) {
-      return Left(AuthFailure(
-        message: 'فشل تسجيل الخروج: $e',
-        code: 'SIGN_OUT_ERROR',
-      ));
+      return Either.left(_mapException(e));
+    } on Exception catch (e) {
+      return Either.left(UnexpectedFailure(e.toString()));
     }
   }
-
+  
   @override
-  Future<Either<Failure, UserModel?>> getCurrentUser() async {
+  Future<Either<Failure, User>> signInWithGoogle() async {
     try {
-      final user = _firebaseAuth.currentUser;
-      if (user == null) {
-        final data = await _secureStorage.getUserData();
-        if (data != null) return Right(UserModel.fromJson(data));
-        return const Right(null);
-      }
-      final doc = await _firestore.collection('users').doc(user.uid).get();
-      if (!doc.exists) {
-        return const Left(AuthFailure(
-          message: 'لم يتم العثور على بيانات المستخدم',
-          code: 'USER_DATA_NOT_FOUND',
-        ));
-      }
-      final userData = doc.data() as Map<String, dynamic>;
-      final model = UserModel.fromJson({
-        'id': user.uid,
-        ...userData,
-      });
-      await _secureStorage.saveUserData(model.toJson());
-      return Right(model);
+      // تنفيذ تسجيل الدخول باستخدام حساب جوجل
+      return Either.left(UnexpectedFailure('لم يتم تنفيذ هذه الميزة بعد'));
     } catch (e) {
-      return Left(AuthFailure(
-        message: 'فشل الحصول على المستخدم الحالي: $e',
-        code: 'GET_CURRENT_USER_ERROR',
-      ));
+      return Either.left(_mapException(e));
     }
   }
 
   @override
   Future<Either<Failure, void>> resetPassword(String email) async {
     try {
-      await _firebaseAuth.sendPasswordResetEmail(email: email);
-      return const Right(null);
-    } on firebase.FirebaseAuthException catch (e) {
-      return Left(_mapException(e));
+      // تنفيذ إعادة تعيين كلمة المرور
+      await _remoteDatasource.resetPassword(email);
+      return Either.right(null);
     } catch (e) {
-      return Left(AuthFailure(
-        message: 'فشل إعادة تعيين كلمة المرور: $e',
-        code: 'RESET_PASSWORD_ERROR',
-      ));
+      return Either.left(_mapException(e));
     }
   }
 
   @override
-  Future<Either<Failure, UserModel>> updateUserData(UserModel user) async {
+  Future<Either<Failure, bool>> validateToken(String token) async {
     try {
-      final currentUser = _firebaseAuth.currentUser;
-      if (currentUser == null) {
-        return const Left(AuthFailure(
-          message: 'يجب تسجيل الدخول لتحديث البيانات',
-          code: 'USER_NOT_AUTHENTICATED',
-        ));
-      }
-      await _firestore.collection('users').doc(user.id).update({
-        'name': user.name,
-        'phone': user.phone,
-        'updatedAt': FieldValue.serverTimestamp(),
-      });
-      await _secureStorage.saveUserData(user.toJson());
-      return Right(user);
+      // تنفيذ التحقق من صحة الرمز
+      final isValid = await _remoteDatasource.validateToken(token);
+      return Either.right(isValid);
     } catch (e) {
-      return Left(AuthFailure(
-        message: 'فشل تحديث بيانات المستخدم: $e',
-        code: 'UPDATE_USER_DATA_ERROR',
-      ));
+      return Either.left(_mapException(e));
     }
   }
 
   @override
-  Future<Either<Failure, void>> updatePassword({
-    required String currentPassword,
+  Future<Either<Failure, User>> updateUserProfile({
+    required String userId,
+    String? name,
+    String? phone,
+    String? photoUrl,
+  }) async {
+    try {
+      // تنفيذ تحديث بيانات المستخدم
+      final user = await _remoteDatasource.updateUserProfile(
+        userId: userId,
+        name: name,
+        phone: phone,
+        photoUrl: photoUrl,
+      );
+      
+      // حفظ بيانات المستخدم المحدثة
+      await _localDatasource.saveUserData(user);
+      
+      return Either.right(user);
+    } catch (e) {
+      return Either.left(_mapException(e));
+    }
+  }
+
+  @override
+  Future<Either<Failure, void>> changePassword({
+    required String oldPassword,
     required String newPassword,
   }) async {
     try {
-      final user = _firebaseAuth.currentUser;
-      if (user == null || user.email == null) {
-        return const Left(AuthFailure(
-          message: 'يجب تسجيل الدخول لتحديث كلمة المرور',
-          code: 'USER_NOT_AUTHENTICATED',
-        ));
-      }
+      // التحقق من قوة كلمة المرور الجديدة
       if (!_isStrongPassword(newPassword)) {
-        return const Left(ValidationFailure(
-          message: 'كلمة المرور غير قوية بما فيه الكفاية',
-          errors: {},
-        ));
+        return Either.left(ValidationFailure('كلمة المرور ضعيفة جدًا. يجب أن تحتوي على 8 أحرف على الأقل وتتضمن أحرفًا كبيرة وصغيرة وأرقامًا ورموزًا.'));
       }
-      final cred = firebase.EmailAuthProvider.credential(
-        email: user.email!,
-        password: currentPassword,
+      
+      // تنفيذ تغيير كلمة المرور
+      await _remoteDatasource.changePassword(
+        oldPassword: oldPassword,
+        newPassword: newPassword,
       );
-      await user.reauthenticateWithCredential(cred);
-      await user.updatePassword(newPassword);
-      return const Right(null);
-    } on firebase.FirebaseAuthException catch (e) {
-      return Left(_mapException(e));
+      
+      return Either.right(null);
     } catch (e) {
-      return Left(AuthFailure(
-        message: 'فشل تحديث كلمة المرور: $e',
-        code: 'UPDATE_PASSWORD_ERROR',
-      ));
+      return Either.left(_mapException(e));
     }
   }
+}
 
-  @override
-  Future<Either<Failure, bool>> verifyAuthToken() async {
-    try {
-      final token = await _secureStorage.getAuthToken();
-      if (token == null) return const Right(false);
-      final user = _firebaseAuth.currentUser;
-      if (user == null) {
-        await _secureStorage.deleteAuthToken();
-        return const Right(false);
-      }
-      final newToken = await user.getIdToken(true);
-      await _secureStorage.saveAuthToken(newToken, expiryMinutes: AppConstants.sessionTimeoutMinutes);
-      return const Right(true);
-    } catch (_) {
-      await _secureStorage.deleteAuthToken();
-      return const Right(false);
-    }
+/// دالة مساعدة للتحقق من قوة كلمة المرور
+bool _isStrongPassword(String password) {
+  // كلمة المرور يجب أن تكون 8 أحرف على الأقل
+  if (password.length < 8) {
+    return false;
   }
 
+  // كلمة المرور يجب أن تحتوي على حرف كبير واحد على الأقل
+  if (!password.contains(RegExp(r'[A-Z]'))) {
+    return false;
+  }
+
+  // كلمة المرور يجب أن تحتوي على حرف صغير واحد على الأقل
+  if (!password.contains(RegExp(r'[a-z]'))) {
+    return false;
+  }
+
+  // كلمة المرور يجب أن تحتوي على رقم واحد على الأقل
+  if (!password.contains(RegExp(r'[0-9]'))) {
+    return false;
+  }
+
+  // كلمة المرور يجب أن تحتوي على رمز خاص واحد على الأقل
+  if (!password.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
+    return false;
+  }
+
+  return true;
+}
+
+/// دالة مساعدة لتحويل الاستثناءات إلى أخطاء
+Failure _mapException(dynamic exception) {
+  if (exception is http.ClientException) {
+    return AuthFailure('خطأ في الاتصال بالخادم: ${exception.message}');
+  } else if (exception is TimeoutException) {
+    return AuthFailure('انتهت مهلة الاتصال بالخادم');
+  } else if (exception is FormatException) {
+    return AuthFailure('خطأ في تنسيق البيانات: ${exception.message}');
+  } else if (exception is GoogleSignInException) {
+    return AuthFailure('خطأ في تسجيل الدخول بحساب جوجل: ${exception.message}');
+  } else {
+    return UnexpectedFailure(exception.toString());
+  }
+}
+
+/// استثناء تسجيل الدخول بحساب جوجل
+class GoogleSignInException implements Exception {
+  final String message;
+  
+  GoogleSignInException(this.message);
+  
   @override
-  Future<Either<Failure, String>> getUserRole() async {
-    try {
-      final user = _firebaseAuth.currentUser;
-      if (user == null) {
-        return const Left(AuthFailure(
-          message: 'يجب تسجيل الدخول للحصول على الدور',
-          code: 'USER_NOT_AUTHENTICATED',
-        ));
-      }
-      final doc = await _firestore.collection('users').doc(user.uid).get();
-      if (!doc.exists) {
-        return const Left(AuthFailure(
-          message: 'لم يتم العثور على بيانات المستخدم',
-          code: 'USER_DATA_NOT_FOUND',
-        ));
-      }
-      final role = (doc.data() ?? {})['role'] as String? ?? 'customer';
-      return Right(role);
-    } catch (e) {
-      return Left(AuthFailure(
-        message: 'فشل الحصول على دور المستخدم: $
+  String toString() => 'GoogleSignInException: $message';
+}

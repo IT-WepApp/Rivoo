@@ -1,14 +1,19 @@
 import 'package:equatable/equatable.dart';
 
-/// الكيان الأساسي الذي تمثل جميع كيانات المجال
-/// يوفِّر المعرف الفريد ويعتمد على مكتبة Equatable للمقارنة
+/// كيان أساسي يمثل كائن له هوية فريدة
 abstract class Entity extends Equatable {
-  /// المعرف الفريد للكيان
+  /// معرف الكيان
   final String id;
 
-  /// منشئ الكيان الأساسي
+  /// إنشاء كيان جديد
   const Entity({required this.id});
+
+  /// تحويل الكيان إلى خريطة
+  Map<String, dynamic> toMap();
 
   @override
   List<Object?> get props => [id];
+
+  @override
+  bool get stringify => true;
 }

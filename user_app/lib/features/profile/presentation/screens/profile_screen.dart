@@ -1,566 +1,406 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:user_app/core/utils/responsive_utils.dart';
-import 'package:user_app/core/widgets/responsive_builder.dart';
+import 'package:user_app/core/theme/app_theme.dart';
+import 'package:user_app/features/profile/domain/entities/user.dart';
 
-class ProfileScreen extends ConsumerWidget {
+/// شاشة الملف الشخصي
+class ProfileScreen extends StatefulWidget {
+  /// إنشاء شاشة الملف الشخصي
   const ProfileScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = AppLocalizations.of(context)!;
+  State<ProfileScreen> createState() => _ProfileScreenState();
+}
+
+class _ProfileScreenState extends State<ProfileScreen> {
+  late User _user;
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserProfile();
+  }
+
+  /// تحميل بيانات الملف الشخصي
+  Future<void> _loadUserProfile() async {
+    // في الواقع، سيتم استدعاء واجهة برمجة التطبيقات لجلب بيانات المستخدم
+    // هذا مجرد تنفيذ وهمي لأغراض العرض
+    await Future.delayed(const Duration(seconds: 1));
+    
+    setState(() {
+      _isLoading = false;
+      // بيانات وهمية للمستخدم
+      _user = User(
+        id: '123',
+        name: 'أحمد محمد',
+        email: 'ahmed@example.com',
+        phone: '+201234567890',
+        avatarUrl: 'https://example.com/avatar.jpg',
+        type: UserType.premium,
+        createdAt: DateTime.now().subtract(const Duration(days: 365)),
+        lastLoginAt: DateTime.now(),
+      );
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    if (_isLoading) {
+      return Scaffold(
+        appBar: AppBar(
+          title: const Text('الملف الشخصي'),
+        ),
+        body: const Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n.profile),
+        title: const Text('الملف الشخصي'),
         actions: [
           IconButton(
-            icon: const Icon(Icons.edit),
+            icon: const Icon(Icons.settings),
             onPressed: () {
-              // الانتقال إلى صفحة تعديل الملف الشخصي
+              // الانتقال إلى شاشة الإعدادات
+              Navigator.pushNamed(context, '/settings');
             },
           ),
         ],
       ),
-      body: ResponsiveBuilder(
-        // تنفيذ واجهة الهاتف
-        mobileBuilder: (context) => _buildMobileLayout(context, l10n),
-
-        // تنفيذ واجهة الجهاز اللوحي
-        smallTabletBuilder: (context) => _buildTabletLayout(context, l10n),
-
-        // تنفيذ واجهة سطح المكتب
-        desktopBuilder: (context) => _buildDesktopLayout(context, l10n),
-      ),
-    );
-  }
-
-  // بناء تخطيط الهاتف
-  Widget _buildMobileLayout(BuildContext context, AppLocalizations l10n) {
-    return SingleChildScrollView(
-      child: Column(
-        children: [
-          _buildProfileHeader(context),
-          _buildProfileInfo(context, l10n),
-          _buildProfileActions(context, l10n),
-        ],
-      ),
-    );
-  }
-
-  // بناء تخطيط الجهاز اللوحي
-  Widget _buildTabletLayout(BuildContext context, AppLocalizations l10n) {
-    return SingleChildScrollView(
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
+      body: SingleChildScrollView(
         child: Column(
           children: [
-            _buildProfileHeader(context),
-            const SizedBox(height: 24),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // معلومات الملف الشخصي
-                Expanded(
-                  flex: 1,
-                  child: _buildProfileInfo(context, l10n),
-                ),
-                const SizedBox(width: 16),
-                // إجراءات الملف الشخصي
-                Expanded(
-                  flex: 1,
-                  child: _buildProfileActions(context, l10n),
-                ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  // بناء تخطيط سطح المكتب
-  Widget _buildDesktopLayout(BuildContext context, AppLocalizations l10n) {
-    return Padding(
-      padding: const EdgeInsets.all(24.0),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // القائمة الجانبية
-          Card(
-            elevation: 2,
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-            ),
-            child: Container(
-              width: 280,
-              padding: const EdgeInsets.symmetric(vertical: 24.0),
+            // معلومات المستخدم الأساسية
+            Container(
+              padding: const EdgeInsets.all(16),
+              color: AppTheme.primaryColor,
               child: Column(
                 children: [
-                  _buildProfileHeader(context, isCompact: false),
-                  const SizedBox(height: 24),
-                  _buildSidebarItem(
-                    context,
-                    icon: Icons.person,
-                    title: l10n.personalInfo,
-                    isSelected: true,
-                    onTap: () {},
+                  // صورة المستخدم
+                  CircleAvatar(
+                    radius: 50,
+                    backgroundColor: Colors.white,
+                    backgroundImage: _user.avatarUrl != null
+                        ? NetworkImage(_user.avatarUrl!)
+                        : null,
+                    child: _user.avatarUrl == null
+                        ? const Icon(
+                            Icons.person,
+                            size: 50,
+                            color: AppTheme.primaryColor,
+                          )
+                        : null,
                   ),
-                  _buildSidebarItem(
-                    context,
-                    icon: Icons.shopping_bag,
-                    title: l10n.orders,
-                    onTap: () {},
+                  
+                  const SizedBox(height: 16),
+                  
+                  // اسم المستخدم
+                  Text(
+                    _user.name,
+                    style: const TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white,
+                    ),
                   ),
-                  _buildSidebarItem(
-                    context,
-                    icon: Icons.favorite,
-                    title: l10n.wishlist,
-                    onTap: () {},
+                  
+                  const SizedBox(height: 4),
+                  
+                  // نوع المستخدم
+                  Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 12,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: Text(
+                      _getUserTypeText(_user.type),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
-                  _buildSidebarItem(
-                    context,
-                    icon: Icons.location_on,
-                    title: l10n.addresses,
-                    onTap: () {},
+                  
+                  const SizedBox(height: 8),
+                  
+                  // البريد الإلكتروني
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      const Icon(
+                        Icons.email,
+                        color: Colors.white70,
+                        size: 16,
+                      ),
+                      const SizedBox(width: 4),
+                      Text(
+                        _user.email,
+                        style: const TextStyle(
+                          color: Colors.white70,
+                        ),
+                      ),
+                    ],
                   ),
-                  _buildSidebarItem(
-                    context,
-                    icon: Icons.payment,
-                    title: l10n.paymentMethods,
-                    onTap: () {},
-                  ),
-                  _buildSidebarItem(
-                    context,
-                    icon: Icons.notifications,
-                    title: l10n.notifications,
-                    onTap: () {},
-                  ),
-                  _buildSidebarItem(
-                    context,
-                    icon: Icons.settings,
-                    title: l10n.settings,
-                    onTap: () {},
-                  ),
-                  const Divider(height: 32),
-                  _buildSidebarItem(
-                    context,
-                    icon: Icons.help,
-                    title: l10n.help,
-                    onTap: () {},
-                  ),
-                  _buildSidebarItem(
-                    context,
-                    icon: Icons.logout,
-                    title: l10n.logout,
-                    onTap: () {},
+                  
+                  // رقم الهاتف
+                  if (_user.phone != null) ...[
+                    const SizedBox(height: 4),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Icon(
+                          Icons.phone,
+                          color: Colors.white70,
+                          size: 16,
+                        ),
+                        const SizedBox(width: 4),
+                        Text(
+                          _user.phone!,
+                          style: const TextStyle(
+                            color: Colors.white70,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                  
+                  const SizedBox(height: 16),
+                  
+                  // زر تعديل الملف الشخصي
+                  ElevatedButton(
+                    onPressed: () {
+                      // الانتقال إلى شاشة تعديل الملف الشخصي
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.white,
+                      foregroundColor: AppTheme.primaryColor,
+                    ),
+                    child: const Text('تعديل الملف الشخصي'),
                   ),
                 ],
               ),
             ),
-          ),
-
-          const SizedBox(width: 24),
-
-          // المحتوى الرئيسي
-          Expanded(
-            child: Card(
-              elevation: 2,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(16),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      l10n.personalInfo,
-                      style:
-                          Theme.of(context).textTheme.headlineSmall?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
+            
+            // قائمة الخيارات
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  _buildOptionCard(
+                    icon: Icons.shopping_bag,
+                    title: 'طلباتي',
+                    subtitle: 'عرض سجل الطلبات السابقة',
+                    onTap: () {
+                      // الانتقال إلى شاشة الطلبات
+                      Navigator.pushNamed(context, '/orders');
+                    },
+                  ),
+                  
+                  _buildOptionCard(
+                    icon: Icons.favorite,
+                    title: 'المفضلة',
+                    subtitle: 'عرض المنتجات المفضلة',
+                    onTap: () {
+                      // الانتقال إلى شاشة المفضلة
+                      Navigator.pushNamed(context, '/favorites');
+                    },
+                  ),
+                  
+                  _buildOptionCard(
+                    icon: Icons.location_on,
+                    title: 'العناوين',
+                    subtitle: 'إدارة عناوين الشحن',
+                    onTap: () {
+                      // الانتقال إلى شاشة العناوين
+                      Navigator.pushNamed(context, '/addresses');
+                    },
+                  ),
+                  
+                  _buildOptionCard(
+                    icon: Icons.payment,
+                    title: 'طرق الدفع',
+                    subtitle: 'إدارة بطاقات الائتمان وطرق الدفع',
+                    onTap: () {
+                      // الانتقال إلى شاشة طرق الدفع
+                      Navigator.pushNamed(context, '/payment-methods');
+                    },
+                  ),
+                  
+                  _buildOptionCard(
+                    icon: Icons.headset_mic,
+                    title: 'الدعم الفني',
+                    subtitle: 'الاتصال بفريق الدعم الفني',
+                    onTap: () {
+                      // الانتقال إلى شاشة الدعم الفني
+                      Navigator.pushNamed(context, '/support');
+                    },
+                  ),
+                  
+                  _buildOptionCard(
+                    icon: Icons.info,
+                    title: 'عن التطبيق',
+                    subtitle: 'معلومات عن التطبيق والإصدار',
+                    onTap: () {
+                      // عرض معلومات التطبيق
+                      _showAboutDialog(context);
+                    },
+                  ),
+                  
+                  const SizedBox(height: 16),
+                  
+                  // زر تسجيل الخروج
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton.icon(
+                      onPressed: () {
+                        // تسجيل الخروج
+                        _confirmLogout(context);
+                      },
+                      icon: const Icon(Icons.logout),
+                      label: const Text('تسجيل الخروج'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.red,
+                        padding: const EdgeInsets.symmetric(vertical: 12),
+                      ),
                     ),
-                    const SizedBox(height: 24),
-                    _buildProfileInfo(context, l10n, isCompact: false),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
 
-  // بناء رأس الملف الشخصي
-  Widget _buildProfileHeader(BuildContext context, {bool isCompact = true}) {
-    return Container(
-      padding: EdgeInsets.symmetric(
-        vertical: isCompact ? 24.0 : 16.0,
-        horizontal: 16.0,
+  /// بناء بطاقة خيار
+  Widget _buildOptionCard({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required VoidCallback onTap,
+  }) {
+    return Card(
+      margin: const EdgeInsets.only(bottom: 12),
+      child: ListTile(
+        leading: CircleAvatar(
+          backgroundColor: AppTheme.primaryColor.withOpacity(0.1),
+          child: Icon(
+            icon,
+            color: AppTheme.primaryColor,
+          ),
+        ),
+        title: Text(title),
+        subtitle: Text(subtitle),
+        trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+        onTap: onTap,
       ),
-      color: isCompact
-          ? Theme.of(context).colorScheme.primary.withValues(alpha: 26) // 0.1 * 255 = 26
-          : Colors.transparent,
-      child: Column(
-        children: [
-          // صورة الملف الشخصي
-          CircleAvatar(
-            radius: context.responsiveHeight(isCompact ? 40 : 60),
-            backgroundColor: Theme.of(context).colorScheme.primary,
-            child: Text(
-              'أ',
+    );
+  }
+
+  /// الحصول على نص نوع المستخدم
+  String _getUserTypeText(UserType type) {
+    switch (type) {
+      case UserType.regular:
+        return 'مستخدم عادي';
+      case UserType.premium:
+        return 'مستخدم مميز';
+      case UserType.admin:
+        return 'مسؤول';
+      default:
+        return 'مستخدم';
+    }
+  }
+
+  /// عرض مربع حوار تأكيد تسجيل الخروج
+  Future<void> _confirmLogout(BuildContext context) async {
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('تسجيل الخروج'),
+        content: const Text('هل أنت متأكد من رغبتك في تسجيل الخروج؟'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('إلغاء'),
+          ),
+          ElevatedButton(
+            onPressed: () => Navigator.pop(context, true),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.red,
+            ),
+            child: const Text('تسجيل الخروج'),
+          ),
+        ],
+      ),
+    );
+    
+    if (result == true) {
+      // تنفيذ تسجيل الخروج
+      // في الواقع، سيتم استدعاء خدمة المصادقة لتسجيل الخروج
+      // ثم الانتقال إلى شاشة تسجيل الدخول
+      Navigator.pushReplacementNamed(context, '/login');
+    }
+  }
+
+  /// عرض مربع حوار معلومات التطبيق
+  void _showAboutDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('عن التطبيق'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Image.asset(
+              'assets/logo.png',
+              height: 80,
+              errorBuilder: (context, error, stackTrace) {
+                return const Icon(
+                  Icons.shopping_cart,
+                  size: 80,
+                  color: AppTheme.primaryColor,
+                );
+              },
+            ),
+            const SizedBox(height: 16),
+            const Text(
+              'Rivoo',
               style: TextStyle(
-                fontSize: context.responsiveFontSize(isCompact ? 32 : 48),
-                color: Theme.of(context).colorScheme.onPrimary,
+                fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
             ),
-          ),
-          const SizedBox(height: 16),
-
-          // اسم المستخدم
-          Text(
-            'أحمد محمد',
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-            textAlign: TextAlign.center,
-          ),
-          const SizedBox(height: 4),
-
-          // البريد الإلكتروني
-          Text(
-            'ahmed@example.com',
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color:
-                      Theme.of(context).colorScheme.onSurface.withValues(alpha: 179), // 0.7 * 255 = 179
-                ),
-            textAlign: TextAlign.center,
-          ),
-
-          if (!isCompact) ...[
+            const SizedBox(height: 8),
+            const Text('الإصدار 1.0.0'),
             const SizedBox(height: 16),
-            OutlinedButton.icon(
-              onPressed: () {
-                // تعديل الملف الشخصي
-              },
-              icon: const Icon(Icons.edit),
-              label: const Text('تعديل الملف الشخصي'),
+            const Text(
+              'تطبيق تسوق إلكتروني يوفر تجربة تسوق سهلة وممتعة.',
+              textAlign: TextAlign.center,
             ),
-          ],
-        ],
-      ),
-    );
-  }
-
-  // بناء معلومات الملف الشخصي
-  Widget _buildProfileInfo(BuildContext context, AppLocalizations l10n,
-      {bool isCompact = true}) {
-    return Card(
-      elevation: isCompact ? 2 : 0,
-      margin: EdgeInsets.all(isCompact ? 16.0 : 0),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (isCompact)
-              Text(
-                l10n.personalInfo,
-                style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+            const SizedBox(height: 16),
+            const Text(
+              '© 2025 Rivoo. جميع الحقوق محفوظة.',
+              style: TextStyle(
+                fontSize: 12,
+                color: Colors.grey,
               ),
-            if (isCompact) const SizedBox(height: 16),
-
-            // المعلومات الشخصية
-            _buildInfoItem(
-              context,
-              label: l10n.fullName,
-              value: 'أحمد محمد',
-              icon: Icons.person,
-            ),
-            const Divider(),
-            _buildInfoItem(
-              context,
-              label: l10n.email,
-              value: 'ahmed@example.com',
-              icon: Icons.email,
-            ),
-            const Divider(),
-            _buildInfoItem(
-              context,
-              label: l10n.phone,
-              value: '+966 50 123 4567',
-              icon: Icons.phone,
-            ),
-            const Divider(),
-            _buildInfoItem(
-              context,
-              label: l10n.dateOfBirth,
-              value: '01/01/1990',
-              icon: Icons.cake,
-            ),
-            const Divider(),
-            _buildInfoItem(
-              context,
-              label: l10n.gender,
-              value: l10n.male,
-              icon: Icons.person_outline,
+              textAlign: TextAlign.center,
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  // بناء عنصر معلومات
-  Widget _buildInfoItem(
-    BuildContext context, {
-    required String label,
-    required String value,
-    required IconData icon,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: Row(
-        children: [
-          Icon(
-            icon,
-            color: Theme.of(context).colorScheme.primary,
-            size: 24,
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  label,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Theme.of(context)
-                            .colorScheme
-                            .onSurface
-                            .withValues(alpha: 179), // 0.7 * 255 = 179
-                      ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  value,
-                  style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
-                ),
-              ],
-            ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('إغلاق'),
           ),
         ],
-      ),
-    );
-  }
-
-  // بناء إجراءات الملف الشخصي
-  Widget _buildProfileActions(BuildContext context, AppLocalizations l10n) {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            l10n.profileActions,
-            style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-          ),
-          const SizedBox(height: 16),
-
-          // قائمة الإجراءات
-          _buildActionItem(
-            context,
-            title: l10n.orders,
-            subtitle: l10n.viewYourOrders,
-            icon: Icons.shopping_bag,
-            onTap: () {},
-          ),
-          _buildActionItem(
-            context,
-            title: l10n.wishlist,
-            subtitle: l10n.viewYourWishlist,
-            icon: Icons.favorite,
-            onTap: () {},
-          ),
-          _buildActionItem(
-            context,
-            title: l10n.addresses,
-            subtitle: l10n.manageYourAddresses,
-            icon: Icons.location_on,
-            onTap: () {},
-          ),
-          _buildActionItem(
-            context,
-            title: l10n.paymentMethods,
-            subtitle: l10n.manageYourPaymentMethods,
-            icon: Icons.payment,
-            onTap: () {},
-          ),
-          _buildActionItem(
-            context,
-            title: l10n.notifications,
-            subtitle: l10n.manageYourNotifications,
-            icon: Icons.notifications,
-            onTap: () {},
-          ),
-          _buildActionItem(
-            context,
-            title: l10n.settings,
-            subtitle: l10n.manageYourSettings,
-            icon: Icons.settings,
-            onTap: () {},
-          ),
-          _buildActionItem(
-            context,
-            title: l10n.help,
-            subtitle: l10n.getHelp,
-            icon: Icons.help,
-            onTap: () {},
-          ),
-          _buildActionItem(
-            context,
-            title: l10n.logout,
-            subtitle: l10n.signOutOfYourAccount,
-            icon: Icons.logout,
-            onTap: () {},
-            isDestructive: true,
-          ),
-        ],
-      ),
-    );
-  }
-
-  // بناء عنصر إجراء
-  Widget _buildActionItem(
-    BuildContext context, {
-    required String title,
-    required String subtitle,
-    required IconData icon,
-    required VoidCallback onTap,
-    bool isDestructive = false,
-  }) {
-    return Card(
-      elevation: 0,
-      color: isDestructive
-          ? Theme.of(context).colorScheme.error.withValues(alpha: 26) // 0.1 * 255 = 26
-          : Theme.of(context).colorScheme.surface,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(12),
-        side: BorderSide(
-          color: isDestructive
-              ? Theme.of(context).colorScheme.error.withValues(alpha: 77) // 0.3 * 255 = 77
-              : Theme.of(context).colorScheme.outline.withValues(alpha: 77), // 0.3 * 255 = 77
-          width: 1,
-        ),
-      ),
-      margin: const EdgeInsets.only(bottom: 12),
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Row(
-            children: [
-              Icon(
-                icon,
-                color: isDestructive
-                    ? Theme.of(context).colorScheme.error
-                    : Theme.of(context).colorScheme.primary,
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: isDestructive
-                                ? Theme.of(context).colorScheme.error
-                                : Theme.of(context).colorScheme.onSurface,
-                          ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      subtitle,
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Theme.of(context)
-                                .colorScheme
-                                .onSurface
-                                .withValues(alpha: 179), // 0.7 * 255 = 179
-                          ),
-                    ),
-                  ],
-                ),
-              ),
-              Icon(
-                Icons.arrow_forward_ios,
-                size: 16,
-                color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 128), // 0.5 * 255 = 128
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  // بناء عنصر القائمة الجانبية
-  Widget _buildSidebarItem(
-    BuildContext context, {
-    required IconData icon,
-    required String title,
-    required VoidCallback onTap,
-    bool isSelected = false,
-  }) {
-    return InkWell(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(
-          horizontal: 24.0,
-          vertical: 12.0,
-        ),
-        decoration: BoxDecoration(
-          color: isSelected
-              ? Theme.of(context).colorScheme.primary.withValues(alpha: 26) // 0.1 * 255 = 26
-              : Colors.transparent,
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Row(
-          children: [
-            Icon(
-              icon,
-              color: isSelected
-                  ? Theme.of(context).colorScheme.primary
-                  : Theme.of(context).colorScheme.onSurface,
-              size: 20,
-            ),
-            const SizedBox(width: 16),
-            Text(
-              title,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    color: isSelected
-                        ? Theme.of(context).colorScheme.primary
-                        : Theme.of(context).colorScheme.onSurface,
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-                  ),
-            ),
-          ],
-        ),
       ),
     );
   }

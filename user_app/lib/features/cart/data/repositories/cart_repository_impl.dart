@@ -1,153 +1,137 @@
 import 'package:dartz/dartz.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_models/shared_models.dart';
+import 'package:user_app/core/architecture/domain/failure.dart';
+import 'package:user_app/features/cart/data/models/cart_item_model.dart';
+import 'package:user_app/features/cart/domain/entities/cart_item.dart';
+import 'package:user_app/features/cart/domain/repositories/cart_repository.dart';
 
-import '../../../../core/architecture/domain/entity.dart';
-import '../../../../core/architecture/domain/failure.dart';
-import '../domain/entities/cart_item.dart';
-import '../domain/repositories/cart_repository.dart';
-import 'models/cart_item_model.dart';
-
+/// تنفيذ مستودع سلة التسوق
 class CartRepositoryImpl implements CartRepository {
-  final List<CartItemModel> _cartItems = [];
+  /// مصدر البيانات المحلي
+  final CartLocalDataSource _localDataSource;
+  
+  /// مصدر البيانات البعيد
+  final CartRemoteDataSource _remoteDataSource;
+
+  /// إنشاء تنفيذ مستودع سلة التسوق
+  CartRepositoryImpl({
+    required CartLocalDataSource localDataSource,
+    required CartRemoteDataSource remoteDataSource,
+  })  : _localDataSource = localDataSource,
+        _remoteDataSource = remoteDataSource;
 
   @override
   Future<Either<Failure, List<CartItem>>> getCartItems() async {
     try {
-      return Right(_cartItems);
+      final cartItemModels = await _localDataSource.getCartItems();
+      final cartItems = cartItemModels.map((model) => model.toEntity()).toList();
+      return Right(cartItems);
     } catch (e) {
-      return Left(ServerFailure(message: e.toString()));
+      return Left(UnexpectedFailure(message: e.toString()));
     }
   }
 
   @override
-  Future<Either<Failure, Unit>> addItem(Entity product,
-      {int quantity = 1}) async {
+  Future<Either<Failure, CartItem>> addCartItem(CartItem cartItem) async {
     try {
-      final existingItemIndex =
-          _cartItems.indexWhere((item) => item.productId == product.id);
-
-      if (existingItemIndex != -1) {
-        final currentItem = _cartItems[existingItemIndex];
-        final updatedItem =
-            currentItem.copyWith(quantity: currentItem.quantity + quantity);
-        _cartItems[existingItemIndex] = updatedItem;
-      } else {
-        final newItem =
-            CartItemModel.fromProduct(product as Product, quantity: quantity);
-        _cartItems.add(newItem);
-      }
-
-      return const Right(unit);
+      final cartItemModel = CartItemModel.fromEntity(cartItem);
+      final addedCartItemModel = await _remoteDataSource.addCartItem(cartItemModel);
+      await _localDataSource.saveCartItem(addedCartItemModel);
+      return Right(addedCartItemModel.toEntity());
     } catch (e) {
-      return Left(ServerFailure(message: e.toString()));
+      return Left(UnexpectedFailure(message: e.toString()));
     }
   }
 
   @override
-  Future<Either<Failure, Unit>> removeItem(String cartItemId) async {
+  Future<Either<Failure, CartItem>> updateCartItem(CartItem cartItem) async {
     try {
-      _cartItems.removeWhere((item) => item.id == cartItemId);
-      return const Right(unit);
+      final cartItemModel = CartItemModel.fromEntity(cartItem);
+      final updatedCartItemModel = await _remoteDataSource.updateCartItem(cartItemModel);
+      await _localDataSource.saveCartItem(updatedCartItemModel);
+      return Right(updatedCartItemModel.toEntity());
     } catch (e) {
-      return Left(ServerFailure(message: e.toString()));
+      return Left(UnexpectedFailure(message: e.toString()));
     }
   }
 
   @override
-  Future<Either<Failure, Unit>> updateQuantity(
-      String cartItemId, int newQuantity) async {
+  Future<Either<Failure, void>> removeCartItem(String cartItemId) async {
     try {
-      final itemIndex = _cartItems.indexWhere((item) => item.id == cartItemId);
-      if (itemIndex == -1) {
-        return Left(NotFoundFailure(message: 'العنصر غير موجود في سلة التسوق'));
-      }
-
-      if (newQuantity <= 0) {
-        return removeItem(cartItemId);
-      } else {
-        final currentItem = _cartItems[itemIndex];
-        final updatedItem = currentItem.copyWith(quantity: newQuantity);
-        _cartItems[itemIndex] = updatedItem;
-        return const Right(unit);
-      }
+      await _remoteDataSource.removeCartItem(cartItemId);
+      await _localDataSource.removeCartItem(cartItemId);
+      return const Right(null);
     } catch (e) {
-      return Left(ServerFailure(message: e.toString()));
+      return Left(UnexpectedFailure(message: e.toString()));
     }
   }
 
   @override
-  Future<Either<Failure, Unit>> incrementQuantity(String cartItemId) async {
+  Future<Either<Failure, void>> clearCart() async {
     try {
-      final itemIndex = _cartItems.indexWhere((item) => item.id == cartItemId);
-      if (itemIndex == -1) {
-        return Left(NotFoundFailure(message: 'العنصر غير موجود في سلة التسوق'));
-      }
-
-      final currentItem = _cartItems[itemIndex];
-      final updatedItem =
-          currentItem.copyWith(quantity: currentItem.quantity + 1);
-      _cartItems[itemIndex] = updatedItem;
-      return const Right(unit);
+      await _remoteDataSource.clearCart();
+      await _localDataSource.clearCart();
+      return const Right(null);
     } catch (e) {
-      return Left(ServerFailure(message: e.toString()));
+      return Left(UnexpectedFailure(message: e.toString()));
     }
   }
 
   @override
-  Future<Either<Failure, Unit>> decrementQuantity(String cartItemId) async {
+  Future<Either<Failure, int>> getCartItemsCount() async {
     try {
-      final itemIndex = _cartItems.indexWhere((item) => item.id == cartItemId);
-      if (itemIndex == -1) {
-        return Left(NotFoundFailure(message: 'العنصر غير موجود في سلة التسوق'));
-      }
-
-      final currentItem = _cartItems[itemIndex];
-      if (currentItem.quantity <= 1) {
-        return removeItem(cartItemId);
-      } else {
-        final updatedItem =
-            currentItem.copyWith(quantity: currentItem.quantity - 1);
-        _cartItems[itemIndex] = updatedItem;
-        return const Right(unit);
-      }
+      final count = await _localDataSource.getCartItemsCount();
+      return Right(count);
     } catch (e) {
-      return Left(ServerFailure(message: e.toString()));
+      return Left(UnexpectedFailure(message: e.toString()));
     }
   }
 
   @override
-  Future<Either<Failure, Unit>> clearCart() async {
+  Future<Either<Failure, double>> getCartTotal() async {
     try {
-      _cartItems.clear();
-      return const Right(unit);
+      final total = await _localDataSource.getCartTotal();
+      return Right(total);
     } catch (e) {
-      return Left(ServerFailure(message: e.toString()));
-    }
-  }
-
-  @override
-  Future<Either<Failure, int>> getTotalItems() async {
-    try {
-      final totalItems = _cartItems.fold(0, (sum, item) => sum + item.quantity);
-      return Right(totalItems);
-    } catch (e) {
-      return Left(ServerFailure(message: e.toString()));
-    }
-  }
-
-  @override
-  Future<Either<Failure, double>> getTotalPrice() async {
-    try {
-      final totalPrice = _cartItems.fold(
-          0.0, (sum, item) => sum + (item.price * item.quantity));
-      return Right(totalPrice);
-    } catch (e) {
-      return Left(ServerFailure(message: e.toString()));
+      return Left(UnexpectedFailure(message: e.toString()));
     }
   }
 }
 
-final cartRepositoryProvider = Provider<CartRepository>((ref) {
-  return CartRepositoryImpl();
-});
+/// مصدر البيانات المحلي لسلة التسوق
+abstract class CartLocalDataSource {
+  /// الحصول على جميع عناصر سلة التسوق
+  Future<List<CartItemModel>> getCartItems();
+  
+  /// حفظ عنصر في سلة التسوق
+  Future<void> saveCartItem(CartItemModel cartItemModel);
+  
+  /// حذف عنصر من سلة التسوق
+  Future<void> removeCartItem(String cartItemId);
+  
+  /// تفريغ سلة التسوق
+  Future<void> clearCart();
+  
+  /// الحصول على عدد عناصر سلة التسوق
+  Future<int> getCartItemsCount();
+  
+  /// الحصول على المبلغ الإجمالي لسلة التسوق
+  Future<double> getCartTotal();
+}
+
+/// مصدر البيانات البعيد لسلة التسوق
+abstract class CartRemoteDataSource {
+  /// الحصول على جميع عناصر سلة التسوق
+  Future<List<CartItemModel>> getCartItems();
+  
+  /// إضافة عنصر إلى سلة التسوق
+  Future<CartItemModel> addCartItem(CartItemModel cartItemModel);
+  
+  /// تحديث عنصر في سلة التسوق
+  Future<CartItemModel> updateCartItem(CartItemModel cartItemModel);
+  
+  /// حذف عنصر من سلة التسوق
+  Future<void> removeCartItem(String cartItemId);
+  
+  /// تفريغ سلة التسوق
+  Future<void> clearCart();
+}

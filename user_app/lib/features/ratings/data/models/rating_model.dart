@@ -1,55 +1,53 @@
-import '../domain/entities/rating.dart';
+import 'package:flutter/material.dart';
+import 'package:user_app/features/ratings/domain/entities/rating.dart';
+import 'package:user_app/core/architecture/domain/failure.dart';
 
+/// نموذج التقييم
 class RatingModel extends Rating {
-  const RatingModel({
+  RatingModel({
     required String id,
     required String userId,
     required String productId,
     required double rating,
-    String? review,
+    required String comment,
     required DateTime createdAt,
-    String? userDisplayName,
-    required bool isVerifiedPurchase,
   }) : super(
           id: id,
           userId: userId,
           productId: productId,
           rating: rating,
-          review: review,
+          comment: comment,
           createdAt: createdAt,
-          userDisplayName: userDisplayName,
-          isVerifiedPurchase: isVerifiedPurchase,
         );
 
+  /// إنشاء نموذج من JSON
   factory RatingModel.fromJson(Map<String, dynamic> json) {
     return RatingModel(
-      id: json['id'] as String,
-      userId: json['userId'] as String,
-      productId: json['productId'] as String,
-      rating: (json['rating'] as num).toDouble(),
-      review: json['review'] as String?,
-      createdAt: DateTime.parse(json['createdAt'] as String),
-      userDisplayName: json['userDisplayName'] as String?,
-      isVerifiedPurchase: json['isVerifiedPurchase'] as bool,
+      id: json['id'],
+      userId: json['userId'],
+      productId: json['productId'],
+      rating: json['rating'].toDouble(),
+      comment: json['comment'],
+      createdAt: DateTime.parse(json['createdAt']),
     );
   }
 
+  /// تحويل النموذج إلى JSON
   Map<String, dynamic> toJson() {
     return {
       'id': id,
       'userId': userId,
       'productId': productId,
       'rating': rating,
-      'review': review,
+      'comment': comment,
       'createdAt': createdAt.toIso8601String(),
-      'userDisplayName': userDisplayName,
-      'isVerifiedPurchase': isVerifiedPurchase,
     };
   }
 }
 
+/// نموذج ملخص التقييمات
 class RatingSummaryModel extends RatingSummary {
-  const RatingSummaryModel({
+  RatingSummaryModel({
     required String productId,
     required double averageRating,
     required int totalRatings,
@@ -61,28 +59,31 @@ class RatingSummaryModel extends RatingSummary {
           ratingDistribution: ratingDistribution,
         );
 
+  /// إنشاء نموذج من JSON
   factory RatingSummaryModel.fromJson(Map<String, dynamic> json) {
-    final distributionJson = json['ratingDistribution'] as Map<String, dynamic>;
-    final distribution = <int, int>{};
-
+    final Map<String, dynamic> distributionJson = json['ratingDistribution'];
+    final Map<int, int> distribution = {};
+    
     distributionJson.forEach((key, value) {
-      distribution[int.parse(key)] = value as int;
+      distribution[int.parse(key)] = value;
     });
-
+    
     return RatingSummaryModel(
-      productId: json['productId'] as String,
-      averageRating: (json['averageRating'] as num).toDouble(),
-      totalRatings: json['totalRatings'] as int,
+      productId: json['productId'],
+      averageRating: json['averageRating'].toDouble(),
+      totalRatings: json['totalRatings'],
       ratingDistribution: distribution,
     );
   }
 
+  /// تحويل النموذج إلى JSON
   Map<String, dynamic> toJson() {
-    final distributionJson = <String, dynamic>{};
+    final Map<String, dynamic> distributionJson = {};
+    
     ratingDistribution.forEach((key, value) {
       distributionJson[key.toString()] = value;
     });
-
+    
     return {
       'productId': productId,
       'averageRating': averageRating,

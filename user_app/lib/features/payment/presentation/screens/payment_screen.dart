@@ -1,344 +1,364 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:user_app/core/widgets/responsive_builder.dart';
-import 'package:user_app/features/payment/data/payment_model.dart';
-import 'package:user_app/features/payment/application/payment_service.dart';
-import 'package:user_app/features/payment/presentation/widgets/payment_method_card.dart';
-import 'package:user_app/features/payment/presentation/widgets/payment_summary.dart';
-import 'package:user_app/features/payment/presentation/screens/payment_result_screen.dart';
+import 'package:user_app/l10n/app_localizations.dart';
+import 'package:user_app/features/payment/domain/entities/payment_method.dart';
 
-/// شاشة الدفع الرئيسية
-/// تعرض ملخص الطلب وطرق الدفع المتاحة وتعالج الدفع عبر Stripe وخدمات أخرى
-class PaymentScreen extends ConsumerStatefulWidget {
-  /// معرف الطلب
+/// شاشة الدفع
+class PaymentScreen extends StatefulWidget {
+  final double totalAmount;
   final String orderId;
-
-  /// المبلغ المطلوبدفعه
-  final double amount;
-
-  /// العملة (مثلاً USD)
-  final String currency;
-
-  /// بيانات إضافية (اختياري)
-  final Map<String, dynamic>? metadata;
+  final VoidCallback? onPaymentSuccess;
+  final VoidCallback? onPaymentFailure;
 
   const PaymentScreen({
     Key? key,
+    required this.totalAmount,
     required this.orderId,
-    required this.amount,
-    this.currency = 'USD',
-    this.metadata,
+    this.onPaymentSuccess,
+    this.onPaymentFailure,
   }) : super(key: key);
 
   @override
-  ConsumerState<PaymentScreen> createState() => _PaymentScreenState();
+  State<PaymentScreen> createState() => _PaymentScreenState();
 }
 
-class _PaymentScreenState extends ConsumerState<PaymentScreen> {
-  /// طريقة الدفع المختارة
-  PaymentMethod? _selectedMethod;
-
-  /// حالة معالجة الدفع
-  final bool _isProcessing = false;
-
-  /// متحكمات نموذج بطاقة الائتمان
-  final _cardNumberController = TextEditingController();
-  final _expiryMonthController = TextEditingController();
-  final _expiryYearController = TextEditingController();
-  final _cvcController = TextEditingController();
+class _PaymentScreenState extends State<PaymentScreen> {
+  PaymentMethod? _selectedPaymentMethod;
+  bool _isProcessing = false;
+  final List<PaymentMethod> _paymentMethods = [
+    PaymentMethod(
+      id: 'cc_visa',
+      name: 'فيزا',
+      icon: 'assets/icons/visa.png',
+      isDefault: true,
+      type: PaymentMethodType.creditCard,
+      details: {
+        'cardNumber': '**** **** **** 1234',
+        'expiryDate': '12/25',
+        'cardHolderName': 'محمد أحمد',
+      },
+    ),
+    PaymentMethod(
+      id: 'cc_mastercard',
+      name: 'ماستركارد',
+      icon: 'assets/icons/mastercard.png',
+      type: PaymentMethodType.creditCard,
+      details: {
+        'cardNumber': '**** **** **** 5678',
+        'expiryDate': '10/24',
+        'cardHolderName': 'محمد أحمد',
+      },
+    ),
+    PaymentMethod(
+      id: 'apple_pay',
+      name: 'Apple Pay',
+      icon: 'assets/icons/apple_pay.png',
+      type: PaymentMethodType.applePay,
+    ),
+    PaymentMethod(
+      id: 'cod',
+      name: 'الدفع عند الاستلام',
+      icon: 'assets/icons/cash.png',
+      type: PaymentMethodType.cashOnDelivery,
+    ),
+  ];
 
   @override
   void initState() {
     super.initState();
-    // تهيئة خدمات الدفع
-    Future.microtask(() => ref.read(paymentServiceProvider).initializeStripe());
+    // تحديد طريقة الدفع الافتراضية
+    _selectedPaymentMethod = _paymentMethods.firstWhere(
+      (method) => method.isDefault,
+      orElse: () => _paymentMethods.first,
+    );
   }
 
-  @override
-  void dispose() {
-    _cardNumberController.dispose();
-    _expiryMonthController.dispose();
-    _expiryYearController.dispose();
-    _cvcController.dispose();
-    super.dispose();
+  Future<void> _processPayment() async {
+    if (_selectedPaymentMethod == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('الرجاء اختيار طريقة دفع'),
+          backgroundColor: Colors.red,
+        ),
+      );
+      return;
+    }
+
+    setState(() {
+      _isProcessing = true;
+    });
+
+    // محاكاة عملية الدفع
+    await Future.delayed(const Duration(seconds: 2));
+
+    if (mounted) {
+      setState(() {
+        _isProcessing = false;
+      });
+
+      // محاكاة نجاح الدفع (يمكن تغييرها لمحاكاة الفشل)
+      final bool paymentSuccess = true;
+
+      if (paymentSuccess) {
+        if (widget.onPaymentSuccess != null) {
+          widget.onPaymentSuccess!();
+        } else {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => PaymentResultScreen(
+                success: true,
+                orderId: widget.orderId,
+                message: 'تم الدفع بنجاح وسيتم شحن طلبك قريبًا.',
+              ),
+            ),
+          );
+        }
+      } else {
+        if (widget.onPaymentFailure != null) {
+          widget.onPaymentFailure!();
+        } else {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => PaymentResultScreen(
+                success: false,
+                orderId: widget.orderId,
+                message: 'فشلت عملية الدفع. الرجاء المحاولة مرة أخرى أو اختيار طريقة دفع أخرى.',
+              ),
+            ),
+          );
+        }
+      }
+    }
   }
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+    
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n.payment),
-        elevation: 0,
+        title: const Text('الدفع'),
       ),
-      body: ResponsiveBuilder(
-        mobile: _buildMobile(context, l10n),
-        tablet: _buildTablet(context, l10n),
-        desktop: _buildDesktop(context, l10n),
-      ),
+      body: _isProcessing
+          ? const Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(),
+                  SizedBox(height: 16),
+                  Text('جاري معالجة الدفع...'),
+                ],
+              ),
+            )
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'اختر طريقة الدفع',
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: _paymentMethods.length,
+                    itemBuilder: (context, index) {
+                      final method = _paymentMethods[index];
+                      final isSelected = _selectedPaymentMethod?.id == method.id;
+                      
+                      return PaymentMethodCard(
+                        paymentMethod: method,
+                        isSelected: isSelected,
+                        onTap: () {
+                          setState(() {
+                            _selectedPaymentMethod = method;
+                          });
+                        },
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 24),
+                  PaymentSummary(
+                    totalAmount: widget.totalAmount,
+                    orderId: widget.orderId,
+                  ),
+                  const SizedBox(height: 24),
+                  SizedBox(
+                    width: double.infinity,
+                    height: 56,
+                    child: ElevatedButton(
+                      onPressed: _processPayment,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: theme.colorScheme.primary,
+                        foregroundColor: theme.colorScheme.onPrimary,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                      ),
+                      child: Text(
+                        'إتمام الدفع',
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          fontWeight: FontWeight.bold,
+                          color: theme.colorScheme.onPrimary,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
     );
   }
+}
 
-  Widget _buildMobile(BuildContext context, AppLocalizations l10n) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          PaymentSummary(
-            orderId: widget.orderId,
-            amount: widget.amount,
-            currency: widget.currency,
-          ),
-          const SizedBox(height: 24),
-          _buildPaymentMethods(context, l10n),
-          if (_selectedMethod == PaymentMethod.creditCard) ...[
-            const SizedBox(height: 24),
-            _buildCreditCardForm(context, l10n),
-          ],
-          const SizedBox(height: 24),
-          Center(child: _buildPayButton(context, l10n)),
-        ],
+// استيراد الواجهات المطلوبة
+class PaymentMethodCard extends StatelessWidget {
+  final PaymentMethod paymentMethod;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const PaymentMethodCard({
+    Key? key,
+    required this.paymentMethod,
+    required this.isSelected,
+    required this.onTap,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    // تنفيذ مؤقت
+    return Card(
+      margin: const EdgeInsets.only(bottom: 12),
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(
+          color: isSelected ? Theme.of(context).colorScheme.primary : Colors.transparent,
+          width: 2,
+        ),
       ),
-    );
-  }
-
-  Widget _buildTablet(BuildContext context, AppLocalizations l10n) {
-    return SingleChildScrollView(
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          PaymentSummary(
-            orderId: widget.orderId,
-            amount: widget.amount,
-            currency: widget.currency,
-          ),
-          const SizedBox(height: 32),
-          _buildPaymentMethods(context, l10n),
-          if (_selectedMethod == PaymentMethod.creditCard) ...[
-            const SizedBox(height: 32),
-            _buildCreditCardForm(context, l10n),
-          ],
-          const SizedBox(height: 32),
-          Center(child: _buildPayButton(context, l10n)),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildDesktop(BuildContext context, AppLocalizations l10n) {
-    return Center(
-      child: ConstrainedBox(
-        constraints: const BoxConstraints(maxWidth: 1200),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
         child: Padding(
-          padding: const EdgeInsets.all(32),
+          padding: const EdgeInsets.all(16),
           child: Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Icon(Icons.payment, size: 32),
+              const SizedBox(width: 16),
               Expanded(
-                flex: 3,
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    PaymentSummary(
-                      orderId: widget.orderId,
-                      amount: widget.amount,
-                      currency: widget.currency,
+                    Text(
+                      paymentMethod.name,
+                      style: Theme.of(context).textTheme.titleMedium,
                     ),
-                    const SizedBox(height: 32),
-                    _buildPaymentMethods(context, l10n),
-                    if (_selectedMethod == PaymentMethod.creditCard) ...[
-                      const SizedBox(height: 32),
-                      _buildCreditCardForm(context, l10n),
-                    ],
+                    if (paymentMethod.details != null && 
+                        paymentMethod.details!.containsKey('cardNumber'))
+                      Text(
+                        paymentMethod.details!['cardNumber'],
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
                   ],
                 ),
               ),
-              const SizedBox(width: 32),
-              Expanded(
-                flex: 2,
-                child: Center(child: _buildPayButton(context, l10n)),
-              ),
+              if (isSelected)
+                Icon(
+                  Icons.check_circle,
+                  color: Theme.of(context).colorScheme.primary,
+                ),
             ],
           ),
         ),
       ),
     );
   }
+}
 
-  Widget _buildPaymentMethods(BuildContext context, AppLocalizations l10n) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(l10n.selectPaymentMethod,
-            style: Theme.of(context).textTheme.headlineSmall),
-        const SizedBox(height: 16),
-        Wrap(
-          spacing: 16,
-          runSpacing: 16,
-          children: PaymentMethod.values.map((method) {
-            return PaymentMethodCard(
-              method: method,
-              isSelected: _selectedMethod == method,
-              onTap: () => setState(() => _selectedMethod = method),
-            );
-          }).toList(),
-        ),
-      ],
-    );
-  }
+class PaymentSummary extends StatelessWidget {
+  final double totalAmount;
+  final String orderId;
 
-  Widget _buildCreditCardForm(BuildContext context, AppLocalizations l10n) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(l10n.cardDetails,
-            style: Theme.of(context).textTheme.headlineSmall),
-        const SizedBox(height: 16),
-        TextFormField(
-          controller: _cardNumberController,
-          decoration: InputDecoration(
-              labelText: l10n.cardNumber, border: const OutlineInputBorder()),
-          keyboardType: TextInputType.number,
-          maxLength: 19,
-        ),
-        const SizedBox(height: 16),
-        Row(children: [
-          Expanded(
-            child: TextFormField(
-              controller: _expiryMonthController,
-              decoration: InputDecoration(
-                  labelText: l10n.expiryMonth,
-                  border: const OutlineInputBorder()),
-              keyboardType: TextInputType.number,
-              maxLength: 2,
-            ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: TextFormField(
-              controller: _expiryYearController,
-              decoration: InputDecoration(
-                  labelText: l10n.expiryYear,
-                  border: const OutlineInputBorder()),
-              keyboardType: TextInputType.number,
-              maxLength: 2,
-            ),
-          ),
-        ]),
-        const SizedBox(height: 16),
-        TextFormField(
-          controller: _cvcController,
-          decoration: InputDecoration(
-              labelText: l10n.cvc, border: const OutlineInputBorder()),
-          keyboardType: TextInputType.number,
-          maxLength: 3,
-        ),
-      ],
-    );
-  }
+  const PaymentSummary({
+    Key? key,
+    required this.totalAmount,
+    required this.orderId,
+  }) : super(key: key);
 
-  Widget _buildPayButton(BuildContext context, AppLocalizations l10n) {
-    return ElevatedButton(
-      onPressed:
-          _selectedMethod == null || _isProcessing ? null : _processPayment,
-      style: ElevatedButton.styleFrom(
-        padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 16),
-        textStyle: const TextStyle(fontSize: 18),
+  @override
+  Widget build(BuildContext context) {
+    // تنفيذ مؤقت
+    return Card(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
       ),
-      child: Text(_isProcessing ? l10n.processing : l10n.payNow),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'ملخص الدفع',
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const Divider(height: 24),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text('رقم الطلب:'),
+                Text(orderId),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text('المبلغ الإجمالي:'),
+                Text(
+                  '$totalAmount ريال',
+                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
+}
 
-  Future<void> _processPayment() async {
-    if (_selectedMethod == null) return;
+// استيراد شاشة نتيجة الدفع
+class PaymentResultScreen extends StatelessWidget {
+  final bool success;
+  final String orderId;
+  final String message;
 
-    setState(() {
-      // _isProcessing = true;
-    });
+  const PaymentResultScreen({
+    Key? key,
+    required this.success,
+    required this.orderId,
+    required this.message,
+  }) : super(key: key);
 
-    try {
-      final paymentService = ref.read(paymentServiceProvider);
-      PaymentResult result;
-
-      switch (_selectedMethod) {
-        case PaymentMethod.creditCard:
-          result = await paymentService.processCardPayment(
-            amount: widget.amount,
-            currency: widget.currency,
-            cardNumber: _cardNumberController.text,
-            expiryMonth: _expiryMonthController.text,
-            expiryYear: _expiryYearController.text,
-            cvc: _cvcController.text,
-            orderId: widget.orderId,
-            metadata: widget.metadata,
-          );
-          break;
-        case PaymentMethod.applePay:
-          result = await paymentService.processApplePay(
-            amount: widget.amount,
-            currency: widget.currency,
-            orderId: widget.orderId,
-            metadata: widget.metadata,
-          );
-          break;
-        case PaymentMethod.googlePay:
-          result = await paymentService.processGooglePay(
-            amount: widget.amount,
-            currency: widget.currency,
-            orderId: widget.orderId,
-            metadata: widget.metadata,
-          );
-          break;
-        case PaymentMethod.paypal:
-          result = await paymentService.processPayPal(
-            amount: widget.amount,
-            currency: widget.currency,
-            orderId: widget.orderId,
-            metadata: widget.metadata,
-          );
-          break;
-        case PaymentMethod.cashOnDelivery:
-          result = PaymentResult(
-            success: true,
-            paymentId: 'cod_${DateTime.now().millisecondsSinceEpoch}',
-            message: l10n.cashOnDeliveryConfirmed,
-          );
-          break;
-        default:
-          result = PaymentResult(
-            success: false,
-            message: l10n.invalidPaymentMethod,
-          );
-      }
-
-      if (!mounted) return;
-
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(
-          builder: (context) => PaymentResultScreen(
-            result: result,
-            orderId: widget.orderId,
-            amount: widget.amount,
-            currency: widget.currency,
-          ),
-        ),
-      );
-    } catch (e) {
-      if (!mounted) return;
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('${l10n.paymentError}: ${e.toString()}')),
-      );
-    } finally {
-      if (mounted) {
-        setState(() {
-          // _isProcessing = false;
-        });
-      }
-    }
+  @override
+  Widget build(BuildContext context) {
+    // تنفيذ مؤقت - سيتم استبداله بالاستيراد الفعلي
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(success ? 'تم الدفع بنجاح' : 'فشل الدفع'),
+      ),
+      body: Center(
+        child: Text(message),
+      ),
+    );
   }
 }

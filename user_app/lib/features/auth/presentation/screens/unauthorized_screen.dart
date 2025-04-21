@@ -1,67 +1,79 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
-import 'package:user_app/features/auth/presentation/viewmodels/auth_view_model.dart';
+import 'package:user_app/core/theme/app_theme.dart';
+import 'package:user_app/core/widgets/app_button.dart';
+import 'package:user_app/flutter_gen/gen_l10n/app_localizations.dart';
 
-class UnauthorizedScreen extends ConsumerWidget {
+/// شاشة غير مصرح بها
+class UnauthorizedScreen extends StatelessWidget {
+  /// إنشاء شاشة غير مصرح بها
   const UnauthorizedScreen({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
+  Widget build(BuildContext context) {
     final localizations = AppLocalizations.of(context)!;
-    final authState = ref.watch(authViewModelProvider);
-
+    
     return Scaffold(
-      appBar: AppBar(
-        title: Text(localizations.unauthorized),
-        elevation: 0,
-      ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(32),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.lock,
-                size: 80,
-                color: theme.colorScheme.error,
-              ),
-              const SizedBox(height: 24),
-              Text(
-                localizations.unauthorizedAccess,
-                style: theme.textTheme.headlineSmall,
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 16),
-              Text(
-                authState.isAuthenticated
-                    ? localizations.noPermissionToAccess
-                    : localizations.pleaseLoginToAccess,
-                style: theme.textTheme.bodyLarge,
-                textAlign: TextAlign.center,
-              ),
-              const SizedBox(height: 32),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.of(context).pushReplacementNamed('/');
-                },
-                style: ElevatedButton.styleFrom(
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+      backgroundColor: AppTheme.backgroundColor,
+      body: SafeArea(
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // أيقونة القفل
+                Icon(
+                  Icons.lock_outline,
+                  size: 100,
+                  color: AppTheme.primaryColor,
                 ),
-                child: Text(localizations.backToHome),
-              ),
-              const SizedBox(height: 16),
-              if (!authState.isAuthenticated)
-                TextButton(
+                
+                const SizedBox(height: 32),
+                
+                // عنوان الشاشة
+                Text(
+                  localizations.unauthorizedTitle,
+                  style: const TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                
+                const SizedBox(height: 16),
+                
+                // وصف الشاشة
+                Text(
+                  localizations.unauthorizedMessage,
+                  style: TextStyle(
+                    fontSize: 16,
+                    color: AppTheme.textSecondaryColor,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                
+                const SizedBox(height: 32),
+                
+                // زر تسجيل الدخول
+                AppButton(
+                  text: localizations.login,
                   onPressed: () {
-                    Navigator.of(context).pushReplacementNamed('/login');
+                    // التنقل إلى شاشة تسجيل الدخول
                   },
-                  child: Text(localizations.login),
                 ),
-            ],
+                
+                const SizedBox(height: 16),
+                
+                // زر إنشاء حساب
+                AppButton(
+                  text: localizations.register,
+                  type: AppButtonType.secondary,
+                  onPressed: () {
+                    // التنقل إلى شاشة إنشاء حساب
+                  },
+                ),
+              ],
+            ),
           ),
         ),
       ),
