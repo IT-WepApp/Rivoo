@@ -1,47 +1,74 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-/// خدمة التخزين الآمن
-/// توفر واجهة للتخزين الآمن للبيانات الحساسة مثل التوكنات ومعلومات المصادقة
-class SecureStorageServiceImpl {
-  final FlutterSecureStorage _storage;
+/// واجهة خدمة التخزين الآمن
+abstract class SecureStorageService {
+  Future<void> write(String key, String value);
+  Future<String?> read(String key);
+  Future<void> delete(String key);
+  Future<void> deleteAll();
+  
+  // طرق إضافية مطلوبة من قبل AuthService
+  Future<void> storeUserId(String userId);
+  Future<void> storeAuthToken(String token);
+  Future<void> clearAuthData();
+  Future<String?> getUserId();
+  Future<String?> getAuthToken();
+}
 
-  /// إنشاء نسخة جديدة من خدمة التخزين الآمن
+/// تنفيذ خدمة التخزين الآمن باستخدام flutter_secure_storage
+class SecureStorageServiceImpl implements SecureStorageService {
+  final FlutterSecureStorage _storage;
+  
+  // مفاتيح التخزين
+  static const String _userIdKey = 'user_id';
+  static const String _authTokenKey = 'auth_token';
+
   SecureStorageServiceImpl({FlutterSecureStorage? storage})
       : _storage = storage ?? const FlutterSecureStorage();
 
-  /// تخزين قيمة بشكل آمن
-  ///
-  /// [key] مفتاح التخزين
-  /// [value] القيمة المراد تخزينها
-  Future<void> write({required String key, required String value}) async {
+  @override
+  Future<void> write(String key, String value) async {
     await _storage.write(key: key, value: value);
   }
 
-  /// قراءة قيمة مخزنة
-  ///
-  /// [key] مفتاح التخزين
-  /// يعيد القيمة المخزنة أو null إذا لم تكن موجودة
-  Future<String?> read({required String key}) async {
+  @override
+  Future<String?> read(String key) async {
     return await _storage.read(key: key);
   }
 
-  /// حذف قيمة مخزنة
-  ///
-  /// [key] مفتاح التخزين المراد حذفه
-  Future<void> delete({required String key}) async {
+  @override
+  Future<void> delete(String key) async {
     await _storage.delete(key: key);
   }
 
-  /// حذف جميع القيم المخزنة
+  @override
   Future<void> deleteAll() async {
     await _storage.deleteAll();
   }
-
-  /// التحقق من وجود قيمة مخزنة
-  ///
-  /// [key] مفتاح التخزين
-  /// يعيد true إذا كانت القيمة موجودة، وfalse إذا لم تكن موجودة
-  Future<bool> containsKey({required String key}) async {
-    return await _storage.containsKey(key: key);
+  
+  @override
+  Future<void> storeUserId(String userId) async {
+    await write(_userIdKey, userId);
+  }
+  
+  @override
+  Future<void> storeAuthToken(String token) async {
+    await write(_authTokenKey, token);
+  }
+  
+  @override
+  Future<void> clearAuthData() async {
+    await delete(_userIdKey);
+    await delete(_authTokenKey);
+  }
+  
+  @override
+  Future<String?> getUserId() async {
+    return await read(_userIdKey);
+  }
+  
+  @override
+  Future<String?> getAuthToken() async {
+    return await read(_authTokenKey);
   }
 }

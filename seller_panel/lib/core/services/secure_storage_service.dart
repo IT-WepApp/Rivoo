@@ -20,6 +20,13 @@ abstract class SecureStorageService {
 
   /// الحصول على جميع القيم المخزنة
   Future<Map<String, String>> readAll();
+  
+  /// طرق إضافية مطلوبة من قبل AuthService
+  Future<void> storeUserId(String userId);
+  Future<void> storeAuthToken(String token);
+  Future<void> clearAuthData();
+  Future<String?> getUserId();
+  Future<String?> getAuthToken();
 }
 
 /// تنفيذ خدمة التخزين الآمن باستخدام flutter_secure_storage
@@ -28,6 +35,7 @@ class SecureStorageServiceImpl implements SecureStorageService {
 
   /// مفاتيح التخزين المستخدمة في التطبيق
   static const String userTokenKey = 'user_token';
+  static const String userIdKey = 'user_id';
   static const String sellerIdKey = 'seller_id';
   static const String userEmailKey = 'user_email';
   static const String userNameKey = 'user_name';
@@ -123,5 +131,31 @@ class SecureStorageServiceImpl implements SecureStorageService {
   /// تسجيل خروج المستخدم (حذف جميع البيانات المخزنة)
   Future<void> logout() async {
     await deleteAll();
+  }
+  
+  @override
+  Future<void> storeUserId(String userId) async {
+    await write(key: userIdKey, value: userId);
+  }
+  
+  @override
+  Future<void> storeAuthToken(String token) async {
+    await write(key: userTokenKey, value: token);
+  }
+  
+  @override
+  Future<void> clearAuthData() async {
+    await delete(key: userIdKey);
+    await delete(key: userTokenKey);
+  }
+  
+  @override
+  Future<String?> getUserId() async {
+    return await read(key: userIdKey);
+  }
+  
+  @override
+  Future<String?> getAuthToken() async {
+    return await read(key: userTokenKey);
   }
 }

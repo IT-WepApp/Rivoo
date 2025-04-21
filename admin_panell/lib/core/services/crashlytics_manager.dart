@@ -1,54 +1,29 @@
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/foundation.dart';
 
-/// مدير تقارير الأعطال
-/// يوفر واجهة للتعامل مع خدمة Firebase Crashlytics لتسجيل الأخطاء والاستثناءات
+/// مدير تقارير الأعطال باستخدام Firebase Crashlytics
 class CrashlyticsManager {
   final FirebaseCrashlytics _crashlytics;
 
-  /// إنشاء نسخة جديدة من مدير تقارير الأعطال
   CrashlyticsManager({FirebaseCrashlytics? crashlytics})
       : _crashlytics = crashlytics ?? FirebaseCrashlytics.instance;
 
-  /// تهيئة خدمة تقارير الأعطال
+  /// تهيئة مدير تقارير الأعطال
   Future<void> initialize() async {
-    // تمكين جمع تقارير الأعطال في وضع التطوير
-    await _crashlytics.setCrashlyticsCollectionEnabled(true);
+    // تعطيل Crashlytics في وضع التصحيح
+    await _crashlytics.setCrashlyticsCollectionEnabled(!kDebugMode);
+    
+    // تسجيل الأخطاء غير المعالجة في Flutter
+    FlutterError.onError = _crashlytics.recordFlutterError;
   }
 
   /// تسجيل معلومات المستخدم
-  ///
-  /// [userId] معرف المستخدم
-  /// [email] البريد الإلكتروني للمستخدم
-  /// [name] اسم المستخدم
-  Future<void> setUserIdentifier({
-    String? userId,
-    String? email,
-    String? name,
-  }) async {
-    if (userId != null) {
-      await _crashlytics.setUserIdentifier(userId);
-    }
-
-    // تسجيل معلومات إضافية عن المستخدم
-    if (email != null) {
-      await _crashlytics.setCustomKey('email', email);
-    }
-
-    if (name != null) {
-      await _crashlytics.setCustomKey('name', name);
-    }
+  Future<void> setUserIdentifier(String userId) async {
+    await _crashlytics.setUserIdentifier(userId);
   }
 
-  /// تسجيل خطأ
-  ///
-  /// [error] الخطأ المراد تسجيله
-  /// [stackTrace] تتبع المكدس للخطأ
-  /// [reason] سبب الخطأ
-  Future<void> recordError(
-    dynamic error,
-    StackTrace stackTrace, {
-    String? reason,
-  }) async {
+  /// تسجيل خطأ مع رسالة
+  Future<void> recordError(dynamic error, StackTrace stackTrace, {String? reason}) async {
     await _crashlytics.recordError(
       error,
       stackTrace,
@@ -56,10 +31,13 @@ class CrashlyticsManager {
     );
   }
 
-  /// تسجيل رسالة خطأ
-  ///
-  /// [message] رسالة الخطأ المراد تسجيلها
+  /// تسجيل رسالة سجل
   Future<void> log(String message) async {
     await _crashlytics.log(message);
+  }
+
+  /// تعيين مفتاح قيمة إضافي
+  Future<void> setCustomKey(String key, dynamic value) async {
+    await _crashlytics.setCustomKey(key, value);
   }
 }

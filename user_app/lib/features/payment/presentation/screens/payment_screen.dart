@@ -13,10 +13,13 @@ import 'package:user_app/features/payment/presentation/screens/payment_result_sc
 class PaymentScreen extends ConsumerStatefulWidget {
   /// معرف الطلب
   final String orderId;
+
   /// المبلغ المطلوبدفعه
   final double amount;
+
   /// العملة (مثلاً USD)
   final String currency;
+
   /// بيانات إضافية (اختياري)
   final Map<String, dynamic>? metadata;
 
@@ -35,8 +38,10 @@ class PaymentScreen extends ConsumerStatefulWidget {
 class _PaymentScreenState extends ConsumerState<PaymentScreen> {
   /// طريقة الدفع المختارة
   PaymentMethod? _selectedMethod;
+
   /// حالة معالجة الدفع
   final bool _isProcessing = false;
+
   /// متحكمات نموذج بطاقة الائتمان
   final _cardNumberController = TextEditingController();
   final _expiryMonthController = TextEditingController();
@@ -167,7 +172,8 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(l10n.selectPaymentMethod, style: Theme.of(context).textTheme.headlineSmall),
+        Text(l10n.selectPaymentMethod,
+            style: Theme.of(context).textTheme.headlineSmall),
         const SizedBox(height: 16),
         Wrap(
           spacing: 16,
@@ -188,11 +194,13 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(l10n.cardDetails, style: Theme.of(context).textTheme.headlineSmall),
+        Text(l10n.cardDetails,
+            style: Theme.of(context).textTheme.headlineSmall),
         const SizedBox(height: 16),
         TextFormField(
           controller: _cardNumberController,
-          decoration: InputDecoration(labelText: l10n.cardNumber, border: const OutlineInputBorder()),
+          decoration: InputDecoration(
+              labelText: l10n.cardNumber, border: const OutlineInputBorder()),
           keyboardType: TextInputType.number,
           maxLength: 19,
         ),
@@ -201,7 +209,9 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
           Expanded(
             child: TextFormField(
               controller: _expiryMonthController,
-              decoration: InputDecoration(labelText: l10n.expiryMonth, border: const OutlineInputBorder()),
+              decoration: InputDecoration(
+                  labelText: l10n.expiryMonth,
+                  border: const OutlineInputBorder()),
               keyboardType: TextInputType.number,
               maxLength: 2,
             ),
@@ -210,7 +220,9 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
           Expanded(
             child: TextFormField(
               controller: _expiryYearController,
-              decoration: InputDecoration(labelText: l10n.expiryYear, border: const OutlineInputBorder()),
+              decoration: InputDecoration(
+                  labelText: l10n.expiryYear,
+                  border: const OutlineInputBorder()),
               keyboardType: TextInputType.number,
               maxLength: 2,
             ),
@@ -219,7 +231,8 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
         const SizedBox(height: 16),
         TextFormField(
           controller: _cvcController,
-          decoration: InputDecoration(labelText: l10n.cvc, border: const OutlineInputBorder()),
+          decoration: InputDecoration(
+              labelText: l10n.cvc, border: const OutlineInputBorder()),
           keyboardType: TextInputType.number,
           maxLength: 3,
         ),
@@ -229,7 +242,8 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
 
   Widget _buildPayButton(BuildContext context, AppLocalizations l10n) {
     return ElevatedButton(
-      onPressed: _selectedMethod == null || _isProcessing ? null : _processPayment,
+      onPressed:
+          _selectedMethod == null || _isProcessing ? null : _processPayment,
       style: ElevatedButton.styleFrom(
         padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 16),
         textStyle: const TextStyle(fontSize: 18),
@@ -315,7 +329,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
       );
     } catch (e) {
       if (!mounted) return;
-      
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('${l10n.paymentError}: ${e.toString()}')),
       );

@@ -87,9 +87,9 @@ class _DeliveryHomePageState extends State<DeliveryHomePage> {
             onTap: () {
               ScaffoldMessenger.of(context).showSnackBar(
                 const SnackBar(
-                    content: Text(
-                        'Navigate to details for order \${order.id ?? '
-                        '} (TODO)')),
+                    content:
+                        Text('Navigate to details for order \${order.id ?? '
+                            '} (TODO)')),
               );
             },
           ),

@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../models/cart_item_model.dart';
-import '../models/product.dart';
+import 'package:shared/models/cart_item_model.dart';
+import 'package:shared/models/product.dart';
 
 /// نموذج حالة سلة التسوق
 class CartState {

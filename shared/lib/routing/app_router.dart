@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../providers/auth_provider.dart';
+import 'package:shared/providers/auth_provider.dart';
 
 /// ثوابت مسارات التطبيق
 class AppRoutes {
@@ -63,11 +63,11 @@ final routerProvider = Provider<GoRouter>((ref) {
     redirect: (context, state) {
       // التحقق من حالة المصادقة وإعادة التوجيه حسب الحاجة
       final isLoggedIn = authState.state == AuthState.authenticated;
-      final isGoingToLogin = state.location == AppRoutes.login;
-      final isGoingToRegister = state.location == AppRoutes.register;
+      final isGoingToLogin = state.uri.toString() == AppRoutes.login;
+      final isGoingToRegister = state.uri.toString() == AppRoutes.register;
       final isGoingToForgotPassword =
-          state.location == AppRoutes.forgotPassword;
-      final isGoingToSplash = state.location == AppRoutes.splash;
+          state.uri.toString() == AppRoutes.forgotPassword;
+      final isGoingToSplash = state.uri.toString() == AppRoutes.splash;
 
       // إذا كان المستخدم غير مسجل دخول ويحاول الوصول إلى صفحة محمية
       if (!isLoggedIn &&
@@ -149,28 +149,28 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '${AppRoutes.orderDetails}/:id',
         builder: (context, state) {
-          final orderId = state.params['id']!;
+          final orderId = state.pathParameters['id']!;
           return OrderDetailsScreen(orderId: orderId);
         },
       ),
       GoRoute(
         path: '${AppRoutes.productDetails}/:id',
         builder: (context, state) {
-          final productId = state.params['id']!;
+          final productId = state.pathParameters['id']!;
           return ProductDetailsScreen(productId: productId);
         },
       ),
       GoRoute(
         path: '${AppRoutes.categoryProducts}/:id',
         builder: (context, state) {
-          final categoryId = state.params['id']!;
+          final categoryId = state.pathParameters['id']!;
           return CategoryProductsScreen(categoryId: categoryId);
         },
       ),
       GoRoute(
         path: AppRoutes.search,
         builder: (context, state) {
-          final query = state.queryParams['q'] ?? '';
+          final query = state.uri.queryParameters['q'] ?? '';
           return SearchScreen(query: query);
         },
       ),
@@ -191,7 +191,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '${AppRoutes.sellerEditProduct}/:id',
         builder: (context, state) {
-          final productId = state.params['id']!;
+          final productId = state.pathParameters['id']!;
           return SellerEditProductScreen(productId: productId);
         },
       ),
@@ -202,7 +202,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '${AppRoutes.sellerOrderDetails}/:id',
         builder: (context, state) {
-          final orderId = state.params['id']!;
+          final orderId = state.pathParameters['id']!;
           return SellerOrderDetailsScreen(orderId: orderId);
         },
       ),
@@ -227,7 +227,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '${AppRoutes.deliveryOrderDetails}/:id',
         builder: (context, state) {
-          final orderId = state.params['id']!;
+          final orderId = state.pathParameters['id']!;
           return DeliveryOrderDetailsScreen(orderId: orderId);
         },
       ),

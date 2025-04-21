@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../services/notification_service.dart';
+import 'package:shared/services/notification_service.dart';
 
 /// نموذج حالة الإشعارات
 class NotificationState {

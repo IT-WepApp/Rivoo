@@ -22,7 +22,8 @@ class RatingRepositoryImpl implements RatingRepository {
         _uuid = uuid ?? const Uuid();
 
   @override
-  Future<Either<Failure, List<Rating>>> getProductRatings(String productId) async {
+  Future<Either<Failure, List<Rating>>> getProductRatings(
+      String productId) async {
     try {
       final ratingsSnapshot = await _firestore
           .collection('ratings')
@@ -42,12 +43,11 @@ class RatingRepositoryImpl implements RatingRepository {
   }
 
   @override
-  Future<Either<Failure, RatingSummary>> getProductRatingSummary(String productId) async {
+  Future<Either<Failure, RatingSummary>> getProductRatingSummary(
+      String productId) async {
     try {
-      final summaryDoc = await _firestore
-          .collection('rating_summaries')
-          .doc(productId)
-          .get();
+      final summaryDoc =
+          await _firestore.collection('rating_summaries').doc(productId).get();
 
       if (!summaryDoc.exists) {
         // إذا لم يكن هناك ملخص، قم بإنشاء ملخص فارغ
@@ -88,15 +88,18 @@ class RatingRepositoryImpl implements RatingRepository {
       );
 
       if (hasExistingRating) {
-        return const Left(ValidationFailure(message: 'لقد قمت بتقييم هذا المنتج من قبل'));
+        return const Left(
+            ValidationFailure(message: 'لقد قمت بتقييم هذا المنتج من قبل'));
       }
 
       // التحقق مما إذا كان المستخدم قد اشترى المنتج
-      final isVerifiedPurchase = await _checkIfUserPurchasedProduct(userId, productId);
+      final isVerifiedPurchase =
+          await _checkIfUserPurchasedProduct(userId, productId);
 
       // الحصول على اسم المستخدم
       final userDoc = await _firestore.collection('users').doc(userId).get();
-      final String? userDisplayName = userDoc.exists ? (userDoc.data()?['displayName'] as String?) : null;
+      final String? userDisplayName =
+          userDoc.exists ? (userDoc.data()?['displayName'] as String?) : null;
 
       final ratingId = _uuid.v4();
       final now = DateTime.now();
@@ -112,7 +115,10 @@ class RatingRepositoryImpl implements RatingRepository {
         isVerifiedPurchase: isVerifiedPurchase,
       );
 
-      await _firestore.collection('ratings').doc(ratingId).set(newRating.toJson());
+      await _firestore
+          .collection('ratings')
+          .doc(ratingId)
+          .set(newRating.toJson());
 
       // تحديث ملخص التقييمات
       await _updateRatingSummary(productId, rating, true);
@@ -135,7 +141,8 @@ class RatingRepositoryImpl implements RatingRepository {
         return const Left(AuthFailure(message: 'المستخدم غير مسجل الدخول'));
       }
 
-      final ratingDoc = await _firestore.collection('ratings').doc(ratingId).get();
+      final ratingDoc =
+          await _firestore.collection('ratings').doc(ratingId).get();
 
       if (!ratingDoc.exists) {
         return Left(NotFoundFailure(message: 'التقييم غير موجود'));
@@ -143,7 +150,8 @@ class RatingRepositoryImpl implements RatingRepository {
 
       final ratingData = ratingDoc.data()!;
       if (ratingData['userId'] != userId) {
-        return const Left(AuthFailure(message: 'ليس لديك صلاحية لتحديث هذا التقييم'));
+        return const Left(
+            AuthFailure(message: 'ليس لديك صلاحية لتحديث هذا التقييم'));
       }
 
       final oldRating = RatingModel.fromJson(ratingData);
@@ -183,7 +191,8 @@ class RatingRepositoryImpl implements RatingRepository {
         return const Left(AuthFailure(message: 'المستخدم غير مسجل الدخول'));
       }
 
-      final ratingDoc = await _firestore.collection('ratings').doc(ratingId).get();
+      final ratingDoc =
+          await _firestore.collection('ratings').doc(ratingId).get();
 
       if (!ratingDoc.exists) {
         return Left(NotFoundFailure(message: 'التقييم غير موجود'));
@@ -191,7 +200,8 @@ class RatingRepositoryImpl implements RatingRepository {
 
       final ratingData = ratingDoc.data()!;
       if (ratingData['userId'] != userId) {
-        return const Left(AuthFailure(message: 'ليس لديك صلاحية لحذف هذا التقييم'));
+        return const Left(
+            AuthFailure(message: 'ليس لديك صلاحية لحذف هذا التقييم'));
       }
 
       final oldRating = RatingModel.fromJson(ratingData);
@@ -255,7 +265,8 @@ class RatingRepositoryImpl implements RatingRepository {
   }
 
   @override
-  Future<Either<Failure, Rating?>> getUserRatingForProduct(String productId) async {
+  Future<Either<Failure, Rating?>> getUserRatingForProduct(
+      String productId) async {
     try {
       final userId = _auth.currentUser?.uid;
       if (userId == null) {
@@ -283,13 +294,13 @@ class RatingRepositoryImpl implements RatingRepository {
   }
 
   // Helper methods
-  Future<bool> _checkIfUserPurchasedProduct(String userId, String productId) async {
+  Future<bool> _checkIfUserPurchasedProduct(
+      String userId, String productId) async {
     try {
       final ordersSnapshot = await _firestore
           .collection('orders')
           .where('userId', isEqualTo: userId)
-          .where('status', whereIn: ['delivered', 'shipped'])
-          .get();
+          .where('status', whereIn: ['delivered', 'shipped']).get();
 
       for (final orderDoc in ordersSnapshot.docs) {
         final orderData = orderDoc.data();
@@ -307,7 +318,8 @@ class RatingRepositoryImpl implements RatingRepository {
     }
   }
 
-  Future<void> _updateRatingSummary(String productId, double rating, bool isAdding) async {
+  Future<void> _updateRatingSummary(
+      String productId, double rating, bool isAdding) async {
     final summaryRef = _firestore.collection('rating_summaries').doc(productId);
     final summaryDoc = await summaryRef.get();
 
@@ -342,22 +354,24 @@ class RatingRepositoryImpl implements RatingRepository {
 
       final ratingInt = rating.round();
       final distribution = Map<int, int>.from(summary.ratingDistribution);
-      
+
       if (isAdding) {
         distribution[ratingInt] = (distribution[ratingInt] ?? 0) + 1;
         final newTotalRatings = summary.totalRatings + 1;
-        final newTotalScore = summary.averageRating * summary.totalRatings + rating;
+        final newTotalScore =
+            summary.averageRating * summary.totalRatings + rating;
         final newAverageRating = newTotalScore / newTotalRatings;
 
         transaction.update(summaryRef, {
           'averageRating': newAverageRating,
           'totalRatings': newTotalRatings,
-          'ratingDistribution': distribution.map((key, value) => MapEntry(key.toString(), value)),
+          'ratingDistribution':
+              distribution.map((key, value) => MapEntry(key.toString(), value)),
         });
       } else {
         distribution[ratingInt] = (distribution[ratingInt] ?? 1) - 1;
         final newTotalRatings = summary.totalRatings - 1;
-        
+
         if (newTotalRatings <= 0) {
           // إذا لم يعد هناك تقييمات، قم بإعادة تعيين الملخص
           transaction.update(summaryRef, {
@@ -372,13 +386,15 @@ class RatingRepositoryImpl implements RatingRepository {
             },
           });
         } else {
-          final newTotalScore = summary.averageRating * summary.totalRatings - rating;
+          final newTotalScore =
+              summary.averageRating * summary.totalRatings - rating;
           final newAverageRating = newTotalScore / newTotalRatings;
 
           transaction.update(summaryRef, {
             'averageRating': newAverageRating,
             'totalRatings': newTotalRatings,
-            'ratingDistribution': distribution.map((key, value) => MapEntry(key.toString(), value)),
+            'ratingDistribution': distribution
+                .map((key, value) => MapEntry(key.toString(), value)),
           });
         }
       }

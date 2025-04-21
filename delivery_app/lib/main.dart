@@ -8,7 +8,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_widgets/shared_widgets.dart'; // ✅ صح
+import 'package:shared_widgets/shared_widgets.dart' as shared_widgets; // استخدام prefix لحل التعارض
 import 'package:delivery_app/presentation/theme/app_theme.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';

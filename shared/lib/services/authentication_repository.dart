@@ -1,4 +1,4 @@
-import 'auth_service.dart';
+import 'package:shared/services/auth_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart'; // Need riverpod
 
 // Provider for AuthenticationRepository
