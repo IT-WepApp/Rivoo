@@ -270,7 +270,7 @@ class _NotificationCard extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 4),
       color: notification.isRead
           ? null
-          : theme.colorScheme.primaryContainer.withOpacity(0.3),
+          : theme.colorScheme.primaryContainer.withValues(alpha: 77), // 0.3 * 255 = 77
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
         side: notification.isRead
@@ -311,7 +311,7 @@ class _NotificationCard extends StatelessWidget {
                         Text(
                           timeAgo,
                           style: theme.textTheme.bodySmall?.copyWith(
-                            color: theme.colorScheme.onSurface.withOpacity(0.6),
+                            color: theme.colorScheme.onSurface.withValues(alpha: 153), // 0.6 * 255 = 153
                           ),
                         ),
                         if (!notification.isRead)
@@ -360,7 +360,7 @@ class _NotificationCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(8),
       decoration: BoxDecoration(
-        color: iconColor.withOpacity(0.1),
+        color: iconColor.withValues(alpha: 26), // 0.1 * 255 = 26
         shape: BoxShape.circle,
       ),
       child: Icon(

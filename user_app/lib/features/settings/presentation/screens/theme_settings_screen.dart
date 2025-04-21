@@ -184,8 +184,8 @@ class ThemeSettingsScreen extends ConsumerWidget {
                 padding: const EdgeInsets.all(12),
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? colorScheme.primary.withOpacity(0.1)
-                      : theme.dividerColor.withOpacity(0.1),
+                      ? colorScheme.primary.withValues(alpha: 26) // 0.1 * 255 = 26
+                      : theme.dividerColor.withValues(alpha: 26), // 0.1 * 255 = 26
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(

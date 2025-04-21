@@ -38,8 +38,8 @@ class ReviewCard extends StatelessWidget {
               children: [
                 CircleAvatar(
                   backgroundColor: isProduct
-                      ? Colors.blue.withOpacity(0.1)
-                      : Colors.green.withOpacity(0.1),
+                      ? Colors.blue.withValues(alpha: 26) // 0.1 * 255 = 26
+                      : Colors.green.withValues(alpha: 26), // 0.1 * 255 = 26
                   child: Icon(
                     isProduct ? Icons.shopping_bag : Icons.delivery_dining,
                     color: isProduct ? Colors.blue : Colors.green,
@@ -79,7 +79,7 @@ class ReviewCard extends StatelessWidget {
                   color: theme.colorScheme.surface,
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
-                    color: theme.colorScheme.onSurface.withOpacity(0.1),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 26), // 0.1 * 255 = 26
                   ),
                 ),
                 child: Text(

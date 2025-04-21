@@ -37,7 +37,7 @@ class TicketCard extends StatelessWidget {
                       color: Theme.of(context)
                           .colorScheme
                           .primary
-                          .withOpacity(0.1),
+                          .withValues(alpha: 26), // 0.1 * 255 = 26
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
@@ -70,7 +70,7 @@ class TicketCard extends StatelessWidget {
                                     color: Theme.of(context)
                                         .colorScheme
                                         .onSurface
-                                        .withOpacity(0.7),
+                                        .withValues(alpha: 179), // 0.7 * 255 = 179
                                   ),
                         ),
                       ],
@@ -111,7 +111,7 @@ class TicketCard extends StatelessWidget {
                         color: Theme.of(context)
                             .colorScheme
                             .error
-                            .withOpacity(0.1),
+                            .withValues(alpha: 26), // 0.1 * 255 = 26
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Row(
@@ -181,9 +181,9 @@ class TicketCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 26), // 0.1 * 255 = 26
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.5)),
+        border: Border.all(color: color.withValues(alpha: 128)), // 0.5 * 255 = 128
       ),
       child: Text(
         label,
@@ -223,9 +223,9 @@ class TicketCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 26), // 0.1 * 255 = 26
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.5)),
+        border: Border.all(color: color.withValues(alpha: 128)), // 0.5 * 255 = 128
       ),
       child: Text(
         label,

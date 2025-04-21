@@ -151,7 +151,7 @@ class SettingsScreen extends ConsumerWidget {
                 child: Text(
                   '${l10n.version}: 1.0.0',
                   style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurface.withOpacity(0.6),
+                    color: theme.colorScheme.onSurface.withValues(alpha: 153), // 0.6 * 255 = 153
                   ),
                 ),
               ),

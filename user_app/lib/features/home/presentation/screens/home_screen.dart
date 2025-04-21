@@ -214,7 +214,7 @@ class HomeScreen extends ConsumerWidget {
         ),
         decoration: BoxDecoration(
           color: isSelected
-              ? Theme.of(context).colorScheme.primary.withOpacity(0.1)
+              ? Theme.of(context).colorScheme.primary.withValues(alpha: 26) // 0.1 * 255 = 26
               : Colors.transparent,
           border: isSelected
               ? Border(

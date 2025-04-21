@@ -63,7 +63,7 @@ class MessageBubble extends StatelessWidget {
                           color: Theme.of(context)
                               .colorScheme
                               .onSurface
-                              .withOpacity(0.5),
+                              .withValues(alpha: 128), // 0.5 * 255 = 128
                         ),
                   ),
                 ),
@@ -79,14 +79,14 @@ class MessageBubble extends StatelessWidget {
                         : Theme.of(context)
                             .colorScheme
                             .primary
-                            .withOpacity(0.2),
+                            .withValues(alpha: 51), // 0.2 * 255 = 51
                     borderRadius: BorderRadius.circular(16.0).copyWith(
                       bottomLeft: isFromSupport ? Radius.zero : null,
                       bottomRight: !isFromSupport ? Radius.zero : null,
                     ),
                     boxShadow: [
                       BoxShadow(
-                        color: Colors.black.withOpacity(0.05),
+                        color: Colors.black.withValues(alpha: 13), // 0.05 * 255 = 13
                         blurRadius: 5,
                         offset: const Offset(0, 2),
                       ),
@@ -125,7 +125,7 @@ class MessageBubble extends StatelessWidget {
                           color: Theme.of(context)
                               .colorScheme
                               .onSurface
-                              .withOpacity(0.5),
+                              .withValues(alpha: 128), // 0.5 * 255 = 128
                         ),
                   ),
                 ),
@@ -204,7 +204,7 @@ class MessageBubble extends StatelessWidget {
             color: Theme.of(context).colorScheme.surface,
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
-              color: Theme.of(context).colorScheme.outline.withOpacity(0.5),
+              color: Theme.of(context).colorScheme.outline.withValues(alpha: 128), // 0.5 * 255 = 128
             ),
           ),
           child: Row(
