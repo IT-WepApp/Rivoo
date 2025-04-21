@@ -24,3 +24,6 @@ export 'utils/validators.dart';
 export 'utils/formatters.dart';
 export 'utils/constants.dart';
 export 'utils/extensions.dart';
+
+// الأخطاء والاستثناءات
+export 'core/error/error.dart';
