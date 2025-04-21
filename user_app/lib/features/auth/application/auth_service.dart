@@ -6,6 +6,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../core/services/secure_storage_service.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/utils/logger.dart';
+import '../domain/entities/user_role.dart';
 
 /// مزود خدمة التخزين الآمن
 final secureStorageServiceProvider = Provider<SecureStorageService>((ref) {
@@ -27,14 +28,6 @@ enum AuthStatus {
   verifying,
   loading,
   error,
-}
-
-/// أدوار المستخدم
-enum UserRole {
-  customer,
-  driver,
-  admin,
-  guest,
 }
 
 /// حالة المستخدم
@@ -381,113 +374,6 @@ class AuthService {
     }
   }
 
-  /// تحديث بيانات المستخدم
-  Future<void> updateProfile({String? displayName, String? photoURL}) async {
-    try {
-      final user = _auth.currentUser;
-      if (user != null) {
-        await user.updateDisplayName(displayName);
-        await user.updatePhotoURL(photoURL);
-
-        // تحديث وثيقة المستخدم في Firestore
-        await _firestore.collection('users').doc(user.uid).update({
-          'displayName': displayName,
-          'photoURL': photoURL,
-          'updatedAt': FieldValue.serverTimestamp(),
-        });
-      } else {
-        throw Exception('لا يوجد مستخدم حالي');
-      }
-    } catch (e) {
-      throw Exception('فشل تحديث بيانات المستخدم: $e');
-    }
-  }
-
-  /// تحديث البريد الإلكتروني
-  Future<void> updateEmail(String newEmail) async {
-    try {
-      final user = _auth.currentUser;
-      if (user != null) {
-        // استخدام الأسلوب الموصى به بدلاً من الأسلوب المهمل
-        await user.verifyBeforeUpdateEmail(newEmail);
-
-        // تحديث وثيقة المستخدم في Firestore
-        await _firestore.collection('users').doc(user.uid).update({
-          'email': newEmail,
-          'updatedAt': FieldValue.serverTimestamp(),
-        });
-      } else {
-        throw Exception('لا يوجد مستخدم حالي');
-      }
-    } catch (e) {
-      throw Exception('فشل تحديث البريد الإلكتروني: $e');
-    }
-  }
-
-  /// تحديث كلمة المرور
-  Future<void> updatePassword(String newPassword) async {
-    try {
-      // التحقق من قوة كلمة المرور
-      if (!_isStrongPassword(newPassword)) {
-        throw Exception(
-            'كلمة المرور غير قوية بما فيه الكفاية. يجب أن تحتوي على 8 أحرف على الأقل وتتضمن أحرفًا كبيرة وصغيرة وأرقامًا ورموزًا.');
-      }
-
-      final user = _auth.currentUser;
-      if (user != null) {
-        await user.updatePassword(newPassword);
-
-        // تحديث وثيقة المستخدم في Firestore
-        await _firestore.collection('users').doc(user.uid).update({
-          'passwordUpdatedAt': FieldValue.serverTimestamp(),
-        });
-      } else {
-        throw Exception('لا يوجد مستخدم حالي');
-      }
-    } catch (e) {
-      throw Exception('فشل تحديث كلمة المرور: $e');
-    }
-  }
-
-  /// إعادة المصادقة
-  Future<UserCredential> reauthenticate(String email, String password) async {
-    try {
-      final user = _auth.currentUser;
-      if (user != null) {
-        final credential = EmailAuthProvider.credential(
-          email: email,
-          password: password,
-        );
-        return await user.reauthenticateWithCredential(credential);
-      } else {
-        throw Exception('لا يوجد مستخدم حالي');
-      }
-    } catch (e) {
-      throw Exception('فشل إعادة المصادقة: $e');
-    }
-  }
-
-  /// حذف الحساب
-  Future<void> deleteAccount() async {
-    try {
-      final user = _auth.currentUser;
-      if (user != null) {
-        // حذف وثيقة المستخدم من Firestore
-        await _firestore.collection('users').doc(user.uid).delete();
-
-        // حذف الحساب من Firebase Auth
-        await user.delete();
-
-        // حذف جميع البيانات المخزنة محلياً
-        await _secureStorage.clearAll();
-      } else {
-        throw Exception('لا يوجد مستخدم حالي');
-      }
-    } catch (e) {
-      throw Exception('فشل حذف الحساب: $e');
-    }
-  }
-
   /// الحصول على دور المستخدم
   Future<UserRole> getUserRole(String userId) async {
     try {
@@ -555,7 +441,6 @@ class AuthService {
           break;
         default:
           roleString = 'customer';
-          break;
       }
 
       // تحديث وثيقة المستخدم في Firestore
@@ -564,18 +449,18 @@ class AuthService {
         'updatedAt': FieldValue.serverTimestamp(),
       });
 
-      // تحديث بيانات المستخدم في التخزين الآمن إذا كان المستخدم الحالي
-      if (userId == _auth.currentUser?.uid) {
-        final userData = await _secureStorage.getUserData();
-        if (userData != null) {
-          userData['role'] = roleString;
-          await _secureStorage.saveUserData(userData);
-        }
+      // تحديث بيانات المستخدم في التخزين الآمن
+      final userData = await _secureStorage.getUserData();
+      if (userData != null && userData['uid'] == userId) {
+        userData['role'] = roleString;
+        await _secureStorage.saveUserData(userData);
       }
     } catch (e) {
       throw Exception('فشل تحديث دور المستخدم: $e');
     }
   }
+
+  // طرق مساعدة خاصة
 
   /// إنشاء وثيقة المستخدم في Firestore
   Future<void> _createUserDocument(
@@ -594,7 +479,6 @@ class AuthService {
           break;
         default:
           roleString = 'customer';
-          break;
       }
 
       await _firestore.collection('users').doc(userId).set({
@@ -603,10 +487,11 @@ class AuthService {
         'role': roleString,
         'createdAt': FieldValue.serverTimestamp(),
         'updatedAt': FieldValue.serverTimestamp(),
-        'lastLogin': FieldValue.serverTimestamp(),
+        'lastLoginAt': FieldValue.serverTimestamp(),
         'isActive': true,
       });
     } catch (e) {
+      _logger.error('Error creating user document', e);
       throw Exception('فشل إنشاء وثيقة المستخدم: $e');
     }
   }
@@ -615,41 +500,36 @@ class AuthService {
   Future<void> _updateLoginTimestamp(String userId) async {
     try {
       await _firestore.collection('users').doc(userId).update({
-        'lastLogin': FieldValue.serverTimestamp(),
+        'lastLoginAt': FieldValue.serverTimestamp(),
       });
     } catch (e) {
-      _logger.error('فشل تحديث تاريخ تسجيل الدخول', e);
+      _logger.error('Error updating login timestamp', e);
     }
   }
 
   /// تسجيل محاولة تسجيل الدخول الفاشلة
-  Future<void> _logFailedLoginAttempt(String email) async {
+  void _logFailedLoginAttempt(String email) {
     try {
-      await _firestore.collection('failedLoginAttempts').add({
+      _firestore.collection('failedLogins').add({
         'email': email,
         'timestamp': FieldValue.serverTimestamp(),
-        'ipAddress': 'unknown', // يمكن تحديث هذا إذا كان لديك طريقة للحصول على عنوان IP
+        'ipAddress': 'unknown', // يمكن تحديث هذا لاحقًا
       });
     } catch (e) {
-      _logger.error('فشل تسجيل محاولة تسجيل الدخول الفاشلة', e);
+      _logger.error('Error logging failed login attempt', e);
     }
   }
 
-  /// الحصول على الرمز المميز للتحديث
+  /// الحصول على رمز التحديث
   Future<String> _getRefreshToken(User user) async {
     try {
-      // هذه طريقة مبسطة للحصول على رمز التحديث
-      // في التطبيق الحقيقي، يجب استخدام Firebase SDK للحصول على رمز التحديث
-      final idTokenResult = await user.getIdTokenResult();
-      final expirationTime = idTokenResult.expirationTime;
-      final expirySeconds =
-          expirationTime!.difference(DateTime.now()).inSeconds;
-
-      // إنشاء رمز تحديث بسيط باستخدام معرف المستخدم وتاريخ انتهاء الصلاحية
-      final data = utf8.encode('${user.uid}:$expirySeconds');
-      final hash = sha256.convert(data);
-      return hash.toString();
+      // هذه طريقة مبسطة، في الواقع يجب استخدام Firebase SDK للحصول على رمز التحديث
+      final idToken = await user.getIdToken();
+      final bytes = utf8.encode('${user.uid}:$idToken:${DateTime.now().millisecondsSinceEpoch}');
+      final refreshToken = sha256.convert(bytes).toString();
+      return refreshToken;
     } catch (e) {
+      _logger.error('Error getting refresh token', e);
       throw Exception('فشل الحصول على رمز التحديث: $e');
     }
   }

@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
+import '../domain/entities/user_role.dart';
 
 part 'auth_state.freezed.dart';
 
@@ -11,14 +12,6 @@ enum AuthenticationStatus {
   verifying,
   loading,
   error,
-}
-
-/// أدوار المستخدم
-enum UserRole {
-  customer,
-  driver,
-  admin,
-  guest,
 }
 
 /// نموذج بيانات المستخدم

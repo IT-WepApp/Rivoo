@@ -26,14 +26,18 @@ void main() async {
   // تهيئة Firebase
   await Firebase.initializeApp();
 
+  // إنشاء حاوية المزودات
+  final container = ProviderContainer();
+  
   // تهيئة Crashlytics
-  final crashlyticsManager = crashlyticsManagerProvider.read(ProviderContainer());
+  final crashlyticsManager = container.read(crashlyticsManagerProvider);
   await crashlyticsManager.initialize();
 
   // تغليف التطبيق بمعالج استثناءات لالتقاط جميع الأخطاء غير المتوقعة
   runApp(
-    const ProviderScope(
-      child: AdminPanelApp(),
+    ProviderScope(
+      parent: container,
+      child: const AdminPanelApp(),
     ),
   );
 }

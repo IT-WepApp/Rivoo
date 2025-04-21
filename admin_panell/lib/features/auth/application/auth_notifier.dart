@@ -146,3 +146,6 @@ final crashlyticsManagerProvider = Provider<CrashlyticsManager>((ref) => throw U
 
 // تعريف مزود AuthNotifier
 final authNotifierProvider = NotifierProvider<AuthNotifier, AuthState>(() => AuthNotifier());
+
+// تعريف مزود authProvider كبديل لـ authNotifierProvider للتوافق مع الكود الحالي
+final authProvider = authNotifierProvider;

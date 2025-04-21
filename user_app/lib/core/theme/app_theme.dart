@@ -84,11 +84,11 @@ class AppTheme {
       elevation: 0,
     ),
     textTheme: const TextTheme(
-      headline1: headlineStyle,
-      headline6: titleStyle,
-      bodyText1: bodyStyle,
-      caption: captionStyle,
-      button: buttonStyle,
+      displayLarge: headlineStyle, // تم تحديث من headline1
+      titleLarge: titleStyle, // تم تحديث من headline6
+      bodyLarge: bodyStyle, // تم تحديث من bodyText1
+      bodySmall: captionStyle, // تم تحديث من caption
+      labelLarge: buttonStyle, // تم تحديث من button
     ),
     buttonTheme: ButtonThemeData(
       buttonColor: primaryColor,
@@ -177,25 +177,25 @@ class AppTheme {
       elevation: 0,
     ),
     textTheme: const TextTheme(
-      headline1: TextStyle(
+      displayLarge: TextStyle( // تم تحديث من headline1
         fontSize: 24,
         fontWeight: FontWeight.bold,
         color: Colors.white,
       ),
-      headline6: TextStyle(
+      titleLarge: TextStyle( // تم تحديث من headline6
         fontSize: 18,
         fontWeight: FontWeight.bold,
         color: Colors.white,
       ),
-      bodyText1: TextStyle(
+      bodyLarge: TextStyle( // تم تحديث من bodyText1
         fontSize: 16,
         color: Colors.white,
       ),
-      caption: TextStyle(
+      bodySmall: TextStyle( // تم تحديث من caption
         fontSize: 14,
         color: Colors.grey,
       ),
-      button: TextStyle(
+      labelLarge: TextStyle( // تم تحديث من button
         fontSize: 16,
         fontWeight: FontWeight.bold,
         color: Colors.white,

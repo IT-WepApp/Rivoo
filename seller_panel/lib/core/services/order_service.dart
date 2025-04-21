@@ -223,7 +223,7 @@ class OrderService {
   }
 
   // الحصول على إحصائيات المبيعات للبائع
-  Future<Map<String, dynamic>> getSellerSalesStatistics() async {
+  Future<Map<String, dynamic>> getSellerSalesStatistics({String? timeRange}) async {
     final authService = AuthService();
     final sellerId = await authService.getCurrentUserId();
 
@@ -236,16 +236,46 @@ class OrderService {
         .where((order) => order['status'] == AppConstants.orderStatusDelivered)
         .toList();
 
+    // تصفية الطلبات حسب النطاق الزمني إذا تم تحديده
+    List<Map<String, dynamic>> filteredOrders = completedOrders;
+    if (timeRange != null) {
+      final now = DateTime.now();
+      DateTime startDate;
+      
+      switch (timeRange) {
+        case 'week':
+          startDate = DateTime(now.year, now.month, now.day - 7);
+          break;
+        case 'month':
+          startDate = DateTime(now.year, now.month - 1, now.day);
+          break;
+        case 'quarter':
+          startDate = DateTime(now.year, now.month - 3, now.day);
+          break;
+        case 'year':
+          startDate = DateTime(now.year - 1, now.month, now.day);
+          break;
+        default:
+          startDate = DateTime(now.year, now.month, now.day - 30); // افتراضي: آخر 30 يوم
+      }
+      
+      filteredOrders = completedOrders.where((order) {
+        final createdAt = (order['createdAt'] as Timestamp?)?.toDate();
+        if (createdAt == null) return false;
+        return createdAt.isAfter(startDate);
+      }).toList();
+    }
+
     // حساب إجمالي المبيعات
     double totalSales = 0;
-    for (final order in completedOrders) {
+    for (final order in filteredOrders) {
       totalSales += (order['total'] as num? ?? 0).toDouble();
     }
 
     // حساب متوسط قيمة الطلب
-    double averageOrderValue = completedOrders.isEmpty
+    double averageOrderValue = filteredOrders.isEmpty
         ? 0
-        : totalSales / completedOrders.length;
+        : totalSales / filteredOrders.length;
 
     // حساب المبيعات الشهرية
     final now = DateTime.now();
@@ -258,7 +288,7 @@ class OrderService {
       monthlySales[monthKey] = 0;
     }
 
-    for (final order in completedOrders) {
+    for (final order in filteredOrders) {
       final createdAt = (order['createdAt'] as Timestamp?)?.toDate();
       if (createdAt != null) {
         final monthKey = '${createdAt.month}-${createdAt.year}';
@@ -271,14 +301,14 @@ class OrderService {
 
     return {
       'totalSales': totalSales,
-      'completedOrders': completedOrders.length,
+      'completedOrders': filteredOrders.length,
       'averageOrderValue': averageOrderValue,
       'monthlySales': monthlySales,
     };
   }
 
   // الحصول على إحصائيات المنتجات للبائع
-  Future<Map<String, dynamic>> getSellerProductsStatistics() async {
+  Future<Map<String, dynamic>> getSellerProductsStatistics({String? timeRange}) async {
     final authService = AuthService();
     final sellerId = await authService.getCurrentUserId();
 
@@ -291,11 +321,41 @@ class OrderService {
         .where((order) => order['status'] == AppConstants.orderStatusDelivered)
         .toList();
 
+    // تصفية الطلبات حسب النطاق الزمني إذا تم تحديده
+    List<Map<String, dynamic>> filteredOrders = completedOrders;
+    if (timeRange != null) {
+      final now = DateTime.now();
+      DateTime startDate;
+      
+      switch (timeRange) {
+        case 'week':
+          startDate = DateTime(now.year, now.month, now.day - 7);
+          break;
+        case 'month':
+          startDate = DateTime(now.year, now.month - 1, now.day);
+          break;
+        case 'quarter':
+          startDate = DateTime(now.year, now.month - 3, now.day);
+          break;
+        case 'year':
+          startDate = DateTime(now.year - 1, now.month, now.day);
+          break;
+        default:
+          startDate = DateTime(now.year, now.month, now.day - 30); // افتراضي: آخر 30 يوم
+      }
+      
+      filteredOrders = completedOrders.where((order) {
+        final createdAt = (order['createdAt'] as Timestamp?)?.toDate();
+        if (createdAt == null) return false;
+        return createdAt.isAfter(startDate);
+      }).toList();
+    }
+
     // حساب المنتجات الأكثر مبيعًا
     final productSales = <String, int>{};
     final productRevenue = <String, double>{};
 
-    for (final order in completedOrders) {
+    for (final order in filteredOrders) {
       final items = order['items'] as List<dynamic>? ?? [];
       for (final item in items) {
         final productId = item['productId'] as String? ?? '';
@@ -324,7 +384,7 @@ class OrderService {
   }
 
   // الحصول على إحصائيات العملاء للبائع
-  Future<Map<String, dynamic>> getSellerCustomersStatistics() async {
+  Future<Map<String, dynamic>> getSellerCustomersStatistics({String? timeRange}) async {
     final authService = AuthService();
     final sellerId = await authService.getCurrentUserId();
 
@@ -337,11 +397,41 @@ class OrderService {
         .where((order) => order['status'] == AppConstants.orderStatusDelivered)
         .toList();
 
+    // تصفية الطلبات حسب النطاق الزمني إذا تم تحديده
+    List<Map<String, dynamic>> filteredOrders = completedOrders;
+    if (timeRange != null) {
+      final now = DateTime.now();
+      DateTime startDate;
+      
+      switch (timeRange) {
+        case 'week':
+          startDate = DateTime(now.year, now.month, now.day - 7);
+          break;
+        case 'month':
+          startDate = DateTime(now.year, now.month - 1, now.day);
+          break;
+        case 'quarter':
+          startDate = DateTime(now.year, now.month - 3, now.day);
+          break;
+        case 'year':
+          startDate = DateTime(now.year - 1, now.month, now.day);
+          break;
+        default:
+          startDate = DateTime(now.year, now.month, now.day - 30); // افتراضي: آخر 30 يوم
+      }
+      
+      filteredOrders = completedOrders.where((order) {
+        final createdAt = (order['createdAt'] as Timestamp?)?.toDate();
+        if (createdAt == null) return false;
+        return createdAt.isAfter(startDate);
+      }).toList();
+    }
+
     // حساب العملاء الأكثر شراءً
     final customerOrders = <String, int>{};
     final customerSpending = <String, double>{};
 
-    for (final order in completedOrders) {
+    for (final order in filteredOrders) {
       final customerId = order['customerId'] as String? ?? '';
       final total = (order['total'] as num? ?? 0).toDouble();
 

@@ -1,37 +1,28 @@
-/// ثوابت المسارات المستخدمة في تطبيق لوحة تحكم البائع
+/// ثوابت المسارات المستخدمة في التطبيق
 class RouteConstants {
   // المسارات الرئيسية
-  static const String login = '/';
-  static const String register = '/register';
-  static const String forgotPassword = '/forgotPassword';
-  static const String verifyEmail = '/verifyEmail';
-  static const String home = '/sellerHome';
-
+  static const String dashboard = '/dashboard';
+  static const String products = '/products';
+  static const String orders = '/orders';
+  static const String customers = '/customers';
+  static const String statistics = '/statistics';
+  static const String performance = '/performance';
+  static const String settings = '/settings';
+  static const String profile = '/profile';
+  
   // مسارات المنتجات
-  static const String products = '/sellerHome/sellerProducts';
-  static const String addProduct = '/sellerHome/addProduct';
-  static const String editProduct = '/sellerHome/editProduct';
-  static const String inventory = '/sellerHome/inventory';
-
+  static const String productDetails = '/products/:id';
+  static const String addProduct = '/products/add';
+  static const String editProduct = '/products/edit/:id';
+  
   // مسارات الطلبات
-  static const String orders = '/sellerHome/sellerOrders';
-  static const String orderDetails = '/sellerHome/sellerOrderDetails';
-
-  // مسارات العروض
-  static const String promotions = '/sellerHome/sellerPromotions';
-
-  // مسارات الإحصائيات
-  static const String statistics = '/sellerHome/sellerStats';
-
-  // مسارات الملف الشخصي
-  static const String profile = '/sellerHome/sellerProfile';
-  static const String editProfile = '/sellerHome/editProfile';
-  static const String settings = '/sellerHome/settings';
-
-  // مسارات الإشعارات
-  static const String notifications = '/sellerHome/sellerNotifications';
-
-  // مسارات الدردشة
-  static const String chat = '/sellerHome/sellerChat';
-  static const String chatDetails = '/sellerHome/sellerChatDetails';
+  static const String orderDetails = '/orders/:id';
+  
+  // مسارات العملاء
+  static const String customerDetails = '/customers/:id';
+  
+  // مسارات المصادقة
+  static const String login = '/login';
+  static const String register = '/register';
+  static const String forgotPassword = '/forgot-password';
 }

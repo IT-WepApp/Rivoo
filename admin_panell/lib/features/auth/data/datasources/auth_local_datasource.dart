@@ -1,65 +1,80 @@
-// مصدر البيانات المحلي للمصادقة في طبقة Data
-// lib/features/auth/data/datasources/auth_local_datasource.dart
+import 'package:admin_panell/core/storage/secure_storage_service.dart';
+import 'package:admin_panell/features/auth/domain/entities/user_entity.dart';
 
-import 'dart:convert';
-import '../../../../core/storage/secure_storage_service.dart';
-import '../models/user_model.dart';
-import '../../domain/entities/user_entity.dart';
+/// مصدر البيانات المحلي للمصادقة
+class AuthLocalDataSource {
+  final SecureStorageService _secureStorageService;
 
-/// واجهة مصدر البيانات المحلي للمصادقة
-abstract class AuthLocalDataSource {
-  /// تخزين بيانات المستخدم محلياً
-  Future<void> cacheUser(UserEntity user);
+  AuthLocalDataSource(this._secureStorageService);
 
-  /// الحصول على آخر مستخدم قام بتسجيل الدخول
-  Future<UserEntity?> getLastSignedInUser();
-
-  /// حذف بيانات المستخدم المخزنة محلياً
-  Future<void> clearUser();
-}
-
-/// تنفيذ مصدر البيانات المحلي للمصادقة
-class AuthLocalDataSourceImpl implements AuthLocalDataSource {
-  final SecureStorageService secureStorage;
-  static const String userKey = 'CACHED_USER';
-
-  AuthLocalDataSourceImpl({required this.secureStorage});
-
-  @override
-  Future<void> cacheUser(UserEntity user) async {
-    // تحويل كائن المستخدم إلى نموذج UserModel
-    final userModel = user is UserModel
-        ? user
-        : UserModel(
-            id: user.id,
-            email: user.email,
-            name: user.name,
-            role: user.role,
-          );
-
-    // تخزين بيانات المستخدم كسلسلة JSON
-    await secureStorage.write(userKey, json.encode(userModel.toJson()));
+  /// حفظ رمز الوصول
+  Future<void> saveAccessToken(String token) async {
+    await _secureStorageService.write(key: 'access_token', value: token);
   }
 
-  @override
-  Future<UserEntity?> getLastSignedInUser() async {
-    try {
-      // قراءة بيانات المستخدم المخزنة
-      final jsonString = await secureStorage.read(userKey);
+  /// الحصول على رمز الوصول
+  Future<String?> getAccessToken() async {
+    return await _secureStorageService.read(key: 'access_token');
+  }
 
-      if (jsonString == null) {
-        return null;
-      }
+  /// حذف رمز الوصول
+  Future<void> deleteAccessToken() async {
+    await _secureStorageService.delete(key: 'access_token');
+  }
 
-      // تحويل سلسلة JSON إلى كائن UserModel
-      return UserModel.fromJson(json.decode(jsonString));
-    } catch (e) {
+  /// حفظ بيانات المستخدم
+  Future<void> saveUserData(UserEntity user) async {
+    await _secureStorageService.write(key: 'user_id', value: user.id);
+    await _secureStorageService.write(key: 'user_name', value: user.name);
+    await _secureStorageService.write(key: 'user_email', value: user.email);
+    await _secureStorageService.write(key: 'user_role', value: user.role.toString());
+  }
+
+  /// الحصول على بيانات المستخدم
+  Future<UserEntity?> getUserData() async {
+    final id = await _secureStorageService.read(key: 'user_id');
+    final name = await _secureStorageService.read(key: 'user_name');
+    final email = await _secureStorageService.read(key: 'user_email');
+    final roleString = await _secureStorageService.read(key: 'user_role');
+
+    if (id == null || name == null || email == null || roleString == null) {
       return null;
     }
+
+    UserRole role;
+    switch (roleString) {
+      case 'UserRole.admin':
+        role = UserRole.admin;
+        break;
+      case 'UserRole.seller':
+        role = UserRole.seller;
+        break;
+      case 'UserRole.delivery':
+        role = UserRole.delivery;
+        break;
+      default:
+        role = UserRole.user;
+    }
+
+    return UserEntity(
+      id: id,
+      name: name,
+      email: email,
+      role: role,
+    );
   }
 
-  @override
-  Future<void> clearUser() async {
-    await secureStorage.delete(userKey);
+  /// حذف بيانات المستخدم
+  Future<void> deleteUserData() async {
+    await _secureStorageService.delete(key: 'user_id');
+    await _secureStorageService.delete(key: 'user_name');
+    await _secureStorageService.delete(key: 'user_email');
+    await _secureStorageService.delete(key: 'user_role');
+  }
+
+  /// التحقق من حالة تسجيل الدخول
+  Future<bool> isLoggedIn() async {
+    final token = await getAccessToken();
+    return token != null && token.isNotEmpty;
   }
 }
