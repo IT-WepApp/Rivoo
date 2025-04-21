@@ -1,13 +1,15 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_models/shared_models.dart';
-// import 'dart:developer'; // Removed unused import
+import '../data/models/cart_item_model.dart';
 
-class CartNotifier extends StateNotifier<List<CartItemModel>> {
-  CartNotifier() : super([]);
+class CartNotifier extends Notifier<List<CartItemModel>> {
+  @override
+  List<CartItemModel> build() {
+    return [];
+  }
 
-  void addItem(Product product, {int quantity = 1}) {
+  void addItem(Map<String, dynamic> product, {int quantity = 1}) {
     final existingItemIndex =
-        state.indexWhere((item) => item.productId == product.id);
+        state.indexWhere((item) => item.productId == product['id']);
 
     if (existingItemIndex != -1) {
       final currentItem = state[existingItemIndex];
@@ -15,14 +17,7 @@ class CartNotifier extends StateNotifier<List<CartItemModel>> {
           currentItem.copyWith(quantity: currentItem.quantity + quantity);
       state = List.from(state)..[existingItemIndex] = updatedItem;
     } else {
-      final newItem = CartItemModel(
-        id: product.id,
-        productId: product.id,
-        name: product.name,
-        price: product.price,
-        imageUrl: product.imageUrl,
-        quantity: quantity,
-      );
+      final newItem = CartItemModel.fromProduct(product, quantity: quantity);
       state = [...state, newItem];
     }
   }
@@ -79,6 +74,6 @@ class CartNotifier extends StateNotifier<List<CartItemModel>> {
 }
 
 final cartProvider =
-    StateNotifierProvider<CartNotifier, List<CartItemModel>>((ref) {
+    NotifierProvider<CartNotifier, List<CartItemModel>>(() {
   return CartNotifier();
 });

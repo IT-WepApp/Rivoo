@@ -12,9 +12,9 @@ class AuthGuard {
     GoRouterState state,
     WidgetRef ref,
   ) async {
-    final authState = ref.read(authStateProvider);
+    final isAuthenticated = ref.read(isAuthenticatedProvider);
 
-    if (authState.isAuthenticated) {
+    if (isAuthenticated) {
       // المستخدم مسجل الدخول، السماح بالوصول
       return null;
     }
@@ -28,9 +28,9 @@ class AuthGuard {
     GoRouterState state,
     WidgetRef ref,
   ) async {
-    final authState = ref.read(authStateProvider);
+    final isAuthenticated = ref.read(isAuthenticatedProvider);
 
-    if (!authState.isAuthenticated) {
+    if (!isAuthenticated) {
       // المستخدم غير مسجل الدخول، السماح بالوصول
       return null;
     }
@@ -43,15 +43,16 @@ class AuthGuard {
     BuildContext context,
     GoRouterState state,
     WidgetRef ref,
-    List<UserRole> allowedRoles,
+    List<String> allowedRoles,
   ) async {
-    final authState = ref.read(authStateProvider);
+    final isAuthenticated = ref.read(isAuthenticatedProvider);
+    final userRole = ref.read(userRoleProvider);
 
-    if (!authState.isAuthenticated) {
+    if (!isAuthenticated) {
       // غير مصدق، إعادة توجيه لتسجيل الدخول
       return '/auth/login';
     }
-    if (authState.user != null && allowedRoles.contains(authState.user!.role)) {
+    if (userRole != null && allowedRoles.contains(userRole)) {
       // لديه الصلاحيات المطلوبة
       return null;
     }
@@ -65,7 +66,7 @@ class AuthGuard {
     GoRouterState state,
     WidgetRef ref,
   ) async {
-    return guardRole(context, state, ref, [UserRole.admin]);
+    return guardRole(context, state, ref, [UserRoles.admin]);
   }
 
   /// التحقق من صلاحيات العميل
@@ -74,7 +75,7 @@ class AuthGuard {
     GoRouterState state,
     WidgetRef ref,
   ) async {
-    return guardRole(context, state, ref, [UserRole.customer]);
+    return guardRole(context, state, ref, [UserRoles.customer]);
   }
 
   /// التحقق من صلاحيات السائق
@@ -83,7 +84,7 @@ class AuthGuard {
     GoRouterState state,
     WidgetRef ref,
   ) async {
-    return guardRole(context, state, ref, [UserRole.driver]);
+    return guardRole(context, state, ref, [UserRoles.driver]);
   }
 
   /// التحقق من صلاحيات المسؤول أو العميل
@@ -92,7 +93,7 @@ class AuthGuard {
     GoRouterState state,
     WidgetRef ref,
   ) async {
-    return guardRole(context, state, ref, [UserRole.admin, UserRole.customer]);
+    return guardRole(context, state, ref, [UserRoles.admin, UserRoles.customer]);
   }
 
   /// التحقق من صلاحيات المسؤول أو السائق
@@ -101,6 +102,6 @@ class AuthGuard {
     GoRouterState state,
     WidgetRef ref,
   ) async {
-    return guardRole(context, state, ref, [UserRole.admin, UserRole.driver]);
+    return guardRole(context, state, ref, [UserRoles.admin, UserRoles.driver]);
   }
 }

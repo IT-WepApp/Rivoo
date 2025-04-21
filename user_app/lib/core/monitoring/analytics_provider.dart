@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import '../monitoring/analytics_monitor.dart';
 import '../services/analytics_service.dart';
 
@@ -49,7 +50,7 @@ class AnalyticsWrapper extends ConsumerWidget {
 }
 
 /// مزود للتحليلات يمكن استخدامه في أي مكان في التطبيق
-class AnalyticsProvider extends ConsumerProvider {
+class AnalyticsProvider {
   final AnalyticsService _analyticsService;
   final PerformanceMonitor _performanceMonitor;
 

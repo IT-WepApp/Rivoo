@@ -29,7 +29,12 @@ class AppLogger {
 
   /// تسجيل خطأ
   void error(String message, [dynamic error, StackTrace? stackTrace]) {
-    _logger.e(message, error: error, stackTrace: stackTrace);
+    // استخدام الطريقة الصحيحة لتسجيل الأخطاء مع تمرير الخطأ وتتبع المكدس بشكل صحيح
+    if (error != null || stackTrace != null) {
+      _logger.e(message, error: error, stackTrace: stackTrace);
+    } else {
+      _logger.e(message);
+    }
   }
 
   /// تسجيل معلومات تصحيح
