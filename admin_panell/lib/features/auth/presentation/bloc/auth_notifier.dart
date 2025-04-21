@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../domain/entities/user_entity.dart';
+import '../../domain/entities/user.dart';
 import '../../domain/usecases/sign_in_usecase.dart';
 import '../../domain/usecases/sign_out_usecase.dart';
 import '../../domain/usecases/get_current_user_usecase.dart';
@@ -13,7 +13,7 @@ class AuthInitial extends AuthState {}
 class AuthLoading extends AuthState {}
 
 class AuthAuthenticated extends AuthState {
-  final UserEntity user;
+  final User user;
 
   AuthAuthenticated(this.user);
 }
@@ -72,7 +72,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
     state = AuthLoading();
 
     try {
-      final user = await _signInUseCase.execute(event.email, event.password);
+      final user = await _signInUseCase.execute(email: event.email, password: event.password);
       state = AuthAuthenticated(user);
     } catch (e) {
       state = AuthError(e.toString());

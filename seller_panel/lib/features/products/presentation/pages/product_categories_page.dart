@@ -141,9 +141,10 @@ class _ProductCategoriesPageState extends ConsumerState<ProductCategoriesPage> {
       final productService = ref.read(productServiceProvider);
       
       // تحديث الفئة في جميع المنتجات التي تستخدمها
-      final productsToUpdate = _products.where((product) => 
-        product['category'] as String? == oldCategoryName
-      ).toList();
+      final productsToUpdate = _products.where((product) {
+        final productCategory = product['category'] as String?;
+        return productCategory != null && productCategory == oldCategoryName;
+      }).toList();
       
       for (final product in productsToUpdate) {
         await productService.updateProduct(
@@ -160,7 +161,8 @@ class _ProductCategoriesPageState extends ConsumerState<ProductCategoriesPage> {
         
         // تحديث المنتجات في القائمة المحلية
         for (final product in _products) {
-          if (product['category'] as String? == oldCategoryName) {
+          final productCategory = product['category'] as String?;
+          if (productCategory != null && productCategory == oldCategoryName) {
             product['category'] = newCategoryName;
           }
         }
@@ -190,9 +192,10 @@ class _ProductCategoriesPageState extends ConsumerState<ProductCategoriesPage> {
 
   Future<void> _deleteCategory(String category) async {
     // التحقق من عدم وجود منتجات تستخدم هذه الفئة
-    final productsUsingCategory = _products.where((product) => 
-      product['category'] as String? == category
-    ).toList();
+    final productsUsingCategory = _products.where((product) {
+      final productCategory = product['category'] as String?;
+      return productCategory != null && productCategory == category;
+    }).toList();
     
     if (productsUsingCategory.isNotEmpty) {
       if (mounted) {
@@ -252,7 +255,8 @@ class _ProductCategoriesPageState extends ConsumerState<ProductCategoriesPage> {
         
         // تحديث المنتجات في القائمة المحلية
         for (final product in _products) {
-          if (product['category'] as String? == category) {
+          final productCategory = product['category'] as String?;
+          if (productCategory != null && productCategory == category) {
             product['category'] = 'أخرى';
           }
         }
@@ -458,9 +462,10 @@ class _ProductCategoriesPageState extends ConsumerState<ProductCategoriesPage> {
                   itemCount: filteredCategories.length,
                   itemBuilder: (context, index) {
                     final category = filteredCategories[index];
-                    final productCount = _products.where((product) => 
-                      product['category'] as String? == category
-                    ).length;
+                    final productCount = _products.where((product) {
+                      final productCategory = product['category'] as String?;
+                      return productCategory != null && productCategory == category;
+                    }).length;
                     
                     return Card(
                       margin: const EdgeInsets.only(bottom: 8),

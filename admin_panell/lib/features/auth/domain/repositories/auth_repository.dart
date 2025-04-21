@@ -6,7 +6,7 @@ import '../entities/user_entity.dart';
 /// واجهة مستودع المصادقة
 abstract class AuthRepository {
   /// تسجيل الدخول باستخدام البريد الإلكتروني وكلمة المرور
-  Future<UserEntity> signIn(String email, String password);
+  Future<UserEntity> signIn({required String email, required String password});
 
   /// تسجيل الخروج
   Future<void> signOut();

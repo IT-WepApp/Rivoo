@@ -1,114 +1,133 @@
-// مصدر البيانات البعيد (Remote Data Source) في طبقة Data
+// مصدر البيانات البعيد للمصادقة في طبقة Data
 // lib/features/auth/data/datasources/auth_remote_datasource.dart
 
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart' as firebase_auth;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../models/user_model.dart';
+import '../../../../core/error/exceptions.dart';
 
 /// واجهة مصدر البيانات البعيد للمصادقة
 abstract class AuthRemoteDataSource {
-  Future<UserModel> signIn(String email, String password);
+  /// تسجيل الدخول باستخدام البريد الإلكتروني وكلمة المرور
+  Future<UserModel> signIn({required String email, required String password});
+
+  /// تسجيل الخروج
   Future<void> signOut();
+
+  /// الحصول على المستخدم الحالي
   Future<UserModel?> getCurrentUser();
 }
 
-/// تنفيذ مصدر البيانات البعيد باستخدام Firebase
-class FirebaseAuthDataSource implements AuthRemoteDataSource {
-  final FirebaseAuth _firebaseAuth;
-  final FirebaseFirestore _firestore;
+/// تنفيذ مصدر البيانات البعيد للمصادقة باستخدام Firebase
+class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
+  final firebase_auth.FirebaseAuth firebaseAuth;
+  final FirebaseFirestore firestore;
 
-  FirebaseAuthDataSource({
-    FirebaseAuth? firebaseAuth,
-    FirebaseFirestore? firestore,
-  })  : _firebaseAuth = firebaseAuth ?? FirebaseAuth.instance,
-        _firestore = firestore ?? FirebaseFirestore.instance;
+  AuthRemoteDataSourceImpl({
+    required this.firebaseAuth,
+    required this.firestore,
+  });
 
   @override
-  Future<UserModel> signIn(String email, String password) async {
+  Future<UserModel> signIn({required String email, required String password}) async {
     try {
-      final userCredential = await _firebaseAuth.signInWithEmailAndPassword(
+      // تسجيل الدخول باستخدام Firebase Auth
+      final userCredential = await firebaseAuth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
 
       if (userCredential.user == null) {
-        throw Exception('فشل تسجيل الدخول');
+        throw AuthException('فشل تسجيل الدخول: لم يتم العثور على المستخدم');
       }
 
       // الحصول على بيانات المستخدم من Firestore
-      final userDoc = await _firestore
-          .collection('users')
-          .doc(userCredential.user!.uid)
-          .get();
+      final userId = userCredential.user!.uid;
+      final userDoc = await firestore.collection('admins').doc(userId).get();
 
       if (!userDoc.exists) {
-        // إذا لم يكن هناك وثيقة للمستخدم، نقوم بإنشاء واحدة
-        final userData = {
-          'id': userCredential.user!.uid,
-          'name': userCredential.user!.displayName ?? 'Admin User',
-          'email': userCredential.user!.email,
-          'role': 'admin',
-          'createdAt': FieldValue.serverTimestamp(),
-        };
-
-        await _firestore
-            .collection('users')
-            .doc(userCredential.user!.uid)
-            .set(userData);
-
-        return UserModel(
-          id: userCredential.user!.uid,
-          name: userCredential.user!.displayName ?? 'Admin User',
-          email: userCredential.user!.email,
-          role: 'admin',
-        );
+        // إذا لم يكن المستخدم موجودًا في مجموعة المشرفين، قم بتسجيل الخروج وإلقاء استثناء
+        await firebaseAuth.signOut();
+        throw AuthException('ليس لديك صلاحية الوصول كمشرف');
       }
 
-      final userData = userDoc.data() as Map<String, dynamic>;
-
+      // إنشاء نموذج المستخدم من بيانات Firestore
       return UserModel(
-        id: userCredential.user!.uid,
-        name: userData['name'] as String? ?? 'Admin User',
-        email: userCredential.user!.email,
-        role: userData['role'] as String? ?? 'admin',
+        id: userId,
+        email: email,
+        name: userDoc.data()?['name'] ?? 'مشرف',
+        role: userDoc.data()?['role'] ?? 'admin',
       );
+    } on firebase_auth.FirebaseAuthException catch (e) {
+      throw AuthException(_mapFirebaseAuthErrorToMessage(e.code));
     } catch (e) {
-      throw Exception('فشل تسجيل الدخول: $e');
+      if (e is AuthException) {
+        rethrow;
+      }
+      throw AuthException('فشل تسجيل الدخول: $e');
     }
   }
 
   @override
   Future<void> signOut() async {
-    await _firebaseAuth.signOut();
+    try {
+      await firebaseAuth.signOut();
+    } catch (e) {
+      throw AuthException('فشل تسجيل الخروج: $e');
+    }
   }
 
   @override
   Future<UserModel?> getCurrentUser() async {
-    final user = _firebaseAuth.currentUser;
-
-    if (user == null) {
-      return null;
-    }
-
     try {
-      // الحصول على بيانات المستخدم من Firestore
-      final userDoc = await _firestore.collection('users').doc(user.uid).get();
-
-      if (!userDoc.exists) {
+      final firebaseUser = firebaseAuth.currentUser;
+      
+      if (firebaseUser == null) {
         return null;
       }
 
-      final userData = userDoc.data() as Map<String, dynamic>;
+      // التحقق من أن المستخدم هو مشرف
+      final userDoc = await firestore.collection('admins').doc(firebaseUser.uid).get();
+      
+      if (!userDoc.exists) {
+        // إذا لم يكن المستخدم موجودًا في مجموعة المشرفين، قم بتسجيل الخروج
+        await firebaseAuth.signOut();
+        return null;
+      }
 
+      // إنشاء نموذج المستخدم من بيانات Firestore
       return UserModel(
-        id: user.uid,
-        name: userData['name'] as String? ?? 'Admin User',
-        email: user.email,
-        role: userData['role'] as String? ?? 'admin',
+        id: firebaseUser.uid,
+        email: firebaseUser.email ?? '',
+        name: userDoc.data()?['name'] ?? 'مشرف',
+        role: userDoc.data()?['role'] ?? 'admin',
       );
     } catch (e) {
-      print('Error getting current user: $e');
       return null;
+    }
+  }
+
+  // تحويل رموز أخطاء Firebase Auth إلى رسائل مفهومة
+  String _mapFirebaseAuthErrorToMessage(String errorCode) {
+    switch (errorCode) {
+      case 'user-not-found':
+        return 'لم يتم العثور على مستخدم بهذا البريد الإلكتروني';
+      case 'wrong-password':
+        return 'كلمة المرور غير صحيحة';
+      case 'invalid-email':
+        return 'البريد الإلكتروني غير صالح';
+      case 'user-disabled':
+        return 'تم تعطيل هذا الحساب';
+      case 'too-many-requests':
+        return 'تم حظر الوصول بسبب محاولات متكررة. يرجى المحاولة لاحقًا';
+      case 'operation-not-allowed':
+        return 'تسجيل الدخول بالبريد الإلكتروني وكلمة المرور غير مفعل';
+      case 'email-already-in-use':
+        return 'البريد الإلكتروني مستخدم بالفعل';
+      case 'weak-password':
+        return 'كلمة المرور ضعيفة جدًا';
+      default:
+        return 'حدث خطأ أثناء المصادقة: $errorCode';
     }
   }
 }

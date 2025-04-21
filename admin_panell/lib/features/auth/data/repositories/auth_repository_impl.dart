@@ -22,11 +22,11 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<UserEntity> signIn(String email, String password) async {
     try {
-      final userModel = await remoteDataSource.signIn(email, password);
+      final userModel = await remoteDataSource.signIn(email: email, password: password);
       await localDataSource.cacheUser(userModel);
 
       // تعيين معرف المستخدم في Crashlytics لتسهيل تتبع الأخطاء
-      await crashlytics.setUserIdentifier(userModel.id);
+      await crashlytics.setUserIdentifier(userId: userModel.id);
 
       return userModel;
     } catch (e, stack) {
@@ -58,7 +58,7 @@ class AuthRepositoryImpl implements AuthRepository {
         await localDataSource.cacheUser(remoteUser);
 
         // تعيين معرف المستخدم في Crashlytics
-        await crashlytics.setUserIdentifier(remoteUser.id);
+        await crashlytics.setUserIdentifier(userId: remoteUser.id);
 
         return remoteUser;
       }
@@ -68,7 +68,7 @@ class AuthRepositoryImpl implements AuthRepository {
 
       if (localUser != null) {
         // تعيين معرف المستخدم في Crashlytics
-        await crashlytics.setUserIdentifier(localUser.id);
+        await crashlytics.setUserIdentifier(userId: localUser.id);
       }
 
       return localUser;

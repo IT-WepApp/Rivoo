@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/services/product_service.dart';
 import '../../../../core/widgets/app_widgets.dart';
@@ -54,6 +55,8 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
 
   // مستودع المنتجات
   late final ProductRepository _productRepository;
+  // إضافة مرجع Firestore
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   @override
   void initState() {
@@ -99,9 +102,11 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
 
   // تعديل: حذف صورة من القائمة
   void _removeImage(int index) {
-    setState(() {
-      _imageFiles.removeAt(index);
-    });
+    if (index >= 0 && index < _imageFiles.length) {
+      setState(() {
+        _imageFiles.removeAt(index);
+      });
+    }
   }
 
   // تعديل: رفع جميع الصور
@@ -156,23 +161,28 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
 
     try {
       // إعداد بيانات المنتج
+      final priceText = _priceController.text;
+      final stockText = _stockQuantityController.text;
+      
+      final double price = double.tryParse(priceText) ?? 0.0;
+      final int stockQuantity = int.tryParse(stockText) ?? 0;
+      
       final productData = {
         'name': _nameController.text,
         'description': _descriptionController.text,
-        'price': double.parse(_priceController.text),
+        'price': price,
         'category': _selectedCategory,
-        'stockQuantity': int.parse(_stockQuantityController.text),
+        'stockQuantity': stockQuantity,
         'isAvailable': _isAvailable,
         'isFeatured': _isFeatured,
-        'imageUrls': [], // سيتم تحديثها بعد رفع الصور
+        'imageUrls': <String>[], // سيتم تحديثها بعد رفع الصور
       };
 
       // إضافة بيانات الخصم إذا كان مفعلاً
       if (_hasDiscount) {
         productData['hasDiscount'] = true;
         productData['discountPercentage'] = _discountPercentage;
-        productData['discountedPrice'] =
-            productData['price'] * (1 - _discountPercentage / 100);
+        productData['discountedPrice'] = price * (1 - _discountPercentage / 100);
       }
 
       // إضافة المنتج إلى Firestore
@@ -426,9 +436,9 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
                     },
                     activeColor: theme.colorScheme.primary,
                   ),
-                  if (_priceController.text.isNotEmpty)
+                  if (_priceController.text.isNotEmpty) 
                     Text(
-                      'السعر بعد الخصم: ${(double.tryParse(_priceController.text) ?? 0) * (1 - _discountPercentage / 100)} ر.س',
+                      'السعر بعد الخصم: ${((double.tryParse(_priceController.text) ?? 0) * (1 - _discountPercentage / 100)).toStringAsFixed(2)} ر.س',
                       style: TextStyle(
                         color: theme.colorScheme.primary,
                         fontWeight: FontWeight.bold,
@@ -525,14 +535,20 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
                         onTap: () => _removeImage(index),
                         child: Container(
                           padding: const EdgeInsets.all(4),
-                          decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.5),
+                          decoration: const BoxDecoration(
+                            color: Colors.white,
                             shape: BoxShape.circle,
+                            boxShadow: [
+                              BoxShadow(
+                                color: Colors.black26,
+                                blurRadius: 2,
+                              ),
+                            ],
                           ),
                           child: const Icon(
                             Icons.close,
                             size: 16,
-                            color: Colors.white,
+                            color: Colors.red,
                           ),
                         ),
                       ),
@@ -543,7 +559,9 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
                         left: 4,
                         child: Container(
                           padding: const EdgeInsets.symmetric(
-                              horizontal: 6, vertical: 2),
+                            horizontal: 6,
+                            vertical: 2,
+                          ),
                           decoration: BoxDecoration(
                             color: theme.colorScheme.primary,
                             borderRadius: BorderRadius.circular(4),
@@ -570,32 +588,30 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
         Row(
           children: [
             Expanded(
-              child: ElevatedButton.icon(
-                onPressed: _imageFiles.length >= 5 ? null : _pickImage,
+              child: OutlinedButton.icon(
+                onPressed: _imageFiles.length < 5 ? _pickImage : null,
                 icon: const Icon(Icons.add_photo_alternate),
                 label: const Text('إضافة صورة'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: theme.colorScheme.primary,
-                  foregroundColor: theme.colorScheme.onPrimary,
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
                 ),
               ),
             ),
-            const SizedBox(width: 8),
+            const SizedBox(width: 16),
             Expanded(
-              child: ElevatedButton.icon(
-                onPressed: _imageFiles.length >= 5 ? null : _pickMultipleImages,
+              child: OutlinedButton.icon(
+                onPressed: _imageFiles.length < 5 ? _pickMultipleImages : null,
                 icon: const Icon(Icons.photo_library),
                 label: const Text('إضافة عدة صور'),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: theme.colorScheme.secondary,
-                  foregroundColor: theme.colorScheme.onSecondary,
+                style: OutlinedButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 12),
                 ),
               ),
             ),
           ],
         ),
 
-        // مؤشر التقدم أثناء الرفع
+        // مؤشر التقدم أثناء رفع الصور
         if (_isUploading)
           Padding(
             padding: const EdgeInsets.only(top: 16),
@@ -603,40 +619,20 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'جاري رفع الصور (${_currentUploadIndex + 1}/${_imageFiles.length})',
-                  style: const TextStyle(fontWeight: FontWeight.bold),
+                  'جاري رفع الصور... (${(_uploadProgress * 100).toStringAsFixed(0)}%)',
+                  style: const TextStyle(color: Colors.grey),
                 ),
                 const SizedBox(height: 8),
                 LinearProgressIndicator(
                   value: _uploadProgress,
-                  backgroundColor: Colors.grey.shade300,
-                  valueColor:
-                      AlwaysStoppedAnimation<Color>(theme.colorScheme.primary),
+                  backgroundColor: Colors.grey[200],
+                  valueColor: AlwaysStoppedAnimation<Color>(
+                    theme.colorScheme.primary,
+                  ),
                 ),
               ],
             ),
           ),
-      ],
-    );
-  }
-
-  // مؤشر تقدم الرفع
-  Widget _buildUploadProgress(ThemeData theme) {
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        CircularProgressIndicator(
-          value: _uploadProgress,
-          valueColor: AlwaysStoppedAnimation<Color>(theme.colorScheme.primary),
-        ),
-        const SizedBox(height: 16),
-        Text(
-          'جاري رفع الصور (${(_uploadProgress * 100).toStringAsFixed(0)}%)',
-          style: TextStyle(
-            color: theme.colorScheme.primary,
-            fontWeight: FontWeight.bold,
-          ),
-        ),
       ],
     );
   }

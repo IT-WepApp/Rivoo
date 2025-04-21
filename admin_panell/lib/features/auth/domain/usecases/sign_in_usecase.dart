@@ -22,7 +22,7 @@ class SignInUseCase {
       throw Exception('كلمة المرور يجب أن تكون 6 أحرف على الأقل');
     }
 
-    final userEntity = await repository.signIn(email, password);
+    final userEntity = await repository.signIn(email: email, password: password);
     return User.fromEntity(userEntity);
   }
 }

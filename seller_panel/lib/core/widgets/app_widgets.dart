@@ -457,4 +457,231 @@ class AppWidgets {
     
     return card;
   }
+  
+  // شريط البحث
+  static Widget searchBar({
+    required TextEditingController controller,
+    required Function(String) onSearch,
+    String hintText = 'بحث...',
+    Widget? prefixIcon,
+    Widget? suffixIcon,
+    EdgeInsetsGeometry? margin,
+    double? borderRadius,
+  }) {
+    return Container(
+      margin: margin ?? const EdgeInsets.symmetric(vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(borderRadius ?? 8),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: TextField(
+        controller: controller,
+        decoration: InputDecoration(
+          hintText: hintText,
+          prefixIcon: prefixIcon ?? const Icon(Icons.search),
+          suffixIcon: suffixIcon ?? (controller.text.isNotEmpty
+              ? IconButton(
+                  icon: const Icon(Icons.clear),
+                  onPressed: () {
+                    controller.clear();
+                    onSearch('');
+                  },
+                )
+              : null),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(borderRadius ?? 8),
+            borderSide: BorderSide.none,
+          ),
+          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        ),
+        onChanged: onSearch,
+        textInputAction: TextInputAction.search,
+        onSubmitted: onSearch,
+      ),
+    );
+  }
+  
+  // عنصر قائمة الطلبات
+  static Widget orderListItem({
+    required String orderId,
+    required String customerName,
+    required DateTime orderDate,
+    required double totalAmount,
+    required String status,
+    required VoidCallback onTap,
+    String? deliveryAddress,
+    int? itemCount,
+    String? paymentMethod,
+  }) {
+    Color statusColor;
+    String statusText;
+    
+    switch (status.toLowerCase()) {
+      case 'pending':
+        statusColor = Colors.orange;
+        statusText = 'قيد الانتظار';
+        break;
+      case 'processing':
+        statusColor = Colors.blue;
+        statusText = 'قيد التجهيز';
+        break;
+      case 'shipped':
+        statusColor = Colors.purple;
+        statusText = 'تم الشحن';
+        break;
+      case 'delivered':
+        statusColor = Colors.green;
+        statusText = 'تم التوصيل';
+        break;
+      case 'cancelled':
+        statusColor = Colors.red;
+        statusText = 'ملغي';
+        break;
+      default:
+        statusColor = Colors.grey;
+        statusText = status;
+    }
+    
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 6, horizontal: 12),
+      elevation: 2,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(12),
+        child: Padding(
+          padding: const EdgeInsets.all(12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'طلب #$orderId',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: statusColor.withOpacity(0.1),
+                      borderRadius: BorderRadius.circular(12),
+                      border: Border.all(color: statusColor),
+                    ),
+                    child: Text(
+                      statusText,
+                      style: TextStyle(
+                        color: statusColor,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              const Divider(),
+              Row(
+                children: [
+                  const Icon(Icons.person_outline, size: 16, color: Colors.grey),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Text(
+                      customerName,
+                      style: const TextStyle(fontSize: 14),
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 4),
+              Row(
+                children: [
+                  const Icon(Icons.calendar_today, size: 16, color: Colors.grey),
+                  const SizedBox(width: 8),
+                  Text(
+                    '${orderDate.day}/${orderDate.month}/${orderDate.year} - ${orderDate.hour}:${orderDate.minute.toString().padLeft(2, '0')}',
+                    style: const TextStyle(fontSize: 14),
+                  ),
+                ],
+              ),
+              if (itemCount != null) ...[
+                const SizedBox(height: 4),
+                Row(
+                  children: [
+                    const Icon(Icons.shopping_bag_outlined, size: 16, color: Colors.grey),
+                    const SizedBox(width: 8),
+                    Text(
+                      '$itemCount ${itemCount == 1 ? 'منتج' : 'منتجات'}',
+                      style: const TextStyle(fontSize: 14),
+                    ),
+                  ],
+                ),
+              ],
+              if (deliveryAddress != null) ...[
+                const SizedBox(height: 4),
+                Row(
+                  children: [
+                    const Icon(Icons.location_on_outlined, size: 16, color: Colors.grey),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        deliveryAddress,
+                        style: const TextStyle(fontSize: 14),
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+              if (paymentMethod != null) ...[
+                const SizedBox(height: 4),
+                Row(
+                  children: [
+                    const Icon(Icons.payment_outlined, size: 16, color: Colors.grey),
+                    const SizedBox(width: 8),
+                    Text(
+                      paymentMethod,
+                      style: const TextStyle(fontSize: 14),
+                    ),
+                  ],
+                ),
+              ],
+              const SizedBox(height: 4),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  const Text(
+                    'المجموع:',
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14,
+                    ),
+                  ),
+                  Text(
+                    '${totalAmount.toStringAsFixed(2)} ر.س',
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
 }
