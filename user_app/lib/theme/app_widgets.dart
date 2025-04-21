@@ -5,8 +5,8 @@ class AppWidgets {
   /// حقل نص مخصص للتطبيق
   static Widget AppTextField({
     required TextEditingController controller,
-    required String label,
-    required String hint,
+    required String labelText,
+    required String hintText,
     String? Function(String?)? validator,
     TextInputType keyboardType = TextInputType.text,
     bool obscureText = false,
@@ -29,8 +29,8 @@ class AppWidgets {
       child: TextFormField(
         controller: controller,
         decoration: InputDecoration(
-          labelText: label,
-          hintText: hint,
+          labelText: labelText,
+          hintText: hintText,
           prefixIcon: prefixIcon,
           suffixIcon: suffixIcon,
           border: OutlineInputBorder(
@@ -291,7 +291,8 @@ class AppWidgets {
     IconData icon = Icons.hourglass_empty,
     Color? iconColor,
     double iconSize = 48,
-    VoidCallback? onRefresh,
+    VoidCallback? onAction,
+    String? actionLabel,
   }) {
     return Center(
       child: Column(
@@ -311,11 +312,11 @@ class AppWidgets {
             ),
             textAlign: TextAlign.center,
           ),
-          if (onRefresh != null) ...[
+          if (onAction != null && actionLabel != null) ...[
             const SizedBox(height: 16),
             ElevatedButton(
-              onPressed: onRefresh,
-              child: const Text('تحديث'),
+              onPressed: onAction,
+              child: Text(actionLabel),
             ),
           ],
         ],

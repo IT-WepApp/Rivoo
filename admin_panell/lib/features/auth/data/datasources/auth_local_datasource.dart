@@ -1,5 +1,6 @@
 import 'package:admin_panell/core/storage/secure_storage_service.dart';
 import 'package:admin_panell/features/auth/domain/entities/user_entity.dart';
+import 'package:admin_panell/features/auth/domain/entities/user_role.dart';
 
 /// مصدر البيانات المحلي للمصادقة
 class AuthLocalDataSource {
@@ -9,33 +10,33 @@ class AuthLocalDataSource {
 
   /// حفظ رمز الوصول
   Future<void> saveAccessToken(String token) async {
-    await _secureStorageService.write(key: 'access_token', value: token);
+    await _secureStorageService.write('access_token', token);
   }
 
   /// الحصول على رمز الوصول
   Future<String?> getAccessToken() async {
-    return await _secureStorageService.read(key: 'access_token');
+    return await _secureStorageService.read('access_token');
   }
 
   /// حذف رمز الوصول
   Future<void> deleteAccessToken() async {
-    await _secureStorageService.delete(key: 'access_token');
+    await _secureStorageService.delete('access_token');
   }
 
   /// حفظ بيانات المستخدم
   Future<void> saveUserData(UserEntity user) async {
-    await _secureStorageService.write(key: 'user_id', value: user.id);
-    await _secureStorageService.write(key: 'user_name', value: user.name);
-    await _secureStorageService.write(key: 'user_email', value: user.email);
-    await _secureStorageService.write(key: 'user_role', value: user.role.toString());
+    await _secureStorageService.write('user_id', user.id);
+    await _secureStorageService.write('user_name', user.name);
+    await _secureStorageService.write('user_email', user.email);
+    await _secureStorageService.write('user_role', user.role.toString());
   }
 
   /// الحصول على بيانات المستخدم
   Future<UserEntity?> getUserData() async {
-    final id = await _secureStorageService.read(key: 'user_id');
-    final name = await _secureStorageService.read(key: 'user_name');
-    final email = await _secureStorageService.read(key: 'user_email');
-    final roleString = await _secureStorageService.read(key: 'user_role');
+    final id = await _secureStorageService.read('user_id');
+    final name = await _secureStorageService.read('user_name');
+    final email = await _secureStorageService.read('user_email');
+    final roleString = await _secureStorageService.read('user_role');
 
     if (id == null || name == null || email == null || roleString == null) {
       return null;
@@ -66,15 +67,30 @@ class AuthLocalDataSource {
 
   /// حذف بيانات المستخدم
   Future<void> deleteUserData() async {
-    await _secureStorageService.delete(key: 'user_id');
-    await _secureStorageService.delete(key: 'user_name');
-    await _secureStorageService.delete(key: 'user_email');
-    await _secureStorageService.delete(key: 'user_role');
+    await _secureStorageService.delete('user_id');
+    await _secureStorageService.delete('user_name');
+    await _secureStorageService.delete('user_email');
+    await _secureStorageService.delete('user_role');
   }
 
   /// التحقق من حالة تسجيل الدخول
   Future<bool> isLoggedIn() async {
     final token = await getAccessToken();
     return token != null && token.isNotEmpty;
+  }
+  
+  /// الحصول على آخر مستخدم قام بتسجيل الدخول
+  Future<UserEntity?> getLastSignedInUser() async {
+    return await getUserData();
+  }
+  
+  /// تخزين بيانات المستخدم في التخزين المحلي
+  Future<void> cacheUser(UserEntity user) async {
+    await saveUserData(user);
+  }
+  
+  /// مسح بيانات المستخدم من التخزين المحلي
+  Future<void> clearUser() async {
+    await deleteUserData();
   }
 }

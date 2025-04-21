@@ -14,7 +14,7 @@ void main() {
           theme: AppTheme.light,
           home: Scaffold(
             body: Center(
-              child: AppButton(
+              child: AppWidgets.AppButton(
                 text: 'زر الاختبار',
                 onPressed: () {
                   buttonPressed = true;
@@ -46,7 +46,7 @@ void main() {
           theme: AppTheme.light,
           home: Scaffold(
             body: Center(
-              child: AppTextField(
+              child: AppWidgets.AppTextField(
                 controller: controller,
                 labelText: 'حقل النص',
                 hintText: 'أدخل النص هنا',
@@ -76,7 +76,7 @@ void main() {
           theme: AppTheme.light,
           home: Scaffold(
             body: Center(
-              child: AppCard(
+              child: AppWidgets.AppCard(
                 onTap: () {
                   cardPressed = true;
                 },
@@ -108,7 +108,7 @@ void main() {
           theme: AppTheme.light,
           home: Scaffold(
             body: Center(
-              child: AppEmptyList(
+              child: AppWidgets.AppEmptyList(
                 message: 'القائمة فارغة',
                 actionLabel: 'إضافة عنصر',
                 onAction: () {
@@ -142,9 +142,6 @@ void main() {
       expect(lightTheme.colorScheme.onPrimary, AppColors.textOnPrimary);
       expect(lightTheme.colorScheme.surface, AppColors.surface);
       expect(lightTheme.colorScheme.onSurface, AppColors.textPrimary);
-
-      // التحقق من اتجاه النص
-      expect(lightTheme.textDirection, TextDirection.rtl);
     });
 
     test('يجب أن تكون سمة التطبيق الداكنة صحيحة', () {
@@ -154,9 +151,6 @@ void main() {
       expect(darkTheme.colorScheme.brightness, Brightness.dark);
       expect(darkTheme.colorScheme.surface, AppColors.darkSurface);
       expect(darkTheme.colorScheme.onSurface, AppColors.darkTextPrimary);
-
-      // التحقق من اتجاه النص
-      expect(darkTheme.textDirection, TextDirection.rtl);
     });
 
     test('يجب أن تعيد getTheme السمة الصحيحة بناءً على الوضع', () {

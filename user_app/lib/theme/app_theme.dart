@@ -116,11 +116,22 @@ class AppTheme {
   static ThemeData darkTheme() {
     return getDarkTheme();
   }
+  
+  /// خاصية للوصول إلى السمة الفاتحة (لإصلاح أخطاء الاختبارات)
+  static ThemeData get light => getLightTheme();
+  
+  /// خاصية للوصول إلى السمة الداكنة (لإصلاح أخطاء الاختبارات)
+  static ThemeData get dark => getDarkTheme();
+  
+  /// طريقة للحصول على السمة حسب الوضع (لإصلاح أخطاء الاختبارات)
+  static ThemeData getTheme(bool isDark) {
+    return isDark ? darkTheme() : lightTheme();
+  }
 }
 
 /// سمة التطبيق الفاتحة
 ThemeData getLightTheme() {
-  return ThemeData(
+  final theme = ThemeData(
     useMaterial3: true,
     colorScheme: const ColorScheme(
       brightness: Brightness.light,
@@ -443,15 +454,17 @@ ThemeData getLightTheme() {
         TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
       },
     ),
-
-    // اتجاه النص
+  );
+  
+  // إضافة خاصية textDirection لإصلاح أخطاء الاختبارات
+  return theme.copyWith(
     textDirection: TextDirection.rtl,
   );
 }
 
 /// سمة التطبيق الداكنة
 ThemeData getDarkTheme() {
-  return ThemeData(
+  final theme = ThemeData(
     useMaterial3: true,
     colorScheme: const ColorScheme(
       brightness: Brightness.dark,
@@ -604,7 +617,7 @@ ThemeData getDarkTheme() {
     // أنماط حقول الإدخال
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
-      fillColor: AppColors.darkSurfaceVariant,
+      fillColor: AppColors.darkSurface,
       contentPadding: const EdgeInsets.symmetric(
         horizontal: AppDimensions.paddingM,
         vertical: AppDimensions.paddingM,
@@ -727,9 +740,9 @@ ThemeData getDarkTheme() {
       }),
       trackColor: WidgetStateProperty.resolveWith((states) {
         if (states.contains(WidgetState.selected)) {
-          return const Color(0xFF388E3C);
+          return const Color(0xFF1B5E20);
         }
-        return Colors.grey.shade700;
+        return Colors.grey.shade800;
       }),
     ),
 
@@ -774,8 +787,10 @@ ThemeData getDarkTheme() {
         TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
       },
     ),
-
-    // اتجاه النص
+  );
+  
+  // إضافة خاصية textDirection لإصلاح أخطاء الاختبارات
+  return theme.copyWith(
     textDirection: TextDirection.rtl,
   );
 }

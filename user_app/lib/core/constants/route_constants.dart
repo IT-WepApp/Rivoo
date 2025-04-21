@@ -1,4 +1,7 @@
 class RouteConstants {
+  // Splash Screen
+  static const String splash = '/splash';
+  
   // Auth Routes
   static const String login = '/login';
   static const String register = '/register';
@@ -7,14 +10,15 @@ class RouteConstants {
   static const String resetPassword = '/reset-password';
 
   // Main Routes
-  static const String home = '/';
+  static const String home = '/home';
   static const String profile = '/profile';
   static const String settings = '/settings';
   static const String notifications = '/notifications';
 
   // Product Routes
   static const String products = '/products';
-  static const String productDetails = '/products/:id';
+  static const String productList = '/products';
+  static const String productDetails = '/product';
   static const String productSearch = '/products/search';
   static const String productCategories = '/products/categories';
   static const String productCategory = '/products/categories/:id';
@@ -28,13 +32,18 @@ class RouteConstants {
 
   // Order Routes
   static const String orders = '/orders';
-  static const String orderDetails = '/orders/:id';
-  static const String orderTracking = '/orders/:id/tracking';
+  static const String orderDetails = '/order-details';
+  static const String orderTracking = '/order-tracking';
 
   // Address Routes
   static const String addresses = '/addresses';
   static const String addAddress = '/addresses/add';
   static const String editAddress = '/addresses/:id/edit';
+  
+  // Shipping Address Routes
+  static const String shippingAddresses = '/shipping-addresses';
+  static const String addShippingAddress = '/shipping-address/add';
+  static const String editShippingAddress = '/shipping-address/edit';
 
   // Rating Routes
   static const String ratings = '/ratings';
