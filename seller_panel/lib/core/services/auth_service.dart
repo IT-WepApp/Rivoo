@@ -197,8 +197,9 @@ class AuthService {
     if (name != null) updateData['name'] = name;
     if (storeName != null) updateData['storeName'] = storeName;
     if (phoneNumber != null) updateData['phoneNumber'] = phoneNumber;
-    if (storeDescription != null)
+    if (storeDescription != null) {
       updateData['storeDescription'] = storeDescription;
+    }
     if (storeAddress != null) updateData['storeAddress'] = storeAddress;
 
     if (updateData.isNotEmpty) {

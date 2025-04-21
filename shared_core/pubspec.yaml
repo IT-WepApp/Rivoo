@@ -16,7 +16,7 @@ dependencies:
   
   # الشبكة والاتصال
   dio: ^5.3.2
-  connectivity_plus: ^4.0.2
+  connectivity_plus: ^5.0.2
   
   # التخزين المحلي
   shared_preferences: ^2.2.1
@@ -25,11 +25,11 @@ dependencies:
   # المصادقة والأمان
   firebase_auth: ^5.5.2
   firebase_core: ^3.13.0
-  cloud_firestore: ^4.9.1
-  firebase_storage: ^11.2.6
+  cloud_firestore: ^5.6.6
+  firebase_storage: ^11.6.0
   
   # المساعدة والأدوات
-  intl: ^0.20.2
+  intl: ^0.19.0
   uuid: ^3.0.7
   logger: ^1.4.0
   path_provider: ^2.1.1
@@ -38,12 +38,14 @@ dependencies:
   flutter_svg: ^2.0.7
   cached_network_image: ^3.2.3
 
-  json_annotation: any
-  equatable: any
-  shared_services: any
-  shared_models: any
-  crypto: any
-  go_router: any
+  json_annotation: ^4.8.1
+  equatable: ^2.0.5
+  shared_services:
+    path: ../shared_modules/shared_services
+  shared_models:
+    path: ../shared_modules/shared_models
+  crypto: ^3.0.3
+  go_router: ^13.2.0
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -337,7 +337,7 @@ class _SellerProfilePageState extends ConsumerState<SellerProfilePage> {
           _totalProducts.toString(),
           Icons.inventory,
           Colors.blue,
-          AppColors.info,
+        ),
         _buildStatCard(
           theme,
           'الطلبات',

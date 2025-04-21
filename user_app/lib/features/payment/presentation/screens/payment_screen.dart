@@ -212,4 +212,6 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
               controller: _expiryYearController,
               decoration: InputDecoration(labelText: l10n.expiryYear, border: const OutlineInputBorder()),
               keyboardType: TextInputType.number,
+              maxLength: 2,
             ),
+          ),

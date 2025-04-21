@@ -44,9 +44,10 @@ final GoRouter appRouter = GoRouter(
               path: 'editProduct/:productId', // /sellerHome/editProduct/some_id
               builder: (context, state) {
                 final productId = state.pathParameters['productId'];
-                if (productId == null)
+                if (productId == null) {
                   return const Scaffold(
                       body: Center(child: Text('Missing Product ID')));
+                }
                 return EditProductPage(productId: productId);
               }),
           GoRoute(
@@ -67,9 +68,10 @@ final GoRouter appRouter = GoRouter(
                     path: ':productId', // /sellerHome/sellerPromotions/some_id
                     builder: (context, state) {
                       final productId = state.pathParameters['productId'];
-                      if (productId == null)
+                      if (productId == null) {
                         return const Scaffold(
                             body: Center(child: Text('Missing Product ID')));
+                      }
                       return PromotionManagementPage(productId: productId);
                     })
               ]),

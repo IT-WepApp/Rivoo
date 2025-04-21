@@ -143,7 +143,7 @@ class _ProductCategoriesPageState extends ConsumerState<ProductCategoriesPage> {
       
       // تحديث الفئة في جميع المنتجات التي تستخدمها
       final productsToUpdate = _products.where((product) => 
-        product['category'] as String? == oldCategoryName
+        (product['category'] as String?) == oldCategoryName
       ).toList();
       
       for (final product in productsToUpdate) {
@@ -192,7 +192,7 @@ class _ProductCategoriesPageState extends ConsumerState<ProductCategoriesPage> {
   Future<void> _deleteCategory(String category) async {
     // التحقق من عدم وجود منتجات تستخدم هذه الفئة
     final productsUsingCategory = _products.where((product) => 
-      ((product['category'] as String?) == category)
+      (product['category'] as String?) == category
     ).toList();
     
     if (productsUsingCategory.isNotEmpty) {
@@ -460,7 +460,7 @@ class _ProductCategoriesPageState extends ConsumerState<ProductCategoriesPage> {
                   itemBuilder: (context, index) {
                     final category = filteredCategories[index];
                     final productCount = _products.where((product) => 
-                      product['category'] as String? == category
+                      (product['category'] as String?) == category
                     ).length;
                     
                     return Card(

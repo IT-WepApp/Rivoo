@@ -229,14 +229,17 @@ class _PromotionManagementPageState
                     ? Icons.percent
                     : Icons.attach_money,
                 validator: (value) {
-                  if (value == null || value.isEmpty)
+                  if (value == null || value.isEmpty) {
                     return 'الرجاء إدخال قيمة.';
+                  }
                   final parsed = double.tryParse(value);
-                  if (parsed == null || parsed <= 0)
+                  if (parsed == null || parsed <= 0) {
                     return 'أدخل رقمًا موجبًا صالحًا.';
+                  }
                   if (_selectedType == PromotionType.percentageDiscount &&
-                      parsed > 100)
+                      parsed > 100) {
                     return 'لا يمكن أن تتجاوز النسبة المئوية 100%';
+                  }
                   return null;
                 },
               ),

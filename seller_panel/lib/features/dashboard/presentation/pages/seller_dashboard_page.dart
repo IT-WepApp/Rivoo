@@ -424,8 +424,9 @@ class _SellerDashboardPageState extends ConsumerState<SellerDashboardPage> {
             ),
           ),
         ),
-      ),
-    );
+      ],
+    ),
+  );
   }
 
   Widget _buildDrawer(BuildContext context, ThemeData theme) {
@@ -554,12 +555,80 @@ class _SellerDashboardPageState extends ConsumerState<SellerDashboardPage> {
           ),
           const Divider(),
           ListTile(
-            leading: const Icon(Icons.logout, color: Colors.red),
-            title: const Text('تسجيل الخروج', style: TextStyle(color: Colors.red)),
+            leading: const Icon(Icons.logout, color: AppColors.error),
+            title: const Text('تسجيل الخروج', style: TextStyle(color: AppColors.error)),
             onTap: () async {
               final confirmed = await AppWidgets.showConfirmDialog(
                 context: context,
                 title: 'تسجيل الخروج',
+                message: 'هل أنت متأكد من رغبتك في تسجيل الخروج؟',
+                confirmText: 'تسجيل الخروج',
+                cancelText: 'إلغاء',
+                isDangerous: true,
+              );
+              
+              if (confirmed && mounted) {
+                final authService = ref.read(authServiceProvider);
+                await authService.signOut();
+                if (mounted) {
+                  context.go(RouteConstants.login);
+                }
+              }
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBottomNavigationBar(BuildContext context, ThemeData theme) {
+    return BottomNavigationBar(
+      currentIndex: _selectedIndex,
+      onTap: (index) {
+        setState(() {
+          _selectedIndex = index;
+        });
+        
+        switch (index) {
+          case 0:
+            context.go(RouteConstants.home);
+            break;
+          case 1:
+            context.push(RouteConstants.products);
+            break;
+          case 2:
+            context.push(RouteConstants.orders);
+            break;
+          case 3:
+            context.push(RouteConstants.profile);
+            break;
+        }
+      },
+      type: BottomNavigationBarType.fixed,
+      backgroundColor: theme.colorScheme.surface,
+      selectedItemColor: AppColors.primary,
+      unselectedItemColor: AppColors.textSecondary,
+      items: const [
+        BottomNavigationBarItem(
+          icon: Icon(Icons.dashboard),
+          label: 'الرئيسية',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.inventory_2),
+          label: 'المنتجات',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.shopping_bag),
+          label: 'الطلبات',
+        ),
+        BottomNavigationBarItem(
+          icon: Icon(Icons.person),
+          label: 'الملف',
+        ),
+      ],
+    );
+  }
+}
                 message: 'هل أنت متأكد من رغبتك في تسجيل الخروج؟',
                 confirmText: 'تسجيل الخروج',
                 cancelText: 'إلغاء',
