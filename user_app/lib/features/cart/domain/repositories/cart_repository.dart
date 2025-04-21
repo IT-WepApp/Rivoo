@@ -8,7 +8,7 @@ abstract class CartRepository {
   Future<Either<Failure, List<CartItem>>> getCartItems();
 
   /// إضافة منتج إلى سلة التسوق
-  Future<Either<Failure, Unit>> addItem(Entity product, {int quantity = 1});
+  Future<Either<Failure, Unit>> addItem(Map<String, dynamic> product, {int quantity = 1});
 
   /// إزالة عنصر من سلة التسوق
   Future<Either<Failure, Unit>> removeItem(String cartItemId);

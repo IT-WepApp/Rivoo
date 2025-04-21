@@ -4,15 +4,18 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 /// مزود حالة السمة
 /// يتيح تبديل وحفظ وضع السمة (فاتح/داكن/النظام)
-class ThemeNotifier extends StateNotifier<ThemeMode> {
+class ThemeNotifier extends Notifier<ThemeMode> {
   /// مفتاح لحفظ وضع السمة في التخزين المحلي
   static const String _themePreferenceKey = 'theme_mode';
 
   /// مرجع للتخزين المحلي
-  final SharedPreferences _prefs;
+  late final SharedPreferences _prefs;
 
-  /// إنشاء مزود حالة السمة مع التخزين المحلي
-  ThemeNotifier(this._prefs) : super(_loadThemeMode(_prefs));
+  @override
+  ThemeMode build() {
+    _prefs = ref.watch(sharedPreferencesProvider);
+    return _loadThemeMode(_prefs);
+  }
 
   /// تحميل وضع السمة من التخزين المحلي
   static ThemeMode _loadThemeMode(SharedPreferences prefs) {
@@ -69,13 +72,20 @@ class ThemeNotifier extends StateNotifier<ThemeMode> {
   bool get isSystemMode => state == ThemeMode.system;
 }
 
-/// مزود حالة السمة
-final themeProvider = StateNotifierProvider<ThemeNotifier, ThemeMode>((ref) {
-  throw UnimplementedError('يجب تهيئة مزود السمة باستخدام ProviderContainer');
+/// مزود للوصول إلى SharedPreferences
+final sharedPreferencesProvider = Provider<SharedPreferences>((ref) {
+  throw UnimplementedError('يجب تهيئة مزود SharedPreferences باستخدام ProviderContainer');
 });
 
-/// تهيئة مزود السمة
-Future<Override> initializeThemeProvider() async {
+/// مزود حالة السمة
+final themeProvider = NotifierProvider<ThemeNotifier, ThemeMode>(() {
+  return ThemeNotifier();
+});
+
+/// تهيئة مزودات التطبيق
+Future<List<Override>> initializeProviders() async {
   final prefs = await SharedPreferences.getInstance();
-  return themeProvider.overrideWith((ref) => ThemeNotifier(prefs));
+  return [
+    sharedPreferencesProvider.overrideWithValue(prefs),
+  ];
 }

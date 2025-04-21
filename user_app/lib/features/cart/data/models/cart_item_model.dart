@@ -1,5 +1,5 @@
-import 'package:shared_models/shared_models.dart';
-import '../domain/entities/cart_item.dart';
+import 'package:equatable/equatable.dart';
+import '../entities/cart_item.dart';
 
 class CartItemModel extends CartItem {
   const CartItemModel({
@@ -29,13 +29,13 @@ class CartItemModel extends CartItem {
     );
   }
 
-  factory CartItemModel.fromProduct(Product product, {int quantity = 1}) {
+  factory CartItemModel.fromProduct(Map<String, dynamic> product, {int quantity = 1}) {
     return CartItemModel(
-      id: product.id,
-      productId: product.id,
-      name: product.name,
-      price: product.price,
-      imageUrl: product.imageUrl,
+      id: product['id'] as String,
+      productId: product['id'] as String,
+      name: product['name'] as String,
+      price: (product['price'] as num).toDouble(),
+      imageUrl: product['imageUrl'] as String,
       quantity: quantity,
     );
   }

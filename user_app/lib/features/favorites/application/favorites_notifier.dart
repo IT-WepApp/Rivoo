@@ -1,20 +1,73 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_models/shared_models.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:user_app/features/auth/application/auth_notifier.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 
-class FavoritesNotifier extends StateNotifier<List<Product>> {
-  final String? userId;
-  final FirebaseFirestore _firestore;
+// تعريف نموذج المنتج المبسط للاستخدام المحلي
+class ProductModel {
+  final String id;
+  final String name;
+  final double price;
+  final String description;
+  final String imageUrl;
+  final String categoryId;
+  final String storeId;
 
-  FavoritesNotifier(this.userId, this._firestore) : super([]) {
-    if (userId != null) {
-      _loadFavorites();
-    } else {
-      _loadLocalFavorites();
-    }
+  ProductModel({
+    required this.id,
+    required this.name,
+    required this.price,
+    required this.description,
+    required this.imageUrl,
+    required this.categoryId,
+    required this.storeId,
+  });
+
+  factory ProductModel.fromJson(Map<String, dynamic> json) {
+    return ProductModel(
+      id: json['id'] ?? '',
+      name: json['name'] ?? '',
+      price: (json['price'] ?? 0.0).toDouble(),
+      description: json['description'] ?? '',
+      imageUrl: json['imageUrl'] ?? '',
+      categoryId: json['categoryId'] ?? '',
+      storeId: json['storeId'] ?? '',
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'price': price,
+      'description': description,
+      'imageUrl': imageUrl,
+      'categoryId': categoryId,
+      'storeId': storeId,
+    };
+  }
+}
+
+class FavoritesNotifier extends Notifier<List<ProductModel>> {
+  late final String? userId;
+  late final FirebaseFirestore _firestore;
+
+  @override
+  List<ProductModel> build() {
+    userId = ref.watch(userIdProvider);
+    _firestore = FirebaseFirestore.instance;
+    
+    // تأجيل تحميل المفضلات إلى ما بعد بناء الحالة الأولية
+    Future.microtask(() {
+      if (userId != null) {
+        _loadFavorites();
+      } else {
+        _loadLocalFavorites();
+      }
+    });
+    
+    return [];
   }
 
   Future<void> _loadFavorites() async {
@@ -30,12 +83,12 @@ class FavoritesNotifier extends StateNotifier<List<Product>> {
 
       final favorites = snapshot.docs.map((doc) {
         final data = doc.data();
-        return Product(
+        return ProductModel(
           id: doc.id,
           name: data['name'] ?? '',
           price: (data['price'] ?? 0.0).toDouble(),
           description: data['description'] ?? '',
-          imageUrl: data['imageUrl'],
+          imageUrl: data['imageUrl'] ?? '',
           categoryId: data['categoryId'] ?? '',
           storeId: data['storeId'] ?? '',
         );
@@ -59,12 +112,12 @@ class FavoritesNotifier extends StateNotifier<List<Product>> {
 
       final favorites = favoritesJson.map((json) {
         final data = jsonDecode(json);
-        return Product(
+        return ProductModel(
           id: data['id'] ?? '',
           name: data['name'] ?? '',
           price: (data['price'] ?? 0.0).toDouble(),
           description: data['description'] ?? '',
-          imageUrl: data['imageUrl'],
+          imageUrl: data['imageUrl'] ?? '',
           categoryId: data['categoryId'] ?? '',
           storeId: data['storeId'] ?? '',
         );
@@ -76,19 +129,11 @@ class FavoritesNotifier extends StateNotifier<List<Product>> {
     }
   }
 
-  Future<void> _saveLocalFavorites(List<Product> favorites) async {
+  Future<void> _saveLocalFavorites(List<ProductModel> favorites) async {
     try {
       final prefs = await SharedPreferences.getInstance();
       final favoritesJson = favorites.map((product) {
-        return jsonEncode({
-          'id': product.id,
-          'name': product.name,
-          'price': product.price,
-          'description': product.description,
-          'imageUrl': product.imageUrl,
-          'categoryId': product.categoryId,
-          'storeId': product.storeId,
-        });
+        return jsonEncode(product.toJson());
       }).toList();
 
       await prefs.setStringList('favorites', favoritesJson);
@@ -97,7 +142,8 @@ class FavoritesNotifier extends StateNotifier<List<Product>> {
     }
   }
 
-  Future<void> toggleFavorite(Product product) async {
+  Future<void> toggleFavorite(Map<String, dynamic> productData) async {
+    final product = ProductModel.fromJson(productData);
     final isFavorite = state.any((p) => p.id == product.id);
 
     if (isFavorite) {
@@ -193,12 +239,12 @@ class FavoritesNotifier extends StateNotifier<List<Product>> {
 
       final remoteFavorites = snapshot.docs.map((doc) {
         final data = doc.data();
-        return Product(
+        return ProductModel(
           id: doc.id,
           name: data['name'] ?? '',
           price: (data['price'] ?? 0.0).toDouble(),
           description: data['description'] ?? '',
-          imageUrl: data['imageUrl'],
+          imageUrl: data['imageUrl'] ?? '',
           categoryId: data['categoryId'] ?? '',
           storeId: data['storeId'] ?? '',
         );
@@ -210,19 +256,19 @@ class FavoritesNotifier extends StateNotifier<List<Product>> {
 
       final localFavorites = localFavoritesJson.map((json) {
         final data = jsonDecode(json);
-        return Product(
+        return ProductModel(
           id: data['id'] ?? '',
           name: data['name'] ?? '',
           price: (data['price'] ?? 0.0).toDouble(),
           description: data['description'] ?? '',
-          imageUrl: data['imageUrl'],
+          imageUrl: data['imageUrl'] ?? '',
           categoryId: data['categoryId'] ?? '',
           storeId: data['storeId'] ?? '',
         );
       }).toList();
 
       // دمج المفضلة المحلية والبعيدة
-      final mergedFavorites = <Product>[];
+      final mergedFavorites = <ProductModel>[];
       final mergedIds = <String>{};
 
       // إضافة المفضلة البعيدة
@@ -267,11 +313,16 @@ class FavoritesNotifier extends StateNotifier<List<Product>> {
   }
 }
 
+// مزود لمعرف المستخدم الحالي
+final userIdProvider = Provider<String?>((ref) {
+  final authState = ref.watch(authStateNotifierProvider);
+  return authState.userData?.uid;
+});
+
+// مزود للمفضلات
 final favoritesProvider =
-    StateNotifierProvider<FavoritesNotifier, List<Product>>((ref) {
-  final userId = ref.watch(userIdProvider);
-  final firestore = FirebaseFirestore.instance;
-  return FavoritesNotifier(userId, firestore);
+    NotifierProvider<FavoritesNotifier, List<ProductModel>>(() {
+  return FavoritesNotifier();
 });
 
 // مزود لمعرفة ما إذا كان منتج معين في المفضلة

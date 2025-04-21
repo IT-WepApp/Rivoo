@@ -1,5 +1,7 @@
 import 'package:equatable/equatable.dart';
+import '../../../../core/architecture/domain/entity.dart';
 
+/// نموذج عنصر سلة التسوق
 class CartItem extends Equatable {
   final String id;
   final String productId;
@@ -17,23 +19,8 @@ class CartItem extends Equatable {
     required this.quantity,
   });
 
-  CartItem copyWith({
-    String? id,
-    String? productId,
-    String? name,
-    double? price,
-    String? imageUrl,
-    int? quantity,
-  }) {
-    return CartItem(
-      id: id ?? this.id,
-      productId: productId ?? this.productId,
-      name: name ?? this.name,
-      price: price ?? this.price,
-      imageUrl: imageUrl ?? this.imageUrl,
-      quantity: quantity ?? this.quantity,
-    );
-  }
+  /// حساب السعر الإجمالي للعنصر
+  double get totalPrice => price * quantity;
 
   @override
   List<Object?> get props => [id, productId, name, price, imageUrl, quantity];

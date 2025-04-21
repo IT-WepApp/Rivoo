@@ -1,18 +1,18 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb_auth;
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:user_app/features/auth/application/auth_state.dart';
+import 'package:user_app/features/auth/application/auth_state.dart' as state_lib;
 import 'package:user_app/features/auth/application/auth_service.dart';
 
 /// مزود لحالة المصادقة
 final authStateNotifierProvider =
-    StateNotifierProvider<AuthNotifier, AuthState>((ref) {
+    StateNotifierProvider<AuthNotifier, state_lib.AuthState>((ref) {
   final authService = ref.watch(authServiceProvider);
   return AuthNotifier(authService);
 });
 
 /// مزود لحالة المصادقة الحالية
-final currentAuthStateProvider = Provider<AuthState>((ref) {
+final currentAuthStateProvider = Provider<state_lib.AuthState>((ref) {
   return ref.watch(authStateNotifierProvider);
 });
 
@@ -27,26 +27,26 @@ final isEmailVerifiedProvider = Provider<bool>((ref) {
 });
 
 /// مزود للتحقق من دور المستخدم
-final hasRoleProvider = Provider.family<bool, UserRole>((ref, role) {
+final hasRoleProvider = Provider.family<bool, state_lib.UserRole>((ref, role) {
   return ref.watch(authStateNotifierProvider).hasRole(role);
 });
 
 /// مزود للتحقق من أي من الأدوار المحددة
-final hasAnyRoleProvider = Provider.family<bool, List<UserRole>>((ref, roles) {
+final hasAnyRoleProvider = Provider.family<bool, List<state_lib.UserRole>>((ref, roles) {
   return ref.watch(authStateNotifierProvider).hasAnyRole(roles);
 });
 
 /// مدير حالة المصادقة
-class AuthNotifier extends StateNotifier<AuthState> {
+class AuthNotifier extends StateNotifier<state_lib.AuthState> {
   final AuthService _authService;
 
-  AuthNotifier(this._authService) : super(const AuthState()) {
+  AuthNotifier(this._authService) : super(const state_lib.AuthState()) {
     _initAuthState();
   }
 
   /// تهيئة حالة المصادقة
   Future<void> _initAuthState() async {
-    state = state.copyWith(status: AuthenticationStatus.loading);
+    state = state.copyWith(status: state_lib.AuthenticationStatus.loading);
 
     try {
       // الاستماع لتغييرات حالة المصادقة
@@ -56,7 +56,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
           final role = await _authService.getUserRole(user.uid);
 
           // إنشاء نموذج بيانات المستخدم
-          final userData = UserData(
+          final userData = state_lib.UserData(
             uid: user.uid,
             email: user.email,
             displayName: user.displayName,
@@ -66,7 +66,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
           );
 
           state = state.copyWith(
-            status: AuthenticationStatus.authenticated,
+            status: state_lib.AuthenticationStatus.authenticated,
             userData: userData,
             firebaseUser: user,
             isLoading: false,
@@ -74,7 +74,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
           );
         } else {
           state = state.copyWith(
-            status: AuthenticationStatus.unauthenticated,
+            status: state_lib.AuthenticationStatus.unauthenticated,
             userData: null,
             firebaseUser: null,
             isLoading: false,
@@ -84,7 +84,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
       });
     } catch (e) {
       state = state.copyWith(
-        status: AuthenticationStatus.error,
+        status: state_lib.AuthenticationStatus.error,
         isLoading: false,
         errorMessage: e.toString(),
       );
@@ -95,12 +95,12 @@ class AuthNotifier extends StateNotifier<AuthState> {
   Future<void> signIn(String email, String password) async {
     try {
       state =
-          state.copyWith(isLoading: true, status: AuthenticationStatus.loading);
+          state.copyWith(isLoading: true, status: state_lib.AuthenticationStatus.loading);
       await _authService.signIn(email, password);
       // لا نحتاج لتحديث الحالة هنا لأن مستمع authStateChanges سيقوم بذلك
     } catch (e) {
       state = state.copyWith(
-        status: AuthenticationStatus.error,
+        status: state_lib.AuthenticationStatus.error,
         isLoading: false,
         errorMessage: e.toString(),
       );
@@ -109,15 +109,15 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   /// إنشاء حساب جديد باستخدام البريد الإلكتروني وكلمة المرور
   Future<void> signUp(String email, String password,
-      {UserRole role = UserRole.customer}) async {
+      {state_lib.UserRole role = state_lib.UserRole.customer}) async {
     try {
       state =
-          state.copyWith(isLoading: true, status: AuthenticationStatus.loading);
+          state.copyWith(isLoading: true, status: state_lib.AuthenticationStatus.loading);
       await _authService.signUp(email, password, role: role);
       // لا نحتاج لتحديث الحالة هنا لأن مستمع authStateChanges سيقوم بذلك
     } catch (e) {
       state = state.copyWith(
-        status: AuthenticationStatus.error,
+        status: state_lib.AuthenticationStatus.error,
         isLoading: false,
         errorMessage: e.toString(),
       );
@@ -128,12 +128,12 @@ class AuthNotifier extends StateNotifier<AuthState> {
   Future<void> signOut() async {
     try {
       state =
-          state.copyWith(isLoading: true, status: AuthenticationStatus.loading);
+          state.copyWith(isLoading: true, status: state_lib.AuthenticationStatus.loading);
       await _authService.signOut();
       // لا نحتاج لتحديث الحالة هنا لأن مستمع authStateChanges سيقوم بذلك
     } catch (e) {
       state = state.copyWith(
-        status: AuthenticationStatus.error,
+        status: state_lib.AuthenticationStatus.error,
         isLoading: false,
         errorMessage: e.toString(),
       );
@@ -144,15 +144,15 @@ class AuthNotifier extends StateNotifier<AuthState> {
   Future<void> sendPasswordResetEmail(String email) async {
     try {
       state =
-          state.copyWith(isLoading: true, status: AuthenticationStatus.loading);
+          state.copyWith(isLoading: true, status: state_lib.AuthenticationStatus.loading);
       await _authService.sendPasswordResetEmail(email);
       state = state.copyWith(
         isLoading: false,
-        status: AuthenticationStatus.unauthenticated,
+        status: state_lib.AuthenticationStatus.unauthenticated,
       );
     } catch (e) {
       state = state.copyWith(
-        status: AuthenticationStatus.error,
+        status: state_lib.AuthenticationStatus.error,
         isLoading: false,
         errorMessage: e.toString(),
       );
@@ -163,15 +163,15 @@ class AuthNotifier extends StateNotifier<AuthState> {
   Future<void> sendEmailVerification() async {
     try {
       state =
-          state.copyWith(isLoading: true, status: AuthenticationStatus.loading);
+          state.copyWith(isLoading: true, status: state_lib.AuthenticationStatus.loading);
       await _authService.sendEmailVerification();
       state = state.copyWith(
         isLoading: false,
-        status: AuthenticationStatus.authenticated,
+        status: state_lib.AuthenticationStatus.authenticated,
       );
     } catch (e) {
       state = state.copyWith(
-        status: AuthenticationStatus.error,
+        status: state_lib.AuthenticationStatus.error,
         isLoading: false,
         errorMessage: e.toString(),
       );
@@ -182,7 +182,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
   Future<void> checkEmailVerification() async {
     try {
       state = state.copyWith(
-          isLoading: true, status: AuthenticationStatus.verifying);
+          isLoading: true, status: state_lib.AuthenticationStatus.verifying);
       final isVerified = await _authService.isEmailVerified();
 
       if (state.userData != null) {
@@ -192,19 +192,19 @@ class AuthNotifier extends StateNotifier<AuthState> {
         state = state.copyWith(
           isLoading: false,
           status: isVerified
-              ? AuthenticationStatus.authenticated
-              : AuthenticationStatus.verifying,
+              ? state_lib.AuthenticationStatus.authenticated
+              : state_lib.AuthenticationStatus.verifying,
           userData: updatedUserData,
         );
       } else {
         state = state.copyWith(
           isLoading: false,
-          status: AuthenticationStatus.unauthenticated,
+          status: state_lib.AuthenticationStatus.unauthenticated,
         );
       }
     } catch (e) {
       state = state.copyWith(
-        status: AuthenticationStatus.error,
+        status: state_lib.AuthenticationStatus.error,
         isLoading: false,
         errorMessage: e.toString(),
       );
@@ -212,7 +212,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
   }
 
   /// تحديث دور المستخدم
-  Future<void> updateUserRole(String userId, UserRole role) async {
+  Future<void> updateUserRole(String userId, state_lib.UserRole role) async {
     try {
       state = state.copyWith(isLoading: true);
       await _authService.updateUserRole(userId, role);
@@ -229,7 +229,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
       }
     } catch (e) {
       state = state.copyWith(
-        status: AuthenticationStatus.error,
+        status: state_lib.AuthenticationStatus.error,
         isLoading: false,
         errorMessage: e.toString(),
       );
@@ -258,7 +258,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
       }
     } catch (e) {
       state = state.copyWith(
-        status: AuthenticationStatus.error,
+        status: state_lib.AuthenticationStatus.error,
         isLoading: false,
         errorMessage: e.toString(),
       );
@@ -266,7 +266,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
   }
 
   /// التحقق من صلاحيات المستخدم
-  bool hasPermission(List<UserRole> allowedRoles) {
+  bool hasPermission(List<state_lib.UserRole> allowedRoles) {
     return state.hasAnyRole(allowedRoles);
   }
 }
