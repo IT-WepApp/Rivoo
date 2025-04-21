@@ -114,6 +114,19 @@ class CacheFailure extends Failure {
         );
 }
 
+/// فشل عدم العثور على العنصر المطلوب
+class NotFoundFailure extends Failure {
+  const NotFoundFailure({
+    required String message,
+    String? code,
+    dynamic stackTrace,
+  }) : super(
+          message: message,
+          code: code,
+          stackTrace: stackTrace,
+        );
+}
+
 /// فشل غير متوقع
 class UnexpectedFailure extends Failure {
   const UnexpectedFailure({
