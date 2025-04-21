@@ -70,8 +70,8 @@ class _DeliveryMapPageState extends ConsumerState<DeliveryMapPage> {
           Marker(
             markerId: const MarkerId('destination'),
             position: destinationPos,
-            icon: BitmapDescriptor.defaultMarkerWithHue(
-                BitmapDescriptor.hueRed),
+            icon:
+                BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed),
             infoWindow: const InfoWindow(title: 'Destination'),
           ),
         );
@@ -84,7 +84,7 @@ class _DeliveryMapPageState extends ConsumerState<DeliveryMapPage> {
   Future<void> _moveCameraToBounds(LatLng pos1, LatLng? pos2) async {
     if (!_mapController.isCompleted) return;
     final controller = await _mapController.future;
-     // Avoid camera movements if the widget is disposed
+    // Avoid camera movements if the widget is disposed
     if (!mounted) return;
 
     if (pos2 == null) {
@@ -102,8 +102,7 @@ class _DeliveryMapPageState extends ConsumerState<DeliveryMapPage> {
         pos1.latitude > pos2.latitude ? pos1.latitude : pos2.latitude,
         pos1.longitude > pos2.longitude ? pos1.longitude : pos2.longitude,
       );
-      final bounds =
-          LatLngBounds(southwest: southWest, northeast: northEast);
+      final bounds = LatLngBounds(southwest: southWest, northeast: northEast);
 
       controller.animateCamera(
         CameraUpdate.newLatLngBounds(bounds, 50), // Adjust padding as needed
@@ -126,23 +125,25 @@ class _DeliveryMapPageState extends ConsumerState<DeliveryMapPage> {
     ref.listen(
       locationProvider,
       (AsyncValue<Position>? previous, AsyncValue<Position> next) {
-        if (next is AsyncData<Position> && orderAsync is AsyncData<OrderModel?>) {
-          final currentPosition = LatLng(next.value.latitude, next.value.longitude);
+        if (next is AsyncData<Position> &&
+            orderAsync is AsyncData<OrderModel?>) {
+          final currentPosition =
+              LatLng(next.value.latitude, next.value.longitude);
           // Destination LatLng is null as OrderModel doesn't have coordinates.
           _updateMarkers(currentPosition, null);
         }
       },
     );
-     ref.listen(
-      orderDetailsProvider(widget.orderId),
-      (AsyncValue<OrderModel?>? previous, AsyncValue<OrderModel?> next) {
-         if (next is AsyncData<OrderModel?> && locationAsync is AsyncData<Position>) {
-             final currentPosition = LatLng(locationAsync.value.latitude, locationAsync.value.longitude);
-             // Destination LatLng is null as OrderModel doesn't have coordinates.
-             _updateMarkers(currentPosition, null);
-         }
+    ref.listen(orderDetailsProvider(widget.orderId),
+        (AsyncValue<OrderModel?>? previous, AsyncValue<OrderModel?> next) {
+      if (next is AsyncData<OrderModel?> &&
+          locationAsync is AsyncData<Position>) {
+        final currentPosition =
+            LatLng(locationAsync.value.latitude, locationAsync.value.longitude);
+        // Destination LatLng is null as OrderModel doesn't have coordinates.
+        _updateMarkers(currentPosition, null);
       }
-    );
+    });
 
     return Scaffold(
       appBar: AppBar(
@@ -157,11 +158,12 @@ class _DeliveryMapPageState extends ConsumerState<DeliveryMapPage> {
             data: (position) {
               // Initial marker setup when data is first available
               WidgetsBinding.instance.addPostFrameCallback((_) {
-                  if (mounted) {
-                    final currentPosition = LatLng(position.latitude, position.longitude);
-                    // Destination LatLng is null
-                    _updateMarkers(currentPosition, null);
-                  }
+                if (mounted) {
+                  final currentPosition =
+                      LatLng(position.latitude, position.longitude);
+                  // Destination LatLng is null
+                  _updateMarkers(currentPosition, null);
+                }
               });
 
               return GoogleMap(
@@ -184,7 +186,8 @@ class _DeliveryMapPageState extends ConsumerState<DeliveryMapPage> {
             },
             // Ensure loading and error states return valid Widgets
             loading: () => const Center(child: CircularProgressIndicator()),
-            error: (err, _) => Center(child: Text('Error loading map data: $err')),
+            error: (err, _) =>
+                Center(child: Text('Error loading map data: $err')),
           ),
           Positioned(
             bottom: 20,

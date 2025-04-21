@@ -23,10 +23,10 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
   final _formKey = GlobalKey<FormState>();
   final _subjectController = TextEditingController();
   final _descriptionController = TextEditingController();
-  
+
   TicketType _selectedType = TicketType.general;
   TicketPriority _selectedPriority = TicketPriority.medium;
-  
+
   bool _isSubmitting = false;
 
   @override
@@ -39,7 +39,7 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    
+
     return Scaffold(
       appBar: AppBar(
         title: Text(l10n.createNewTicket),
@@ -47,7 +47,7 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
       body: ResponsiveBuilder(
         // تنفيذ واجهة الهاتف
         mobileBuilder: (context) => _buildMobileLayout(context, l10n),
-        
+
         // تنفيذ واجهة الجهاز اللوحي والأكبر
         smallTabletBuilder: (context) => _buildTabletLayout(context, l10n),
       ),
@@ -106,11 +106,12 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
           Text(
             'يرجى تقديم تفاصيل كافية حتى نتمكن من مساعدتك بشكل أفضل.',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                  color:
+                      Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
                 ),
           ),
           const SizedBox(height: 24),
-          
+
           // حقل الموضوع
           TextFormField(
             controller: _subjectController,
@@ -129,7 +130,7 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
             },
           ),
           const SizedBox(height: 16),
-          
+
           // حقل الوصف
           TextFormField(
             controller: _descriptionController,
@@ -153,7 +154,7 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
             },
           ),
           const SizedBox(height: 16),
-          
+
           // اختيار نوع التذكرة
           Text(
             l10n.ticketType,
@@ -164,7 +165,7 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
           const SizedBox(height: 8),
           _buildTicketTypeSelector(context),
           const SizedBox(height: 16),
-          
+
           // اختيار أولوية التذكرة
           Text(
             l10n.priority,
@@ -175,7 +176,7 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
           const SizedBox(height: 8),
           _buildPrioritySelector(context),
           const SizedBox(height: 24),
-          
+
           // زر الإرسال
           SizedBox(
             width: double.infinity,
@@ -217,7 +218,7 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
   // بناء شريحة نوع التذكرة
   Widget _buildTypeChip(BuildContext context, TicketType type, String label) {
     final isSelected = _selectedType == type;
-    
+
     return ChoiceChip(
       label: Text(label),
       selected: isSelected,
@@ -246,8 +247,10 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
       runSpacing: 8,
       children: [
         _buildPriorityChip(context, TicketPriority.low, 'منخفضة', Colors.green),
-        _buildPriorityChip(context, TicketPriority.medium, 'متوسطة', Colors.blue),
-        _buildPriorityChip(context, TicketPriority.high, 'عالية', Colors.orange),
+        _buildPriorityChip(
+            context, TicketPriority.medium, 'متوسطة', Colors.blue),
+        _buildPriorityChip(
+            context, TicketPriority.high, 'عالية', Colors.orange),
         _buildPriorityChip(context, TicketPriority.urgent, 'عاجلة', Colors.red),
       ],
     );
@@ -261,7 +264,7 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
     Color color,
   ) {
     final isSelected = _selectedPriority == priority;
-    
+
     return ChoiceChip(
       label: Text(label),
       selected: isSelected,
@@ -286,14 +289,14 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
     if (_formKey.currentState?.validate() != true) {
       return;
     }
-    
+
     setState(() {
       _isSubmitting = true;
     });
-    
+
     try {
       final supportNotifier = ref.read(supportNotifierProvider.notifier);
-      
+
       await supportNotifier.createTicket(
         subject: _subjectController.text.trim(),
         description: _descriptionController.text.trim(),
@@ -301,24 +304,25 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
         priority: _selectedPriority,
         orderId: widget.orderId,
       );
-      
+
       final selectedTicket = ref.read(supportNotifierProvider).selectedTicket;
-      
+
       if (!mounted) return;
-      
+
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
+        const SnackBar(
           content: Text('تم إنشاء التذكرة بنجاح'),
           backgroundColor: Colors.green,
         ),
       );
-      
+
       // الانتقال إلى صفحة تفاصيل التذكرة
       if (selectedTicket != null) {
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-            builder: (context) => TicketDetailsScreen(ticketId: selectedTicket.id),
+            builder: (context) =>
+                TicketDetailsScreen(ticketId: selectedTicket.id),
           ),
         );
       } else {
@@ -326,14 +330,14 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
       }
     } catch (e) {
       if (!mounted) return;
-      
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('حدث خطأ: ${e.toString()}'),
           backgroundColor: Colors.red,
         ),
       );
-      
+
       setState(() {
         _isSubmitting = false;
       });

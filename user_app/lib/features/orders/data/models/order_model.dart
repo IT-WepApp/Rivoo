@@ -48,7 +48,8 @@ class OrderModel extends Order {
     return {
       'id': id,
       'userId': userId,
-      'items': (items as List<OrderItemModel>).map((item) => item.toJson()).toList(),
+      'items':
+          (items as List<OrderItemModel>).map((item) => item.toJson()).toList(),
       'totalAmount': totalAmount,
       'status': status,
       'orderDate': orderDate.toIso8601String(),

@@ -53,9 +53,9 @@ class PromotionEntity extends Equatable {
       ];
 
   bool get isExpired => DateTime.now().isAfter(endDate);
-  
+
   bool get isNotStarted => DateTime.now().isBefore(startDate);
-  
+
   bool get isAvailable => isActive && !isExpired && !isNotStarted;
 
   PromotionEntity copyWith({

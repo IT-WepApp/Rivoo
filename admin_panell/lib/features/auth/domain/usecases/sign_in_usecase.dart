@@ -15,15 +15,15 @@ class SignInUseCase {
     if (email.isEmpty || password.isEmpty) {
       throw Exception('البريد الإلكتروني وكلمة المرور مطلوبان');
     }
-    
+
     if (!email.contains('@')) {
       throw Exception('البريد الإلكتروني غير صالح');
     }
-    
+
     if (password.length < 6) {
       throw Exception('كلمة المرور يجب أن تكون 6 أحرف على الأقل');
     }
-    
+
     return repository.signIn(email, password);
   }
 }

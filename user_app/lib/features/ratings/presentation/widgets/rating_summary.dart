@@ -77,7 +77,8 @@ class RatingSummary extends StatelessWidget {
   Widget _buildRatingDistribution(BuildContext context) {
     final theme = Theme.of(context);
     final distribution = ratingDistribution!;
-    final maxCount = distribution.values.fold(0, (max, count) => count > max ? count : max);
+    final maxCount =
+        distribution.values.fold(0, (max, count) => count > max ? count : max);
 
     return Column(
       children: List.generate(5, (index) {
@@ -94,7 +95,7 @@ class RatingSummary extends StatelessWidget {
                 style: theme.textTheme.bodyMedium,
               ),
               const SizedBox(width: 8),
-              Icon(Icons.star, color: Colors.amber, size: 16),
+              const Icon(Icons.star, color: Colors.amber, size: 16),
               const SizedBox(width: 8),
               Expanded(
                 child: ClipRRect(

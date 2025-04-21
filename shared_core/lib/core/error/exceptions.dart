@@ -1,5 +1,5 @@
 /// استثناء أساسي للخادم
-/// 
+///
 /// يُستخدم عندما تحدث مشكلة في الاتصال بالخادم أو عندما يعيد الخادم استجابة خاطئة
 /// مثل أخطاء HTTP 4xx أو 5xx
 class ServerException implements Exception {
@@ -12,7 +12,7 @@ class ServerException implements Exception {
 }
 
 /// استثناء للشبكة
-/// 
+///
 /// يُستخدم عندما تكون هناك مشكلة في الاتصال بالإنترنت
 class NetworkException implements Exception {
   final String? message;
@@ -24,7 +24,7 @@ class NetworkException implements Exception {
 }
 
 /// استثناء للتخزين المؤقت
-/// 
+///
 /// يُستخدم عندما تكون هناك مشكلة في قراءة أو كتابة البيانات في التخزين المؤقت
 class CacheException implements Exception {
   final String? message;

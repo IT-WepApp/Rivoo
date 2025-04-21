@@ -1,6 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:equatable/equatable.dart';
-import 'promotion.dart'; // ✅ استيراد enum من ملفه الرسمي
+import 'package:shared_core/models/promotion.dart'; // ✅ استيراد enum من ملفه الرسمي
 
 part 'product.g.dart';
 
@@ -43,24 +43,29 @@ class Product extends Equatable {
   void validatePromotion() {
     if (hasPromotion) {
       if (promotionType == null) {
-        throw Exception('Promotion type cannot be null when promotion is enabled.');
+        throw Exception(
+            'Promotion type cannot be null when promotion is enabled.');
       }
 
       if (promotionValue == null) {
-        throw Exception('Promotion value must be a positive number when promotion is enabled.');
+        throw Exception(
+            'Promotion value must be a positive number when promotion is enabled.');
       }
 
       final value = promotionValue!;
       if (value <= 0) {
-        throw Exception('Promotion value must be a positive number when promotion is enabled.');
+        throw Exception(
+            'Promotion value must be a positive number when promotion is enabled.');
       }
 
       if (promotionEndDate != null && promotionStartDate == null) {
-        throw Exception('Promotion start date can not be null when promotion end date is provided');
+        throw Exception(
+            'Promotion start date can not be null when promotion end date is provided');
       }
 
       if (promotionStartDate != null && promotionEndDate == null) {
-        throw Exception('Promotion end date can not be null when promotion start date is provided');
+        throw Exception(
+            'Promotion end date can not be null when promotion start date is provided');
       }
 
       if (promotionStartDate != null && promotionEndDate != null) {
@@ -107,7 +112,8 @@ class Product extends Equatable {
     );
   }
 
-  factory Product.fromJson(Map<String, dynamic> json) => _$ProductFromJson(json);
+  factory Product.fromJson(Map<String, dynamic> json) =>
+      _$ProductFromJson(json);
 
   Map<String, dynamic> toJson() => _$ProductToJson(this);
 

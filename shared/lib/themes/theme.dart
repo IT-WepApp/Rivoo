@@ -48,7 +48,8 @@ class AppTheme {
       foregroundColor: Colors.white,
     ),
     textTheme: const TextTheme(
-      displayLarge: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
+      displayLarge: TextStyle(
+          fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
       bodyLarge: TextStyle(fontSize: 16, color: Colors.white70),
     ),
     elevatedButtonTheme: ElevatedButtonThemeData(

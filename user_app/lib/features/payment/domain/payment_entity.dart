@@ -6,17 +6,17 @@ class PaymentMethodEntity extends Entity {
   final PaymentMethodType type;
   final PaymentMethodCardEntity? card;
   final bool isDefault;
-  
+
   const PaymentMethodEntity({
     required String id,
     required this.type,
     this.card,
     this.isDefault = false,
   }) : super(id: id);
-  
+
   @override
   List<Object?> get props => [id, type, card, isDefault];
-  
+
   /// نسخ الكيان مع تحديث بعض الحقول
   PaymentMethodEntity copyWith({
     String? id,
@@ -40,16 +40,16 @@ class PaymentMethodCardEntity {
   final String brand;
   final int expiryMonth;
   final int expiryYear;
-  
+
   const PaymentMethodCardEntity({
     required this.last4,
     required this.brand,
     required this.expiryMonth,
     required this.expiryYear,
   });
-  
+
   List<Object?> get props => [last4, brand, expiryMonth, expiryYear];
-  
+
   /// نسخ الكيان مع تحديث بعض الحقول
   PaymentMethodCardEntity copyWith({
     String? last4,
@@ -74,7 +74,7 @@ class PaymentIntentEntity extends Entity {
   final int amount;
   final String currency;
   final DateTime createdAt;
-  
+
   const PaymentIntentEntity({
     required String id,
     required this.clientSecret,
@@ -83,10 +83,11 @@ class PaymentIntentEntity extends Entity {
     required this.currency,
     required this.createdAt,
   }) : super(id: id);
-  
+
   @override
-  List<Object?> get props => [id, clientSecret, status, amount, currency, createdAt];
-  
+  List<Object?> get props =>
+      [id, clientSecret, status, amount, currency, createdAt];
+
   /// نسخ الكيان مع تحديث بعض الحقول
   PaymentIntentEntity copyWith({
     String? id,
@@ -114,7 +115,7 @@ class PaymentResultEntity extends Entity {
   final String status;
   final String? errorMessage;
   final DateTime timestamp;
-  
+
   const PaymentResultEntity({
     required String id,
     required this.success,
@@ -122,10 +123,10 @@ class PaymentResultEntity extends Entity {
     this.errorMessage,
     required this.timestamp,
   }) : super(id: id);
-  
+
   @override
   List<Object?> get props => [id, success, status, errorMessage, timestamp];
-  
+
   /// نسخ الكيان مع تحديث بعض الحقول
   PaymentResultEntity copyWith({
     String? id,

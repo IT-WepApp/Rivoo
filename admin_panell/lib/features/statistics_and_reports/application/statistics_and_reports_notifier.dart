@@ -95,4 +95,3 @@ final statisticsAndReportsProvider =
 final statisticsServiceProvider = Provider<svc.StatisticsService>((ref) {
   return svc.StatisticsService();
 });
-

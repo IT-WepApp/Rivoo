@@ -30,7 +30,7 @@ void main() {
 
   group('GetCartItemsUseCase', () {
     final cartItems = [
-      CartItem(
+      const CartItem(
         id: 'item1',
         productId: 'product1',
         productName: 'Product 1',
@@ -38,7 +38,7 @@ void main() {
         quantity: 2,
         imageUrl: 'https://example.com/image1.jpg',
       ),
-      CartItem(
+      const CartItem(
         id: 'item2',
         productId: 'product2',
         productName: 'Product 2',
@@ -64,15 +64,15 @@ void main() {
 
     test('should return failure when repository fails', () async {
       // Arrange
-      final failure = ServerFailure(message: 'Server error');
+      const failure = ServerFailure(message: 'Server error');
       when(mockRepository.getCartItems())
-          .thenAnswer((_) async => Left(failure));
+          .thenAnswer((_) async => const Left(failure));
 
       // Act
       final result = await getCartItemsUseCase(NoParams());
 
       // Assert
-      expect(result, Left(failure));
+      expect(result, const Left(failure));
       verify(mockRepository.getCartItems()).called(1);
       verifyNoMoreInteractions(mockRepository);
     });
@@ -158,7 +158,7 @@ void main() {
   });
 
   group('RemoveFromCartUseCase', () {
-    final itemId = 'item1';
+    const itemId = 'item1';
 
     test('should remove item from cart through repository', () async {
       // Arrange

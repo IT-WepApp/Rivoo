@@ -12,32 +12,41 @@ dependencies:
     sdk: flutter
   
   # إدارة الحالة
-  flutter_riverpod: ^2.3.6
+  flutter_riverpod: ^2.4.9
   
   # الشبكة والاتصال
   dio: ^5.3.2
-  connectivity_plus: ^4.0.2
+  connectivity_plus: ^5.0.2
   
   # التخزين المحلي
-  shared_preferences: ^2.2.1
-  flutter_secure_storage: ^8.0.0
+  shared_preferences: ^2.2.2
+  flutter_secure_storage: ^9.0.0
   
   # المصادقة والأمان
-  firebase_auth: ^4.9.0
-  firebase_core: ^2.15.1
-  cloud_firestore: ^4.9.1
-  firebase_storage: ^11.2.6
+  firebase_auth: ^5.5.2
+  firebase_core: ^3.13.0
+  cloud_firestore: ^5.6.6
+  firebase_storage: ^12.4.5
   
   # المساعدة والأدوات
-  intl: ^0.18.1
-  uuid: ^3.0.7
+  intl: ^0.19.0
+  uuid: ^4.0.0  # تم تحديث الإصدار لحل التعارض مع geolocator
   logger: ^1.4.0
   path_provider: ^2.1.1
   
   # واجهة المستخدم
   flutter_svg: ^2.0.7
-  cached_network_image: ^3.2.3
+  cached_network_image: ^3.3.1
+  
+  # إضافة تبعيات مفقودة
+  equatable: ^2.0.5
+  dartz: ^0.10.1
 
+  json_annotation: any
+  go_router: any
+  shared_services: any
+  shared_models: any
+  crypto: any
 dev_dependencies:
   flutter_test:
     sdk: flutter

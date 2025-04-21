@@ -70,7 +70,8 @@ class LanguageSettingsPage extends ConsumerWidget {
 
     return ListTile(
       title: Text(languageName),
-      trailing: isSelected ? const Icon(Icons.check, color: Colors.green) : null,
+      trailing:
+          isSelected ? const Icon(Icons.check, color: Colors.green) : null,
       onTap: () {
         ref.read(languageProvider.notifier).changeLanguage(locale);
       },

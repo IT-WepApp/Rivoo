@@ -56,7 +56,7 @@ class AppRoutes {
 /// مزود نظام التوجيه
 final routerProvider = Provider<GoRouter>((ref) {
   final authState = ref.watch(authStateProvider);
-  
+
   return GoRouter(
     initialLocation: AppRoutes.splash,
     debugLogDiagnostics: true,
@@ -65,20 +65,25 @@ final routerProvider = Provider<GoRouter>((ref) {
       final isLoggedIn = authState.state == AuthState.authenticated;
       final isGoingToLogin = state.location == AppRoutes.login;
       final isGoingToRegister = state.location == AppRoutes.register;
-      final isGoingToForgotPassword = state.location == AppRoutes.forgotPassword;
+      final isGoingToForgotPassword =
+          state.location == AppRoutes.forgotPassword;
       final isGoingToSplash = state.location == AppRoutes.splash;
-      
+
       // إذا كان المستخدم غير مسجل دخول ويحاول الوصول إلى صفحة محمية
-      if (!isLoggedIn && 
-          !isGoingToLogin && 
-          !isGoingToRegister && 
-          !isGoingToForgotPassword && 
+      if (!isLoggedIn &&
+          !isGoingToLogin &&
+          !isGoingToRegister &&
+          !isGoingToForgotPassword &&
           !isGoingToSplash) {
         return AppRoutes.login;
       }
-      
+
       // إذا كان المستخدم مسجل دخول ويحاول الوصول إلى صفحة تسجيل الدخول
-      if (isLoggedIn && (isGoingToLogin || isGoingToRegister || isGoingToForgotPassword || isGoingToSplash)) {
+      if (isLoggedIn &&
+          (isGoingToLogin ||
+              isGoingToRegister ||
+              isGoingToForgotPassword ||
+              isGoingToSplash)) {
         // توجيه المستخدم إلى الصفحة المناسبة حسب دوره
         if (authState.user?.role == 'seller') {
           return AppRoutes.sellerDashboard;
@@ -90,7 +95,7 @@ final routerProvider = Provider<GoRouter>((ref) {
           return AppRoutes.home;
         }
       }
-      
+
       return null;
     },
     routes: [
@@ -111,7 +116,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.forgotPassword,
         builder: (context, state) => const ForgotPasswordScreen(),
       ),
-      
+
       // مسارات المستخدم
       GoRoute(
         path: AppRoutes.home,
@@ -169,7 +174,7 @@ final routerProvider = Provider<GoRouter>((ref) {
           return SearchScreen(query: query);
         },
       ),
-      
+
       // مسارات البائع
       GoRoute(
         path: AppRoutes.sellerDashboard,
@@ -209,7 +214,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.sellerSettings,
         builder: (context, state) => const SellerSettingsScreen(),
       ),
-      
+
       // مسارات التوصيل
       GoRoute(
         path: AppRoutes.deliveryDashboard,
@@ -234,7 +239,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         path: AppRoutes.deliverySettings,
         builder: (context, state) => const DeliverySettingsScreen(),
       ),
-      
+
       // مسارات الإدارة
       GoRoute(
         path: AppRoutes.adminDashboard,
@@ -352,14 +357,16 @@ class OrderDetailsScreen extends StatelessWidget {
 
 class ProductDetailsScreen extends StatelessWidget {
   final String productId;
-  const ProductDetailsScreen({Key? key, required this.productId}) : super(key: key);
+  const ProductDetailsScreen({Key? key, required this.productId})
+      : super(key: key);
   @override
   Widget build(BuildContext context) => const Placeholder();
 }
 
 class CategoryProductsScreen extends StatelessWidget {
   final String categoryId;
-  const CategoryProductsScreen({Key? key, required this.categoryId}) : super(key: key);
+  const CategoryProductsScreen({Key? key, required this.categoryId})
+      : super(key: key);
   @override
   Widget build(BuildContext context) => const Placeholder();
 }
@@ -391,7 +398,8 @@ class SellerAddProductScreen extends StatelessWidget {
 
 class SellerEditProductScreen extends StatelessWidget {
   final String productId;
-  const SellerEditProductScreen({Key? key, required this.productId}) : super(key: key);
+  const SellerEditProductScreen({Key? key, required this.productId})
+      : super(key: key);
   @override
   Widget build(BuildContext context) => const Placeholder();
 }
@@ -404,7 +412,8 @@ class SellerOrdersScreen extends StatelessWidget {
 
 class SellerOrderDetailsScreen extends StatelessWidget {
   final String orderId;
-  const SellerOrderDetailsScreen({Key? key, required this.orderId}) : super(key: key);
+  const SellerOrderDetailsScreen({Key? key, required this.orderId})
+      : super(key: key);
   @override
   Widget build(BuildContext context) => const Placeholder();
 }
@@ -435,7 +444,8 @@ class DeliveryOrdersScreen extends StatelessWidget {
 
 class DeliveryOrderDetailsScreen extends StatelessWidget {
   final String orderId;
-  const DeliveryOrderDetailsScreen({Key? key, required this.orderId}) : super(key: key);
+  const DeliveryOrderDetailsScreen({Key? key, required this.orderId})
+      : super(key: key);
   @override
   Widget build(BuildContext context) => const Placeholder();
 }

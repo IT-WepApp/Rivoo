@@ -5,7 +5,8 @@ import 'package:user_app/features/auth/application/auth_state.dart';
 import 'package:user_app/features/auth/application/auth_service.dart';
 
 /// مزود لحالة المصادقة
-final authStateNotifierProvider = StateNotifierProvider<AuthNotifier, AuthState>((ref) {
+final authStateNotifierProvider =
+    StateNotifierProvider<AuthNotifier, AuthState>((ref) {
   final authService = ref.watch(authServiceProvider);
   return AuthNotifier(authService);
 });
@@ -38,22 +39,22 @@ final hasAnyRoleProvider = Provider.family<bool, List<UserRole>>((ref, roles) {
 /// مدير حالة المصادقة
 class AuthNotifier extends StateNotifier<AuthState> {
   final AuthService _authService;
-  
+
   AuthNotifier(this._authService) : super(const AuthState()) {
     _initAuthState();
   }
-  
+
   /// تهيئة حالة المصادقة
   Future<void> _initAuthState() async {
     state = state.copyWith(status: AuthenticationStatus.loading);
-    
+
     try {
       // الاستماع لتغييرات حالة المصادقة
       _authService.authStateChanges.listen((fb_auth.User? user) async {
         if (user != null) {
           // الحصول على دور المستخدم
           final role = await _authService.getUserRole(user.uid);
-          
+
           // إنشاء نموذج بيانات المستخدم
           final userData = UserData(
             uid: user.uid,
@@ -63,7 +64,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
             role: role,
             isEmailVerified: user.emailVerified,
           );
-          
+
           state = state.copyWith(
             status: AuthenticationStatus.authenticated,
             userData: userData,
@@ -89,11 +90,12 @@ class AuthNotifier extends StateNotifier<AuthState> {
       );
     }
   }
-  
+
   /// تسجيل الدخول باستخدام البريد الإلكتروني وكلمة المرور
   Future<void> signIn(String email, String password) async {
     try {
-      state = state.copyWith(isLoading: true, status: AuthenticationStatus.loading);
+      state =
+          state.copyWith(isLoading: true, status: AuthenticationStatus.loading);
       await _authService.signIn(email, password);
       // لا نحتاج لتحديث الحالة هنا لأن مستمع authStateChanges سيقوم بذلك
     } catch (e) {
@@ -104,11 +106,13 @@ class AuthNotifier extends StateNotifier<AuthState> {
       );
     }
   }
-  
+
   /// إنشاء حساب جديد باستخدام البريد الإلكتروني وكلمة المرور
-  Future<void> signUp(String email, String password, {UserRole role = UserRole.customer}) async {
+  Future<void> signUp(String email, String password,
+      {UserRole role = UserRole.customer}) async {
     try {
-      state = state.copyWith(isLoading: true, status: AuthenticationStatus.loading);
+      state =
+          state.copyWith(isLoading: true, status: AuthenticationStatus.loading);
       await _authService.signUp(email, password, role: role);
       // لا نحتاج لتحديث الحالة هنا لأن مستمع authStateChanges سيقوم بذلك
     } catch (e) {
@@ -119,11 +123,12 @@ class AuthNotifier extends StateNotifier<AuthState> {
       );
     }
   }
-  
+
   /// تسجيل الخروج
   Future<void> signOut() async {
     try {
-      state = state.copyWith(isLoading: true, status: AuthenticationStatus.loading);
+      state =
+          state.copyWith(isLoading: true, status: AuthenticationStatus.loading);
       await _authService.signOut();
       // لا نحتاج لتحديث الحالة هنا لأن مستمع authStateChanges سيقوم بذلك
     } catch (e) {
@@ -134,11 +139,12 @@ class AuthNotifier extends StateNotifier<AuthState> {
       );
     }
   }
-  
+
   /// إرسال رابط إعادة تعيين كلمة المرور
   Future<void> sendPasswordResetEmail(String email) async {
     try {
-      state = state.copyWith(isLoading: true, status: AuthenticationStatus.loading);
+      state =
+          state.copyWith(isLoading: true, status: AuthenticationStatus.loading);
       await _authService.sendPasswordResetEmail(email);
       state = state.copyWith(
         isLoading: false,
@@ -152,11 +158,12 @@ class AuthNotifier extends StateNotifier<AuthState> {
       );
     }
   }
-  
+
   /// إرسال بريد تأكيد البريد الإلكتروني
   Future<void> sendEmailVerification() async {
     try {
-      state = state.copyWith(isLoading: true, status: AuthenticationStatus.loading);
+      state =
+          state.copyWith(isLoading: true, status: AuthenticationStatus.loading);
       await _authService.sendEmailVerification();
       state = state.copyWith(
         isLoading: false,
@@ -170,19 +177,23 @@ class AuthNotifier extends StateNotifier<AuthState> {
       );
     }
   }
-  
+
   /// التحقق من حالة تأكيد البريد الإلكتروني
   Future<void> checkEmailVerification() async {
     try {
-      state = state.copyWith(isLoading: true, status: AuthenticationStatus.verifying);
+      state = state.copyWith(
+          isLoading: true, status: AuthenticationStatus.verifying);
       final isVerified = await _authService.isEmailVerified();
-      
+
       if (state.userData != null) {
-        final updatedUserData = state.userData!.copyWith(isEmailVerified: isVerified);
-        
+        final updatedUserData =
+            state.userData!.copyWith(isEmailVerified: isVerified);
+
         state = state.copyWith(
           isLoading: false,
-          status: isVerified ? AuthenticationStatus.authenticated : AuthenticationStatus.verifying,
+          status: isVerified
+              ? AuthenticationStatus.authenticated
+              : AuthenticationStatus.verifying,
           userData: updatedUserData,
         );
       } else {
@@ -199,16 +210,16 @@ class AuthNotifier extends StateNotifier<AuthState> {
       );
     }
   }
-  
+
   /// تحديث دور المستخدم
   Future<void> updateUserRole(String userId, UserRole role) async {
     try {
       state = state.copyWith(isLoading: true);
       await _authService.updateUserRole(userId, role);
-      
+
       if (state.userData != null && userId == state.userData!.uid) {
         final updatedUserData = state.userData!.copyWith(role: role);
-        
+
         state = state.copyWith(
           isLoading: false,
           userData: updatedUserData,
@@ -224,19 +235,20 @@ class AuthNotifier extends StateNotifier<AuthState> {
       );
     }
   }
-  
+
   /// تحديث بيانات المستخدم
   Future<void> updateProfile({String? displayName, String? photoURL}) async {
     try {
       state = state.copyWith(isLoading: true);
-      await _authService.updateProfile(displayName: displayName, photoURL: photoURL);
-      
+      await _authService.updateProfile(
+          displayName: displayName, photoURL: photoURL);
+
       if (state.userData != null) {
         final updatedUserData = state.userData!.copyWith(
           displayName: displayName ?? state.userData!.displayName,
           photoURL: photoURL ?? state.userData!.photoURL,
         );
-        
+
         state = state.copyWith(
           isLoading: false,
           userData: updatedUserData,
@@ -252,7 +264,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
       );
     }
   }
-  
+
   /// التحقق من صلاحيات المستخدم
   bool hasPermission(List<UserRole> allowedRoles) {
     return state.hasAnyRole(allowedRoles);

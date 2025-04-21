@@ -66,7 +66,8 @@ class _DeliveryHomePageState extends State<DeliveryHomePage> {
       return Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Text(_error!, style: TextStyle(color: theme.colorScheme.error)),
+          child:
+              Text(_error!, style: TextStyle(color: theme.colorScheme.error)),
         ),
       );
     }
@@ -86,7 +87,9 @@ class _DeliveryHomePageState extends State<DeliveryHomePage> {
             trailing: const Icon(Icons.arrow_forward_ios, size: 16),
             onTap: () {
               ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(content: Text('Navigate to details for order ${order.id} (TODO)')),
+                SnackBar(
+                    content: Text(
+                        'Navigate to details for order ${order.id} (TODO)')),
               );
             },
           ),

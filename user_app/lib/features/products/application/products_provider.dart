@@ -12,13 +12,13 @@ part 'products_provider.g.dart';
 class ProductsState with _$ProductsState {
   /// حالة التحميل الأولي
   const factory ProductsState.initial() = _Initial;
-  
+
   /// حالة التحميل
   const factory ProductsState.loading() = _Loading;
-  
+
   /// حالة النجاح مع قائمة المنتجات
   const factory ProductsState.loaded(List<ProductModel> products) = _Loaded;
-  
+
   /// حالة الخطأ
   const factory ProductsState.error(String message) = _Error;
 }
@@ -27,7 +27,7 @@ class ProductsState with _$ProductsState {
 @riverpod
 class ProductsNotifier extends _$ProductsNotifier {
   late final FirebaseFirestore _firestore;
-  
+
   @override
   ProductsState build() {
     _firestore = FirebaseFirestore.instance;
@@ -35,71 +35,71 @@ class ProductsNotifier extends _$ProductsNotifier {
     _loadProducts();
     return const ProductsState.initial();
   }
-  
+
   /// تحميل قائمة المنتجات من Firestore
   Future<void> _loadProducts() async {
     state = const ProductsState.loading();
-    
+
     try {
       // التحقق من الاتصال بالإنترنت قبل تحميل البيانات
       final isConnected = await ref.read(isNetworkConnectedProvider.future);
-      
+
       if (!isConnected) {
         state = const ProductsState.error("لا يوجد اتصال بالإنترنت");
         return;
       }
-      
+
       final snapshot = await _firestore.collection('products').get();
       final products = snapshot.docs
           .map((doc) => ProductModel.fromJson(doc.data()..['id'] = doc.id))
           .toList();
-      
+
       state = ProductsState.loaded(products);
     } catch (e) {
       state = ProductsState.error(e.toString());
     }
   }
-  
+
   /// إعادة تحميل المنتجات
   Future<void> refreshProducts() async {
     await _loadProducts();
   }
-  
+
   /// البحث عن منتجات
   Future<void> searchProducts(String query) async {
     state = const ProductsState.loading();
-    
+
     try {
       final snapshot = await _firestore
           .collection('products')
           .where('name', isGreaterThanOrEqualTo: query)
-          .where('name', isLessThanOrEqualTo: query + '\uf8ff')
+          .where('name', isLessThanOrEqualTo: '$query\uf8ff')
           .get();
-      
+
       final products = snapshot.docs
           .map((doc) => ProductModel.fromJson(doc.data()..['id'] = doc.id))
           .toList();
-      
+
       state = ProductsState.loaded(products);
     } catch (e) {
       state = ProductsState.error(e.toString());
     }
   }
-  
+
   /// تصفية المنتجات حسب الفئة
   Future<void> filterByCategory(String category) async {
     state = const ProductsState.loading();
-    
+
     try {
       final snapshot = await _firestore
           .collection('products')
           .where('category', isEqualTo: category)
           .get();
-      
+
       final products = snapshot.docs
           .map((doc) => ProductModel.fromJson(doc.data()..['id'] = doc.id))
           .toList();
-      
+
       state = ProductsState.loaded(products);
     } catch (e) {
       state = ProductsState.error(e.toString());
@@ -115,9 +115,9 @@ Future<ProductModel?> product(ProductRef ref, String productId) async {
         .collection('products')
         .doc(productId)
         .get();
-    
+
     if (!doc.exists) return null;
-    
+
     return ProductModel.fromJson(doc.data()!..['id'] = doc.id);
   } catch (e) {
     return null;

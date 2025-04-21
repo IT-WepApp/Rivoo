@@ -27,12 +27,13 @@ class ShippingAddressFormPage extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<ShippingAddressFormPage> createState() => _ShippingAddressFormPageState();
+  State<ShippingAddressFormPage> createState() =>
+      _ShippingAddressFormPageState();
 }
 
 class _ShippingAddressFormPageState extends State<ShippingAddressFormPage> {
   final _formKey = GlobalKey<FormState>();
-  
+
   // وحدات التحكم في النص
   late final TextEditingController _nameController;
   late final TextEditingController _phoneController;
@@ -41,22 +42,29 @@ class _ShippingAddressFormPageState extends State<ShippingAddressFormPage> {
   late final TextEditingController _cityController;
   late final TextEditingController _stateController;
   late final TextEditingController _postalCodeController;
-  
+
   // حالة التحميل
   bool _isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    
+
     // تهيئة وحدات التحكم في النص مع البيانات الأولية إذا كانت متوفرة
-    _nameController = TextEditingController(text: widget.initialData?['name'] ?? '');
-    _phoneController = TextEditingController(text: widget.initialData?['phone'] ?? '');
-    _addressLine1Controller = TextEditingController(text: widget.initialData?['addressLine1'] ?? '');
-    _addressLine2Controller = TextEditingController(text: widget.initialData?['addressLine2'] ?? '');
-    _cityController = TextEditingController(text: widget.initialData?['city'] ?? '');
-    _stateController = TextEditingController(text: widget.initialData?['state'] ?? '');
-    _postalCodeController = TextEditingController(text: widget.initialData?['postalCode'] ?? '');
+    _nameController =
+        TextEditingController(text: widget.initialData?['name'] ?? '');
+    _phoneController =
+        TextEditingController(text: widget.initialData?['phone'] ?? '');
+    _addressLine1Controller =
+        TextEditingController(text: widget.initialData?['addressLine1'] ?? '');
+    _addressLine2Controller =
+        TextEditingController(text: widget.initialData?['addressLine2'] ?? '');
+    _cityController =
+        TextEditingController(text: widget.initialData?['city'] ?? '');
+    _stateController =
+        TextEditingController(text: widget.initialData?['state'] ?? '');
+    _postalCodeController =
+        TextEditingController(text: widget.initialData?['postalCode'] ?? '');
   }
 
   @override
@@ -78,7 +86,7 @@ class _ShippingAddressFormPageState extends State<ShippingAddressFormPage> {
       setState(() {
         _isLoading = true;
       });
-      
+
       // تجميع بيانات العنوان
       final addressData = {
         'name': _nameController.text,
@@ -89,15 +97,15 @@ class _ShippingAddressFormPageState extends State<ShippingAddressFormPage> {
         'state': _stateController.text,
         'postalCode': _postalCodeController.text,
       };
-      
+
       // إضافة معرف العنوان إذا كان متوفرًا (في حالة التعديل)
       if (widget.addressId != null) {
         addressData['id'] = widget.addressId;
       }
-      
+
       // استدعاء وظيفة الحفظ
       widget.onSave(addressData);
-      
+
       setState(() {
         _isLoading = false;
       });
@@ -130,7 +138,7 @@ class _ShippingAddressFormPageState extends State<ShippingAddressFormPage> {
                 },
               ),
               const SizedBox(height: 16.0),
-              
+
               // رقم الهاتف
               AppTextField(
                 label: 'رقم الهاتف',
@@ -144,7 +152,7 @@ class _ShippingAddressFormPageState extends State<ShippingAddressFormPage> {
                 },
               ),
               const SizedBox(height: 16.0),
-              
+
               // سطر العنوان 1
               AppTextField(
                 label: 'العنوان (السطر 1)',
@@ -157,14 +165,14 @@ class _ShippingAddressFormPageState extends State<ShippingAddressFormPage> {
                 },
               ),
               const SizedBox(height: 16.0),
-              
+
               // سطر العنوان 2 (اختياري)
               AppTextField(
                 label: 'العنوان (السطر 2) - اختياري',
                 controller: _addressLine2Controller,
               ),
               const SizedBox(height: 16.0),
-              
+
               // المدينة
               AppTextField(
                 label: 'المدينة',
@@ -177,7 +185,7 @@ class _ShippingAddressFormPageState extends State<ShippingAddressFormPage> {
                 },
               ),
               const SizedBox(height: 16.0),
-              
+
               // المحافظة/الولاية
               AppTextField(
                 label: 'المحافظة/الولاية',
@@ -190,7 +198,7 @@ class _ShippingAddressFormPageState extends State<ShippingAddressFormPage> {
                 },
               ),
               const SizedBox(height: 16.0),
-              
+
               // الرمز البريدي
               AppTextField(
                 label: 'الرمز البريدي',
@@ -204,10 +212,12 @@ class _ShippingAddressFormPageState extends State<ShippingAddressFormPage> {
                 },
               ),
               const SizedBox(height: 24.0),
-              
+
               // زر الحفظ
               AppButton(
-                text: widget.addressId != null ? 'تحديث العنوان' : 'إضافة العنوان',
+                text: widget.addressId != null
+                    ? 'تحديث العنوان'
+                    : 'إضافة العنوان',
                 onPressed: _saveForm,
                 isLoading: _isLoading,
                 icon: Icons.save,

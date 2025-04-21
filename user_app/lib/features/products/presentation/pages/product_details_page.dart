@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:shared_models/shared_models.dart';
 
 class ProductDetailsPage extends StatefulWidget {
   final String productId;
-  
+
   const ProductDetailsPage({
     Key? key,
     required this.productId,

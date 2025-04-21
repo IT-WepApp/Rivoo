@@ -127,7 +127,8 @@ class _EnhancedPaginatedList<T> extends StatefulWidget {
   });
 
   @override
-  _EnhancedPaginatedListState<T> createState() => _EnhancedPaginatedListState<T>();
+  _EnhancedPaginatedListState<T> createState() =>
+      _EnhancedPaginatedListState<T>();
 }
 
 class _EnhancedPaginatedListState<T> extends State<_EnhancedPaginatedList<T>> {
@@ -157,7 +158,8 @@ class _EnhancedPaginatedListState<T> extends State<_EnhancedPaginatedList<T>> {
   }
 
   void _scrollListener() {
-    if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 200 &&
+    if (_scrollController.position.pixels >=
+            _scrollController.position.maxScrollExtent - 200 &&
         !_isLoading &&
         _hasMoreItems) {
       _loadMoreItems();
@@ -174,7 +176,7 @@ class _EnhancedPaginatedListState<T> extends State<_EnhancedPaginatedList<T>> {
 
     try {
       final newItems = await widget.fetchItems(1, widget.pageSize);
-      
+
       setState(() {
         _items.clear();
         _items.addAll(newItems);
@@ -198,8 +200,9 @@ class _EnhancedPaginatedListState<T> extends State<_EnhancedPaginatedList<T>> {
     });
 
     try {
-      final newItems = await widget.fetchItems(_currentPage + 1, widget.pageSize);
-      
+      final newItems =
+          await widget.fetchItems(_currentPage + 1, widget.pageSize);
+
       setState(() {
         _items.addAll(newItems);
         _isLoading = false;
@@ -321,7 +324,8 @@ class _EnhancedOptimizedImage extends StatefulWidget {
   _EnhancedOptimizedImageState createState() => _EnhancedOptimizedImageState();
 }
 
-class _EnhancedOptimizedImageState extends State<_EnhancedOptimizedImage> with SingleTickerProviderStateMixin {
+class _EnhancedOptimizedImageState extends State<_EnhancedOptimizedImage>
+    with SingleTickerProviderStateMixin {
   late ImageProvider _imageProvider;
   bool _isLoading = true;
   bool _hasError = false;
@@ -361,27 +365,27 @@ class _EnhancedOptimizedImageState extends State<_EnhancedOptimizedImage> with S
 
     _imageProvider = NetworkImage(widget.imageUrl);
     final image = Image(image: _imageProvider);
-    
+
     image.image.resolve(const ImageConfiguration()).addListener(
-      ImageStreamListener(
-        (info, synchronousCall) {
-          if (mounted) {
-            setState(() {
-              _isLoading = false;
-            });
-            _controller.forward(from: 0.0);
-          }
-        },
-        onError: (exception, stackTrace) {
-          if (mounted) {
-            setState(() {
-              _isLoading = false;
-              _hasError = true;
-            });
-          }
-        },
-      ),
-    );
+          ImageStreamListener(
+            (info, synchronousCall) {
+              if (mounted) {
+                setState(() {
+                  _isLoading = false;
+                });
+                _controller.forward(from: 0.0);
+              }
+            },
+            onError: (exception, stackTrace) {
+              if (mounted) {
+                setState(() {
+                  _isLoading = false;
+                  _hasError = true;
+                });
+              }
+            },
+          ),
+        );
   }
 
   @override
@@ -474,7 +478,8 @@ class _EnhancedPaginatedGrid<T> extends StatefulWidget {
   });
 
   @override
-  _EnhancedPaginatedGridState<T> createState() => _EnhancedPaginatedGridState<T>();
+  _EnhancedPaginatedGridState<T> createState() =>
+      _EnhancedPaginatedGridState<T>();
 }
 
 class _EnhancedPaginatedGridState<T> extends State<_EnhancedPaginatedGrid<T>> {
@@ -504,7 +509,8 @@ class _EnhancedPaginatedGridState<T> extends State<_EnhancedPaginatedGrid<T>> {
   }
 
   void _scrollListener() {
-    if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 200 &&
+    if (_scrollController.position.pixels >=
+            _scrollController.position.maxScrollExtent - 200 &&
         !_isLoading &&
         _hasMoreItems) {
       _loadMoreItems();
@@ -521,7 +527,7 @@ class _EnhancedPaginatedGridState<T> extends State<_EnhancedPaginatedGrid<T>> {
 
     try {
       final newItems = await widget.fetchItems(1, widget.pageSize);
-      
+
       setState(() {
         _items.clear();
         _items.addAll(newItems);
@@ -545,8 +551,9 @@ class _EnhancedPaginatedGridState<T> extends State<_EnhancedPaginatedGrid<T>> {
     });
 
     try {
-      final newItems = await widget.fetchItems(_currentPage + 1, widget.pageSize);
-      
+      final newItems =
+          await widget.fetchItems(_currentPage + 1, widget.pageSize);
+
       setState(() {
         _items.addAll(newItems);
         _isLoading = false;

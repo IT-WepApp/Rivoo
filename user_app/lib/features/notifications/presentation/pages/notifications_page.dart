@@ -18,7 +18,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
   void initState() {
     super.initState();
     _loadNotifications();
-    
+
     // تهيئة الترجمة العربية لمكتبة timeago
     timeago.setLocaleMessages('ar', timeago.ArMessages());
   }
@@ -187,7 +187,8 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    const Icon(Icons.error_outline, color: Colors.red, size: 48),
+                    const Icon(Icons.error_outline,
+                        color: Colors.red, size: 48),
                     const SizedBox(height: 16),
                     Text('حدث خطأ أثناء تحميل الإشعارات: $error'),
                     const SizedBox(height: 16),
@@ -257,7 +258,7 @@ class _NotificationCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     // تنسيق الوقت بالعربية
     final timeAgo = timeago.format(
       notification.timestamp,
@@ -267,7 +268,9 @@ class _NotificationCard extends StatelessWidget {
     return Card(
       elevation: 1,
       margin: const EdgeInsets.symmetric(vertical: 4),
-      color: notification.isRead ? null : theme.colorScheme.primaryContainer.withOpacity(0.3),
+      color: notification.isRead
+          ? null
+          : theme.colorScheme.primaryContainer.withOpacity(0.3),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
         side: notification.isRead
@@ -291,7 +294,9 @@ class _NotificationCard extends StatelessWidget {
                     Text(
                       notification.title,
                       style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: notification.isRead ? FontWeight.normal : FontWeight.bold,
+                        fontWeight: notification.isRead
+                            ? FontWeight.normal
+                            : FontWeight.bold,
                       ),
                     ),
                     const SizedBox(height: 4),

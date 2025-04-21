@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 // Import your AuthNotifier provider
-import 'package:delivery_app/features/auth/application/auth_notifier.dart'; 
+import 'package:delivery_app/features/auth/application/auth_notifier.dart';
 
 class DeliveryLoginPage extends ConsumerWidget {
   const DeliveryLoginPage({super.key});
@@ -12,7 +12,7 @@ class DeliveryLoginPage extends ConsumerWidget {
     final authState = ref.watch(authNotifierProvider);
     final authNotifier = ref.read(authNotifierProvider.notifier);
     // Optional: Track loading state if needed
-    // final isLoading = ref.watch(authNotifierProvider.select((state) => state is AsyncLoading)); 
+    // final isLoading = ref.watch(authNotifierProvider.select((state) => state is AsyncLoading));
 
     return Scaffold(
       appBar: AppBar(title: const Text('Delivery Login')),
@@ -22,22 +22,29 @@ class DeliveryLoginPage extends ConsumerWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // TODO: Add TextField widgets for email and password
-            
+
             // Example: Display user name if logged in
             if (authState != null)
-              Text('Welcome, ${authState.name}!') // Assuming DeliveryPersonModel has 'name'
+              Text(
+                  'Welcome, ${authState.name}!') // Assuming DeliveryPersonModel has 'name'
             else
               const Text('Please log in.'),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: () async { // Simplified onPressed logic
+              onPressed: () async {
+                // Simplified onPressed logic
                 if (authState == null) {
                   // TODO: Get email and password from TextFields
-                  final success = await authNotifier.signIn('delivery@example.com', 'password123'); // Use strong password
-                  if (!success && context.mounted) { // Check if mounted before showing SnackBar
-                     ScaffoldMessenger.of(context).showSnackBar(
-                       const SnackBar(content: Text('Login Failed'), backgroundColor: Colors.red),
-                     );
+                  final success = await authNotifier.signIn(
+                      'delivery@example.com',
+                      'password123'); // Use strong password
+                  if (!success && context.mounted) {
+                    // Check if mounted before showing SnackBar
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                          content: Text('Login Failed'),
+                          backgroundColor: Colors.red),
+                    );
                   }
                   // TODO: Navigate on success (e.g., context.go('/deliveryHome'))
                 } else {

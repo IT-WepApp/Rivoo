@@ -24,6 +24,7 @@ class AuthNotifier extends StateNotifier<SellerModel?> {
 }
 
 // مزود لـ AuthNotifier
-final sellerAuthProvider = StateNotifierProvider<AuthNotifier, SellerModel?>((ref) {
+final sellerAuthProvider =
+    StateNotifierProvider<AuthNotifier, SellerModel?>((ref) {
   return AuthNotifier();
 });

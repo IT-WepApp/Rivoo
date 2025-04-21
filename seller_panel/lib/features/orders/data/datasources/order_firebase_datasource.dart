@@ -47,7 +47,8 @@ class OrderFirebaseDataSourceImpl implements OrderFirebaseDataSource {
 
   @override
   Future<OrderEntity> getOrderDetails(String orderId) async {
-    final docSnapshot = await _firestore.collection('orders').doc(orderId).get();
+    final docSnapshot =
+        await _firestore.collection('orders').doc(orderId).get();
 
     if (!docSnapshot.exists) {
       throw Exception('الطلب غير موجود');
@@ -74,22 +75,27 @@ class OrderFirebaseDataSourceImpl implements OrderFirebaseDataSource {
         .get();
 
     final orders = querySnapshot.docs;
-    
+
     // إجمالي الطلبات
     final totalOrders = orders.length;
-    
+
     // إجمالي المبيعات
     double totalSales = 0;
     for (var doc in orders) {
       totalSales += (doc.data()['totalAmount'] as num).toDouble();
     }
-    
+
     // عدد الطلبات حسب الحالة
-    final pendingOrders = orders.where((doc) => doc.data()['status'] == 'pending').length;
-    final processingOrders = orders.where((doc) => doc.data()['status'] == 'processing').length;
-    final shippedOrders = orders.where((doc) => doc.data()['status'] == 'shipped').length;
-    final deliveredOrders = orders.where((doc) => doc.data()['status'] == 'delivered').length;
-    final cancelledOrders = orders.where((doc) => doc.data()['status'] == 'cancelled').length;
+    final pendingOrders =
+        orders.where((doc) => doc.data()['status'] == 'pending').length;
+    final processingOrders =
+        orders.where((doc) => doc.data()['status'] == 'processing').length;
+    final shippedOrders =
+        orders.where((doc) => doc.data()['status'] == 'shipped').length;
+    final deliveredOrders =
+        orders.where((doc) => doc.data()['status'] == 'delivered').length;
+    final cancelledOrders =
+        orders.where((doc) => doc.data()['status'] == 'cancelled').length;
 
     return {
       'totalOrders': totalOrders,
@@ -110,9 +116,8 @@ class OrderFirebaseDataSourceImpl implements OrderFirebaseDataSource {
     DateTime? startDate,
     DateTime? endDate,
   }) async {
-    Query<Map<String, dynamic>> ordersQuery = _firestore
-        .collection('orders')
-        .where('sellerId', isEqualTo: sellerId);
+    Query<Map<String, dynamic>> ordersQuery =
+        _firestore.collection('orders').where('sellerId', isEqualTo: sellerId);
 
     if (status != null && status.isNotEmpty) {
       ordersQuery = ordersQuery.where('status', isEqualTo: status);
@@ -137,7 +142,7 @@ class OrderFirebaseDataSourceImpl implements OrderFirebaseDataSource {
     }
 
     final querySnapshot = await ordersQuery.get();
-    
+
     List<OrderEntity> orders = querySnapshot.docs
         .map((doc) => _convertToOrderEntity(doc.id, doc.data()))
         .toList();
@@ -156,7 +161,7 @@ class OrderFirebaseDataSourceImpl implements OrderFirebaseDataSource {
   /// تحويل بيانات Firestore إلى كيان الطلب
   OrderEntity _convertToOrderEntity(String id, Map<String, dynamic> data) {
     final List<OrderItemEntity> items = [];
-    
+
     if (data.containsKey('items') && data['items'] is List) {
       for (var item in data['items']) {
         items.add(OrderItemEntity(
@@ -164,7 +169,9 @@ class OrderFirebaseDataSourceImpl implements OrderFirebaseDataSource {
           productName: item['productName'],
           quantity: (item['quantity'] as num).toInt(),
           price: (item['price'] as num).toDouble(),
-          discount: item['discount'] != null ? (item['discount'] as num).toDouble() : null,
+          discount: item['discount'] != null
+              ? (item['discount'] as num).toDouble()
+              : null,
           imageUrl: item['imageUrl'],
         ));
       }

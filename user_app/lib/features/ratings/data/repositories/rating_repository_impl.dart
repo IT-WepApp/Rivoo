@@ -77,18 +77,18 @@ class RatingRepositoryImpl implements RatingRepository {
     try {
       final userId = _auth.currentUser?.uid;
       if (userId == null) {
-        return Left(AuthFailure(message: 'المستخدم غير مسجل الدخول'));
+        return const Left(AuthFailure(message: 'المستخدم غير مسجل الدخول'));
       }
 
       // التحقق مما إذا كان المستخدم قد قام بتقييم المنتج من قبل
       final existingRatingResult = await getUserRatingForProduct(productId);
-      final hasExistingRating = await existingRatingResult.fold(
+      final hasExistingRating = existingRatingResult.fold(
         (failure) => false,
         (existingRating) => existingRating != null,
       );
 
       if (hasExistingRating) {
-        return Left(ValidationFailure(message: 'لقد قمت بتقييم هذا المنتج من قبل'));
+        return const Left(ValidationFailure(message: 'لقد قمت بتقييم هذا المنتج من قبل'));
       }
 
       // التحقق مما إذا كان المستخدم قد اشترى المنتج
@@ -96,7 +96,7 @@ class RatingRepositoryImpl implements RatingRepository {
 
       // الحصول على اسم المستخدم
       final userDoc = await _firestore.collection('users').doc(userId).get();
-      final userDisplayName = userDoc.exists ? userDoc.data()?['displayName'] as String? : null;
+      final String? userDisplayName = userDoc.exists ? (userDoc.data()?['displayName'] as String?) : null;
 
       final ratingId = _uuid.v4();
       final now = DateTime.now();
@@ -132,7 +132,7 @@ class RatingRepositoryImpl implements RatingRepository {
     try {
       final userId = _auth.currentUser?.uid;
       if (userId == null) {
-        return Left(AuthFailure(message: 'المستخدم غير مسجل الدخول'));
+        return const Left(AuthFailure(message: 'المستخدم غير مسجل الدخول'));
       }
 
       final ratingDoc = await _firestore.collection('ratings').doc(ratingId).get();
@@ -143,7 +143,7 @@ class RatingRepositoryImpl implements RatingRepository {
 
       final ratingData = ratingDoc.data()!;
       if (ratingData['userId'] != userId) {
-        return Left(AuthFailure(message: 'ليس لديك صلاحية لتحديث هذا التقييم'));
+        return const Left(AuthFailure(message: 'ليس لديك صلاحية لتحديث هذا التقييم'));
       }
 
       final oldRating = RatingModel.fromJson(ratingData);
@@ -180,7 +180,7 @@ class RatingRepositoryImpl implements RatingRepository {
     try {
       final userId = _auth.currentUser?.uid;
       if (userId == null) {
-        return Left(AuthFailure(message: 'المستخدم غير مسجل الدخول'));
+        return const Left(AuthFailure(message: 'المستخدم غير مسجل الدخول'));
       }
 
       final ratingDoc = await _firestore.collection('ratings').doc(ratingId).get();
@@ -191,7 +191,7 @@ class RatingRepositoryImpl implements RatingRepository {
 
       final ratingData = ratingDoc.data()!;
       if (ratingData['userId'] != userId) {
-        return Left(AuthFailure(message: 'ليس لديك صلاحية لحذف هذا التقييم'));
+        return const Left(AuthFailure(message: 'ليس لديك صلاحية لحذف هذا التقييم'));
       }
 
       final oldRating = RatingModel.fromJson(ratingData);
@@ -213,7 +213,7 @@ class RatingRepositoryImpl implements RatingRepository {
     try {
       final userId = _auth.currentUser?.uid;
       if (userId == null) {
-        return Left(AuthFailure(message: 'المستخدم غير مسجل الدخول'));
+        return const Left(AuthFailure(message: 'المستخدم غير مسجل الدخول'));
       }
 
       final ratingsSnapshot = await _firestore
@@ -238,7 +238,7 @@ class RatingRepositoryImpl implements RatingRepository {
     try {
       final userId = _auth.currentUser?.uid;
       if (userId == null) {
-        return Left(AuthFailure(message: 'المستخدم غير مسجل الدخول'));
+        return const Left(AuthFailure(message: 'المستخدم غير مسجل الدخول'));
       }
 
       final ratingsSnapshot = await _firestore
@@ -259,7 +259,7 @@ class RatingRepositoryImpl implements RatingRepository {
     try {
       final userId = _auth.currentUser?.uid;
       if (userId == null) {
-        return Left(AuthFailure(message: 'المستخدم غير مسجل الدخول'));
+        return const Left(AuthFailure(message: 'المستخدم غير مسجل الدخول'));
       }
 
       final ratingsSnapshot = await _firestore

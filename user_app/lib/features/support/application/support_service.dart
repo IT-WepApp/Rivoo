@@ -54,7 +54,7 @@ class SupportService {
 
     // إنشاء معرف فريد للتذكرة
     final ticketId = _uuid.v4();
-    
+
     // إنشاء كائن التذكرة
     final ticket = SupportTicket(
       id: ticketId,
@@ -83,7 +83,9 @@ class SupportService {
     );
 
     // حفظ الرسالة في قاعدة البيانات
-    await _messagesCollection.doc(initialMessage.id).set(initialMessage.toMap());
+    await _messagesCollection
+        .doc(initialMessage.id)
+        .set(initialMessage.toMap());
 
     return ticket;
   }
@@ -103,7 +105,8 @@ class SupportService {
         .snapshots()
         .map((snapshot) {
       return snapshot.docs
-          .map((doc) => SupportTicket.fromMap(doc.data() as Map<String, dynamic>))
+          .map((doc) =>
+              SupportTicket.fromMap(doc.data() as Map<String, dynamic>))
           .toList();
     });
   }
@@ -126,7 +129,8 @@ class SupportService {
         .snapshots()
         .map((snapshot) {
       return snapshot.docs
-          .map((doc) => SupportMessage.fromMap(doc.data() as Map<String, dynamic>))
+          .map((doc) =>
+              SupportMessage.fromMap(doc.data() as Map<String, dynamic>))
           .toList();
     });
   }
@@ -151,12 +155,13 @@ class SupportService {
 
     // إنشاء معرف فريد للرسالة
     final messageId = _uuid.v4();
-    
+
     // رفع المرفق إذا وجد
     String? attachmentUrl;
     if (attachmentPath != null) {
-      final ref = _storage.ref().child('support_attachments/$ticketId/$messageId');
-      await ref.putFile(await new File(attachmentPath).create());
+      final ref =
+          _storage.ref().child('support_attachments/$ticketId/$messageId');
+      await ref.putFile(await File(attachmentPath).create());
       attachmentUrl = await ref.getDownloadURL();
     }
 
@@ -201,7 +206,8 @@ class SupportService {
     }
 
     // التحقق من ملكية التذكرة
-    final ticket = SupportTicket.fromMap(ticketDoc.data() as Map<String, dynamic>);
+    final ticket =
+        SupportTicket.fromMap(ticketDoc.data() as Map<String, dynamic>);
     if (ticket.userId != user.uid) {
       throw Exception('لا يمكنك تحديث تذكرة لا تملكها');
     }

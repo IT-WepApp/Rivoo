@@ -27,14 +27,14 @@ class SignInUseCase implements UseCase<UserModel, SignInParams> {
   Future<Either<Failure, UserModel>> call(SignInParams params) async {
     // التحقق من صحة المدخلات
     if (params.email.isEmpty) {
-      return Left(ValidationFailure(
+      return const Left(ValidationFailure(
         message: 'البريد الإلكتروني مطلوب',
         code: 'EMPTY_EMAIL',
       ));
     }
 
     if (params.password.isEmpty) {
-      return Left(ValidationFailure(
+      return const Left(ValidationFailure(
         message: 'كلمة المرور مطلوبة',
         code: 'EMPTY_PASSWORD',
       ));

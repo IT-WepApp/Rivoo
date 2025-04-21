@@ -17,7 +17,7 @@ void main() {
     test('startTracking should initialize tracking for an order', () async {
       // ترتيب
       const orderId = 'order_123';
-      
+
       when(mockOrderTrackingNotifier.startTracking(orderId))
           .thenAnswer((_) async => true);
 
@@ -32,7 +32,7 @@ void main() {
     test('stopTracking should end tracking for an order', () async {
       // ترتيب
       const orderId = 'order_123';
-      
+
       when(mockOrderTrackingNotifier.stopTracking())
           .thenAnswer((_) async => true);
 
@@ -47,8 +47,8 @@ void main() {
     test('getDriverLocation should return current driver location', () async {
       // ترتيب
       const orderId = 'order_123';
-      final expectedLocation = LatLng(24.7136, 46.6753); // الرياض
-      
+      const expectedLocation = LatLng(24.7136, 46.6753); // الرياض
+
       when(mockOrderTrackingNotifier.getDriverLocation(orderId))
           .thenAnswer((_) async => expectedLocation);
 
@@ -66,28 +66,30 @@ void main() {
       // ترتيب
       const orderId = 'order_123';
       final expectedETA = DateTime.now().add(const Duration(minutes: 30));
-      
+
       when(mockOrderTrackingNotifier.getEstimatedArrivalTime(orderId))
           .thenAnswer((_) async => expectedETA);
 
       // تنفيذ
-      final result = await mockOrderTrackingNotifier.getEstimatedArrivalTime(orderId);
+      final result =
+          await mockOrderTrackingNotifier.getEstimatedArrivalTime(orderId);
 
       // تحقق
       expect(result, isNotNull);
       expect(result.isAfter(DateTime.now()), true);
-      verify(mockOrderTrackingNotifier.getEstimatedArrivalTime(orderId)).called(1);
+      verify(mockOrderTrackingNotifier.getEstimatedArrivalTime(orderId))
+          .called(1);
     });
 
     test('getRoutePolyline should return route points', () async {
       // ترتيب
       const orderId = 'order_123';
       final expectedRoute = [
-        LatLng(24.7136, 46.6753), // نقطة البداية
-        LatLng(24.7236, 46.6853), // نقطة وسيطة
-        LatLng(24.7336, 46.6953), // نقطة النهاية
+        const LatLng(24.7136, 46.6753), // نقطة البداية
+        const LatLng(24.7236, 46.6853), // نقطة وسيطة
+        const LatLng(24.7336, 46.6953), // نقطة النهاية
       ];
-      
+
       when(mockOrderTrackingNotifier.getRoutePolyline(orderId))
           .thenAnswer((_) async => expectedRoute);
 

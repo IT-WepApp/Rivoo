@@ -11,10 +11,12 @@ class ProductsManagementPage extends ConsumerStatefulWidget {
   const ProductsManagementPage({Key? key}) : super(key: key);
 
   @override
-  ConsumerState<ProductsManagementPage> createState() => _ProductsManagementPageState();
+  ConsumerState<ProductsManagementPage> createState() =>
+      _ProductsManagementPageState();
 }
 
-class _ProductsManagementPageState extends ConsumerState<ProductsManagementPage> {
+class _ProductsManagementPageState
+    extends ConsumerState<ProductsManagementPage> {
   String _searchQuery = '';
   String _selectedCategory = 'الكل';
   bool _isLoading = false;
@@ -37,14 +39,14 @@ class _ProductsManagementPageState extends ConsumerState<ProductsManagementPage>
     try {
       final productService = ref.read(productServiceProvider);
       final products = await productService.getSellerProducts();
-      
+
       // استخراج الفئات الفريدة
       final uniqueCategories = <String>{};
       for (final product in products) {
         final category = product['category'] as String? ?? 'أخرى';
         uniqueCategories.add(category);
       }
-      
+
       setState(() {
         _products = products;
         _categories = ['الكل', ...uniqueCategories.toList()..sort()];
@@ -66,20 +68,22 @@ class _ProductsManagementPageState extends ConsumerState<ProductsManagementPage>
       final matchesSearch = _searchQuery.isEmpty ||
           name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
           description.toLowerCase().contains(_searchQuery.toLowerCase());
-      
+
       // تطبيق فلتر الفئة
       final category = product['category'] as String? ?? 'أخرى';
-      final matchesCategory = _selectedCategory == 'الكل' || category == _selectedCategory;
-      
+      final matchesCategory =
+          _selectedCategory == 'الكل' || category == _selectedCategory;
+
       return matchesSearch && matchesCategory;
     }).toList();
   }
 
-  Future<void> _toggleProductAvailability(String productId, bool currentValue) async {
+  Future<void> _toggleProductAvailability(
+      String productId, bool currentValue) async {
     try {
       final productService = ref.read(productServiceProvider);
       await productService.toggleProductAvailability(productId, !currentValue);
-      
+
       // تحديث القائمة المحلية
       setState(() {
         final index = _products.indexWhere((p) => p['id'] == productId);
@@ -87,14 +91,17 @@ class _ProductsManagementPageState extends ConsumerState<ProductsManagementPage>
           _products[index]['isAvailable'] = !currentValue;
         }
       });
-      
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(
-              !currentValue ? 'تم تفعيل المنتج بنجاح' : 'تم إلغاء تفعيل المنتج بنجاح',
+              !currentValue
+                  ? 'تم تفعيل المنتج بنجاح'
+                  : 'تم إلغاء تفعيل المنتج بنجاح',
             ),
-            backgroundColor: !currentValue ? AppColors.success : AppColors.warning,
+            backgroundColor:
+                !currentValue ? AppColors.success : AppColors.warning,
             behavior: SnackBarBehavior.floating,
           ),
         );
@@ -116,27 +123,28 @@ class _ProductsManagementPageState extends ConsumerState<ProductsManagementPage>
     final confirmed = await AppWidgets.showConfirmDialog(
       context: context,
       title: 'حذف المنتج',
-      message: 'هل أنت متأكد من رغبتك في حذف هذا المنتج؟ لا يمكن التراجع عن هذا الإجراء.',
+      message:
+          'هل أنت متأكد من رغبتك في حذف هذا المنتج؟ لا يمكن التراجع عن هذا الإجراء.',
       confirmText: 'حذف',
       cancelText: 'إلغاء',
       isDangerous: true,
     );
-    
+
     if (confirmed) {
       try {
         setState(() {
           _isLoading = true;
         });
-        
+
         final productService = ref.read(productServiceProvider);
         await productService.deleteProduct(productId);
-        
+
         // تحديث القائمة المحلية
         setState(() {
           _products.removeWhere((p) => p['id'] == productId);
           _isLoading = false;
         });
-        
+
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -150,7 +158,7 @@ class _ProductsManagementPageState extends ConsumerState<ProductsManagementPage>
         setState(() {
           _isLoading = false;
         });
-        
+
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
@@ -167,7 +175,7 @@ class _ProductsManagementPageState extends ConsumerState<ProductsManagementPage>
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('إدارة المنتجات'),
@@ -221,7 +229,7 @@ class _ProductsManagementPageState extends ConsumerState<ProductsManagementPage>
             },
           ),
           const SizedBox(height: 16),
-          
+
           // شريط الفئات
           SizedBox(
             height: 40,
@@ -231,7 +239,7 @@ class _ProductsManagementPageState extends ConsumerState<ProductsManagementPage>
               itemBuilder: (context, index) {
                 final category = _categories[index];
                 final isSelected = category == _selectedCategory;
-                
+
                 return Padding(
                   padding: const EdgeInsets.only(right: 8),
                   child: ChoiceChip(
@@ -263,7 +271,7 @@ class _ProductsManagementPageState extends ConsumerState<ProductsManagementPage>
 
   Widget _buildProductsList(ThemeData theme) {
     final products = filteredProducts;
-    
+
     if (products.isEmpty) {
       return Center(
         child: Column(
@@ -293,7 +301,7 @@ class _ProductsManagementPageState extends ConsumerState<ProductsManagementPage>
         ),
       );
     }
-    
+
     return RefreshIndicator(
       onRefresh: _loadProducts,
       child: ListView.builder(
@@ -315,7 +323,7 @@ class _ProductsManagementPageState extends ConsumerState<ProductsManagementPage>
     final category = product['category'] as String? ?? 'أخرى';
     final isAvailable = product['isAvailable'] as bool? ?? true;
     final stockQuantity = product['stockQuantity'] as int? ?? 0;
-    
+
     return AppWidgets.appCard(
       margin: const EdgeInsets.only(bottom: 16),
       child: Column(
@@ -330,7 +338,8 @@ class _ProductsManagementPageState extends ConsumerState<ProductsManagementPage>
                   image: NetworkImage(imageUrl),
                   fit: BoxFit.cover,
                 ),
-                borderRadius: const BorderRadius.vertical(top: Radius.circular(4)),
+                borderRadius:
+                    const BorderRadius.vertical(top: Radius.circular(4)),
               ),
             )
           else
@@ -344,7 +353,7 @@ class _ProductsManagementPageState extends ConsumerState<ProductsManagementPage>
                 color: theme.colorScheme.primary.withOpacity(0.5),
               ),
             ),
-          
+
           // تفاصيل المنتج
           Padding(
             padding: const EdgeInsets.all(16),
@@ -364,20 +373,23 @@ class _ProductsManagementPageState extends ConsumerState<ProductsManagementPage>
                       ),
                     ),
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
                         color: isAvailable
                             ? AppColors.success.withOpacity(0.1)
                             : AppColors.error.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(4),
                         border: Border.all(
-                          color: isAvailable ? AppColors.success : AppColors.error,
+                          color:
+                              isAvailable ? AppColors.success : AppColors.error,
                         ),
                       ),
                       child: Text(
                         isAvailable ? 'متاح' : 'غير متاح',
                         style: TextStyle(
-                          color: isAvailable ? AppColors.success : AppColors.error,
+                          color:
+                              isAvailable ? AppColors.success : AppColors.error,
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
                         ),
@@ -389,7 +401,8 @@ class _ProductsManagementPageState extends ConsumerState<ProductsManagementPage>
                 Row(
                   children: [
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
                         color: theme.colorScheme.primary.withOpacity(0.1),
                         borderRadius: BorderRadius.circular(4),
@@ -426,7 +439,7 @@ class _ProductsManagementPageState extends ConsumerState<ProductsManagementPage>
                   ],
                 ),
                 const SizedBox(height: 16),
-                
+
                 // أزرار الإجراءات
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -434,7 +447,8 @@ class _ProductsManagementPageState extends ConsumerState<ProductsManagementPage>
                     Expanded(
                       child: AppWidgets.appButton(
                         text: 'تعديل',
-                        onPressed: () => context.push('${RouteConstants.editProduct}/$id'),
+                        onPressed: () =>
+                            context.push('${RouteConstants.editProduct}/$id'),
                         icon: Icons.edit,
                         backgroundColor: Colors.white,
                         textColor: theme.colorScheme.primary,
@@ -445,11 +459,16 @@ class _ProductsManagementPageState extends ConsumerState<ProductsManagementPage>
                     Expanded(
                       child: AppWidgets.appButton(
                         text: isAvailable ? 'إخفاء' : 'إظهار',
-                        onPressed: () => _toggleProductAvailability(id, isAvailable),
-                        icon: isAvailable ? Icons.visibility_off : Icons.visibility,
+                        onPressed: () =>
+                            _toggleProductAvailability(id, isAvailable),
+                        icon: isAvailable
+                            ? Icons.visibility_off
+                            : Icons.visibility,
                         backgroundColor: Colors.white,
-                        textColor: isAvailable ? AppColors.warning : AppColors.success,
-                        borderColor: isAvailable ? AppColors.warning : AppColors.success,
+                        textColor:
+                            isAvailable ? AppColors.warning : AppColors.success,
+                        borderColor:
+                            isAvailable ? AppColors.warning : AppColors.success,
                       ),
                     ),
                     const SizedBox(width: 8),

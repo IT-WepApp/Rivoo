@@ -129,13 +129,16 @@ class AppTextField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     // تحديد الألوان والأنماط
-    final effectiveFillColor = fillColor ?? theme.inputDecorationTheme.fillColor;
-    final effectiveBorderColor = borderColor ?? theme.inputDecorationTheme.enabledBorder?.borderSide.color;
-    final effectiveFocusedBorderColor = focusedBorderColor ?? theme.colorScheme.primary;
+    final effectiveFillColor =
+        fillColor ?? theme.inputDecorationTheme.fillColor;
+    final effectiveBorderColor = borderColor ??
+        theme.inputDecorationTheme.enabledBorder?.borderSide.color;
+    final effectiveFocusedBorderColor =
+        focusedBorderColor ?? theme.colorScheme.primary;
     final effectiveTextColor = textColor ?? theme.textTheme.bodyLarge?.color;
-    
+
     // إنشاء أيقونة النهاية إذا كانت موجودة
     Widget? suffixIconWidget;
     if (suffixIcon != null) {
@@ -145,7 +148,7 @@ class AppTextField extends StatelessWidget {
         color: theme.colorScheme.primary,
       );
     }
-    
+
     // إنشاء حقل النص
     return TextFormField(
       controller: controller,
@@ -163,19 +166,23 @@ class AppTextField extends StatelessWidget {
       enabled: enabled,
       focusNode: focusNode,
       onTap: onTap,
-      style: textStyle ?? TextStyle(
-        color: effectiveTextColor,
-        fontSize: fontSize ?? 16.0,
-      ),
+      style: textStyle ??
+          TextStyle(
+            color: effectiveTextColor,
+            fontSize: fontSize ?? 16.0,
+          ),
       decoration: InputDecoration(
         labelText: label,
         hintText: hint,
         errorText: errorText,
         filled: true,
         fillColor: effectiveFillColor,
-        prefixIcon: prefixIcon != null ? Icon(prefixIcon, color: theme.colorScheme.primary) : null,
+        prefixIcon: prefixIcon != null
+            ? Icon(prefixIcon, color: theme.colorScheme.primary)
+            : null,
         suffixIcon: suffixIconWidget,
-        labelStyle: labelStyle ?? TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.7)),
+        labelStyle: labelStyle ??
+            TextStyle(color: theme.colorScheme.onSurface.withOpacity(0.7)),
         hintStyle: hintStyle ?? TextStyle(color: theme.hintColor),
         errorStyle: TextStyle(color: theme.colorScheme.error),
         border: OutlineInputBorder(
@@ -188,7 +195,8 @@ class AppTextField extends StatelessWidget {
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8.0),
-          borderSide: BorderSide(color: effectiveFocusedBorderColor, width: 2.0),
+          borderSide:
+              BorderSide(color: effectiveFocusedBorderColor, width: 2.0),
         ),
         errorBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8.0),
@@ -198,7 +206,8 @@ class AppTextField extends StatelessWidget {
           borderRadius: BorderRadius.circular(8.0),
           borderSide: BorderSide(color: theme.colorScheme.error, width: 2.0),
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16.0, vertical: 16.0),
       ),
     );
   }

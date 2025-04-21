@@ -8,6 +8,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // إنشاء فئات وهمية للاختبار
 class MockSecureStorageService extends Mock implements SecureStorageService {}
+
 class MockAuthService extends Mock implements AuthService {}
 
 void main() {
@@ -68,9 +69,12 @@ void main() {
 
       // بريد إلكتروني غير صحيح
       expect(Validators.validateEmail(''), 'الرجاء إدخال البريد الإلكتروني');
-      expect(Validators.validateEmail('user'), 'الرجاء إدخال بريد إلكتروني صحيح');
-      expect(Validators.validateEmail('user@'), 'الرجاء إدخال بريد إلكتروني صحيح');
-      expect(Validators.validateEmail('user@example'), 'الرجاء إدخال بريد إلكتروني صحيح');
+      expect(
+          Validators.validateEmail('user'), 'الرجاء إدخال بريد إلكتروني صحيح');
+      expect(
+          Validators.validateEmail('user@'), 'الرجاء إدخال بريد إلكتروني صحيح');
+      expect(Validators.validateEmail('user@example'),
+          'الرجاء إدخال بريد إلكتروني صحيح');
     });
 
     test('التحقق من صحة كلمة المرور', () {
@@ -80,9 +84,12 @@ void main() {
 
       // كلمة مرور غير صحيحة
       expect(Validators.validatePassword(''), 'الرجاء إدخال كلمة المرور');
-      expect(Validators.validatePassword('pass'), 'يجب أن تحتوي كلمة المرور على 8 أحرف على الأقل');
-      expect(Validators.validatePassword('password'), 'يجب أن تحتوي كلمة المرور على حرف كبير واحد على الأقل');
-      expect(Validators.validatePassword('Password'), 'يجب أن تحتوي كلمة المرور على رقم واحد على الأقل');
+      expect(Validators.validatePassword('pass'),
+          'يجب أن تحتوي كلمة المرور على 8 أحرف على الأقل');
+      expect(Validators.validatePassword('password'),
+          'يجب أن تحتوي كلمة المرور على حرف كبير واحد على الأقل');
+      expect(Validators.validatePassword('Password'),
+          'يجب أن تحتوي كلمة المرور على رقم واحد على الأقل');
     });
 
     test('التحقق من صحة رقم الهاتف', () {
@@ -92,8 +99,10 @@ void main() {
 
       // رقم هاتف غير صحيح
       expect(Validators.validatePhone(''), 'الرجاء إدخال رقم الهاتف');
-      expect(Validators.validatePhone('123'), 'يجب أن يحتوي رقم الهاتف على 10 أرقام على الأقل');
-      expect(Validators.validatePhone('abcdefghij'), 'يجب أن يحتوي رقم الهاتف على أرقام فقط');
+      expect(Validators.validatePhone('123'),
+          'يجب أن يحتوي رقم الهاتف على 10 أرقام على الأقل');
+      expect(Validators.validatePhone('abcdefghij'),
+          'يجب أن يحتوي رقم الهاتف على أرقام فقط');
     });
 
     test('التحقق من صحة الاسم', () {
@@ -103,7 +112,8 @@ void main() {
 
       // اسم غير صحيح
       expect(Validators.validateName(''), 'الرجاء إدخال الاسم');
-      expect(Validators.validateName('م'), 'يجب أن يحتوي الاسم على حرفين على الأقل');
+      expect(Validators.validateName('م'),
+          'يجب أن يحتوي الاسم على حرفين على الأقل');
     });
   });
 
@@ -128,7 +138,8 @@ void main() {
       // ترتيب
       const email = 'user@example.com';
       const password = 'Password123!';
-      when(mockAuthService.signIn(email, password)).thenAnswer((_) async => true);
+      when(mockAuthService.signIn(email, password))
+          .thenAnswer((_) async => true);
 
       // تنفيذ
       final result = await mockAuthService.signIn(email, password);
@@ -143,7 +154,8 @@ void main() {
       const email = 'user@example.com';
       const password = 'Password123!';
       const name = 'محمد أحمد';
-      when(mockAuthService.signUp(email, password, name)).thenAnswer((_) async => true);
+      when(mockAuthService.signUp(email, password, name))
+          .thenAnswer((_) async => true);
 
       // تنفيذ
       final result = await mockAuthService.signUp(email, password, name);
@@ -168,7 +180,8 @@ void main() {
     test('يجب أن تقوم بإرسال رابط إعادة تعيين كلمة المرور بنجاح', () async {
       // ترتيب
       const email = 'user@example.com';
-      when(mockAuthService.sendPasswordResetEmail(email)).thenAnswer((_) async => true);
+      when(mockAuthService.sendPasswordResetEmail(email))
+          .thenAnswer((_) async => true);
 
       // تنفيذ
       final result = await mockAuthService.sendPasswordResetEmail(email);
@@ -192,7 +205,8 @@ void main() {
   });
 
   group('اختبارات واجهة المستخدم', () {
-    testWidgets('يجب أن تعرض صفحة تسجيل الدخول بشكل صحيح', (WidgetTester tester) async {
+    testWidgets('يجب أن تعرض صفحة تسجيل الدخول بشكل صحيح',
+        (WidgetTester tester) async {
       // بناء واجهة المستخدم
       await tester.pumpWidget(
         const MaterialApp(
@@ -208,7 +222,8 @@ void main() {
       expect(find.text('تسجيل الدخول'), findsOneWidget);
     });
 
-    testWidgets('يجب أن تعرض صفحة التسجيل بشكل صحيح', (WidgetTester tester) async {
+    testWidgets('يجب أن تعرض صفحة التسجيل بشكل صحيح',
+        (WidgetTester tester) async {
       // بناء واجهة المستخدم
       await tester.pumpWidget(
         const MaterialApp(
@@ -224,7 +239,8 @@ void main() {
       expect(find.text('إنشاء حساب جديد'), findsOneWidget);
     });
 
-    testWidgets('يجب أن تعرض صفحة نسيت كلمة المرور بشكل صحيح', (WidgetTester tester) async {
+    testWidgets('يجب أن تعرض صفحة نسيت كلمة المرور بشكل صحيح',
+        (WidgetTester tester) async {
       // بناء واجهة المستخدم
       await tester.pumpWidget(
         const MaterialApp(

@@ -11,22 +11,28 @@ dependencies:
   flutter_localizations:
     sdk: flutter
 
-  # Added missing dependencies
-  flutter_riverpod: any
-  go_router: any
-  geolocator: any
-  google_maps_flutter: any
-  http: any
-  # End of added dependencies
+  # إدارة الحالة
+  flutter_riverpod: ^2.4.9
+  go_router: ^13.0.1
+  
+  # الخرائط والموقع
+  geolocator: ^13.0.2
+  google_maps_flutter: ^2.10.1
+  
+  # الشبكة والاتصال
+  http: ^1.3.0
+  connectivity_plus: ^5.0.2
 
+  # التخزين المحلي
   flutter_secure_storage: ^9.0.0
 
   # Firebase حزم
-  firebase_core: any
+  firebase_core: ^3.13.0
   firebase_auth: ^5.5.2
-  firebase_messaging: any
-  cloud_firestore: any
-  firebase_crashlytics: ^3.4.8
+  firebase_messaging: ^15.2.5
+  cloud_firestore: ^5.6.6
+  firebase_crashlytics: ^4.0.0  # تم تحديث الإصدار لحل التعارض
+  firebase_storage: ^12.4.5
 
   # إشعارات وتخزين محلي
   flutter_local_notifications: ^19.1.0
@@ -35,7 +41,11 @@ dependencies:
 
   # واجهة المستخدم
   cached_network_image: ^3.3.1
-  intl: ^0.20.2 # Already present, ensuring it is listed
+  intl: ^0.19.0
+  
+  # إضافة تبعيات مفقودة
+  equatable: ^2.0.5
+  dartz: ^0.10.1
 
   # الحزم المشتركة في المونوربو
   shared_models:
@@ -44,11 +54,17 @@ dependencies:
     path: ../shared_modules/shared_services
   shared_widgets:
     path: ../shared_modules/shared_widgets
+  shared_core:
+    path: ../shared_core
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^2.0.0
+  build_runner: ^2.4.6
+  mockito: ^5.4.2
 
+  integration_test: any
 flutter:
   uses-material-design: true
+  generate: true

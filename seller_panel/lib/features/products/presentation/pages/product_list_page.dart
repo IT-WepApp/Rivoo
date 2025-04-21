@@ -26,10 +26,13 @@ class _ProductListPageState extends ConsumerState<ProductListPage> {
     final productsState = ref.watch(sellerProductsProvider);
     final theme = Theme.of(context);
 
-    ref.listen<AsyncValue<List<Product>>>(sellerProductsProvider, (previous, next) {
+    ref.listen<AsyncValue<List<Product>>>(sellerProductsProvider,
+        (previous, next) {
       if (next is AsyncError && next != previous) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: ${next.error}'), backgroundColor: Colors.red),
+          SnackBar(
+              content: Text('Error: ${next.error}'),
+              backgroundColor: Colors.red),
         );
       }
     });
@@ -72,7 +75,8 @@ class _ProductListPageState extends ConsumerState<ProductListPage> {
             child: productsState.when(
               data: (products) => _buildProductGrid(context, products),
               error: (error, stackTrace) => Center(
-                child: Text('Failed to load products. Pull down to retry. Error: $error'),
+                child: Text(
+                    'Failed to load products. Pull down to retry. Error: $error'),
               ),
               loading: () => const Center(child: CircularProgressIndicator()),
             ),
@@ -94,7 +98,8 @@ class _ProductListPageState extends ConsumerState<ProductListPage> {
     }
 
     return RefreshIndicator(
-      onRefresh: () => ref.read(sellerProductsProvider.notifier).fetchProducts(),
+      onRefresh: () =>
+          ref.read(sellerProductsProvider.notifier).fetchProducts(),
       child: GridView.builder(
         padding: const EdgeInsets.all(8.0),
         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -150,7 +155,8 @@ class ProductItem extends ConsumerWidget {
                           return Center(
                             child: CircularProgressIndicator(
                               value: loadingProgress.expectedTotalBytes != null
-                                  ? loadingProgress.cumulativeBytesLoaded / loadingProgress.expectedTotalBytes!
+                                  ? loadingProgress.cumulativeBytesLoaded /
+                                      loadingProgress.expectedTotalBytes!
                                   : null,
                             ),
                           );
@@ -169,23 +175,28 @@ class ProductItem extends ConsumerWidget {
                   children: [
                     Text(
                       product.name,
-                      style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
+                      style: theme.textTheme.titleSmall
+                          ?.copyWith(fontWeight: FontWeight.bold),
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                     ),
                     Text(
                       '\$${product.price.toStringAsFixed(2)}',
-                      style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.primary),
+                      style: theme.textTheme.bodyMedium
+                          ?.copyWith(color: theme.colorScheme.primary),
                     ),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Chip(
-                          label: Text(product.status, style: const TextStyle(fontSize: 10)),
-                          backgroundColor: _getStatusColor(product.status, theme),
+                          label: Text(product.status,
+                              style: const TextStyle(fontSize: 10)),
+                          backgroundColor:
+                              _getStatusColor(product.status, theme),
                           padding: EdgeInsets.zero,
                           visualDensity: VisualDensity.compact,
-                          labelPadding: const EdgeInsets.symmetric(horizontal: 4),
+                          labelPadding:
+                              const EdgeInsets.symmetric(horizontal: 4),
                           side: BorderSide.none,
                         ),
                         SizedBox(
@@ -195,9 +206,11 @@ class ProductItem extends ConsumerWidget {
                             padding: EdgeInsets.zero,
                             iconSize: 18,
                             visualDensity: VisualDensity.compact,
-                            icon: Icon(Icons.delete_outline, color: theme.colorScheme.error),
+                            icon: Icon(Icons.delete_outline,
+                                color: theme.colorScheme.error),
                             tooltip: 'Delete Product',
-                            onPressed: () => _showDeleteConfirmation(context, ref, product.id),
+                            onPressed: () => _showDeleteConfirmation(
+                                context, ref, product.id),
                           ),
                         ),
                       ],
@@ -212,19 +225,24 @@ class ProductItem extends ConsumerWidget {
     );
   }
 
-  void _showDeleteConfirmation(BuildContext context, WidgetRef ref, String productId) {
+  void _showDeleteConfirmation(
+      BuildContext context, WidgetRef ref, String productId) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Confirm Deletion'),
         content: const Text('Are you sure you want to delete this product?'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+          TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('Cancel')),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
             onPressed: () async {
               Navigator.pop(context);
-              await ref.read(sellerProductsProvider.notifier).deleteProduct(productId);
+              await ref
+                  .read(sellerProductsProvider.notifier)
+                  .deleteProduct(productId);
             },
             child: const Text('Delete', style: TextStyle(color: Colors.white)),
           ),

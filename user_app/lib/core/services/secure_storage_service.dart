@@ -11,19 +11,18 @@ part 'secure_storage_service.g.dart';
 class SecureStorageService {
   final FlutterSecureStorage _secureStorage;
   final EncryptionUtils _encryptionUtils;
-  
+
   // مفاتيح التخزين
   static const String _tokenKey = 'auth_token';
   static const String _refreshTokenKey = 'refresh_token';
   static const String _userDataKey = 'user_data';
   static const String _preferencesKey = 'user_preferences';
-  
+
   SecureStorageService({
     required FlutterSecureStorage secureStorage,
     required EncryptionUtils encryptionUtils,
-  }) : 
-    _secureStorage = secureStorage,
-    _encryptionUtils = encryptionUtils;
+  })  : _secureStorage = secureStorage,
+        _encryptionUtils = encryptionUtils;
 
   /// حفظ رمز المصادقة بشكل آمن مع تشفير وتوقيت انتهاء الصلاحية
   Future<void> saveAuthToken(String token, {int expiryMinutes = 60}) async {
@@ -32,7 +31,7 @@ class SecureStorageService {
       'token': token,
       'expiry': expiryTime.toIso8601String(),
     };
-    
+
     final encryptedData = _encryptionUtils.encrypt(jsonEncode(tokenData));
     await _secureStorage.write(key: _tokenKey, value: encryptedData);
   }
@@ -42,17 +41,17 @@ class SecureStorageService {
     try {
       final encryptedData = await _secureStorage.read(key: _tokenKey);
       if (encryptedData == null) return null;
-      
+
       final decryptedData = _encryptionUtils.decrypt(encryptedData);
       final tokenData = jsonDecode(decryptedData) as Map<String, dynamic>;
-      
+
       final expiryTime = DateTime.parse(tokenData['expiry']);
       if (DateTime.now().isAfter(expiryTime)) {
         // الرمز منتهي الصلاحية، قم بحذفه والعودة بقيمة فارغة
         await _secureStorage.delete(key: _tokenKey);
         return null;
       }
-      
+
       return tokenData['token'] as String;
     } catch (e) {
       // في حالة وجود أي خطأ، قم بحذف الرمز والعودة بقيمة فارغة
@@ -72,7 +71,7 @@ class SecureStorageService {
     try {
       final encryptedToken = await _secureStorage.read(key: _refreshTokenKey);
       if (encryptedToken == null) return null;
-      
+
       return _encryptionUtils.decrypt(encryptedToken);
     } catch (e) {
       return null;
@@ -82,16 +81,17 @@ class SecureStorageService {
   /// حفظ بيانات المستخدم بشكل آمن مع توقيع رقمي للتحقق من السلامة
   Future<void> saveUserData(Map<String, dynamic> userData) async {
     final userDataString = jsonEncode(userData);
-    
+
     // إنشاء توقيع رقمي للبيانات للتحقق من سلامتها
     final signature = _createSignature(userDataString);
-    
+
     final dataWithSignature = {
       'data': userDataString,
       'signature': signature,
     };
-    
-    final encryptedData = _encryptionUtils.encrypt(jsonEncode(dataWithSignature));
+
+    final encryptedData =
+        _encryptionUtils.encrypt(jsonEncode(dataWithSignature));
     await _secureStorage.write(key: _userDataKey, value: encryptedData);
   }
 
@@ -100,13 +100,13 @@ class SecureStorageService {
     try {
       final encryptedData = await _secureStorage.read(key: _userDataKey);
       if (encryptedData == null) return null;
-      
+
       final decryptedData = _encryptionUtils.decrypt(encryptedData);
       final dataMap = jsonDecode(decryptedData) as Map<String, dynamic>;
-      
+
       final userDataString = dataMap['data'] as String;
       final signature = dataMap['signature'] as String;
-      
+
       // التحقق من سلامة البيانات باستخدام التوقيع الرقمي
       if (_verifySignature(userDataString, signature)) {
         return jsonDecode(userDataString) as Map<String, dynamic>;
@@ -131,7 +131,7 @@ class SecureStorageService {
     try {
       final encryptedData = await _secureStorage.read(key: _preferencesKey);
       if (encryptedData == null) return null;
-      
+
       final decryptedData = _encryptionUtils.decrypt(encryptedData);
       return jsonDecode(decryptedData) as Map<String, dynamic>;
     } catch (e) {
@@ -150,7 +150,7 @@ class SecureStorageService {
     try {
       final encryptedValue = await _secureStorage.read(key: key);
       if (encryptedValue == null) return null;
-      
+
       return _encryptionUtils.decrypt(encryptedValue);
     } catch (e) {
       return null;
@@ -185,7 +185,7 @@ class SecureStorageService {
 /// مزود خدمة التخزين الآمن
 @riverpod
 SecureStorageService secureStorageService(SecureStorageServiceRef ref) {
-  final secureStorage = const FlutterSecureStorage(
+  const secureStorage = FlutterSecureStorage(
     aOptions: AndroidOptions(
       encryptedSharedPreferences: true,
       resetOnError: true,
@@ -194,9 +194,9 @@ SecureStorageService secureStorageService(SecureStorageServiceRef ref) {
       accessibility: KeychainAccessibility.first_unlock,
     ),
   );
-  
+
   final encryptionUtils = EncryptionUtils();
-  
+
   return SecureStorageService(
     secureStorage: secureStorage,
     encryptionUtils: encryptionUtils,

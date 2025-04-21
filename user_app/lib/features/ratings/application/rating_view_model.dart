@@ -1,10 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:dartz/dartz.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:uuid/uuid.dart';
 
-import '../../../../core/architecture/domain/failure.dart';
 import '../../../../core/architecture/presentation/base_view_model.dart';
 import '../domain/entities/rating.dart';
 import '../domain/usecases/rating_usecases.dart';
@@ -118,7 +116,7 @@ class RatingViewModel extends BaseViewModel {
       (failure) => setError(failure.message),
       (updatedRating) {
         _userRatingForProduct = updatedRating;
-        
+
         // تحديث القوائم المحلية
         if (_userRatingForProduct != null) {
           final productId = _userRatingForProduct!.productId;
@@ -139,7 +137,7 @@ class RatingViewModel extends BaseViewModel {
       (_) {
         _userRatingForProduct = null;
         _hasUserRated = false;
-        
+
         // تحديث القوائم المحلية
         if (productId != null) {
           getProductRatings(productId);
@@ -207,11 +205,13 @@ final ratingRepositoryProvider = Provider<RatingRepository>((ref) {
   );
 });
 
-final getProductRatingsUseCaseProvider = Provider<GetProductRatingsUseCase>((ref) {
+final getProductRatingsUseCaseProvider =
+    Provider<GetProductRatingsUseCase>((ref) {
   return GetProductRatingsUseCase(ref.watch(ratingRepositoryProvider));
 });
 
-final getProductRatingSummaryUseCaseProvider = Provider<GetProductRatingSummaryUseCase>((ref) {
+final getProductRatingSummaryUseCaseProvider =
+    Provider<GetProductRatingSummaryUseCase>((ref) {
   return GetProductRatingSummaryUseCase(ref.watch(ratingRepositoryProvider));
 });
 
@@ -231,23 +231,27 @@ final getUserRatingsUseCaseProvider = Provider<GetUserRatingsUseCase>((ref) {
   return GetUserRatingsUseCase(ref.watch(ratingRepositoryProvider));
 });
 
-final hasUserRatedProductUseCaseProvider = Provider<HasUserRatedProductUseCase>((ref) {
+final hasUserRatedProductUseCaseProvider =
+    Provider<HasUserRatedProductUseCase>((ref) {
   return HasUserRatedProductUseCase(ref.watch(ratingRepositoryProvider));
 });
 
-final getUserRatingForProductUseCaseProvider = Provider<GetUserRatingForProductUseCase>((ref) {
+final getUserRatingForProductUseCaseProvider =
+    Provider<GetUserRatingForProductUseCase>((ref) {
   return GetUserRatingForProductUseCase(ref.watch(ratingRepositoryProvider));
 });
 
 final ratingViewModelProvider = ChangeNotifierProvider<RatingViewModel>((ref) {
   return RatingViewModel(
     getProductRatingsUseCase: ref.watch(getProductRatingsUseCaseProvider),
-    getProductRatingSummaryUseCase: ref.watch(getProductRatingSummaryUseCaseProvider),
+    getProductRatingSummaryUseCase:
+        ref.watch(getProductRatingSummaryUseCaseProvider),
     addRatingUseCase: ref.watch(addRatingUseCaseProvider),
     updateRatingUseCase: ref.watch(updateRatingUseCaseProvider),
     deleteRatingUseCase: ref.watch(deleteRatingUseCaseProvider),
     getUserRatingsUseCase: ref.watch(getUserRatingsUseCaseProvider),
     hasUserRatedProductUseCase: ref.watch(hasUserRatedProductUseCaseProvider),
-    getUserRatingForProductUseCase: ref.watch(getUserRatingForProductUseCaseProvider),
+    getUserRatingForProductUseCase:
+        ref.watch(getUserRatingForProductUseCaseProvider),
   );
 });

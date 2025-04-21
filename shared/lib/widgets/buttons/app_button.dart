@@ -84,15 +84,16 @@ class AppButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     // تحديد الألوان بناءً على حالة الزر
-    final effectiveBackgroundColor = backgroundColor ?? theme.colorScheme.primary;
+    final effectiveBackgroundColor =
+        backgroundColor ?? theme.colorScheme.primary;
     final effectiveTextColor = textColor ?? theme.colorScheme.onPrimary;
     final effectiveIconColor = iconColor ?? effectiveTextColor;
-    
+
     // إنشاء محتوى الزر
     Widget buttonContent;
-    
+
     if (isLoading) {
       // محتوى الزر أثناء التحميل
       buttonContent = Row(
@@ -125,7 +126,7 @@ class AppButton extends StatelessWidget {
         size: iconSize ?? 20.0,
         color: effectiveIconColor,
       );
-      
+
       final textWidget = Text(
         text,
         style: TextStyle(
@@ -134,7 +135,7 @@ class AppButton extends StatelessWidget {
           fontWeight: FontWeight.bold,
         ),
       );
-      
+
       if (iconLeading) {
         buttonContent = Row(
           mainAxisSize: MainAxisSize.min,
@@ -167,7 +168,7 @@ class AppButton extends StatelessWidget {
         ),
       );
     }
-    
+
     // إنشاء الزر
     return SizedBox(
       width: width,

@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../domain/entities/user_entity.dart';
 import '../../domain/usecases/sign_in_usecase.dart';
@@ -71,7 +70,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   Future<void> _handleSignIn(SignInEvent event) async {
     state = AuthLoading();
-    
+
     try {
       final user = await _signInUseCase.execute(event.email, event.password);
       state = AuthAuthenticated(user);
@@ -82,7 +81,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   Future<void> _handleSignOut() async {
     state = AuthLoading();
-    
+
     try {
       await _signOutUseCase.execute();
       state = AuthUnauthenticated();
@@ -93,13 +92,13 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   Future<void> _handleCheckAuthStatus() async {
     state = AuthLoading();
-    
+
     try {
       final isSignedIn = await _isSignedInUseCase.execute();
-      
+
       if (isSignedIn) {
         final user = await _getCurrentUserUseCase.execute();
-        
+
         if (user != null) {
           state = AuthAuthenticated(user);
         } else {

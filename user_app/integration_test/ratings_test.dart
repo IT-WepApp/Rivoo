@@ -12,7 +12,8 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   group('اختبار نظام التقييمات والمراجعات', () {
-    testWidgets('تسجيل الدخول، عرض تفاصيل منتج، إضافة تقييم ومراجعة', (WidgetTester tester) async {
+    testWidgets('تسجيل الدخول، عرض تفاصيل منتج، إضافة تقييم ومراجعة',
+        (WidgetTester tester) async {
       // تشغيل التطبيق
       app.main();
       await tester.pumpAndSettle();
@@ -21,8 +22,10 @@ void main() {
       expect(find.byType(LoginScreen), findsOneWidget);
 
       // إدخال بيانات تسجيل الدخول
-      await tester.enterText(find.byKey(const Key('email_field')), 'test@example.com');
-      await tester.enterText(find.byKey(const Key('password_field')), 'password123');
+      await tester.enterText(
+          find.byKey(const Key('email_field')), 'test@example.com');
+      await tester.enterText(
+          find.byKey(const Key('password_field')), 'password123');
       await tester.pumpAndSettle();
 
       // النقر على زر تسجيل الدخول
@@ -58,10 +61,8 @@ void main() {
       await tester.pumpAndSettle();
 
       // إدخال نص المراجعة
-      await tester.enterText(
-        find.byKey(const Key('review_text_field')),
-        'منتج رائع وذو جودة عالية. أنصح به بشدة لمن يبحث عن منتج موثوق.'
-      );
+      await tester.enterText(find.byKey(const Key('review_text_field')),
+          'منتج رائع وذو جودة عالية. أنصح به بشدة لمن يبحث عن منتج موثوق.');
       await tester.pumpAndSettle();
 
       // النقر على زر إرسال التقييم
@@ -72,7 +73,10 @@ void main() {
       expect(find.byType(ProductReviewsScreen), findsOneWidget);
 
       // التحقق من ظهور التقييم الجديد في القائمة
-      expect(find.text('منتج رائع وذو جودة عالية. أنصح به بشدة لمن يبحث عن منتج موثوق.'), findsOneWidget);
+      expect(
+          find.text(
+              'منتج رائع وذو جودة عالية. أنصح به بشدة لمن يبحث عن منتج موثوق.'),
+          findsOneWidget);
 
       // العودة إلى شاشة تفاصيل المنتج
       await tester.tap(find.byIcon(Icons.arrow_back));

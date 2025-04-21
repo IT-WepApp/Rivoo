@@ -24,13 +24,13 @@ class SignInUseCase implements UseCase<UserModel, SignInParams> {
   @override
   Future<Either<Failure, UserModel>> call(SignInParams params) async {
     if (params.email.isEmpty) {
-      return Left(ValidationFailure(
+      return const Left(ValidationFailure(
         message: 'البريد الإلكتروني مطلوب',
         code: 'EMPTY_EMAIL',
       ));
     }
     if (params.password.isEmpty) {
-      return Left(ValidationFailure(
+      return const Left(ValidationFailure(
         message: 'كلمة المرور مطلوبة',
         code: 'EMPTY_PASSWORD',
       ));
@@ -138,7 +138,8 @@ class UpdateUserDataParams {
 }
 
 /// حالة استخدام تحديث بيانات المستخدم
-class UpdateUserDataUseCase implements UseCase<UserModel, UpdateUserDataParams> {
+class UpdateUserDataUseCase
+    implements UseCase<UserModel, UpdateUserDataParams> {
   final AuthRepository _authRepository;
 
   UpdateUserDataUseCase(this._authRepository);

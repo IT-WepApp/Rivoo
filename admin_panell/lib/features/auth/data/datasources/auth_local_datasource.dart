@@ -18,7 +18,7 @@ abstract class AuthLocalDataSource {
 /// تنفيذ مصدر البيانات المحلي باستخدام SecureStorageService
 class SecureStorageAuthDataSource implements AuthLocalDataSource {
   final SecureStorageService _secureStorage;
-  
+
   static const String userKey = 'cached_user';
   static const String tokenKey = 'access_token';
 
@@ -33,11 +33,11 @@ class SecureStorageAuthDataSource implements AuthLocalDataSource {
   @override
   Future<UserModel?> getLastSignedInUser() async {
     final userJson = await _secureStorage.read(userKey);
-    
+
     if (userJson == null) {
       return null;
     }
-    
+
     try {
       final userData = jsonDecode(userJson) as Map<String, dynamic>;
       return UserModel.fromJson(userData);
@@ -51,17 +51,17 @@ class SecureStorageAuthDataSource implements AuthLocalDataSource {
   Future<void> clearUser() async {
     await _secureStorage.delete(userKey);
   }
-  
+
   @override
   Future<void> saveToken(String token) async {
     await _secureStorage.write(tokenKey, token);
   }
-  
+
   @override
   Future<String?> getToken() async {
     return await _secureStorage.read(tokenKey);
   }
-  
+
   @override
   Future<bool> hasToken() async {
     final token = await getToken();

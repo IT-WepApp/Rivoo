@@ -11,10 +11,12 @@ abstract class OrderRepository {
   Future<Either<Failure, OrderEntity>> getOrderDetails(String orderId);
 
   /// تحديث حالة الطلب
-  Future<Either<Failure, OrderEntity>> updateOrderStatus(String orderId, String status);
+  Future<Either<Failure, OrderEntity>> updateOrderStatus(
+      String orderId, String status);
 
   /// الحصول على إحصائيات الطلبات للبائع
-  Future<Either<Failure, Map<String, dynamic>>> getOrderStatistics(String sellerId);
+  Future<Either<Failure, Map<String, dynamic>>> getOrderStatistics(
+      String sellerId);
 
   /// البحث عن الطلبات
   Future<Either<Failure, List<OrderEntity>>> searchOrders(

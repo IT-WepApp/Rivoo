@@ -12,7 +12,8 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   group('اختبار نظام الدعم الفني', () {
-    testWidgets('تسجيل الدخول، إنشاء تذكرة دعم فني، متابعة التذكرة', (WidgetTester tester) async {
+    testWidgets('تسجيل الدخول، إنشاء تذكرة دعم فني، متابعة التذكرة',
+        (WidgetTester tester) async {
       // تشغيل التطبيق
       app.main();
       await tester.pumpAndSettle();
@@ -21,8 +22,10 @@ void main() {
       expect(find.byType(LoginScreen), findsOneWidget);
 
       // إدخال بيانات تسجيل الدخول
-      await tester.enterText(find.byKey(const Key('email_field')), 'test@example.com');
-      await tester.enterText(find.byKey(const Key('password_field')), 'password123');
+      await tester.enterText(
+          find.byKey(const Key('email_field')), 'test@example.com');
+      await tester.enterText(
+          find.byKey(const Key('password_field')), 'password123');
       await tester.pumpAndSettle();
 
       // النقر على زر تسجيل الدخول
@@ -47,11 +50,10 @@ void main() {
       expect(find.byType(CreateTicketScreen), findsOneWidget);
 
       // إدخال بيانات التذكرة
-      await tester.enterText(find.byKey(const Key('ticket_subject_field')), 'مشكلة في الدفع');
       await tester.enterText(
-        find.byKey(const Key('ticket_description_field')),
-        'لم أتمكن من إتمام عملية الدفع باستخدام بطاقة الائتمان الخاصة بي. تظهر رسالة خطأ عند محاولة الدفع.'
-      );
+          find.byKey(const Key('ticket_subject_field')), 'مشكلة في الدفع');
+      await tester.enterText(find.byKey(const Key('ticket_description_field')),
+          'لم أتمكن من إتمام عملية الدفع باستخدام بطاقة الائتمان الخاصة بي. تظهر رسالة خطأ عند محاولة الدفع.');
       await tester.pumpAndSettle();
 
       // اختيار نوع المشكلة
@@ -85,13 +87,14 @@ void main() {
 
       // التحقق من ظهور تفاصيل التذكرة
       expect(find.text('مشكلة في الدفع'), findsOneWidget);
-      expect(find.text('لم أتمكن من إتمام عملية الدفع باستخدام بطاقة الائتمان الخاصة بي. تظهر رسالة خطأ عند محاولة الدفع.'), findsOneWidget);
+      expect(
+          find.text(
+              'لم أتمكن من إتمام عملية الدفع باستخدام بطاقة الائتمان الخاصة بي. تظهر رسالة خطأ عند محاولة الدفع.'),
+          findsOneWidget);
 
       // إضافة رد على التذكرة
-      await tester.enterText(
-        find.byKey(const Key('reply_message_field')),
-        'هل يمكنك توضيح رسالة الخطأ التي تظهر لك؟'
-      );
+      await tester.enterText(find.byKey(const Key('reply_message_field')),
+          'هل يمكنك توضيح رسالة الخطأ التي تظهر لك؟');
       await tester.pumpAndSettle();
 
       // إرسال الرد
@@ -99,7 +102,8 @@ void main() {
       await tester.pumpAndSettle();
 
       // التحقق من ظهور الرد في المحادثة
-      expect(find.text('هل يمكنك توضيح رسالة الخطأ التي تظهر لك؟'), findsOneWidget);
+      expect(find.text('هل يمكنك توضيح رسالة الخطأ التي تظهر لك؟'),
+          findsOneWidget);
 
       // العودة إلى شاشة الدعم الفني
       await tester.tap(find.byIcon(Icons.arrow_back));

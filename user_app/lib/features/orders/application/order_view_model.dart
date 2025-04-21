@@ -164,7 +164,8 @@ final trackOrderUseCaseProvider = Provider<TrackOrderUseCase>((ref) {
   return TrackOrderUseCase(ref.watch(orderRepositoryProvider));
 });
 
-final updateShippingAddressUseCaseProvider = Provider<UpdateShippingAddressUseCase>((ref) {
+final updateShippingAddressUseCaseProvider =
+    Provider<UpdateShippingAddressUseCase>((ref) {
   return UpdateShippingAddressUseCase(ref.watch(orderRepositoryProvider));
 });
 
@@ -175,6 +176,7 @@ final orderViewModelProvider = ChangeNotifierProvider<OrderViewModel>((ref) {
     createOrderUseCase: ref.watch(createOrderUseCaseProvider),
     cancelOrderUseCase: ref.watch(cancelOrderUseCaseProvider),
     trackOrderUseCase: ref.watch(trackOrderUseCaseProvider),
-    updateShippingAddressUseCase: ref.watch(updateShippingAddressUseCaseProvider),
+    updateShippingAddressUseCase:
+        ref.watch(updateShippingAddressUseCaseProvider),
   );
 });

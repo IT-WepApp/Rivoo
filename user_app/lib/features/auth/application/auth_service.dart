@@ -1,9 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter/material.dart';
 import 'package:crypto/crypto.dart';
 import 'dart:convert';
-import 'dart:math';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../core/services/secure_storage_service.dart';
 import '../../../core/constants/app_constants.dart';
@@ -16,7 +14,8 @@ final secureStorageServiceProvider = Provider<SecureStorageService>((ref) {
 /// مزود خدمة المصادقة
 final authServiceProvider = Provider<AuthService>((ref) {
   final secureStorage = ref.watch(secureStorageServiceProvider);
-  return AuthService(secureStorage, FirebaseAuth.instance, FirebaseFirestore.instance);
+  return AuthService(
+      secureStorage, FirebaseAuth.instance, FirebaseFirestore.instance);
 });
 
 /// حالة المصادقة
@@ -91,10 +90,10 @@ class AuthNotifier extends StateNotifier<AuthState> {
         // التحقق من تأكيد البريد الإلكتروني
         await user.reload();
         final isEmailVerified = user.emailVerified;
-        
+
         // الحصول على دور المستخدم
         final role = await _authService.getUserRole(user.uid);
-        
+
         state = state.copyWith(
           status: AuthStatus.authenticated,
           user: user,
@@ -127,7 +126,8 @@ class AuthNotifier extends StateNotifier<AuthState> {
   }
 
   /// إنشاء حساب جديد باستخدام البريد الإلكتروني وكلمة المرور
-  Future<void> signUp(String email, String password, {UserRole role = UserRole.customer}) async {
+  Future<void> signUp(String email, String password,
+      {UserRole role = UserRole.customer}) async {
     try {
       state = state.copyWith(status: AuthStatus.loading);
       await _authService.signUp(email, password, role: role);
@@ -204,7 +204,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
     try {
       state = state.copyWith(status: AuthStatus.loading);
       await _authService.updateUserRole(userId, role);
-      
+
       if (userId == state.user?.uid) {
         state = state.copyWith(
           role: role,
@@ -248,16 +248,17 @@ class AuthService {
         email: email,
         password: password,
       );
-      
+
       // حفظ الرمز المميز وحذف كلمة المرور
       if (credential.user != null) {
         final token = await credential.user!.getIdToken();
         final refreshToken = await _getRefreshToken(credential.user!);
-        
+
         // استخدام الطرق المتقدمة في SecureStorageService لحفظ الرموز المميزة
-        await _secureStorage.saveAuthToken(token, expiryMinutes: AppConstants.sessionTimeoutMinutes);
+        await _secureStorage.saveAuthToken(token,
+            expiryMinutes: AppConstants.sessionTimeoutMinutes);
         await _secureStorage.saveRefreshToken(refreshToken);
-        
+
         // حفظ بيانات المستخدم بشكل آمن
         final userData = {
           'uid': credential.user!.uid,
@@ -267,11 +268,11 @@ class AuthService {
           'lastLogin': DateTime.now().toIso8601String(),
         };
         await _secureStorage.saveUserData(userData);
-        
+
         // تسجيل تاريخ تسجيل الدخول
         await _updateLoginTimestamp(credential.user!.uid);
       }
-      
+
       return credential;
     } catch (e) {
       // تسجيل محاولة تسجيل الدخول الفاشلة للكشف عن الهجمات
@@ -281,27 +282,30 @@ class AuthService {
   }
 
   /// إنشاء حساب جديد باستخدام البريد الإلكتروني وكلمة المرور
-  Future<UserCredential> signUp(String email, String password, {UserRole role = UserRole.customer}) async {
+  Future<UserCredential> signUp(String email, String password,
+      {UserRole role = UserRole.customer}) async {
     try {
       // التحقق من قوة كلمة المرور
       if (!_isStrongPassword(password)) {
-        throw Exception('كلمة المرور غير قوية بما فيه الكفاية. يجب أن تحتوي على 8 أحرف على الأقل وتتضمن أحرفًا كبيرة وصغيرة وأرقامًا ورموزًا.');
+        throw Exception(
+            'كلمة المرور غير قوية بما فيه الكفاية. يجب أن تحتوي على 8 أحرف على الأقل وتتضمن أحرفًا كبيرة وصغيرة وأرقامًا ورموزًا.');
       }
-      
+
       final credential = await _auth.createUserWithEmailAndPassword(
         email: email,
         password: password,
       );
-      
+
       // حفظ الرمز المميز وحذف كلمة المرور
       if (credential.user != null) {
         final token = await credential.user!.getIdToken();
         final refreshToken = await _getRefreshToken(credential.user!);
-        
+
         // استخدام الطرق المتقدمة في SecureStorageService لحفظ الرموز المميزة
-        await _secureStorage.saveAuthToken(token, expiryMinutes: AppConstants.sessionTimeoutMinutes);
+        await _secureStorage.saveAuthToken(token,
+            expiryMinutes: AppConstants.sessionTimeoutMinutes);
         await _secureStorage.saveRefreshToken(refreshToken);
-        
+
         // حفظ بيانات المستخدم بشكل آمن
         final userData = {
           'uid': credential.user!.uid,
@@ -312,14 +316,14 @@ class AuthService {
           'createdAt': DateTime.now().toIso8601String(),
         };
         await _secureStorage.saveUserData(userData);
-        
+
         // إنشاء وثيقة المستخدم في Firestore
         await _createUserDocument(credential.user!.uid, email, role);
-        
+
         // إرسال بريد تأكيد البريد الإلكتروني
         await credential.user!.sendEmailVerification();
       }
-      
+
       return credential;
     } catch (e) {
       throw Exception('فشل إنشاء الحساب: $e');
@@ -339,7 +343,7 @@ class AuthService {
   Future<void> signOut() async {
     try {
       await _auth.signOut();
-      
+
       // استخدام طريقة clearAll من SecureStorageService لحذف جميع البيانات المخزنة
       await _secureStorage.clearAll();
     } catch (e) {
@@ -382,7 +386,7 @@ class AuthService {
       if (user != null) {
         await user.updateDisplayName(displayName);
         await user.updatePhotoURL(photoURL);
-        
+
         // تحديث وثيقة المستخدم في Firestore
         await _firestore.collection('users').doc(user.uid).update({
           'displayName': displayName,
@@ -404,7 +408,7 @@ class AuthService {
       if (user != null) {
         // استخدام الأسلوب الموصى به بدلاً من الأسلوب المهمل
         await user.verifyBeforeUpdateEmail(newEmail);
-        
+
         // تحديث وثيقة المستخدم في Firestore
         await _firestore.collection('users').doc(user.uid).update({
           'email': newEmail,
@@ -423,13 +427,14 @@ class AuthService {
     try {
       // التحقق من قوة كلمة المرور
       if (!_isStrongPassword(newPassword)) {
-        throw Exception('كلمة المرور غير قوية بما فيه الكفاية. يجب أن تحتوي على 8 أحرف على الأقل وتتضمن أحرفًا كبيرة وصغيرة وأرقامًا ورموزًا.');
+        throw Exception(
+            'كلمة المرور غير قوية بما فيه الكفاية. يجب أن تحتوي على 8 أحرف على الأقل وتتضمن أحرفًا كبيرة وصغيرة وأرقامًا ورموزًا.');
       }
-      
+
       final user = _auth.currentUser;
       if (user != null) {
         await user.updatePassword(newPassword);
-        
+
         // تحديث وثيقة المستخدم في Firestore
         await _firestore.collection('users').doc(user.uid).update({
           'passwordUpdatedAt': FieldValue.serverTimestamp(),
@@ -467,10 +472,10 @@ class AuthService {
       if (user != null) {
         // حذف وثيقة المستخدم من Firestore
         await _firestore.collection('users').doc(user.uid).delete();
-        
+
         // حذف الحساب من Firebase Auth
         await user.delete();
-        
+
         // حذف جميع البيانات المخزنة محلياً
         await _secureStorage.clearAll();
       } else {
@@ -486,7 +491,9 @@ class AuthService {
     try {
       // محاولة الحصول على الدور من التخزين الآمن أولاً
       final userData = await _secureStorage.getUserData();
-      if (userData != null && userData['uid'] == userId && userData['role'] != null) {
+      if (userData != null &&
+          userData['uid'] == userId &&
+          userData['role'] != null) {
         final roleString = userData['role'] as String;
         switch (roleString) {
           case 'admin':
@@ -499,7 +506,7 @@ class AuthService {
             return UserRole.customer;
         }
       }
-      
+
       // إذا لم يتم العثور على الدور في التخزين الآمن، استعلم من Firestore
       final doc = await _firestore.collection('users').doc(userId).get();
       if (doc.exists && doc.data() != null) {
@@ -510,7 +517,7 @@ class AuthService {
             userData['role'] = roleString;
             await _secureStorage.saveUserData(userData);
           }
-          
+
           switch (roleString) {
             case 'admin':
               return UserRole.admin;
@@ -547,13 +554,13 @@ class AuthService {
         default:
           roleString = 'customer';
       }
-      
+
       // تحديث الدور في Firestore
       await _firestore.collection('users').doc(userId).update({
         'role': roleString,
         'updatedAt': FieldValue.serverTimestamp(),
       });
-      
+
       // تحديث الدور في التخزين الآمن إذا كان المستخدم الحالي
       final userData = await _secureStorage.getUserData();
       if (userData != null && userData['uid'] == userId) {
@@ -566,7 +573,8 @@ class AuthService {
   }
 
   /// إنشاء وثيقة المستخدم في Firestore
-  Future<void> _createUserDocument(String userId, String email, UserRole role) async {
+  Future<void> _createUserDocument(
+      String userId, String email, UserRole role) async {
     String roleString;
     switch (role) {
       case UserRole.admin:
@@ -581,7 +589,7 @@ class AuthService {
       default:
         roleString = 'customer';
     }
-    
+
     await _firestore.collection('users').doc(userId).set({
       'email': email,
       'role': roleString,
@@ -628,27 +636,27 @@ class AuthService {
     if (password.length < 8) {
       return false;
     }
-    
+
     // التحقق من وجود حرف كبير
     if (!password.contains(RegExp(r'[A-Z]'))) {
       return false;
     }
-    
+
     // التحقق من وجود حرف صغير
     if (!password.contains(RegExp(r'[a-z]'))) {
       return false;
     }
-    
+
     // التحقق من وجود رقم
     if (!password.contains(RegExp(r'[0-9]'))) {
       return false;
     }
-    
+
     // التحقق من وجود رمز
     if (!password.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
       return false;
     }
-    
+
     return true;
   }
 }

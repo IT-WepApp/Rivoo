@@ -40,7 +40,7 @@ class AuthRepositoryImpl implements AuthRepository {
       );
       final user = credential.user;
       if (user == null) {
-        return Left(const AuthFailure(
+        return const Left(AuthFailure(
           message: 'فشل تسجيل الدخول: لم يتم العثور على المستخدم',
           code: 'USER_NOT_FOUND',
         ));
@@ -48,7 +48,7 @@ class AuthRepositoryImpl implements AuthRepository {
       // جلب وثيقة المستخدم
       final doc = await _firestore.collection('users').doc(user.uid).get();
       if (!doc.exists) {
-        return Left(const AuthFailure(
+        return const Left(AuthFailure(
           message: 'فشل تسجيل الدخول: لم يتم العثور على بيانات المستخدم',
           code: 'USER_DATA_NOT_FOUND',
         ));
@@ -88,7 +88,7 @@ class AuthRepositoryImpl implements AuthRepository {
   }) async {
     try {
       if (!_isStrongPassword(password)) {
-        return Left(const ValidationFailure(
+        return const Left(ValidationFailure(
           message: 'كلمة المرور غير قوية بما فيه الكفاية',
           errors: {},
         ));
@@ -99,7 +99,7 @@ class AuthRepositoryImpl implements AuthRepository {
       );
       final user = credential.user;
       if (user == null) {
-        return Left(const AuthFailure(
+        return const Left(AuthFailure(
           message: 'فشل إنشاء الحساب: لم يتم إنشاء المستخدم',
           code: 'USER_NOT_CREATED',
         ));
@@ -144,7 +144,7 @@ class AuthRepositoryImpl implements AuthRepository {
     try {
       final googleUser = await _googleSignIn.signIn();
       if (googleUser == null) {
-        return Left(const AuthFailure(
+        return const Left(AuthFailure(
           message: 'تم إلغاء تسجيل الدخول بواسطة المستخدم',
           code: 'SIGN_IN_CANCELLED',
         ));
@@ -288,7 +288,7 @@ class AuthRepositoryImpl implements AuthRepository {
         ));
       }
       if (!_isStrongPassword(newPassword)) {
-        return Left(const ValidationFailure(
+        return const Left(ValidationFailure(
           message: 'كلمة المرور غير قوية بما فيه الكفاية',
           errors: {},
         ));

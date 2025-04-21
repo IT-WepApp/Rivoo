@@ -31,13 +31,16 @@ class SupportTicketsScreen extends ConsumerWidget {
       ),
       body: ResponsiveBuilder(
         // تنفيذ واجهة الهاتف
-        mobileBuilder: (context) => _buildMobileLayout(context, l10n, ticketsAsync),
-        
+        mobileBuilder: (context) =>
+            _buildMobileLayout(context, l10n, ticketsAsync),
+
         // تنفيذ واجهة الجهاز اللوحي
-        smallTabletBuilder: (context) => _buildTabletLayout(context, l10n, ticketsAsync),
-        
+        smallTabletBuilder: (context) =>
+            _buildTabletLayout(context, l10n, ticketsAsync),
+
         // تنفيذ واجهة سطح المكتب
-        desktopBuilder: (context) => _buildDesktopLayout(context, l10n, ticketsAsync),
+        desktopBuilder: (context) =>
+            _buildDesktopLayout(context, l10n, ticketsAsync),
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: () {
@@ -65,7 +68,7 @@ class SupportTicketsScreen extends ConsumerWidget {
         if (tickets.isEmpty) {
           return _buildEmptyState(context, l10n);
         }
-        
+
         return ListView.builder(
           padding: const EdgeInsets.all(16.0),
           itemCount: tickets.length,
@@ -79,7 +82,8 @@ class SupportTicketsScreen extends ConsumerWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => TicketDetailsScreen(ticketId: ticket.id),
+                      builder: (context) =>
+                          TicketDetailsScreen(ticketId: ticket.id),
                     ),
                   );
                 },
@@ -110,7 +114,7 @@ class SupportTicketsScreen extends ConsumerWidget {
         if (tickets.isEmpty) {
           return _buildEmptyState(context, l10n);
         }
-        
+
         return Padding(
           padding: const EdgeInsets.all(16.0),
           child: GridView.builder(
@@ -129,7 +133,8 @@ class SupportTicketsScreen extends ConsumerWidget {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => TicketDetailsScreen(ticketId: ticket.id),
+                      builder: (context) =>
+                          TicketDetailsScreen(ticketId: ticket.id),
                     ),
                   );
                 },
@@ -160,7 +165,7 @@ class SupportTicketsScreen extends ConsumerWidget {
         if (tickets.isEmpty) {
           return _buildEmptyState(context, l10n);
         }
-        
+
         return Padding(
           padding: const EdgeInsets.all(24.0),
           child: Column(
@@ -174,7 +179,7 @@ class SupportTicketsScreen extends ConsumerWidget {
                     ),
               ),
               const SizedBox(height: 24),
-              
+
               // قائمة التذاكر
               Expanded(
                 child: Card(
@@ -199,7 +204,10 @@ class SupportTicketsScreen extends ConsumerWidget {
                                 flex: 1,
                                 child: Text(
                                   l10n.ticketId,
-                                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleSmall
+                                      ?.copyWith(
                                         fontWeight: FontWeight.bold,
                                       ),
                                 ),
@@ -208,7 +216,10 @@ class SupportTicketsScreen extends ConsumerWidget {
                                 flex: 3,
                                 child: Text(
                                   l10n.subject,
-                                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleSmall
+                                      ?.copyWith(
                                         fontWeight: FontWeight.bold,
                                       ),
                                 ),
@@ -217,7 +228,10 @@ class SupportTicketsScreen extends ConsumerWidget {
                                 flex: 1,
                                 child: Text(
                                   l10n.status,
-                                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleSmall
+                                      ?.copyWith(
                                         fontWeight: FontWeight.bold,
                                       ),
                                 ),
@@ -226,7 +240,10 @@ class SupportTicketsScreen extends ConsumerWidget {
                                 flex: 1,
                                 child: Text(
                                   l10n.priority,
-                                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleSmall
+                                      ?.copyWith(
                                         fontWeight: FontWeight.bold,
                                       ),
                                 ),
@@ -235,7 +252,10 @@ class SupportTicketsScreen extends ConsumerWidget {
                                 flex: 2,
                                 child: Text(
                                   l10n.createdAt,
-                                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                                  style: Theme.of(context)
+                                      .textTheme
+                                      .titleSmall
+                                      ?.copyWith(
                                         fontWeight: FontWeight.bold,
                                       ),
                                 ),
@@ -245,12 +265,13 @@ class SupportTicketsScreen extends ConsumerWidget {
                           ),
                         ),
                         const Divider(),
-                        
+
                         // بيانات الجدول
                         Expanded(
                           child: ListView.separated(
                             itemCount: tickets.length,
-                            separatorBuilder: (context, index) => const Divider(),
+                            separatorBuilder: (context, index) =>
+                                const Divider(),
                             itemBuilder: (context, index) {
                               final ticket = tickets[index];
                               return InkWell(
@@ -258,7 +279,8 @@ class SupportTicketsScreen extends ConsumerWidget {
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => TicketDetailsScreen(ticketId: ticket.id),
+                                      builder: (context) => TicketDetailsScreen(
+                                          ticketId: ticket.id),
                                     ),
                                   );
                                 },
@@ -274,54 +296,67 @@ class SupportTicketsScreen extends ConsumerWidget {
                                         flex: 1,
                                         child: Text(
                                           '#${ticket.id.substring(0, 8)}',
-                                          style: Theme.of(context).textTheme.bodyMedium,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium,
                                         ),
                                       ),
-                                      
+
                                       // الموضوع
                                       Expanded(
                                         flex: 3,
                                         child: Text(
                                           ticket.subject,
-                                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium
+                                              ?.copyWith(
                                                 fontWeight: FontWeight.bold,
                                               ),
                                           maxLines: 1,
                                           overflow: TextOverflow.ellipsis,
                                         ),
                                       ),
-                                      
+
                                       // الحالة
                                       Expanded(
                                         flex: 1,
-                                        child: _buildStatusChip(context, ticket.status),
+                                        child: _buildStatusChip(
+                                            context, ticket.status),
                                       ),
-                                      
+
                                       // الأولوية
                                       Expanded(
                                         flex: 1,
-                                        child: _buildPriorityChip(context, ticket.priority),
+                                        child: _buildPriorityChip(
+                                            context, ticket.priority),
                                       ),
-                                      
+
                                       // تاريخ الإنشاء
                                       Expanded(
                                         flex: 2,
                                         child: Text(
                                           _formatDate(ticket.createdAt),
-                                          style: Theme.of(context).textTheme.bodyMedium,
+                                          style: Theme.of(context)
+                                              .textTheme
+                                              .bodyMedium,
                                         ),
                                       ),
-                                      
+
                                       // زر الإجراءات
                                       SizedBox(
                                         width: 48,
                                         child: IconButton(
-                                          icon: const Icon(Icons.arrow_forward_ios, size: 16),
+                                          icon: const Icon(
+                                              Icons.arrow_forward_ios,
+                                              size: 16),
                                           onPressed: () {
                                             Navigator.push(
                                               context,
                                               MaterialPageRoute(
-                                                builder: (context) => TicketDetailsScreen(ticketId: ticket.id),
+                                                builder: (context) =>
+                                                    TicketDetailsScreen(
+                                                        ticketId: ticket.id),
                                               ),
                                             );
                                           },
@@ -404,7 +439,7 @@ class SupportTicketsScreen extends ConsumerWidget {
   Widget _buildStatusChip(BuildContext context, TicketStatus status) {
     String label;
     Color color;
-    
+
     switch (status) {
       case TicketStatus.open:
         label = 'مفتوحة';
@@ -423,7 +458,7 @@ class SupportTicketsScreen extends ConsumerWidget {
         color = Colors.grey;
         break;
     }
-    
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
@@ -446,7 +481,7 @@ class SupportTicketsScreen extends ConsumerWidget {
   Widget _buildPriorityChip(BuildContext context, TicketPriority priority) {
     String label;
     Color color;
-    
+
     switch (priority) {
       case TicketPriority.low:
         label = 'منخفضة';
@@ -465,7 +500,7 @@ class SupportTicketsScreen extends ConsumerWidget {
         color = Colors.red;
         break;
     }
-    
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(

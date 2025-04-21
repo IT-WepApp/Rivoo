@@ -7,8 +7,8 @@ class AppProviders {
 
   /// إنشاء قائمة بكل المزودين المستخدمين في التطبيق
   static List<ProviderObserver> get observers => [
-    LoggerProviderObserver(),
-  ];
+        LoggerProviderObserver(),
+      ];
 }
 
 /// مراقب لتسجيل تغييرات الحالة في المزودين

@@ -4,7 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_models/shared_models.dart'; // Assuming these are properly imported
 
 // Provider definition
-final statisticsServiceProvider = Provider<StatisticsService>((ref) => StatisticsService());
+final statisticsServiceProvider =
+    Provider<StatisticsService>((ref) => StatisticsService());
 
 class StatisticsService {
   // Placeholder for fetching overall sales data
@@ -16,23 +17,28 @@ class StatisticsService {
   }
 
   // Placeholder for fetching store performance
-  Future<List<StorePerformance>> getStorePerformance(DateTimeRange dateRange) async {
+  Future<List<StorePerformance>> getStorePerformance(
+      DateTimeRange dateRange) async {
     return [];
   }
 
   // Placeholder for fetching top products across all stores
-  Future<List<Product>> getTopSellingProducts(DateTimeRange dateRange, {int limit = 5}) async {
+  Future<List<Product>> getTopSellingProducts(DateTimeRange dateRange,
+      {int limit = 5}) async {
     return [];
   }
 
   // Seller-specific stats
-  Future<SalesData> getSellerSalesData(String sellerId, DateTimeRange dateRange) async {
+  Future<SalesData> getSellerSalesData(
+      String sellerId, DateTimeRange dateRange) async {
     log('Fetching sales data for seller: $sellerId');
     await Future.delayed(const Duration(milliseconds: 500));
     return SalesData(totalSales: 1234.56.toString(), orderCount: 78.toString());
   }
 
-  Future<List<Product>> getSellerTopSellingProducts(String sellerId, DateTimeRange dateRange, {int limit = 5}) async {
+  Future<List<Product>> getSellerTopSellingProducts(
+      String sellerId, DateTimeRange dateRange,
+      {int limit = 5}) async {
     log('Fetching top products for seller: $sellerId');
     await Future.delayed(const Duration(milliseconds: 500));
     return [
@@ -59,8 +65,8 @@ class StatisticsService {
 }
 
 class SalesData {
-  final String totalSales;  // Now it's a String to avoid type errors
-  final String orderCount;  // Now it's a String to avoid type errors
+  final String totalSales; // Now it's a String to avoid type errors
+  final String orderCount; // Now it's a String to avoid type errors
 
   SalesData({required this.totalSales, required this.orderCount});
 }

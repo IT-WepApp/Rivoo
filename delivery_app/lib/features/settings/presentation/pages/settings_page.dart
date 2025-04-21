@@ -14,10 +14,10 @@ class SettingsPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final localeNotifier = ref.read(localeProvider.notifier);
     final themeNotifier = ref.read(themeModeProvider.notifier);
-    
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.settings),
+        title: Text(AppLocalizations.of(context).settings),
         centerTitle: true,
       ),
       body: ListView(
@@ -25,7 +25,7 @@ class SettingsPage extends ConsumerWidget {
           // قسم اللغة
           ListTile(
             leading: const Icon(Icons.language),
-            title: Text(AppLocalizations.of(context)!.language),
+            title: Text(AppLocalizations.of(context).language),
             subtitle: Text(
               '${localeNotifier.getCurrentLanguageFlag()} ${localeNotifier.getCurrentLanguageName()}',
             ),
@@ -34,51 +34,51 @@ class SettingsPage extends ConsumerWidget {
             },
           ),
           const Divider(),
-          
+
           // قسم المظهر
           ListTile(
             leading: Icon(themeNotifier.getCurrentThemeModeIcon()),
-            title: Text(AppLocalizations.of(context)!.theme),
+            title: Text(AppLocalizations.of(context).theme),
             subtitle: Text(
-              AppLocalizations.of(context)!.systemDefault,
+              AppLocalizations.of(context).systemDefault,
             ),
             onTap: () {
               _showThemeModeDialog(context, ref);
             },
           ),
           const Divider(),
-          
+
           // معلومات التطبيق
           const ListTile(
             leading: Icon(Icons.info_outline),
             title: Text('RivooSy Delivery'),
             subtitle: Text('v1.0.0'),
           ),
-          
+
           // واجهة اختبار اللغة
           const LanguageToggleWidget(),
-          
+
           // واجهة اختبار الوضع الليلي
           const ThemeToggleWidget(),
         ],
       ),
     );
   }
-  
+
   void _showThemeModeDialog(BuildContext context, WidgetRef ref) {
     final themeNotifier = ref.read(themeModeProvider.notifier);
     final currentThemeMode = ref.watch(themeModeProvider);
-    
+
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text(AppLocalizations.of(context)!.theme),
+          title: Text(AppLocalizations.of(context).theme),
           content: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
               RadioListTile<ThemeMode>(
-                title: Text(AppLocalizations.of(context)!.lightMode),
+                title: Text(AppLocalizations.of(context).lightMode),
                 value: ThemeMode.light,
                 groupValue: currentThemeMode,
                 onChanged: (value) {
@@ -87,7 +87,7 @@ class SettingsPage extends ConsumerWidget {
                 },
               ),
               RadioListTile<ThemeMode>(
-                title: Text(AppLocalizations.of(context)!.darkMode),
+                title: Text(AppLocalizations.of(context).darkMode),
                 value: ThemeMode.dark,
                 groupValue: currentThemeMode,
                 onChanged: (value) {
@@ -96,7 +96,7 @@ class SettingsPage extends ConsumerWidget {
                 },
               ),
               RadioListTile<ThemeMode>(
-                title: Text(AppLocalizations.of(context)!.systemDefault),
+                title: Text(AppLocalizations.of(context).systemDefault),
                 value: ThemeMode.system,
                 groupValue: currentThemeMode,
                 onChanged: (value) {

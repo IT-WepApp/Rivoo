@@ -8,18 +8,18 @@ part 'connectivity_provider.g.dart';
 @riverpod
 class ConnectivityNotifier extends _$ConnectivityNotifier {
   late final Connectivity _connectivity;
-  
+
   @override
   Stream<ConnectivityResult> build() {
     _connectivity = Connectivity();
     return _connectivity.onConnectivityChanged;
   }
-  
+
   /// التحقق من حالة الاتصال الحالية
   Future<ConnectivityResult> checkConnectivity() async {
     return await _connectivity.checkConnectivity();
   }
-  
+
   /// التحقق مما إذا كان الجهاز متصلاً بالإنترنت
   Future<bool> isConnected() async {
     final result = await checkConnectivity();

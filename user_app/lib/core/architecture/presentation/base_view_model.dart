@@ -1,4 +1,3 @@
-import 'package:flutter/foundation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:user_app/core/architecture/domain/failure.dart';
 
@@ -7,19 +6,19 @@ import 'package:user_app/core/architecture/domain/failure.dart';
 class ViewState<T> {
   /// بيانات الحالة (متوفرة في حالة النجاح)
   final T? data;
-  
+
   /// رسالة الخطأ (متوفرة في حالة الفشل)
   final String? errorMessage;
-  
+
   /// حالة التحميل
   final bool isLoading;
-  
+
   /// حالة النجاح
   final bool isSuccess;
-  
+
   /// حالة الفشل
   final bool isError;
-  
+
   /// منشئ حالة العرض
   const ViewState({
     this.data,

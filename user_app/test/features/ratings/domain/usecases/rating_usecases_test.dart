@@ -22,14 +22,15 @@ void main() {
   setUp(() {
     mockRepository = MockRatingRepository();
     getProductRatingsUseCase = GetProductRatingsUseCase(mockRepository);
-    getProductRatingSummaryUseCase = GetProductRatingSummaryUseCase(mockRepository);
+    getProductRatingSummaryUseCase =
+        GetProductRatingSummaryUseCase(mockRepository);
     addRatingUseCase = AddRatingUseCase(mockRepository);
     updateRatingUseCase = UpdateRatingUseCase(mockRepository);
     deleteRatingUseCase = DeleteRatingUseCase(mockRepository);
   });
 
   group('GetProductRatingsUseCase', () {
-    final productId = 'product123';
+    const productId = 'product123';
     final ratings = [
       Rating(
         id: 'rating1',
@@ -66,23 +67,23 @@ void main() {
 
     test('should return failure when repository fails', () async {
       // Arrange
-      final failure = ServerFailure(message: 'Server error');
+      const failure = ServerFailure(message: 'Server error');
       when(mockRepository.getProductRatings(productId))
-          .thenAnswer((_) async => Left(failure));
+          .thenAnswer((_) async => const Left(failure));
 
       // Act
       final result = await getProductRatingsUseCase(productId);
 
       // Assert
-      expect(result, Left(failure));
+      expect(result, const Left(failure));
       verify(mockRepository.getProductRatings(productId)).called(1);
       verifyNoMoreInteractions(mockRepository);
     });
   });
 
   group('GetProductRatingSummaryUseCase', () {
-    final productId = 'product123';
-    final summary = RatingSummary(
+    const productId = 'product123';
+    const summary = RatingSummary(
       productId: productId,
       averageRating: 4.2,
       totalRatings: 10,
@@ -92,13 +93,13 @@ void main() {
     test('should get product rating summary from repository', () async {
       // Arrange
       when(mockRepository.getProductRatingSummary(productId))
-          .thenAnswer((_) async => Right(summary));
+          .thenAnswer((_) async => const Right(summary));
 
       // Act
       final result = await getProductRatingSummaryUseCase(productId);
 
       // Assert
-      expect(result, Right(summary));
+      expect(result, const Right(summary));
       verify(mockRepository.getProductRatingSummary(productId)).called(1);
       verifyNoMoreInteractions(mockRepository);
     });
@@ -183,7 +184,7 @@ void main() {
   });
 
   group('DeleteRatingUseCase', () {
-    final ratingId = 'rating1';
+    const ratingId = 'rating1';
 
     test('should delete rating through repository', () async {
       // Arrange

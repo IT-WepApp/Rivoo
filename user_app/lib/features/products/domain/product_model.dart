@@ -1,5 +1,4 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:json_annotation/json_annotation.dart';
 
 part 'product_model.freezed.dart';
 part 'product_model.g.dart';
@@ -24,5 +23,6 @@ class ProductModel with _$ProductModel {
   }) = _ProductModel;
 
   /// إنشاء نموذج من JSON
-  factory ProductModel.fromJson(Map<String, dynamic> json) => _$ProductModelFromJson(json);
+  factory ProductModel.fromJson(Map<String, dynamic> json) =>
+      _$ProductModelFromJson(json);
 }

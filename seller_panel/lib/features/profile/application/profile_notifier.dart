@@ -67,8 +67,8 @@ class ProfileNotifier extends StateNotifier<AsyncValue<SellerModel?>> {
   }
 }
 
-final sellerProfileProvider =
-    StateNotifierProvider.autoDispose<ProfileNotifier, AsyncValue<SellerModel?>>((ref) {
+final sellerProfileProvider = StateNotifierProvider.autoDispose<ProfileNotifier,
+    AsyncValue<SellerModel?>>((ref) {
   final userService = ref.watch(userServiceProvider);
   final sellerUserId = ref.watch(currentSellerIdProvider);
   return ProfileNotifier(userService, sellerUserId);

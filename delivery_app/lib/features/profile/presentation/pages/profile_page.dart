@@ -11,10 +11,13 @@ class ProfilePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final profileState = ref.watch(profileProvider);
 
-    ref.listen<AsyncValue<DeliveryPersonModel?>>(profileProvider, (previous, next) {
+    ref.listen<AsyncValue<DeliveryPersonModel?>>(profileProvider,
+        (previous, next) {
       if (next is AsyncError && next != previous) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: ${next.error}'), backgroundColor: Colors.red),
+          SnackBar(
+              content: Text('Error: ${next.error}'),
+              backgroundColor: Colors.red),
         );
       }
     });
@@ -29,7 +32,8 @@ class ProfilePage extends ConsumerWidget {
           return _ProfileContent(profile: profileData);
         },
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, _) => Center(child: Text('Failed to load profile: $error')),
+        error: (error, _) =>
+            Center(child: Text('Failed to load profile: $error')),
       ),
     );
   }
@@ -77,16 +81,20 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
       name: _nameController.text,
     );
 
-    final success = await ref.read(profileProvider.notifier).updateProfile(updatedProfile);
+    final success =
+        await ref.read(profileProvider.notifier).updateProfile(updatedProfile);
 
     if (mounted && success) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Profile updated!'), backgroundColor: Colors.green),
+        const SnackBar(
+            content: Text('Profile updated!'), backgroundColor: Colors.green),
       );
       _toggleEditing();
     } else if (mounted && !success) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Failed to update profile'), backgroundColor: Colors.red),
+        const SnackBar(
+            content: Text('Failed to update profile'),
+            backgroundColor: Colors.red),
       );
     }
   }
@@ -116,7 +124,8 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
             const SizedBox(height: 16),
 
             // الإيميل
-            Text(widget.profile.email ?? 'No Email', style: theme.textTheme.titleMedium),
+            Text(widget.profile.email ?? 'No Email',
+                style: theme.textTheme.titleMedium),
 
             // 🚗 معلومات المركبة
             if (widget.profile.vehicleDetails != null)
@@ -129,12 +138,14 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
               ),
 
             // 📍 إحداثيات الموقع
-            if (widget.profile.currentLat != null && widget.profile.currentLng != null)
+            if (widget.profile.currentLat != null &&
+                widget.profile.currentLng != null)
               Padding(
                 padding: const EdgeInsets.only(top: 4),
                 child: Text(
                   'Location: (${widget.profile.currentLat}, ${widget.profile.currentLng})',
-                  style: theme.textTheme.bodySmall?.copyWith(color: Colors.grey[600]),
+                  style: theme.textTheme.bodySmall
+                      ?.copyWith(color: Colors.grey[600]),
                 ),
               ),
 
@@ -145,8 +156,9 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
               controller: _nameController,
               label: 'Name',
               enabled: _isEditing,
-              validator: (value) =>
-                  value == null || value.isEmpty ? 'Name cannot be empty' : null,
+              validator: (value) => value == null || value.isEmpty
+                  ? 'Name cannot be empty'
+                  : null,
             ),
             const SizedBox(height: 24),
 
@@ -156,11 +168,15 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   OutlinedButton(
-                    onPressed: profileUpdateState is AsyncLoading ? null : _toggleEditing,
+                    onPressed: profileUpdateState is AsyncLoading
+                        ? null
+                        : _toggleEditing,
                     child: const Text('Cancel'),
                   ),
                   ElevatedButton(
-                    onPressed: profileUpdateState is AsyncLoading ? null : _updateProfile,
+                    onPressed: profileUpdateState is AsyncLoading
+                        ? null
+                        : _updateProfile,
                     child: profileUpdateState is AsyncLoading
                         ? const SizedBox(
                             height: 20,

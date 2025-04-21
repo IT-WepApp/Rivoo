@@ -17,7 +17,8 @@ class StatisticsRepositoryImpl implements StatisticsRepository {
     DateTime? date,
   }) async {
     try {
-      final statistics = await dataSource.getDailySalesStatistics(sellerId, date: date);
+      final statistics =
+          await dataSource.getDailySalesStatistics(sellerId, date: date);
       return Right(statistics);
     } on ServerException {
       return Left(ServerFailure());
@@ -32,7 +33,8 @@ class StatisticsRepositoryImpl implements StatisticsRepository {
     DateTime? startDate,
   }) async {
     try {
-      final statistics = await dataSource.getWeeklySalesStatistics(sellerId, startDate: startDate);
+      final statistics = await dataSource.getWeeklySalesStatistics(sellerId,
+          startDate: startDate);
       return Right(statistics);
     } on ServerException {
       return Left(ServerFailure());
@@ -47,7 +49,8 @@ class StatisticsRepositoryImpl implements StatisticsRepository {
     DateTime? month,
   }) async {
     try {
-      final statistics = await dataSource.getMonthlySalesStatistics(sellerId, month: month);
+      final statistics =
+          await dataSource.getMonthlySalesStatistics(sellerId, month: month);
       return Right(statistics);
     } on ServerException {
       return Left(ServerFailure());
@@ -62,7 +65,8 @@ class StatisticsRepositoryImpl implements StatisticsRepository {
     int? year,
   }) async {
     try {
-      final statistics = await dataSource.getYearlySalesStatistics(sellerId, year: year);
+      final statistics =
+          await dataSource.getYearlySalesStatistics(sellerId, year: year);
       return Right(statistics);
     } on ServerException {
       return Left(ServerFailure());

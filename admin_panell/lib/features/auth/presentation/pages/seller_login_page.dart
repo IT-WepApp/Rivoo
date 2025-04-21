@@ -53,9 +53,10 @@ class _SellerLoginPageState extends State<SellerLoginPage> {
       }
     } on FirebaseAuthException catch (e) {
       if (!mounted) return;
-      final errorMessage = (e.code == 'user-not-found' || e.code == 'invalid-credential')
-          ? 'البريد الإلكتروني أو كلمة المرور غير صحيحة'
-          : 'حدث خطأ أثناء تسجيل الدخول: ${e.message}';
+      final errorMessage =
+          (e.code == 'user-not-found' || e.code == 'invalid-credential')
+              ? 'البريد الإلكتروني أو كلمة المرور غير صحيحة'
+              : 'حدث خطأ أثناء تسجيل الدخول: ${e.message}';
       _showErrorSnackBar(errorMessage);
     } catch (e) {
       if (!mounted) return;
@@ -78,7 +79,8 @@ class _SellerLoginPageState extends State<SellerLoginPage> {
             children: <Widget>[
               AppTextField(
                 controller: _emailController,
-                label: "البريد الإلكتروني", // ✅ تم تعديلها من labelText إلى label
+                label:
+                    "البريد الإلكتروني", // ✅ تم تعديلها من labelText إلى label
                 keyboardType: TextInputType.emailAddress,
                 validator: (value) {
                   if (value == null || value.isEmpty) {

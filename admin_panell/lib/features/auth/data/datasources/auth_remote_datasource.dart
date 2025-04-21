@@ -30,17 +30,17 @@ class FirebaseAuthDataSource implements AuthRemoteDataSource {
         email: email,
         password: password,
       );
-      
+
       if (userCredential.user == null) {
         throw Exception('فشل تسجيل الدخول');
       }
-      
+
       // الحصول على بيانات المستخدم من Firestore
       final userDoc = await _firestore
           .collection('users')
           .doc(userCredential.user!.uid)
           .get();
-      
+
       if (!userDoc.exists) {
         // إذا لم يكن هناك وثيقة للمستخدم، نقوم بإنشاء واحدة
         final userData = {
@@ -50,12 +50,12 @@ class FirebaseAuthDataSource implements AuthRemoteDataSource {
           'role': 'admin',
           'createdAt': FieldValue.serverTimestamp(),
         };
-        
+
         await _firestore
             .collection('users')
             .doc(userCredential.user!.uid)
             .set(userData);
-            
+
         return UserModel(
           id: userCredential.user!.uid,
           name: userCredential.user!.displayName ?? 'Admin User',
@@ -63,9 +63,9 @@ class FirebaseAuthDataSource implements AuthRemoteDataSource {
           role: 'admin',
         );
       }
-      
+
       final userData = userDoc.data() as Map<String, dynamic>;
-      
+
       return UserModel(
         id: userCredential.user!.uid,
         name: userData['name'] as String? ?? 'Admin User',
@@ -85,24 +85,21 @@ class FirebaseAuthDataSource implements AuthRemoteDataSource {
   @override
   Future<UserModel?> getCurrentUser() async {
     final user = _firebaseAuth.currentUser;
-    
+
     if (user == null) {
       return null;
     }
-    
+
     try {
       // الحصول على بيانات المستخدم من Firestore
-      final userDoc = await _firestore
-          .collection('users')
-          .doc(user.uid)
-          .get();
-      
+      final userDoc = await _firestore.collection('users').doc(user.uid).get();
+
       if (!userDoc.exists) {
         return null;
       }
-      
+
       final userData = userDoc.data() as Map<String, dynamic>;
-      
+
       return UserModel(
         id: user.uid,
         name: userData['name'] as String? ?? 'Admin User',

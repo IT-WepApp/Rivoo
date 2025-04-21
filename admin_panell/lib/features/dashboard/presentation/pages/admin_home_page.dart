@@ -33,7 +33,9 @@ class AdminHomePage extends StatelessWidget {
                   text: 'إدارة المستخدمين',
                   onPressed: () {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Navigation to User Management (TODO)')),
+                      const SnackBar(
+                          content:
+                              Text('Navigation to User Management (TODO)')),
                     );
                   },
                 ),
@@ -57,7 +59,9 @@ class AdminHomePage extends StatelessWidget {
                   text: 'إدارة المنتجات',
                   onPressed: () {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Navigation to Product Management (TODO)')),
+                      const SnackBar(
+                          content:
+                              Text('Navigation to Product Management (TODO)')),
                     );
                   },
                 ),
@@ -70,7 +74,8 @@ class AdminHomePage extends StatelessWidget {
                   text: 'عرض التقارير والإحصائيات',
                   onPressed: () {
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Navigation to Statistics (TODO)')),
+                      const SnackBar(
+                          content: Text('Navigation to Statistics (TODO)')),
                     );
                   },
                 ),

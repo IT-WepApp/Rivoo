@@ -11,10 +11,10 @@ class LanguageSelectionPage extends ConsumerWidget {
     final localeNotifier = ref.read(localeProvider.notifier);
     final currentLocale = ref.watch(localeProvider);
     final supportedLanguages = localeNotifier.getSupportedLanguages();
-    
+
     return Scaffold(
       appBar: AppBar(
-        title: Text(AppLocalizations.of(context)!.language),
+        title: Text(AppLocalizations.of(context).language),
         centerTitle: true,
       ),
       body: ListView.builder(
@@ -22,16 +22,16 @@ class LanguageSelectionPage extends ConsumerWidget {
         itemBuilder: (context, index) {
           final language = supportedLanguages[index];
           final isSelected = language['code'] == currentLocale.languageCode;
-          
+
           return ListTile(
             leading: Text(
               language['flag']!,
               style: const TextStyle(fontSize: 24),
             ),
             title: Text(language['name']!),
-            trailing: isSelected 
-              ? const Icon(Icons.check, color: Colors.green) 
-              : null,
+            trailing: isSelected
+                ? const Icon(Icons.check, color: Colors.green)
+                : null,
             onTap: () {
               localeNotifier.changeLocale(language['code']!);
             },

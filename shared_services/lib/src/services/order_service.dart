@@ -8,7 +8,10 @@ class OrderService {
   // تحديث حالة الطلب
   Future<bool> updateOrderStatus(String orderId, String newStatus) async {
     try {
-      await _firestore.collection('orders').doc(orderId).update({'status': newStatus});
+      await _firestore
+          .collection('orders')
+          .doc(orderId)
+          .update({'status': newStatus});
       return true;
     } catch (e, st) {
       developer.log('Error updating order status: $e', stackTrace: st);
@@ -17,7 +20,8 @@ class OrderService {
   }
 
   // تحديث موقع موظف التوصيل
-  Future<bool> updateDeliveryPersonnelLocation(String orderId, DeliveryLocation location) async {
+  Future<bool> updateDeliveryPersonnelLocation(
+      String orderId, DeliveryLocation location) async {
     try {
       await _firestore.collection('orders').doc(orderId).update({
         'deliveryPersonnelLocation': {
@@ -27,13 +31,15 @@ class OrderService {
       });
       return true;
     } catch (e, st) {
-      developer.log('Error updating delivery personnel location: $e', stackTrace: st);
+      developer.log('Error updating delivery personnel location: $e',
+          stackTrace: st);
       return false;
     }
   }
 
   // استرجاع الطلبات المسلمة لشخص توصيل محدد
-  Future<List<OrderModel>> getDeliveredOrdersForPersonnel(String deliveryPersonnelId) async {
+  Future<List<OrderModel>> getDeliveredOrdersForPersonnel(
+      String deliveryPersonnelId) async {
     try {
       final snapshot = await _firestore
           .collection('orders')
@@ -41,9 +47,12 @@ class OrderService {
           .where('status', isEqualTo: 'delivered')
           .get();
 
-      return snapshot.docs.map((doc) => OrderModel.fromJson(doc.data())).toList();
+      return snapshot.docs
+          .map((doc) => OrderModel.fromJson(doc.data()))
+          .toList();
     } catch (e, st) {
-      developer.log('Error getting delivered orders for personnel: $e', stackTrace: st);
+      developer.log('Error getting delivered orders for personnel: $e',
+          stackTrace: st);
       return [];
     }
   }

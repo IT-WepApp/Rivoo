@@ -10,7 +10,7 @@ class SecureStorageServiceImpl {
       : _storage = storage ?? const FlutterSecureStorage();
 
   /// تخزين قيمة بشكل آمن
-  /// 
+  ///
   /// [key] مفتاح التخزين
   /// [value] القيمة المراد تخزينها
   Future<void> write({required String key, required String value}) async {
@@ -18,7 +18,7 @@ class SecureStorageServiceImpl {
   }
 
   /// قراءة قيمة مخزنة
-  /// 
+  ///
   /// [key] مفتاح التخزين
   /// يعيد القيمة المخزنة أو null إذا لم تكن موجودة
   Future<String?> read({required String key}) async {
@@ -26,7 +26,7 @@ class SecureStorageServiceImpl {
   }
 
   /// حذف قيمة مخزنة
-  /// 
+  ///
   /// [key] مفتاح التخزين المراد حذفه
   Future<void> delete({required String key}) async {
     await _storage.delete(key: key);
@@ -38,7 +38,7 @@ class SecureStorageServiceImpl {
   }
 
   /// التحقق من وجود قيمة مخزنة
-  /// 
+  ///
   /// [key] مفتاح التخزين
   /// يعيد true إذا كانت القيمة موجودة، وfalse إذا لم تكن موجودة
   Future<bool> containsKey({required String key}) async {

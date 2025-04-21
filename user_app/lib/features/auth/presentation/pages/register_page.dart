@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:user_app/core/utils/validators.dart';
 import 'package:user_app/features/auth/application/auth_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:user_app/theme/app_widgets.dart';
 import 'package:user_app/core/constants/route_constants.dart';
 import 'package:go_router/go_router.dart';
 
@@ -48,8 +47,9 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
     if (_formKey.currentState!.validate() && _acceptTerms) {
       try {
         final authNotifier = ref.read(authStateProvider.notifier);
-        await authNotifier.signUp(_emailController.text, _passwordController.text);
-        
+        await authNotifier.signUp(
+            _emailController.text, _passwordController.text);
+
         // بعد التسجيل بنجاح، انتقل إلى صفحة تأكيد البريد الإلكتروني
         if (!mounted) return;
         context.go(RouteConstants.verifyEmail);
@@ -90,7 +90,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const SizedBox(height: 24),
-                
+
                 // شعار التطبيق
                 Center(
                   child: Image.asset(
@@ -103,9 +103,9 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                     ),
                   ),
                 ),
-                
+
                 const SizedBox(height: 32),
-                
+
                 // حقل الاسم
                 AppTextField(
                   controller: _nameController,
@@ -116,9 +116,9 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                   validator: Validators.validateName,
                   enabled: !isLoading,
                 ),
-                
+
                 const SizedBox(height: 16),
-                
+
                 // حقل البريد الإلكتروني
                 AppTextField(
                   controller: _emailController,
@@ -130,9 +130,9 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                   validator: Validators.validateEmail,
                   enabled: !isLoading,
                 ),
-                
+
                 const SizedBox(height: 16),
-                
+
                 // حقل كلمة المرور
                 AppTextField(
                   controller: _passwordController,
@@ -145,14 +145,16 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                   enabled: !isLoading,
                   suffix: IconButton(
                     icon: Icon(
-                      _obscurePassword ? Icons.visibility : Icons.visibility_off,
+                      _obscurePassword
+                          ? Icons.visibility
+                          : Icons.visibility_off,
                     ),
                     onPressed: _togglePasswordVisibility,
                   ),
                 ),
-                
+
                 const SizedBox(height: 16),
-                
+
                 // حقل تأكيد كلمة المرور
                 AppTextField(
                   controller: _confirmPasswordController,
@@ -168,14 +170,16 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                   enabled: !isLoading,
                   suffix: IconButton(
                     icon: Icon(
-                      _obscureConfirmPassword ? Icons.visibility : Icons.visibility_off,
+                      _obscureConfirmPassword
+                          ? Icons.visibility
+                          : Icons.visibility_off,
                     ),
                     onPressed: _toggleConfirmPasswordVisibility,
                   ),
                 ),
-                
+
                 const SizedBox(height: 24),
-                
+
                 // الموافقة على الشروط والأحكام
                 Row(
                   children: [
@@ -218,18 +222,18 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                     ),
                   ],
                 ),
-                
+
                 const SizedBox(height: 32),
-                
+
                 // زر إنشاء الحساب
                 AppButton(
                   text: 'إنشاء حساب',
                   onPressed: _register,
                   isLoading: isLoading,
                 ),
-                
+
                 const SizedBox(height: 16),
-                
+
                 // رابط تسجيل الدخول
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -243,7 +247,7 @@ class _RegisterPageState extends ConsumerState<RegisterPage> {
                     ),
                   ],
                 ),
-                
+
                 const SizedBox(height: 24),
               ],
             ),

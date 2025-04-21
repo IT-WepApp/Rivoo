@@ -1,10 +1,11 @@
 import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:shared_models/shared_models.dart'; 
+import 'package:shared_models/shared_models.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart'; // Import Riverpod
 
 // Provider definition
-final categoryServiceProvider = Provider<CategoryService>((ref) => CategoryService());
+final categoryServiceProvider =
+    Provider<CategoryService>((ref) => CategoryService());
 
 class CategoryService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -27,11 +28,12 @@ class CategoryService {
 
   Future<Category?> getCategory(String categoryId) async {
     try {
-      final doc = await _firestore.collection(_collectionPath).doc(categoryId).get();
+      final doc =
+          await _firestore.collection(_collectionPath).doc(categoryId).get();
       if (doc.exists && doc.data() != null) {
-         final data = doc.data()!;
-         data['id'] = doc.id;
-         return Category.fromJson(data);
+        final data = doc.data()!;
+        data['id'] = doc.id;
+        return Category.fromJson(data);
       }
       return null;
     } catch (e) {
@@ -56,7 +58,10 @@ class CategoryService {
   Future<void> updateCategory(Category category) async {
     try {
       // Ensure category object has the correct document ID
-      await _firestore.collection(_collectionPath).doc(category.id).update(category.toJson());
+      await _firestore
+          .collection(_collectionPath)
+          .doc(category.id)
+          .update(category.toJson());
     } catch (e) {
       log('Error updating category: $e');
       rethrow;

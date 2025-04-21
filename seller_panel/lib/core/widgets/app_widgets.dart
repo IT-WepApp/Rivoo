@@ -13,7 +13,7 @@ class AppWidgets {
   }) {
     Color statusColor;
     String statusLabel;
-    
+
     switch (status) {
       case 'pending':
         statusColor = Colors.orange;
@@ -35,7 +35,7 @@ class AppWidgets {
         statusColor = Colors.grey;
         statusLabel = 'غير معروف';
     }
-    
+
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       child: ListTile(
@@ -108,6 +108,7 @@ class AppWidgets {
       ),
     );
   }
+
   // مربع حوار تأكيد
   static Future<bool> showConfirmDialog({
     required BuildContext context,
@@ -137,9 +138,10 @@ class AppWidgets {
         ],
       ),
     );
-    
+
     return result ?? false;
   }
+
   // مربع حوار اختيار
   static Future<T?> showSelectionDialog<T>({
     required BuildContext context,
@@ -177,6 +179,7 @@ class AppWidgets {
       ),
     );
   }
+
   // شريط تنبيه
   static void showSnackBar({
     required BuildContext context,
@@ -189,7 +192,7 @@ class AppWidgets {
   }) {
     Color backgroundColor;
     Color textColor = Colors.white;
-    
+
     if (isError) {
       backgroundColor = Colors.red;
     } else if (isSuccess) {
@@ -197,7 +200,7 @@ class AppWidgets {
     } else {
       backgroundColor = Colors.black;
     }
-    
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(

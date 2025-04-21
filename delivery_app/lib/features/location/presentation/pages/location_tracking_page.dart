@@ -9,7 +9,7 @@ class LocationTrackingPage extends ConsumerWidget {
   const LocationTrackingPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {   
+  Widget build(BuildContext context, WidgetRef ref) {
     final locationAsyncValue = ref.watch(locationProvider);
 
     return Scaffold(
@@ -89,7 +89,8 @@ class LocationTrackingPage extends ConsumerWidget {
           markerId: const MarkerId('destination'),
           position: destination,
           infoWindow: const InfoWindow(title: 'وجهة التوصيل'),
-          icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
+          icon:
+              BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
         ),
       },
     );

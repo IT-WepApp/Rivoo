@@ -10,13 +10,14 @@ dependencies:
   flutter:
     sdk: flutter
 
-  # Added missing dependencies
-  equatable: any
+  # إضافة تبعيات مفقودة
+  equatable: ^2.0.5
   json_annotation: ^4.8.1
-  # End of added dependencies
+  dartz: ^0.10.1
 
-  # إضافة تخزين Cloud Firestore لتدعم import في هذا الموديول
-  cloud_firestore: any
+  # Firebase حزم
+  cloud_firestore: ^5.6.6
+  firebase_core: ^3.13.0
 
 dev_dependencies:
   flutter_test:
@@ -25,6 +26,7 @@ dev_dependencies:
   # Added build runner dependencies
   build_runner: ^2.4.6
   json_serializable: ^6.7.1
+  mockito: ^5.4.2
 
 flutter:
   uses-material-design: true

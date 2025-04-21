@@ -29,7 +29,7 @@ class ProductEntity {
     this.attributes,
     this.stockQuantity = 0,
   });
-  
+
   // نسخة جديدة من الكيان مع تحديث بعض الخصائص
   ProductEntity copyWith({
     String? id,

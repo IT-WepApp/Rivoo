@@ -6,7 +6,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:seller_panel/services/notification_service.dart';
 
 @GenerateMocks([
-  FirebaseMessaging, 
+  FirebaseMessaging,
   FlutterLocalNotificationsPlugin,
   AndroidFlutterLocalNotificationsPlugin,
   NotificationResponse
@@ -21,10 +21,10 @@ void main() {
     mockMessaging = MockFirebaseMessaging();
     mockLocalNotifications = MockFlutterLocalNotificationsPlugin();
     mockAndroidPlugin = MockAndroidFlutterLocalNotificationsPlugin();
-    
+
     // استبدال الكائنات الحقيقية بالكائنات المزيفة للاختبار
     notificationService = NotificationService();
-    
+
     // تعيين الحقول الخاصة باستخدام التفكير (reflection)
     // هذا يتطلب تعديل الفئة NotificationService لتسهيل الاختبار
     // أو استخدام مكتبة مثل mockito_extensions
@@ -34,10 +34,10 @@ void main() {
     test('getToken يجب أن يعيد توكن FCM', () async {
       // الإعداد
       when(mockMessaging.getToken()).thenAnswer((_) async => 'test-fcm-token');
-      
+
       // التنفيذ
       final token = await notificationService.getToken();
-      
+
       // التحقق
       expect(token, 'test-fcm-token');
       verify(mockMessaging.getToken()).called(1);
@@ -46,10 +46,10 @@ void main() {
     test('getToken يجب أن يعيد null عند حدوث خطأ', () async {
       // الإعداد
       when(mockMessaging.getToken()).thenThrow(Exception('Test error'));
-      
+
       // التنفيذ
       final token = await notificationService.getToken();
-      
+
       // التحقق
       expect(token, null);
       verify(mockMessaging.getToken()).called(1);
@@ -57,7 +57,7 @@ void main() {
 
     test('initialize يجب أن يطلب الأذونات ويهيئ الإشعارات المحلية', () async {
       // الإعداد
-      final mockNotificationSettings = NotificationSettings(
+      const mockNotificationSettings = NotificationSettings(
         authorizationStatus: AuthorizationStatus.authorized,
         alert: AppleNotificationSetting.enabled,
         announcement: AppleNotificationSetting.disabled,
@@ -70,33 +70,45 @@ void main() {
         criticalAlert: AppleNotificationSetting.disabled,
         providesAppNotificationSettings: false,
       );
-      
-      when(mockMessaging.requestPermission()).thenAnswer((_) async => mockNotificationSettings);
-      when(mockLocalNotifications.initialize(any, onDidReceiveNotificationResponse: anyNamed('onDidReceiveNotificationResponse')))
+
+      when(mockMessaging.requestPermission())
+          .thenAnswer((_) async => mockNotificationSettings);
+      when(mockLocalNotifications.initialize(any,
+              onDidReceiveNotificationResponse:
+                  anyNamed('onDidReceiveNotificationResponse')))
           .thenAnswer((_) async => true);
-      when(mockLocalNotifications.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>())
+      when(mockLocalNotifications.resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>())
           .thenReturn(mockAndroidPlugin);
-      when(mockAndroidPlugin.createNotificationChannel(any)).thenAnswer((_) async => true);
+      when(mockAndroidPlugin.createNotificationChannel(any))
+          .thenAnswer((_) async => true);
       when(mockMessaging.subscribeToTopic(any)).thenAnswer((_) async => true);
-      
+
       // التنفيذ
       await notificationService.initialize('test-store-id');
-      
+
       // التحقق
       verify(mockMessaging.requestPermission()).called(1);
-      verify(mockLocalNotifications.initialize(any, onDidReceiveNotificationResponse: anyNamed('onDidReceiveNotificationResponse'))).called(1);
-      verify(mockLocalNotifications.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()).called(1);
+      verify(mockLocalNotifications.initialize(any,
+              onDidReceiveNotificationResponse:
+                  anyNamed('onDidReceiveNotificationResponse')))
+          .called(1);
+      verify(mockLocalNotifications.resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>())
+          .called(1);
       verify(mockAndroidPlugin.createNotificationChannel(any)).called(1);
       verify(mockMessaging.subscribeToTopic('test-store-id')).called(1);
     });
 
-    test('unsubscribeFromStoreTopic يجب أن يلغي الاشتراك من موضوع المتجر', () async {
+    test('unsubscribeFromStoreTopic يجب أن يلغي الاشتراك من موضوع المتجر',
+        () async {
       // الإعداد
-      when(mockMessaging.unsubscribeFromTopic(any)).thenAnswer((_) async => true);
-      
+      when(mockMessaging.unsubscribeFromTopic(any))
+          .thenAnswer((_) async => true);
+
       // التنفيذ
       await notificationService.unsubscribeFromStoreTopic('test-store-id');
-      
+
       // التحقق
       verify(mockMessaging.unsubscribeFromTopic('test-store-id')).called(1);
     });

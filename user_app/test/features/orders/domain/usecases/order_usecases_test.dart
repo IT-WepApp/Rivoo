@@ -32,7 +32,7 @@ void main() {
         id: 'order1',
         userId: 'user1',
         items: [
-          OrderItem(
+          const OrderItem(
             productId: 'product1',
             productName: 'Product 1',
             price: 100.0,
@@ -57,7 +57,7 @@ void main() {
         id: 'order2',
         userId: 'user1',
         items: [
-          OrderItem(
+          const OrderItem(
             productId: 'product2',
             productName: 'Product 2',
             price: 150.0,
@@ -82,8 +82,7 @@ void main() {
 
     test('should get orders from repository', () async {
       // Arrange
-      when(mockRepository.getOrders())
-          .thenAnswer((_) async => Right(orders));
+      when(mockRepository.getOrders()).thenAnswer((_) async => Right(orders));
 
       // Act
       final result = await getOrdersUseCase(NoParams());
@@ -96,27 +95,27 @@ void main() {
 
     test('should return failure when repository fails', () async {
       // Arrange
-      final failure = ServerFailure(message: 'Server error');
+      const failure = ServerFailure(message: 'Server error');
       when(mockRepository.getOrders())
-          .thenAnswer((_) async => Left(failure));
+          .thenAnswer((_) async => const Left(failure));
 
       // Act
       final result = await getOrdersUseCase(NoParams());
 
       // Assert
-      expect(result, Left(failure));
+      expect(result, const Left(failure));
       verify(mockRepository.getOrders()).called(1);
       verifyNoMoreInteractions(mockRepository);
     });
   });
 
   group('GetOrderDetailsUseCase', () {
-    final orderId = 'order1';
+    const orderId = 'order1';
     final order = Order(
       id: orderId,
       userId: 'user1',
       items: [
-        OrderItem(
+        const OrderItem(
           productId: 'product1',
           productName: 'Product 1',
           price: 100.0,
@@ -156,7 +155,7 @@ void main() {
   group('CreateOrderUseCase', () {
     final params = CreateOrderParams(
       items: [
-        OrderItem(
+        const OrderItem(
           productId: 'product1',
           productName: 'Product 1',
           price: 100.0,
@@ -209,7 +208,7 @@ void main() {
   });
 
   group('CancelOrderUseCase', () {
-    final orderId = 'order1';
+    const orderId = 'order1';
 
     test('should cancel order through repository', () async {
       // Arrange

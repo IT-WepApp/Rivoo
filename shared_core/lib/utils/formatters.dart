@@ -13,7 +13,8 @@ String formatDateTime(DateTime dateTime, {String locale = 'ar'}) {
 }
 
 /// تنسيق المبلغ المالي مع رمز العملة
-String formatCurrency(double amount, {String currencySymbol = 'ر.س', String locale = 'ar'}) {
+String formatCurrency(double amount,
+    {String currencySymbol = 'ر.س', String locale = 'ar'}) {
   final formatter = NumberFormat.currency(
     locale: locale,
     symbol: currencySymbol,
@@ -26,25 +27,25 @@ String formatCurrency(double amount, {String currencySymbol = 'ر.س', String lo
 String formatPhoneNumber(String phoneNumber) {
   // إزالة أي أحرف غير رقمية
   final digitsOnly = phoneNumber.replaceAll(RegExp(r'\D'), '');
-  
+
   // التعامل مع الأرقام الدولية
   if (digitsOnly.startsWith('00') || digitsOnly.startsWith('+')) {
     // تنسيق الرقم الدولي
-    final countryCode = digitsOnly.startsWith('00') 
-        ? digitsOnly.substring(0, 4) 
+    final countryCode = digitsOnly.startsWith('00')
+        ? digitsOnly.substring(0, 4)
         : '+${digitsOnly.substring(1, 3)}';
-    
+
     final remaining = digitsOnly.startsWith('00')
         ? digitsOnly.substring(4)
         : digitsOnly.substring(3);
-    
+
     // تقسيم الرقم إلى مجموعات من 3 أو 4 أرقام
     final parts = <String>[];
     for (int i = 0; i < remaining.length; i += 3) {
       final end = i + 3 > remaining.length ? remaining.length : i + 3;
       parts.add(remaining.substring(i, end));
     }
-    
+
     return '$countryCode ${parts.join(' ')}';
   } else {
     // تنسيق الرقم المحلي
@@ -61,7 +62,7 @@ String formatPhoneNumber(String phoneNumber) {
 /// تنسيق النص ليكون بأحرف كبيرة في بداية كل كلمة
 String toTitleCase(String text) {
   if (text.isEmpty) return text;
-  
+
   return text.split(' ').map((word) {
     if (word.isEmpty) return word;
     return word[0].toUpperCase() + word.substring(1).toLowerCase();
@@ -93,7 +94,7 @@ String formatDuration(Duration duration, {String locale = 'ar'}) {
   } else if (duration.inHours < 24) {
     final hours = duration.inHours;
     final minutes = duration.inMinutes % 60;
-    
+
     if (minutes == 0) {
       return '$hours ساعة';
     } else {
@@ -102,7 +103,7 @@ String formatDuration(Duration duration, {String locale = 'ar'}) {
   } else {
     final days = duration.inDays;
     final hours = duration.inHours % 24;
-    
+
     if (hours == 0) {
       return '$days يوم';
     } else {
@@ -115,15 +116,15 @@ String formatDuration(Duration duration, {String locale = 'ar'}) {
 String formatCreditCardNumber(String cardNumber) {
   // إزالة المسافات والشرطات
   final cleanNumber = cardNumber.replaceAll(RegExp(r'[\s-]'), '');
-  
+
   if (cleanNumber.length < 4) {
     return cleanNumber;
   }
-  
+
   // إظهار آخر 4 أرقام فقط
   final lastFour = cleanNumber.substring(cleanNumber.length - 4);
   final maskedPart = '*' * (cleanNumber.length - 4);
-  
+
   // تنسيق الرقم في مجموعات من 4 أرقام
   final masked = '$maskedPart$lastFour';
   final parts = <String>[];
@@ -131,6 +132,6 @@ String formatCreditCardNumber(String cardNumber) {
     final end = i + 4 > masked.length ? masked.length : i + 4;
     parts.add(masked.substring(i, end));
   }
-  
+
   return parts.join(' ');
 }

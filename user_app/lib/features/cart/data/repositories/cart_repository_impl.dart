@@ -21,19 +21,23 @@ class CartRepositoryImpl implements CartRepository {
   }
 
   @override
-  Future<Either<Failure, Unit>> addItem(Entity product, {int quantity = 1}) async {
+  Future<Either<Failure, Unit>> addItem(Entity product,
+      {int quantity = 1}) async {
     try {
-      final existingItemIndex = _cartItems.indexWhere((item) => item.productId == product.id);
+      final existingItemIndex =
+          _cartItems.indexWhere((item) => item.productId == product.id);
 
       if (existingItemIndex != -1) {
         final currentItem = _cartItems[existingItemIndex];
-        final updatedItem = currentItem.copyWith(quantity: currentItem.quantity + quantity);
+        final updatedItem =
+            currentItem.copyWith(quantity: currentItem.quantity + quantity);
         _cartItems[existingItemIndex] = updatedItem;
       } else {
-        final newItem = CartItemModel.fromProduct(product as Product, quantity: quantity);
+        final newItem =
+            CartItemModel.fromProduct(product as Product, quantity: quantity);
         _cartItems.add(newItem);
       }
-      
+
       return const Right(unit);
     } catch (e) {
       return Left(ServerFailure(message: e.toString()));
@@ -51,7 +55,8 @@ class CartRepositoryImpl implements CartRepository {
   }
 
   @override
-  Future<Either<Failure, Unit>> updateQuantity(String cartItemId, int newQuantity) async {
+  Future<Either<Failure, Unit>> updateQuantity(
+      String cartItemId, int newQuantity) async {
     try {
       final itemIndex = _cartItems.indexWhere((item) => item.id == cartItemId);
       if (itemIndex == -1) {
@@ -80,7 +85,8 @@ class CartRepositoryImpl implements CartRepository {
       }
 
       final currentItem = _cartItems[itemIndex];
-      final updatedItem = currentItem.copyWith(quantity: currentItem.quantity + 1);
+      final updatedItem =
+          currentItem.copyWith(quantity: currentItem.quantity + 1);
       _cartItems[itemIndex] = updatedItem;
       return const Right(unit);
     } catch (e) {
@@ -100,7 +106,8 @@ class CartRepositoryImpl implements CartRepository {
       if (currentItem.quantity <= 1) {
         return removeItem(cartItemId);
       } else {
-        final updatedItem = currentItem.copyWith(quantity: currentItem.quantity - 1);
+        final updatedItem =
+            currentItem.copyWith(quantity: currentItem.quantity - 1);
         _cartItems[itemIndex] = updatedItem;
         return const Right(unit);
       }
@@ -132,7 +139,8 @@ class CartRepositoryImpl implements CartRepository {
   @override
   Future<Either<Failure, double>> getTotalPrice() async {
     try {
-      final totalPrice = _cartItems.fold(0.0, (sum, item) => sum + (item.price * item.quantity));
+      final totalPrice = _cartItems.fold(
+          0.0, (sum, item) => sum + (item.price * item.quantity));
       return Right(totalPrice);
     } catch (e) {
       return Left(ServerFailure(message: e.toString()));

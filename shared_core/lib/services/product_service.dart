@@ -1,17 +1,21 @@
 import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:shared_models/shared_models.dart'; 
+import 'package:shared_models/shared_models.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_models/src/models/promotion.dart';
 
-final productServiceProvider = Provider<ProductService>((ref) => ProductService());
+final productServiceProvider =
+    Provider<ProductService>((ref) => ProductService());
 
 class ProductService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
   Future<void> createProduct(Product product) async {
     try {
-      await _firestore.collection('products').doc(product.id).set(product.toJson());
+      await _firestore
+          .collection('products')
+          .doc(product.id)
+          .set(product.toJson());
     } catch (e) {
       log('Error creating product: $e');
       rethrow;
@@ -33,7 +37,10 @@ class ProductService {
 
   Future<void> updateProduct(Product product) async {
     try {
-      await _firestore.collection('products').doc(product.id).update(product.toJson());
+      await _firestore
+          .collection('products')
+          .doc(product.id)
+          .update(product.toJson());
     } catch (e) {
       log('Error updating product: $e');
       rethrow;
@@ -78,7 +85,10 @@ class ProductService {
 
   Future<void> approveProduct(String productId) async {
     try {
-      await _firestore.collection('products').doc(productId).update({'status': 'approved'}); 
+      await _firestore
+          .collection('products')
+          .doc(productId)
+          .update({'status': 'approved'});
     } catch (e) {
       log('Error approving product: $e');
       rethrow;
@@ -87,7 +97,10 @@ class ProductService {
 
   Future<void> rejectProduct(String productId) async {
     try {
-      await _firestore.collection('products').doc(productId).update({'status': 'rejected'});
+      await _firestore
+          .collection('products')
+          .doc(productId)
+          .update({'status': 'rejected'});
     } catch (e) {
       log('Error rejecting product: $e');
       rethrow;

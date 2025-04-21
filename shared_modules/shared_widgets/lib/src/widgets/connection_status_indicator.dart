@@ -19,15 +19,15 @@ class _ConnectionStatusIndicatorState extends State<ConnectionStatusIndicator> {
   void initState() {
     super.initState();
     _initConnectivity();
-    _connectivitySubscription = 
+    _connectivitySubscription =
         _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
   }
 
- @override
- void dispose() {
-   _connectivitySubscription.cancel();
-   super.dispose();
- }
+  @override
+  void dispose() {
+    _connectivitySubscription.cancel();
+    super.dispose();
+  }
 
   Future<void> _initConnectivity() async {
     late List<ConnectivityResult> result;
@@ -48,9 +48,10 @@ class _ConnectionStatusIndicatorState extends State<ConnectionStatusIndicator> {
 
   void _updateConnectionStatus(List<ConnectivityResult> result) {
     // Use the first result or determine status based on the list
-    ConnectivityResult currentStatus = result.isNotEmpty ? result[0] : ConnectivityResult.none;
+    ConnectivityResult currentStatus =
+        result.isNotEmpty ? result[0] : ConnectivityResult.none;
     if (result.contains(ConnectivityResult.none)) {
-        currentStatus = ConnectivityResult.none;
+      currentStatus = ConnectivityResult.none;
     }
     setState(() {
       _connectionStatus = currentStatus;

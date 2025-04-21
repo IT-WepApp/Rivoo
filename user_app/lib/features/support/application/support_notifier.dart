@@ -78,7 +78,7 @@ class SupportNotifier extends StateNotifier<SupportState> {
   }) async {
     try {
       state = state.copyWith(isLoading: true, error: null);
-      
+
       final ticket = await _supportService.createTicket(
         subject: subject,
         description: description,
@@ -86,7 +86,7 @@ class SupportNotifier extends StateNotifier<SupportState> {
         priority: priority,
         orderId: orderId,
       );
-      
+
       state = state.copyWith(
         isLoading: false,
         selectedTicket: ticket,
@@ -105,7 +105,7 @@ class SupportNotifier extends StateNotifier<SupportState> {
       selectedTicket: ticket,
       messages: [],
     );
-    
+
     if (ticket != null) {
       _supportService.markMessagesAsRead(ticket.id);
     }
@@ -120,15 +120,15 @@ class SupportNotifier extends StateNotifier<SupportState> {
       if (state.selectedTicket == null) {
         throw Exception('لم يتم تحديد تذكرة');
       }
-      
+
       state = state.copyWith(isLoading: true, error: null);
-      
+
       await _supportService.sendMessage(
         ticketId: state.selectedTicket!.id,
         message: message,
         attachmentPath: attachmentPath,
       );
-      
+
       state = state.copyWith(isLoading: false);
     } catch (e) {
       state = state.copyWith(
@@ -144,11 +144,11 @@ class SupportNotifier extends StateNotifier<SupportState> {
       if (state.selectedTicket == null) {
         throw Exception('لم يتم تحديد تذكرة');
       }
-      
+
       state = state.copyWith(isLoading: true, error: null);
-      
+
       await _supportService.closeTicket(state.selectedTicket!.id);
-      
+
       state = state.copyWith(isLoading: false);
     } catch (e) {
       state = state.copyWith(
@@ -164,11 +164,11 @@ class SupportNotifier extends StateNotifier<SupportState> {
       if (state.selectedTicket == null) {
         throw Exception('لم يتم تحديد تذكرة');
       }
-      
+
       state = state.copyWith(isLoading: true, error: null);
-      
+
       await _supportService.reopenTicket(state.selectedTicket!.id);
-      
+
       state = state.copyWith(isLoading: false);
     } catch (e) {
       state = state.copyWith(
@@ -184,7 +184,7 @@ class SupportNotifier extends StateNotifier<SupportState> {
       if (state.selectedTicket == null) {
         return;
       }
-      
+
       await _supportService.markMessagesAsRead(state.selectedTicket!.id);
     } catch (e) {
       // تجاهل الأخطاء هنا

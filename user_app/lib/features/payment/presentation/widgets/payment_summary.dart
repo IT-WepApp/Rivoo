@@ -7,10 +7,13 @@ import 'package:intl/intl.dart';
 class PaymentSummary extends StatelessWidget {
   /// معرف الطلب
   final String orderId;
+
   /// المبلغ الفرعي (Subtotal)
   final double amount;
+
   /// العملة (رمز العملة)
   final String currency;
+
   /// بيانات إضافية قد تتضمن عناصر، ضريبة، شحن، إلخ
   final Map<String, dynamic>? metadata;
 
@@ -56,7 +59,8 @@ class PaymentSummary extends StatelessWidget {
               ),
               const Divider(height: 24),
             ],
-            _buildRow(context, label: l10n.subtotal, value: formattedAmount, isBold: true),
+            _buildRow(context,
+                label: l10n.subtotal, value: formattedAmount, isBold: true),
             if (metadata?['tax'] != null) ...[
               const SizedBox(height: 8),
               _buildRow(
@@ -101,13 +105,15 @@ class PaymentSummary extends StatelessWidget {
         Text(
           label,
           style: isBold
-              ? theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)
+              ? theme.textTheme.titleMedium
+                  ?.copyWith(fontWeight: FontWeight.bold)
               : theme.textTheme.bodyMedium,
         ),
         Text(
           value,
           style: isBold
-              ? theme.textTheme.titleMedium?.copyWith(fontWeight: FontWeight.bold)
+              ? theme.textTheme.titleMedium
+                  ?.copyWith(fontWeight: FontWeight.bold)
               : theme.textTheme.bodyMedium,
         ),
       ],
@@ -146,14 +152,22 @@ class PaymentSummary extends StatelessWidget {
 
   String _getCurrencySymbol(String code) {
     switch (code.toUpperCase()) {
-      case 'USD': return '\$';
-      case 'EUR': return '€';
-      case 'GBP': return '£';
-      case 'JPY': return '¥';
-      case 'SAR': return 'ر.س';
-      case 'AED': return 'د.إ';
-      case 'EGP': return 'ج.م';
-      default: return code;
+      case 'USD':
+        return '\$';
+      case 'EUR':
+        return '€';
+      case 'GBP':
+        return '£';
+      case 'JPY':
+        return '¥';
+      case 'SAR':
+        return 'ر.س';
+      case 'AED':
+        return 'د.إ';
+      case 'EGP':
+        return 'ج.م';
+      default:
+        return code;
     }
   }
 }

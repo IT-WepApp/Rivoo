@@ -18,7 +18,7 @@ void main() {
       const productId = 'product_123';
       const rating = 4;
       const comment = 'منتج رائع، أنصح به';
-      
+
       when(mockRatingsNotifier.addRating(
         productId: productId,
         rating: rating,
@@ -47,7 +47,7 @@ void main() {
       const productId = 'product_123';
       const newRating = 5;
       const newComment = 'تحديث: المنتج ممتاز جداً';
-      
+
       when(mockRatingsNotifier.updateRating(
         ratingId: ratingId,
         productId: productId,
@@ -77,7 +77,7 @@ void main() {
       // ترتيب
       const ratingId = 'rating_123';
       const productId = 'product_123';
-      
+
       when(mockRatingsNotifier.deleteRating(
         ratingId: ratingId,
         productId: productId,
@@ -104,7 +104,7 @@ void main() {
         {'id': 'rating_1', 'rating': 5, 'comment': 'ممتاز'},
         {'id': 'rating_2', 'rating': 4, 'comment': 'جيد جدا'},
       ];
-      
+
       when(mockRatingsNotifier.getProductRatings(productId))
           .thenAnswer((_) async => expectedRatings);
 
@@ -121,7 +121,7 @@ void main() {
       // ترتيب
       const productId = 'product_123';
       const expectedAverage = 4.5;
-      
+
       when(mockRatingsNotifier.getAverageRating(productId))
           .thenAnswer((_) async => expectedAverage);
 

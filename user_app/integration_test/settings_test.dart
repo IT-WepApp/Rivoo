@@ -12,7 +12,8 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   group('اختبار إعدادات التطبيق', () {
-    testWidgets('تسجيل حساب جديد، تغيير اللغة، تغيير السمة', (WidgetTester tester) async {
+    testWidgets('تسجيل حساب جديد، تغيير اللغة، تغيير السمة',
+        (WidgetTester tester) async {
       // تشغيل التطبيق
       app.main();
       await tester.pumpAndSettle();
@@ -28,10 +29,14 @@ void main() {
       expect(find.byType(RegisterScreen), findsOneWidget);
 
       // إدخال بيانات الحساب الجديد
-      await tester.enterText(find.byKey(const Key('name_field')), 'مستخدم جديد');
-      await tester.enterText(find.byKey(const Key('email_field')), 'new_user@example.com');
-      await tester.enterText(find.byKey(const Key('password_field')), 'password123');
-      await tester.enterText(find.byKey(const Key('confirm_password_field')), 'password123');
+      await tester.enterText(
+          find.byKey(const Key('name_field')), 'مستخدم جديد');
+      await tester.enterText(
+          find.byKey(const Key('email_field')), 'new_user@example.com');
+      await tester.enterText(
+          find.byKey(const Key('password_field')), 'password123');
+      await tester.enterText(
+          find.byKey(const Key('confirm_password_field')), 'password123');
       await tester.pumpAndSettle();
 
       // النقر على زر إنشاء الحساب
@@ -78,7 +83,8 @@ void main() {
       await tester.pumpAndSettle();
 
       // التحقق من تغيير السمة
-      final darkThemeSwitch = find.byType(Switch).evaluate().first.widget as Switch;
+      final darkThemeSwitch =
+          find.byType(Switch).evaluate().first.widget as Switch;
       expect(darkThemeSwitch.value, true);
 
       // العودة إلى شاشة الإعدادات

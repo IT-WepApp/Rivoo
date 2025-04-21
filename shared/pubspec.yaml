@@ -28,8 +28,8 @@ dependencies:
   firebase_auth: ^5.5.2
   firebase_messaging: ^15.2.5
   cloud_firestore: ^5.6.6
-  firebase_crashlytics: ^3.4.8
-  firebase_storage: ^11.6.0
+  firebase_crashlytics: ^4.0.0  # تم تحديث الإصدار لحل التعارض
+  firebase_storage: ^12.4.5
 
   # تخزين محلي
   flutter_secure_storage: ^9.0.0
@@ -37,10 +37,14 @@ dependencies:
 
   # واجهة المستخدم
   cached_network_image: ^3.3.1
-  intl: ^0.20.2
+  intl: ^0.19.0
   connectivity_plus: ^5.0.2
   equatable: ^2.0.5
+  dartz: ^0.10.1
 
+  shared_services: any
+  shared_models: any
+  shared_widgets: any
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -48,6 +52,7 @@ dev_dependencies:
   build_runner: ^2.4.7
   riverpod_generator: ^2.3.9
   json_serializable: ^6.7.1
+  mockito: ^5.4.2
 
 flutter:
   uses-material-design: true

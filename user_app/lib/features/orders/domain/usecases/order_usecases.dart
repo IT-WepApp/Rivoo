@@ -78,7 +78,8 @@ class TrackOrderUseCase implements UseCase<String, String> {
   }
 }
 
-class UpdateShippingAddressUseCase implements UseCase<Unit, UpdateShippingAddressParams> {
+class UpdateShippingAddressUseCase
+    implements UseCase<Unit, UpdateShippingAddressParams> {
   final OrderRepository repository;
 
   UpdateShippingAddressUseCase(this.repository);

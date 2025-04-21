@@ -15,27 +15,28 @@ class StatisticsPage extends ConsumerStatefulWidget {
   ConsumerState<StatisticsPage> createState() => _StatisticsPageState();
 }
 
-class _StatisticsPageState extends ConsumerState<StatisticsPage> with SingleTickerProviderStateMixin {
+class _StatisticsPageState extends ConsumerState<StatisticsPage>
+    with SingleTickerProviderStateMixin {
   bool _isLoading = true;
   String _errorMessage = '';
-  
+
   late TabController _tabController;
-  
+
   // بيانات الإحصائيات
   Map<String, dynamic> _salesData = {};
   Map<String, dynamic> _productsData = {};
   Map<String, dynamic> _customersData = {};
-  
+
   // فلاتر
   String _timeRange = 'week'; // يوم، أسبوع، شهر، سنة
-  
+
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
     _loadStatistics();
   }
-  
+
   @override
   void dispose() {
     _tabController.dispose();
@@ -50,16 +51,19 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> with SingleTick
 
     try {
       final orderService = ref.read(orderServiceProvider);
-      
+
       // تحميل بيانات المبيعات
-      final salesData = await orderService.getSellerSalesStatistics(timeRange: _timeRange);
-      
+      final salesData =
+          await orderService.getSellerSalesStatistics(timeRange: _timeRange);
+
       // تحميل بيانات المنتجات
-      final productsData = await orderService.getSellerProductsStatistics(timeRange: _timeRange);
-      
+      final productsData =
+          await orderService.getSellerProductsStatistics(timeRange: _timeRange);
+
       // تحميل بيانات العملاء
-      final customersData = await orderService.getSellerCustomersStatistics(timeRange: _timeRange);
-      
+      final customersData = await orderService.getSellerCustomersStatistics(
+          timeRange: _timeRange);
+
       setState(() {
         _salesData = salesData;
         _productsData = productsData;
@@ -84,7 +88,7 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> with SingleTick
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('الإحصائيات والتحليلات'),
@@ -120,7 +124,7 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> with SingleTick
                   children: [
                     // فلاتر الوقت
                     _buildTimeRangeFilter(theme),
-                    
+
                     // محتوى التبويبات
                     Expanded(
                       child: TabBarView(
@@ -155,12 +159,13 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> with SingleTick
 
   Widget _buildTimeRangeButton(ThemeData theme, String value, String label) {
     final isSelected = _timeRange == value;
-    
+
     return ElevatedButton(
       onPressed: () => _changeTimeRange(value),
       style: ElevatedButton.styleFrom(
         backgroundColor: isSelected ? AppColors.primary : AppColors.surface,
-        foregroundColor: isSelected ? AppColors.onPrimary : AppColors.textPrimary,
+        foregroundColor:
+            isSelected ? AppColors.onPrimary : AppColors.textPrimary,
         elevation: isSelected ? 2 : 0,
         side: BorderSide(
           color: isSelected ? AppColors.primary : AppColors.border,
@@ -178,14 +183,15 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> with SingleTick
         child: Text('لا توجد بيانات مبيعات متاحة'),
       );
     }
-    
+
     final totalSales = _salesData['totalSales'] as num? ?? 0;
     final totalOrders = _salesData['totalOrders'] as int? ?? 0;
     final averageOrderValue = _salesData['averageOrderValue'] as num? ?? 0;
     final salesGrowth = _salesData['salesGrowth'] as num? ?? 0;
     final salesByDay = _salesData['salesByDay'] as List<dynamic>? ?? [];
-    final salesByCategory = _salesData['salesByCategory'] as List<dynamic>? ?? [];
-    
+    final salesByCategory =
+        _salesData['salesByCategory'] as List<dynamic>? ?? [];
+
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
@@ -213,14 +219,16 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> with SingleTick
             },
             {
               'title': 'نمو المبيعات',
-              'value': '${salesGrowth >= 0 ? '+' : ''}${salesGrowth.toStringAsFixed(1)}%',
-              'icon': salesGrowth >= 0 ? Icons.arrow_upward : Icons.arrow_downward,
+              'value':
+                  '${salesGrowth >= 0 ? '+' : ''}${salesGrowth.toStringAsFixed(1)}%',
+              'icon':
+                  salesGrowth >= 0 ? Icons.arrow_upward : Icons.arrow_downward,
               'color': salesGrowth >= 0 ? AppColors.success : AppColors.error,
             },
           ],
         ),
         const SizedBox(height: 24),
-        
+
         // رسم بياني للمبيعات حسب اليوم
         _buildSectionTitle(theme, 'المبيعات حسب اليوم'),
         const SizedBox(height: 8),
@@ -229,7 +237,7 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> with SingleTick
           child: _buildSalesByDayChart(theme, salesByDay),
         ),
         const SizedBox(height: 24),
-        
+
         // رسم بياني للمبيعات حسب الفئة
         _buildSectionTitle(theme, 'المبيعات حسب الفئة'),
         const SizedBox(height: 8),
@@ -247,12 +255,13 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> with SingleTick
         child: Text('لا توجد بيانات منتجات متاحة'),
       );
     }
-    
+
     final totalProducts = _productsData['totalProducts'] as int? ?? 0;
     final outOfStockProducts = _productsData['outOfStockProducts'] as int? ?? 0;
     final lowStockProducts = _productsData['lowStockProducts'] as int? ?? 0;
-    final topSellingProducts = _productsData['topSellingProducts'] as List<dynamic>? ?? [];
-    
+    final topSellingProducts =
+        _productsData['topSellingProducts'] as List<dynamic>? ?? [];
+
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
@@ -281,7 +290,7 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> with SingleTick
           ],
         ),
         const SizedBox(height: 24),
-        
+
         // قائمة المنتجات الأكثر مبيعاً
         _buildSectionTitle(theme, 'المنتجات الأكثر مبيعاً'),
         const SizedBox(height: 8),
@@ -296,13 +305,15 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> with SingleTick
         child: Text('لا توجد بيانات عملاء متاحة'),
       );
     }
-    
+
     final totalCustomers = _customersData['totalCustomers'] as int? ?? 0;
     final newCustomers = _customersData['newCustomers'] as int? ?? 0;
-    final returningCustomers = _customersData['returningCustomers'] as int? ?? 0;
-    final customerRetentionRate = _customersData['customerRetentionRate'] as num? ?? 0;
+    final returningCustomers =
+        _customersData['returningCustomers'] as int? ?? 0;
+    final customerRetentionRate =
+        _customersData['customerRetentionRate'] as num? ?? 0;
     final topCustomers = _customersData['topCustomers'] as List<dynamic>? ?? [];
-    
+
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
@@ -337,7 +348,7 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> with SingleTick
           ],
         ),
         const SizedBox(height: 24),
-        
+
         // قائمة العملاء الأكثر شراءً
         _buildSectionTitle(theme, 'العملاء الأكثر شراءً'),
         const SizedBox(height: 8),
@@ -363,7 +374,7 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> with SingleTick
         final value = stat['value'] as String;
         final icon = stat['icon'] as IconData;
         final color = stat['color'] as Color;
-        
+
         return Card(
           elevation: 2,
           shape: RoundedRectangleBorder(
@@ -418,20 +429,20 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> with SingleTick
         child: Text('لا توجد بيانات متاحة'),
       );
     }
-    
+
     // تحويل البيانات إلى تنسيق مناسب للرسم البياني
     final spots = <FlSpot>[];
     final labels = <String>[];
-    
+
     for (int i = 0; i < salesByDay.length; i++) {
       final item = salesByDay[i] as Map<String, dynamic>;
       final sales = item['sales'] as num? ?? 0;
       final day = item['day'] as String? ?? '';
-      
+
       spots.add(FlSpot(i.toDouble(), sales.toDouble()));
       labels.add(day);
     }
-    
+
     return LineChart(
       LineChartData(
         gridData: FlGridData(
@@ -440,13 +451,13 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> with SingleTick
           horizontalInterval: 1,
           verticalInterval: 1,
           getDrawingHorizontalLine: (value) {
-            return FlLine(
+            return const FlLine(
               color: AppColors.border,
               strokeWidth: 1,
             );
           },
           getDrawingVerticalLine: (value) {
-            return FlLine(
+            return const FlLine(
               color: AppColors.border,
               strokeWidth: 1,
             );
@@ -454,10 +465,10 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> with SingleTick
         ),
         titlesData: FlTitlesData(
           show: true,
-          rightTitles: AxisTitles(
+          rightTitles: const AxisTitles(
             sideTitles: SideTitles(showTitles: false),
           ),
-          topTitles: AxisTitles(
+          topTitles: const AxisTitles(
             sideTitles: SideTitles(showTitles: false),
           ),
           bottomTitles: AxisTitles(
@@ -545,17 +556,18 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> with SingleTick
     );
   }
 
-  Widget _buildSalesByCategoryChart(ThemeData theme, List<dynamic> salesByCategory) {
+  Widget _buildSalesByCategoryChart(
+      ThemeData theme, List<dynamic> salesByCategory) {
     if (salesByCategory.isEmpty) {
       return const Center(
         child: Text('لا توجد بيانات متاحة'),
       );
     }
-    
+
     // تحويل البيانات إلى تنسيق مناسب للرسم البياني
     final sections = <PieChartSectionData>[];
     final legends = <Widget>[];
-    
+
     final colors = [
       Colors.blue,
       Colors.green,
@@ -566,15 +578,15 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> with SingleTick
       Colors.amber,
       Colors.pink,
     ];
-    
+
     for (int i = 0; i < salesByCategory.length; i++) {
       final item = salesByCategory[i] as Map<String, dynamic>;
       final category = item['category'] as String? ?? '';
       final sales = item['sales'] as num? ?? 0;
       final percentage = item['percentage'] as num? ?? 0;
-      
+
       final color = colors[i % colors.length];
-      
+
       sections.add(
         PieChartSectionData(
           color: color,
@@ -588,7 +600,7 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> with SingleTick
           ),
         ),
       );
-      
+
       legends.add(
         Padding(
           padding: const EdgeInsets.only(bottom: 4),
@@ -620,7 +632,7 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> with SingleTick
         ),
       );
     }
-    
+
     return Row(
       children: [
         // الرسم البياني الدائري
@@ -634,7 +646,7 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> with SingleTick
             ),
           ),
         ),
-        
+
         // مفتاح الرسم البياني
         Expanded(
           flex: 2,
@@ -660,7 +672,7 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> with SingleTick
         ),
       );
     }
-    
+
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -673,7 +685,7 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> with SingleTick
         final sales = product['sales'] as num? ?? 0;
         final quantity = product['quantity'] as int? ?? 0;
         final stock = product['stock'] as int? ?? 0;
-        
+
         return Card(
           margin: const EdgeInsets.only(bottom: 8),
           child: ListTile(
@@ -691,7 +703,8 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> with SingleTick
                           width: 50,
                           height: 50,
                           color: Colors.grey.shade200,
-                          child: const Icon(Icons.image_not_supported, color: Colors.grey),
+                          child: const Icon(Icons.image_not_supported,
+                              color: Colors.grey),
                         );
                       },
                     ),
@@ -731,7 +744,8 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> with SingleTick
             ),
             trailing: IconButton(
               icon: const Icon(Icons.arrow_forward),
-              onPressed: () => context.push('${RouteConstants.editProduct}/$productId'),
+              onPressed: () =>
+                  context.push('${RouteConstants.editProduct}/$productId'),
               tooltip: 'عرض المنتج',
             ),
           ),
@@ -749,7 +763,7 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> with SingleTick
         ),
       );
     }
-    
+
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
@@ -761,7 +775,7 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> with SingleTick
         final phone = customer['phone'] as String? ?? '';
         final totalSpent = customer['totalSpent'] as num? ?? 0;
         final ordersCount = customer['ordersCount'] as int? ?? 0;
-        
+
         return Card(
           margin: const EdgeInsets.only(bottom: 8),
           child: ListTile(

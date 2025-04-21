@@ -151,15 +151,17 @@ class _EnhancedLoadingScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
-    final effectiveBackgroundColor = backgroundColor ?? 
+
+    final effectiveBackgroundColor = backgroundColor ??
         (theme.brightness == Brightness.dark ? Colors.black12 : Colors.white);
-    
+
     final effectiveIndicatorColor = indicatorColor ?? theme.primaryColor;
-    
-    final effectiveMessageStyle = messageStyle ?? 
+
+    final effectiveMessageStyle = messageStyle ??
         TextStyle(
-          color: theme.brightness == Brightness.dark ? Colors.white70 : Colors.black54,
+          color: theme.brightness == Brightness.dark
+              ? Colors.white70
+              : Colors.black54,
           fontSize: 16,
         );
 
@@ -173,7 +175,8 @@ class _EnhancedLoadingScreen extends StatelessWidget {
               width: indicatorSize,
               height: indicatorSize,
               child: CircularProgressIndicator(
-                valueColor: AlwaysStoppedAnimation<Color>(effectiveIndicatorColor),
+                valueColor:
+                    AlwaysStoppedAnimation<Color>(effectiveIndicatorColor),
               ),
             ),
             if (message != null) ...[
@@ -220,28 +223,32 @@ class _EnhancedErrorScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
-    final effectiveBackgroundColor = backgroundColor ?? 
+
+    final effectiveBackgroundColor = backgroundColor ??
         (theme.brightness == Brightness.dark ? Colors.black12 : Colors.white);
-    
-    final effectiveIconColor = iconColor ?? 
+
+    final effectiveIconColor = iconColor ??
         (theme.brightness == Brightness.dark ? Colors.redAccent : Colors.red);
-    
-    final effectiveTitleStyle = titleStyle ?? 
+
+    final effectiveTitleStyle = titleStyle ??
         TextStyle(
-          color: theme.brightness == Brightness.dark ? Colors.white : Colors.black87,
+          color: theme.brightness == Brightness.dark
+              ? Colors.white
+              : Colors.black87,
           fontSize: 20,
           fontWeight: FontWeight.bold,
         );
-    
-    final effectiveMessageStyle = messageStyle ?? 
+
+    final effectiveMessageStyle = messageStyle ??
         TextStyle(
-          color: theme.brightness == Brightness.dark ? Colors.white70 : Colors.black54,
+          color: theme.brightness == Brightness.dark
+              ? Colors.white70
+              : Colors.black54,
           fontSize: 16,
         );
-    
-    final effectiveButtonTextStyle = buttonTextStyle ?? 
-        TextStyle(
+
+    final effectiveButtonTextStyle = buttonTextStyle ??
+        const TextStyle(
           color: Colors.white,
           fontSize: 16,
           fontWeight: FontWeight.bold,
@@ -329,28 +336,32 @@ class _EnhancedEmptyScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
-    final effectiveBackgroundColor = backgroundColor ?? 
+
+    final effectiveBackgroundColor = backgroundColor ??
         (theme.brightness == Brightness.dark ? Colors.black12 : Colors.white);
-    
-    final effectiveIconColor = iconColor ?? 
+
+    final effectiveIconColor = iconColor ??
         (theme.brightness == Brightness.dark ? Colors.white54 : Colors.black38);
-    
-    final effectiveTitleStyle = titleStyle ?? 
+
+    final effectiveTitleStyle = titleStyle ??
         TextStyle(
-          color: theme.brightness == Brightness.dark ? Colors.white : Colors.black87,
+          color: theme.brightness == Brightness.dark
+              ? Colors.white
+              : Colors.black87,
           fontSize: 20,
           fontWeight: FontWeight.bold,
         );
-    
-    final effectiveMessageStyle = messageStyle ?? 
+
+    final effectiveMessageStyle = messageStyle ??
         TextStyle(
-          color: theme.brightness == Brightness.dark ? Colors.white70 : Colors.black54,
+          color: theme.brightness == Brightness.dark
+              ? Colors.white70
+              : Colors.black54,
           fontSize: 16,
         );
-    
-    final effectiveButtonTextStyle = buttonTextStyle ?? 
-        TextStyle(
+
+    final effectiveButtonTextStyle = buttonTextStyle ??
+        const TextStyle(
           color: Colors.white,
           fontSize: 16,
           fontWeight: FontWeight.bold,
@@ -438,28 +449,34 @@ class _EnhancedSuccessScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
-    final effectiveBackgroundColor = backgroundColor ?? 
+
+    final effectiveBackgroundColor = backgroundColor ??
         (theme.brightness == Brightness.dark ? Colors.black12 : Colors.white);
-    
-    final effectiveIconColor = iconColor ?? 
-        (theme.brightness == Brightness.dark ? Colors.greenAccent : Colors.green);
-    
-    final effectiveTitleStyle = titleStyle ?? 
+
+    final effectiveIconColor = iconColor ??
+        (theme.brightness == Brightness.dark
+            ? Colors.greenAccent
+            : Colors.green);
+
+    final effectiveTitleStyle = titleStyle ??
         TextStyle(
-          color: theme.brightness == Brightness.dark ? Colors.white : Colors.black87,
+          color: theme.brightness == Brightness.dark
+              ? Colors.white
+              : Colors.black87,
           fontSize: 20,
           fontWeight: FontWeight.bold,
         );
-    
-    final effectiveMessageStyle = messageStyle ?? 
+
+    final effectiveMessageStyle = messageStyle ??
         TextStyle(
-          color: theme.brightness == Brightness.dark ? Colors.white70 : Colors.black54,
+          color: theme.brightness == Brightness.dark
+              ? Colors.white70
+              : Colors.black54,
           fontSize: 16,
         );
-    
-    final effectiveButtonTextStyle = buttonTextStyle ?? 
-        TextStyle(
+
+    final effectiveButtonTextStyle = buttonTextStyle ??
+        const TextStyle(
           color: Colors.white,
           fontSize: 16,
           fontWeight: FontWeight.bold,
@@ -543,7 +560,8 @@ class _EnhancedSearchScreen<T> extends StatefulWidget {
   });
 
   @override
-  _EnhancedSearchScreenState<T> createState() => _EnhancedSearchScreenState<T>();
+  _EnhancedSearchScreenState<T> createState() =>
+      _EnhancedSearchScreenState<T>();
 }
 
 class _EnhancedSearchScreenState<T> extends State<_EnhancedSearchScreen<T>> {
@@ -570,7 +588,8 @@ class _EnhancedSearchScreenState<T> extends State<_EnhancedSearchScreen<T>> {
         _filteredItems = widget.items;
       } else {
         _filteredItems = widget.items
-            .where((item) => widget.searchFilter(item)
+            .where((item) => widget
+                .searchFilter(item)
                 .toLowerCase()
                 .contains(query.toLowerCase()))
             .toList();
@@ -581,17 +600,19 @@ class _EnhancedSearchScreenState<T> extends State<_EnhancedSearchScreen<T>> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
-    final effectiveBackgroundColor = widget.backgroundColor ?? 
+
+    final effectiveBackgroundColor = widget.backgroundColor ??
         (theme.brightness == Brightness.dark ? Colors.black12 : Colors.white);
-    
-    final effectiveSearchTextStyle = widget.searchTextStyle ?? 
+
+    final effectiveSearchTextStyle = widget.searchTextStyle ??
         TextStyle(
-          color: theme.brightness == Brightness.dark ? Colors.white : Colors.black87,
+          color: theme.brightness == Brightness.dark
+              ? Colors.white
+              : Colors.black87,
           fontSize: 16,
         );
-    
-    final effectiveSearchIconColor = widget.searchIconColor ?? 
+
+    final effectiveSearchIconColor = widget.searchIconColor ??
         (theme.brightness == Brightness.dark ? Colors.white54 : Colors.black54);
 
     return Container(

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 // Basic theme definition for Admin Panel
 class AppTheme {
   // Prevent instantiation
-  AppTheme._(); 
+  AppTheme._();
 
   static final ThemeData lightTheme = ThemeData(
     brightness: Brightness.light,
@@ -25,19 +25,20 @@ class AppTheme {
 
   static final ThemeData darkTheme = ThemeData(
     brightness: Brightness.dark,
-    primarySwatch: Colors.blue, // Keep consistent or use a different dark theme color
+    primarySwatch:
+        Colors.blue, // Keep consistent or use a different dark theme color
     visualDensity: VisualDensity.adaptivePlatformDensity,
     // Add other dark theme configurations
     appBarTheme: const AppBarTheme(
-       backgroundColor: Colors.blueGrey, // Example dark app bar
-       foregroundColor: Colors.white,
+      backgroundColor: Colors.blueGrey, // Example dark app bar
+      foregroundColor: Colors.white,
     ),
-     elevatedButtonTheme: ElevatedButtonThemeData(
+    elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
         backgroundColor: Colors.blueGrey[700], // Example dark button
         foregroundColor: Colors.white,
       ),
     ),
-     // Define text themes, input decorations, etc.
+    // Define text themes, input decorations, etc.
   );
 }

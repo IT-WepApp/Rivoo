@@ -8,7 +8,8 @@ final settingsRepositoryProvider = Provider<SettingsRepository>((ref) {
 });
 
 /// مزود وضع السمة
-final themeModeProvider = StateNotifierProvider<ThemeModeNotifier, ThemeMode>((ref) {
+final themeModeProvider =
+    StateNotifierProvider<ThemeModeNotifier, ThemeMode>((ref) {
   final repository = ref.watch(settingsRepositoryProvider);
   return ThemeModeNotifier(repository);
 });
@@ -20,19 +21,22 @@ final localeProvider = StateNotifierProvider<LocaleNotifier, Locale>((ref) {
 });
 
 /// مزود إعدادات الإشعارات
-final notificationsEnabledProvider = StateNotifierProvider<NotificationsEnabledNotifier, bool>((ref) {
+final notificationsEnabledProvider =
+    StateNotifierProvider<NotificationsEnabledNotifier, bool>((ref) {
   final repository = ref.watch(settingsRepositoryProvider);
   return NotificationsEnabledNotifier(repository);
 });
 
 /// مزود إعدادات تحديد الموقع
-final locationEnabledProvider = StateNotifierProvider<LocationEnabledNotifier, bool>((ref) {
+final locationEnabledProvider =
+    StateNotifierProvider<LocationEnabledNotifier, bool>((ref) {
   final repository = ref.watch(settingsRepositoryProvider);
   return LocationEnabledNotifier(repository);
 });
 
 /// مزود وحدة المسافة
-final distanceUnitProvider = StateNotifierProvider<DistanceUnitNotifier, String>((ref) {
+final distanceUnitProvider =
+    StateNotifierProvider<DistanceUnitNotifier, String>((ref) {
   final repository = ref.watch(settingsRepositoryProvider);
   return DistanceUnitNotifier(repository);
 });
@@ -67,7 +71,8 @@ class LocaleNotifier extends StateNotifier<Locale> {
 class NotificationsEnabledNotifier extends StateNotifier<bool> {
   final SettingsRepository _repository;
 
-  NotificationsEnabledNotifier(this._repository) : super(_repository.getNotificationsEnabled());
+  NotificationsEnabledNotifier(this._repository)
+      : super(_repository.getNotificationsEnabled());
 
   /// تغيير إعدادات الإشعارات
   Future<void> setNotificationsEnabled(bool enabled) async {
@@ -80,7 +85,8 @@ class NotificationsEnabledNotifier extends StateNotifier<bool> {
 class LocationEnabledNotifier extends StateNotifier<bool> {
   final SettingsRepository _repository;
 
-  LocationEnabledNotifier(this._repository) : super(_repository.getLocationEnabled());
+  LocationEnabledNotifier(this._repository)
+      : super(_repository.getLocationEnabled());
 
   /// تغيير إعدادات تحديد الموقع
   Future<void> setLocationEnabled(bool enabled) async {

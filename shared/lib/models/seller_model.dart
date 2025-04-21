@@ -19,7 +19,8 @@ class SellerModel extends Equatable {
     this.storeName,
   });
 
-  factory SellerModel.fromJson(Map<String, dynamic> json) => _$SellerModelFromJson(json);
+  factory SellerModel.fromJson(Map<String, dynamic> json) =>
+      _$SellerModelFromJson(json);
   Map<String, dynamic> toJson() => _$SellerModelToJson(this);
 
   SellerModel copyWith({

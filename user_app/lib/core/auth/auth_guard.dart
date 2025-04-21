@@ -13,7 +13,7 @@ class AuthGuard {
     WidgetRef ref,
   ) async {
     final authState = ref.read(authStateProvider);
-    
+
     if (authState.isAuthenticated) {
       // المستخدم مسجل الدخول، السماح بالوصول
       return null;
@@ -29,7 +29,7 @@ class AuthGuard {
     WidgetRef ref,
   ) async {
     final authState = ref.read(authStateProvider);
-    
+
     if (!authState.isAuthenticated) {
       // المستخدم غير مسجل الدخول، السماح بالوصول
       return null;
@@ -46,7 +46,7 @@ class AuthGuard {
     List<UserRole> allowedRoles,
   ) async {
     final authState = ref.read(authStateProvider);
-    
+
     if (!authState.isAuthenticated) {
       // غير مصدق، إعادة توجيه لتسجيل الدخول
       return '/auth/login';

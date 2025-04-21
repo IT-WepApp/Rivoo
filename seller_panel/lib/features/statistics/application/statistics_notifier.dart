@@ -92,8 +92,8 @@ class StatisticsNotifier extends StateNotifier<SellerStatisticsState> {
   }
 }
 
-final sellerStatisticsProvider =
-    StateNotifierProvider.autoDispose<StatisticsNotifier, SellerStatisticsState>( 
+final sellerStatisticsProvider = StateNotifierProvider.autoDispose<
+    StatisticsNotifier, SellerStatisticsState>(
   (ref) {
     final statisticsService = ref.watch(statisticsServiceProvider);
     final sellerId = ref.watch(currentSellerIdProvider);

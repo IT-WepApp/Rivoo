@@ -19,7 +19,8 @@ abstract class PromotionFirebaseDataSource {
   Future<bool> deletePromotion(String promotionId);
 
   /// تفعيل أو تعطيل عرض
-  Future<PromotionEntity> togglePromotionStatus(String promotionId, bool isActive);
+  Future<PromotionEntity> togglePromotionStatus(
+      String promotionId, bool isActive);
 }
 
 /// تنفيذ مصدر بيانات Firebase للعروض
@@ -44,7 +45,8 @@ class PromotionFirebaseDataSourceImpl implements PromotionFirebaseDataSource {
 
   @override
   Future<PromotionEntity> getPromotionDetails(String promotionId) async {
-    final docSnapshot = await _firestore.collection('promotions').doc(promotionId).get();
+    final docSnapshot =
+        await _firestore.collection('promotions').doc(promotionId).get();
 
     if (!docSnapshot.exists) {
       throw Exception('العرض غير موجود');
@@ -56,28 +58,31 @@ class PromotionFirebaseDataSourceImpl implements PromotionFirebaseDataSource {
   @override
   Future<PromotionEntity> createPromotion(PromotionEntity promotion) async {
     final promotionData = _convertToMap(promotion);
-    
+
     // حذف الـ ID لأنه سيتم إنشاؤه تلقائيًا
     promotionData.remove('id');
-    
+
     // إضافة طوابع زمنية للإنشاء والتحديث
     promotionData['createdAt'] = FieldValue.serverTimestamp();
     promotionData['updatedAt'] = FieldValue.serverTimestamp();
 
     final docRef = await _firestore.collection('promotions').add(promotionData);
-    
+
     return getPromotionDetails(docRef.id);
   }
 
   @override
   Future<PromotionEntity> updatePromotion(PromotionEntity promotion) async {
     final promotionData = _convertToMap(promotion);
-    
+
     // إضافة طابع زمني للتحديث
     promotionData['updatedAt'] = FieldValue.serverTimestamp();
 
-    await _firestore.collection('promotions').doc(promotion.id).update(promotionData);
-    
+    await _firestore
+        .collection('promotions')
+        .doc(promotion.id)
+        .update(promotionData);
+
     return getPromotionDetails(promotion.id);
   }
 
@@ -88,20 +93,23 @@ class PromotionFirebaseDataSourceImpl implements PromotionFirebaseDataSource {
   }
 
   @override
-  Future<PromotionEntity> togglePromotionStatus(String promotionId, bool isActive) async {
+  Future<PromotionEntity> togglePromotionStatus(
+      String promotionId, bool isActive) async {
     await _firestore.collection('promotions').doc(promotionId).update({
       'isActive': isActive,
       'updatedAt': FieldValue.serverTimestamp(),
     });
-    
+
     return getPromotionDetails(promotionId);
   }
 
   /// تحويل بيانات Firestore إلى كيان العرض
-  PromotionEntity _convertToPromotionEntity(String id, Map<String, dynamic> data) {
+  PromotionEntity _convertToPromotionEntity(
+      String id, Map<String, dynamic> data) {
     List<String> applicableProductIds = [];
-    
-    if (data.containsKey('applicableProductIds') && data['applicableProductIds'] is List) {
+
+    if (data.containsKey('applicableProductIds') &&
+        data['applicableProductIds'] is List) {
       applicableProductIds = List<String>.from(data['applicableProductIds']);
     }
 
@@ -116,10 +124,16 @@ class PromotionFirebaseDataSourceImpl implements PromotionFirebaseDataSource {
       endDate: (data['endDate'] as Timestamp).toDate(),
       applicableProductIds: applicableProductIds,
       isActive: data['isActive'] ?? false,
-      usageLimit: data['usageLimit'] != null ? (data['usageLimit'] as num).toInt() : null,
-      usageCount: data['usageCount'] != null ? (data['usageCount'] as num).toInt() : null,
+      usageLimit: data['usageLimit'] != null
+          ? (data['usageLimit'] as num).toInt()
+          : null,
+      usageCount: data['usageCount'] != null
+          ? (data['usageCount'] as num).toInt()
+          : null,
       code: data['code'],
-      minimumOrderAmount: data['minimumOrderAmount'] != null ? (data['minimumOrderAmount'] as num).toDouble() : null,
+      minimumOrderAmount: data['minimumOrderAmount'] != null
+          ? (data['minimumOrderAmount'] as num).toDouble()
+          : null,
     );
   }
 

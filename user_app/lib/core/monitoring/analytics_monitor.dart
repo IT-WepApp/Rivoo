@@ -53,10 +53,10 @@ class AnalyticsObserver extends NavigatorObserver {
     if (route.settings.name != null) {
       return route.settings.name;
     }
-    
+
     // محاولة استخراج اسم الشاشة من نوع الصفحة
     final routeStr = route.toString();
-    if (routeStr.contains('MaterialPageRoute') || 
+    if (routeStr.contains('MaterialPageRoute') ||
         routeStr.contains('CupertinoPageRoute')) {
       final regex = RegExp(r'[A-Za-z]+Screen');
       final match = regex.firstMatch(routeStr);
@@ -64,7 +64,7 @@ class AnalyticsObserver extends NavigatorObserver {
         return match.group(0);
       }
     }
-    
+
     return null;
   }
 }
@@ -78,21 +78,21 @@ final analyticsObserverProvider = Provider<AnalyticsObserver>((ref) {
 // مزود لقياس أداء التطبيق
 class PerformanceMonitor {
   final PerformanceService _performanceService;
-  
+
   PerformanceMonitor(this._performanceService);
-  
+
   // قياس أداء تحميل الصفحة
   void monitorPageLoad(String pageName, VoidCallback onComplete) {
     final traceName = 'page_load_$pageName';
     _performanceService.startTrace(traceName);
-    
+
     // استدعاء onComplete عند اكتمال تحميل الصفحة
     WidgetsBinding.instance.addPostFrameCallback((_) {
       _performanceService.stopTrace(traceName);
       onComplete();
     });
   }
-  
+
   // قياس أداء عملية معينة
   Future<T> monitorOperation<T>({
     required String operationName,
@@ -101,13 +101,13 @@ class PerformanceMonitor {
   }) async {
     final traceName = 'operation_$operationName';
     await _performanceService.startTrace(traceName);
-    
+
     if (attributes != null) {
       attributes.forEach((key, value) {
         _performanceService.setTraceAttribute(traceName, key, value);
       });
     }
-    
+
     try {
       final result = await operation();
       await _performanceService.stopTrace(traceName);
@@ -118,7 +118,7 @@ class PerformanceMonitor {
       rethrow;
     }
   }
-  
+
   // قياس أداء طلب HTTP
   Future<T> monitorHttpRequest<T>({
     required String url,
@@ -130,10 +130,10 @@ class PerformanceMonitor {
     String? contentType,
   }) async {
     await _performanceService.startHttpMetric(url, method);
-    
+
     try {
       final result = await request();
-      
+
       await _performanceService.stopHttpMetric(
         url,
         method,
@@ -142,7 +142,7 @@ class PerformanceMonitor {
         responsePayloadSize: responseSize,
         contentType: contentType,
       );
-      
+
       return result;
     } catch (e) {
       await _performanceService.stopHttpMetric(

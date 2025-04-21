@@ -57,8 +57,7 @@ class _StoreListPageState extends ConsumerState<StoreListPage> {
           Expanded(
             child: storeListState.when(
               data: (stores) => _buildStoreList(stores),
-              loading: () =>
-                  const Center(child: CircularProgressIndicator()),
+              loading: () => const Center(child: CircularProgressIndicator()),
               error: (err, _) => Center(
                 child: Text(
                   'Failed to load stores. Pull down to retry.\nError: $err',
@@ -96,8 +95,8 @@ class _StoreListPageState extends ConsumerState<StoreListPage> {
               decoration: InputDecoration(
                 hintText: 'Search by store name or owner',
                 prefixIcon: const Icon(Icons.search),
-                border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(8)),
+                border:
+                    OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                 isDense: true,
               ),
               onChanged: (value) {
@@ -132,8 +131,7 @@ class _StoreListPageState extends ConsumerState<StoreListPage> {
     }
 
     return RefreshIndicator(
-      onRefresh: () =>
-          ref.read(storeManagementProvider.notifier).fetchStores(),
+      onRefresh: () => ref.read(storeManagementProvider.notifier).fetchStores(),
       child: ListView.builder(
         itemCount: filtered.length,
         itemBuilder: (context, i) {
@@ -189,8 +187,7 @@ class _StoreListPageState extends ConsumerState<StoreListPage> {
         content: Text(content),
         actions: [
           TextButton(
-              onPressed: () => Navigator.pop(ctx),
-              child: const Text('Cancel')),
+              onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: color),
             onPressed: () {
@@ -259,15 +256,14 @@ class StoreListItem extends StatelessWidget {
                     onPressed: onApprove,
                   ),
                   IconButton(
-                    icon: const Icon(Icons.cancel_outlined,
-                        color: Colors.orange),
+                    icon:
+                        const Icon(Icons.cancel_outlined, color: Colors.orange),
                     tooltip: 'Reject',
                     onPressed: onReject,
                   ),
                 ],
                 IconButton(
-                  icon: Icon(Icons.delete_outline,
-                      color: Colors.red.shade700),
+                  icon: Icon(Icons.delete_outline, color: Colors.red.shade700),
                   tooltip: 'Delete',
                   onPressed: onDelete,
                 ),

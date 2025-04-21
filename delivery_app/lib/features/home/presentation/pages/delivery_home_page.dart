@@ -11,7 +11,8 @@ import 'package:shared_services/shared_services.dart';
 import 'package:delivery_app/features/auth/application/auth_notifier.dart';
 
 // Provider لاسم العميل
-final customerNameProvider = FutureProvider.family<String?, String>((ref, userId) async {
+final customerNameProvider =
+    FutureProvider.family<String?, String>((ref, userId) async {
   final userService = ref.watch(userServiceProvider);
   final userModel = await userService.getUser(userId);
   return userModel?.name;
@@ -46,7 +47,8 @@ class DeliveryHomePage extends ConsumerWidget {
     final theme = Theme.of(context);
 
     // استماع للأخطاء
-    ref.listen<AsyncValue<List<OrderModel>>>(assignedOrdersProvider, (prev, next) {
+    ref.listen<AsyncValue<List<OrderModel>>>(assignedOrdersProvider,
+        (prev, next) {
       if (next is AsyncError && next != prev) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -75,7 +77,8 @@ class DeliveryHomePage extends ConsumerWidget {
       body: assignedOrdersAsync.when(
         data: (orders) {
           if (orders.isEmpty) {
-            return const Center(child: Text('No orders currently assigned to you.'));
+            return const Center(
+                child: Text('No orders currently assigned to you.'));
           }
           return RefreshIndicator(
             onRefresh: () {
@@ -88,7 +91,8 @@ class DeliveryHomePage extends ConsumerWidget {
               itemBuilder: (context, index) {
                 final order = orders[index];
                 return Card(
-                  margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  margin:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   child: _OrderListItem(order: order),
                 );
               },
@@ -97,7 +101,8 @@ class DeliveryHomePage extends ConsumerWidget {
         },
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (err, stack) => Center(
-          child: Text('Failed to load orders. Pull down to retry.\nError: $err'),
+          child:
+              Text('Failed to load orders. Pull down to retry.\nError: $err'),
         ),
       ),
       drawer: _buildAppDrawer(context, theme, ref),
@@ -113,7 +118,8 @@ class DeliveryHomePage extends ConsumerWidget {
             decoration: BoxDecoration(color: theme.colorScheme.primary),
             child: Text(
               'Menu',
-              style: TextStyle(color: theme.colorScheme.onPrimary, fontSize: 24),
+              style:
+                  TextStyle(color: theme.colorScheme.onPrimary, fontSize: 24),
             ),
           ),
           ListTile(

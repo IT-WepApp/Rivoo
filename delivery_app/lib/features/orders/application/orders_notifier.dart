@@ -12,7 +12,8 @@ class OrdersNotifier extends StateNotifier<AsyncValue<List<OrderModel>>> {
   final OrderService _orderService;
   final String? _deliveryPersonId;
 
-  OrdersNotifier(this._orderService, this._deliveryPersonId) : super(const AsyncLoading()) {
+  OrdersNotifier(this._orderService, this._deliveryPersonId)
+      : super(const AsyncLoading()) {
     if (_deliveryPersonId != null) {
       fetchAssignedOrders();
     } else {

@@ -17,23 +17,23 @@ class HomeScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
-    
+
     return Scaffold(
       body: SafeArea(
         child: ResponsiveBuilder(
           // تنفيذ واجهة الهاتف
           mobileBuilder: (context) => _buildMobileLayout(context, l10n),
-          
+
           // تنفيذ واجهة الجهاز اللوحي
           smallTabletBuilder: (context) => _buildTabletLayout(context, l10n),
-          
+
           // تنفيذ واجهة سطح المكتب
           desktopBuilder: (context) => _buildDesktopLayout(context, l10n),
         ),
       ),
     );
   }
-  
+
   // بناء تخطيط الهاتف
   Widget _buildMobileLayout(BuildContext context, AppLocalizations l10n) {
     return SingleChildScrollView(
@@ -50,7 +50,7 @@ class HomeScreen extends ConsumerWidget {
       ),
     );
   }
-  
+
   // بناء تخطيط الجهاز اللوحي
   Widget _buildTabletLayout(BuildContext context, AppLocalizations l10n) {
     return SingleChildScrollView(
@@ -74,7 +74,7 @@ class HomeScreen extends ConsumerWidget {
       ),
     );
   }
-  
+
   // بناء تخطيط سطح المكتب
   Widget _buildDesktopLayout(BuildContext context, AppLocalizations l10n) {
     return Row(
@@ -94,9 +94,9 @@ class HomeScreen extends ConsumerWidget {
                 child: Text(
                   'RivooSy',
                   style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.primary,
-                    fontWeight: FontWeight.bold,
-                  ),
+                        color: Theme.of(context).colorScheme.primary,
+                        fontWeight: FontWeight.bold,
+                      ),
                 ),
               ),
               const SizedBox(height: 32),
@@ -159,7 +159,7 @@ class HomeScreen extends ConsumerWidget {
             ],
           ),
         ),
-        
+
         // المحتوى الرئيسي
         Expanded(
           child: SingleChildScrollView(
@@ -196,7 +196,7 @@ class HomeScreen extends ConsumerWidget {
       ],
     );
   }
-  
+
   // بناء عنصر القائمة الجانبية
   Widget _buildSidebarItem(
     BuildContext context, {
@@ -240,7 +240,8 @@ class HomeScreen extends ConsumerWidget {
                     color: isSelected
                         ? Theme.of(context).colorScheme.primary
                         : Theme.of(context).colorScheme.onSurface,
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                    fontWeight:
+                        isSelected ? FontWeight.bold : FontWeight.normal,
                   ),
             ),
           ],
@@ -248,7 +249,7 @@ class HomeScreen extends ConsumerWidget {
       ),
     );
   }
-  
+
   // بناء شريط التطبيق
   Widget _buildAppBar(BuildContext context, AppLocalizations l10n) {
     return Padding(
@@ -279,7 +280,7 @@ class HomeScreen extends ConsumerWidget {
       ),
     );
   }
-  
+
   // بناء شريط البحث
   Widget _buildSearchBar(BuildContext context, AppLocalizations l10n) {
     return Padding(
@@ -293,13 +294,13 @@ class HomeScreen extends ConsumerWidget {
             borderSide: BorderSide.none,
           ),
           filled: true,
-          fillColor: Theme.of(context).colorScheme.surfaceVariant,
+          fillColor: Theme.of(context).colorScheme.surfaceContainerHighest,
           contentPadding: const EdgeInsets.symmetric(vertical: 12.0),
         ),
       ),
     );
   }
-  
+
   // بناء شريط البانر
   Widget _buildBannerSlider(BuildContext context) {
     return Padding(
@@ -309,7 +310,7 @@ class HomeScreen extends ConsumerWidget {
       ),
     );
   }
-  
+
   // بناء قسم التصنيفات
   Widget _buildCategoriesSection(
     BuildContext context,
@@ -348,7 +349,7 @@ class HomeScreen extends ConsumerWidget {
       ),
     );
   }
-  
+
   // بناء قسم المنتجات الشائعة
   Widget _buildPopularProductsSection(
     BuildContext context,
@@ -375,7 +376,7 @@ class HomeScreen extends ConsumerWidget {
       ),
     );
   }
-  
+
   // بناء قسم المنتجات الجديدة
   Widget _buildNewArrivalsSection(
     BuildContext context,
@@ -402,7 +403,8 @@ class HomeScreen extends ConsumerWidget {
                 return Padding(
                   padding: const EdgeInsets.only(right: 16.0),
                   child: SizedBox(
-                    width: context.responsiveWidthRatio(0.6) * context.screenWidth,
+                    width:
+                        context.responsiveWidthRatio(0.6) * context.screenWidth,
                     child: ProductCard(
                       product: Product(
                         id: 'product-$index',
@@ -424,7 +426,7 @@ class HomeScreen extends ConsumerWidget {
       ),
     );
   }
-  
+
   // بناء شبكة المنتجات
   Widget _buildProductGrid(BuildContext context, int crossAxisCount) {
     return Padding(

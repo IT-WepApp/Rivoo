@@ -12,7 +12,7 @@ import '../../../../core/theme/app_colors.dart';
 /// صفحة تعديل منتج موجود
 class EditProductPage extends ConsumerStatefulWidget {
   final String productId;
-  
+
   const EditProductPage({
     Key? key,
     required this.productId,
@@ -28,20 +28,27 @@ class _EditProductPageState extends ConsumerState<EditProductPage> {
   final _descriptionController = TextEditingController();
   final _priceController = TextEditingController();
   final _stockQuantityController = TextEditingController();
-  
+
   String _selectedCategory = 'أخرى';
-  List<String> _categories = ['أخرى', 'طعام', 'مشروبات', 'إلكترونيات', 'ملابس', 'أدوات منزلية'];
-  
+  final List<String> _categories = [
+    'أخرى',
+    'طعام',
+    'مشروبات',
+    'إلكترونيات',
+    'ملابس',
+    'أدوات منزلية'
+  ];
+
   bool _isAvailable = true;
   bool _isFeatured = false;
   bool _hasDiscount = false;
   double _discountPercentage = 0;
-  
+
   File? _imageFile;
   String _imageUrl = '';
   bool _isUploading = false;
   double _uploadProgress = 0;
-  
+
   bool _isLoading = true;
   bool _isSubmitting = false;
   String _errorMessage = '';
@@ -71,7 +78,7 @@ class _EditProductPageState extends ConsumerState<EditProductPage> {
     try {
       final productService = ref.read(productServiceProvider);
       final productData = await productService.getProduct(widget.productId);
-      
+
       if (productData == null) {
         setState(() {
           _isLoading = false;
@@ -79,25 +86,28 @@ class _EditProductPageState extends ConsumerState<EditProductPage> {
         });
         return;
       }
-      
+
       setState(() {
         _productData = productData;
-        
+
         // تعبئة البيانات في النموذج
         _nameController.text = productData['name'] as String? ?? '';
-        _descriptionController.text = productData['description'] as String? ?? '';
-        _priceController.text = (productData['price'] as num?)?.toString() ?? '0';
-        _stockQuantityController.text = (productData['stockQuantity'] as int?)?.toString() ?? '0';
-        
+        _descriptionController.text =
+            productData['description'] as String? ?? '';
+        _priceController.text =
+            (productData['price'] as num?)?.toString() ?? '0';
+        _stockQuantityController.text =
+            (productData['stockQuantity'] as int?)?.toString() ?? '0';
+
         _selectedCategory = productData['category'] as String? ?? 'أخرى';
         _isAvailable = productData['isAvailable'] as bool? ?? true;
         _isFeatured = productData['isFeatured'] as bool? ?? false;
-        
+
         _hasDiscount = productData['hasDiscount'] as bool? ?? false;
         _discountPercentage = productData['discountPercentage'] as double? ?? 0;
-        
+
         _imageUrl = productData['imageUrl'] as String? ?? '';
-        
+
         _isLoading = false;
       });
     } catch (e) {
@@ -111,7 +121,7 @@ class _EditProductPageState extends ConsumerState<EditProductPage> {
   Future<void> _pickImage() async {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-    
+
     if (pickedFile != null) {
       setState(() {
         _imageFile = File(pickedFile.path);
@@ -123,36 +133,37 @@ class _EditProductPageState extends ConsumerState<EditProductPage> {
     if (_imageFile == null) {
       return _imageUrl; // إرجاع الرابط الحالي إذا لم يتم اختيار صورة جديدة
     }
-    
+
     setState(() {
       _isUploading = true;
       _uploadProgress = 0;
     });
-    
+
     try {
-      final fileName = 'product_${widget.productId}_${DateTime.now().millisecondsSinceEpoch}.jpg';
+      final fileName =
+          'product_${widget.productId}_${DateTime.now().millisecondsSinceEpoch}.jpg';
       final storageRef = FirebaseStorage.instance
           .ref()
           .child(AppConstants.productImagesPath)
           .child(fileName);
-      
+
       final uploadTask = storageRef.putFile(_imageFile!);
-      
+
       uploadTask.snapshotEvents.listen((TaskSnapshot snapshot) {
         setState(() {
           _uploadProgress = snapshot.bytesTransferred / snapshot.totalBytes;
         });
       });
-      
+
       await uploadTask;
-      
+
       final downloadUrl = await storageRef.getDownloadURL();
-      
+
       setState(() {
         _isUploading = false;
         _imageUrl = downloadUrl;
       });
-      
+
       return downloadUrl;
     } catch (e) {
       setState(() {
@@ -167,19 +178,19 @@ class _EditProductPageState extends ConsumerState<EditProductPage> {
     if (!_formKey.currentState!.validate()) {
       return;
     }
-    
+
     setState(() {
       _isSubmitting = true;
       _errorMessage = '';
     });
-    
+
     try {
       // رفع الصورة إذا تم اختيارها
       String imageUrl = _imageUrl;
       if (_imageFile != null) {
         imageUrl = await _uploadImage();
       }
-      
+
       // إعداد بيانات المنتج
       final productData = {
         'name': _nameController.text,
@@ -191,26 +202,27 @@ class _EditProductPageState extends ConsumerState<EditProductPage> {
         'isFeatured': _isFeatured,
         'imageUrl': imageUrl,
       };
-      
+
       // إضافة بيانات الخصم إذا كان مفعلاً
       if (_hasDiscount) {
         productData['hasDiscount'] = true;
         productData['discountPercentage'] = _discountPercentage;
-        productData['discountedPrice'] = productData['price'] * (1 - _discountPercentage / 100);
+        productData['discountedPrice'] =
+            productData['price'] * (1 - _discountPercentage / 100);
       } else {
         productData['hasDiscount'] = false;
         productData['discountPercentage'] = 0;
         productData['discountedPrice'] = productData['price'];
       }
-      
+
       // تحديث المنتج في Firestore
       final productService = ref.read(productServiceProvider);
       await productService.updateProduct(widget.productId, productData);
-      
+
       setState(() {
         _isSubmitting = false;
       });
-      
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -219,7 +231,7 @@ class _EditProductPageState extends ConsumerState<EditProductPage> {
             behavior: SnackBarBehavior.floating,
           ),
         );
-        
+
         // العودة إلى صفحة إدارة المنتجات
         context.pop();
       }
@@ -234,7 +246,7 @@ class _EditProductPageState extends ConsumerState<EditProductPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('تعديل المنتج'),
@@ -263,14 +275,14 @@ class _EditProductPageState extends ConsumerState<EditProductPage> {
           // صورة المنتج
           _buildImagePicker(theme),
           const SizedBox(height: 24),
-          
+
           // معلومات المنتج الأساسية
           Text(
             'معلومات المنتج',
             style: theme.textTheme.titleLarge,
           ),
           const SizedBox(height: 16),
-          
+
           // اسم المنتج
           TextFormField(
             controller: _nameController,
@@ -287,7 +299,7 @@ class _EditProductPageState extends ConsumerState<EditProductPage> {
             },
           ),
           const SizedBox(height: 16),
-          
+
           // وصف المنتج
           TextFormField(
             controller: _descriptionController,
@@ -305,7 +317,7 @@ class _EditProductPageState extends ConsumerState<EditProductPage> {
             },
           ),
           const SizedBox(height: 16),
-          
+
           // فئة المنتج
           DropdownButtonFormField<String>(
             value: _selectedCategory,
@@ -328,7 +340,7 @@ class _EditProductPageState extends ConsumerState<EditProductPage> {
             },
           ),
           const SizedBox(height: 16),
-          
+
           // السعر والمخزون
           Row(
             children: [
@@ -356,7 +368,7 @@ class _EditProductPageState extends ConsumerState<EditProductPage> {
                 ),
               ),
               const SizedBox(width: 16),
-              
+
               // كمية المخزون
               Expanded(
                 child: TextFormField(
@@ -382,14 +394,14 @@ class _EditProductPageState extends ConsumerState<EditProductPage> {
             ],
           ),
           const SizedBox(height: 24),
-          
+
           // خيارات إضافية
           Text(
             'خيارات إضافية',
             style: theme.textTheme.titleLarge,
           ),
           const SizedBox(height: 16),
-          
+
           // توفر المنتج
           SwitchListTile(
             title: const Text('متاح للبيع'),
@@ -402,7 +414,7 @@ class _EditProductPageState extends ConsumerState<EditProductPage> {
             },
             activeColor: theme.colorScheme.primary,
           ),
-          
+
           // منتج مميز
           SwitchListTile(
             title: const Text('منتج مميز'),
@@ -415,7 +427,7 @@ class _EditProductPageState extends ConsumerState<EditProductPage> {
             },
             activeColor: theme.colorScheme.primary,
           ),
-          
+
           // خصم على المنتج
           SwitchListTile(
             title: const Text('تطبيق خصم'),
@@ -428,7 +440,7 @@ class _EditProductPageState extends ConsumerState<EditProductPage> {
             },
             activeColor: theme.colorScheme.primary,
           ),
-          
+
           // نسبة الخصم
           if (_hasDiscount)
             Padding(
@@ -436,7 +448,8 @@ class _EditProductPageState extends ConsumerState<EditProductPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('نسبة الخصم: ${_discountPercentage.toStringAsFixed(0)}%'),
+                  Text(
+                      'نسبة الخصم: ${_discountPercentage.toStringAsFixed(0)}%'),
                   Slider(
                     value: _discountPercentage,
                     min: 0,
@@ -461,9 +474,9 @@ class _EditProductPageState extends ConsumerState<EditProductPage> {
                 ],
               ),
             ),
-          
+
           const SizedBox(height: 24),
-          
+
           // رسالة الخطأ
           if (_errorMessage.isNotEmpty)
             Container(
@@ -476,10 +489,10 @@ class _EditProductPageState extends ConsumerState<EditProductPage> {
               ),
               child: Text(
                 _errorMessage,
-                style: TextStyle(color: AppColors.error),
+                style: const TextStyle(color: AppColors.error),
               ),
             ),
-          
+
           // زر الحفظ
           ElevatedButton(
             onPressed: _submitForm,
@@ -509,7 +522,7 @@ class _EditProductPageState extends ConsumerState<EditProductPage> {
           style: TextStyle(color: AppColors.textSecondary),
         ),
         const SizedBox(height: 16),
-        
+
         // عرض الصورة المختارة أو زر اختيار الصورة
         GestureDetector(
           onTap: _pickImage,
@@ -537,12 +550,15 @@ class _EditProductPageState extends ConsumerState<EditProductPage> {
                             child: Image.network(
                               _imageUrl,
                               fit: BoxFit.cover,
-                              loadingBuilder: (context, child, loadingProgress) {
+                              loadingBuilder:
+                                  (context, child, loadingProgress) {
                                 if (loadingProgress == null) return child;
                                 return Center(
                                   child: CircularProgressIndicator(
-                                    value: loadingProgress.expectedTotalBytes != null
-                                        ? loadingProgress.cumulativeBytesLoaded /
+                                    value: loadingProgress.expectedTotalBytes !=
+                                            null
+                                        ? loadingProgress
+                                                .cumulativeBytesLoaded /
                                             loadingProgress.expectedTotalBytes!
                                         : null,
                                   ),
@@ -586,7 +602,7 @@ class _EditProductPageState extends ConsumerState<EditProductPage> {
                           ),
           ),
         ),
-        
+
         // زر تغيير الصورة إذا تم اختيار صورة
         if (_imageFile != null || _imageUrl.isNotEmpty)
           Padding(

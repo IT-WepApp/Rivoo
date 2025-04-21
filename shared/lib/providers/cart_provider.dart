@@ -69,11 +69,12 @@ class CartNotifier extends StateNotifier<CartState> {
   /// إضافة منتج إلى السلة
   void addItem(Product product, int quantity) {
     state = state.copyWithLoading();
-    
+
     try {
       final currentItems = List<CartItemModel>.from(state.items);
-      final existingIndex = currentItems.indexWhere((item) => item.productId == product.id);
-      
+      final existingIndex =
+          currentItems.indexWhere((item) => item.productId == product.id);
+
       if (existingIndex >= 0) {
         // تحديث الكمية إذا كان المنتج موجوداً بالفعل
         final existingItem = currentItems[existingIndex];
@@ -97,7 +98,7 @@ class CartNotifier extends StateNotifier<CartState> {
           ),
         );
       }
-      
+
       state = state.copyWithItems(currentItems);
     } catch (e) {
       state = state.copyWithError(e.toString());
@@ -107,11 +108,11 @@ class CartNotifier extends StateNotifier<CartState> {
   /// إزالة منتج من السلة
   void removeItem(String productId) {
     state = state.copyWithLoading();
-    
+
     try {
       final currentItems = List<CartItemModel>.from(state.items);
       currentItems.removeWhere((item) => item.productId == productId);
-      
+
       state = state.copyWithItems(currentItems);
     } catch (e) {
       state = state.copyWithError(e.toString());
@@ -121,14 +122,15 @@ class CartNotifier extends StateNotifier<CartState> {
   /// تغيير كمية منتج في السلة
   void updateQuantity(String productId, int quantity) {
     state = state.copyWithLoading();
-    
+
     try {
       final currentItems = List<CartItemModel>.from(state.items);
-      final itemIndex = currentItems.indexWhere((item) => item.productId == productId);
-      
+      final itemIndex =
+          currentItems.indexWhere((item) => item.productId == productId);
+
       if (itemIndex >= 0) {
         final item = currentItems[itemIndex];
-        
+
         if (quantity <= 0) {
           // إزالة المنتج إذا كانت الكمية صفر أو أقل
           currentItems.removeAt(itemIndex);
@@ -143,7 +145,7 @@ class CartNotifier extends StateNotifier<CartState> {
           );
           currentItems[itemIndex] = updatedItem;
         }
-        
+
         state = state.copyWithItems(currentItems);
       }
     } catch (e) {

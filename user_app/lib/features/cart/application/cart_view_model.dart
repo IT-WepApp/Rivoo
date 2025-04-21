@@ -1,8 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:dartz/dartz.dart';
 import 'package:shared_models/shared_models.dart';
 
-import '../../../../core/architecture/domain/failure.dart';
 import '../../../../core/architecture/presentation/base_view_model.dart';
 import '../domain/entities/cart_item.dart';
 import '../domain/usecases/cart_usecases.dart';
@@ -146,19 +144,23 @@ final addItemToCartUseCaseProvider = Provider<AddItemToCartUseCase>((ref) {
   return AddItemToCartUseCase(ref.watch(cartRepositoryProvider));
 });
 
-final removeItemFromCartUseCaseProvider = Provider<RemoveItemFromCartUseCase>((ref) {
+final removeItemFromCartUseCaseProvider =
+    Provider<RemoveItemFromCartUseCase>((ref) {
   return RemoveItemFromCartUseCase(ref.watch(cartRepositoryProvider));
 });
 
-final updateCartItemQuantityUseCaseProvider = Provider<UpdateCartItemQuantityUseCase>((ref) {
+final updateCartItemQuantityUseCaseProvider =
+    Provider<UpdateCartItemQuantityUseCase>((ref) {
   return UpdateCartItemQuantityUseCase(ref.watch(cartRepositoryProvider));
 });
 
-final incrementCartItemUseCaseProvider = Provider<IncrementCartItemUseCase>((ref) {
+final incrementCartItemUseCaseProvider =
+    Provider<IncrementCartItemUseCase>((ref) {
   return IncrementCartItemUseCase(ref.watch(cartRepositoryProvider));
 });
 
-final decrementCartItemUseCaseProvider = Provider<DecrementCartItemUseCase>((ref) {
+final decrementCartItemUseCaseProvider =
+    Provider<DecrementCartItemUseCase>((ref) {
   return DecrementCartItemUseCase(ref.watch(cartRepositoryProvider));
 });
 
@@ -170,11 +172,13 @@ final getCartItemsUseCaseProvider = Provider<GetCartItemsUseCase>((ref) {
   return GetCartItemsUseCase(ref.watch(cartRepositoryProvider));
 });
 
-final getCartTotalItemsUseCaseProvider = Provider<GetCartTotalItemsUseCase>((ref) {
+final getCartTotalItemsUseCaseProvider =
+    Provider<GetCartTotalItemsUseCase>((ref) {
   return GetCartTotalItemsUseCase(ref.watch(cartRepositoryProvider));
 });
 
-final getCartTotalPriceUseCaseProvider = Provider<GetCartTotalPriceUseCase>((ref) {
+final getCartTotalPriceUseCaseProvider =
+    Provider<GetCartTotalPriceUseCase>((ref) {
   return GetCartTotalPriceUseCase(ref.watch(cartRepositoryProvider));
 });
 
@@ -182,7 +186,8 @@ final cartViewModelProvider = ChangeNotifierProvider<CartViewModel>((ref) {
   return CartViewModel(
     addItemToCartUseCase: ref.watch(addItemToCartUseCaseProvider),
     removeItemFromCartUseCase: ref.watch(removeItemFromCartUseCaseProvider),
-    updateCartItemQuantityUseCase: ref.watch(updateCartItemQuantityUseCaseProvider),
+    updateCartItemQuantityUseCase:
+        ref.watch(updateCartItemQuantityUseCaseProvider),
     incrementCartItemUseCase: ref.watch(incrementCartItemUseCaseProvider),
     decrementCartItemUseCase: ref.watch(decrementCartItemUseCaseProvider),
     clearCartUseCase: ref.watch(clearCartUseCaseProvider),

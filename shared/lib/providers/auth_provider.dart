@@ -57,7 +57,8 @@ class AuthStateModel {
 }
 
 /// مزود حالة المصادقة
-final authStateProvider = StateNotifierProvider<AuthNotifier, AuthStateModel>((ref) {
+final authStateProvider =
+    StateNotifierProvider<AuthNotifier, AuthStateModel>((ref) {
   final authService = ref.watch(authServiceProvider);
   return AuthNotifier(authService);
 });
@@ -101,7 +102,8 @@ class AuthNotifier extends StateNotifier<AuthStateModel> {
   Future<void> signInWithEmailAndPassword(String email, String password) async {
     state = state.loading();
     try {
-      final result = await _authService.signInWithEmailAndPassword(email, password);
+      final result =
+          await _authService.signInWithEmailAndPassword(email, password);
       await _secureStorage.write(key: 'auth_token', value: result.token);
       await _secureStorage.write(key: 'user_id', value: result.user.id);
       state = state.authenticated(result.user);

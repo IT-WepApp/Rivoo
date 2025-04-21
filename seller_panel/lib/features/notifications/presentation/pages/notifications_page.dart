@@ -16,9 +16,9 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
   bool _isLoading = true;
   bool _isSubmitting = false;
   String _errorMessage = '';
-  
+
   List<Map<String, dynamic>> _notifications = [];
-  
+
   @override
   void initState() {
     super.initState();
@@ -33,8 +33,8 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
 
     try {
       final notificationService = ref.read(notificationServiceProvider);
-      final notifications = await notificationService.getSellerNotifications();
-      
+      final notifications = notificationService.getSellerNotifications();
+
       setState(() {
         _notifications = notifications;
         _isLoading = false;
@@ -56,14 +56,15 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
     try {
       final notificationService = ref.read(notificationServiceProvider);
       await notificationService.markNotificationAsRead(notificationId);
-      
+
       // تحديث القائمة المحلية
       setState(() {
-        final notificationIndex = _notifications.indexWhere((n) => n['id'] == notificationId);
+        final notificationIndex =
+            _notifications.indexWhere((n) => n['id'] == notificationId);
         if (notificationIndex != -1) {
           _notifications[notificationIndex]['isRead'] = true;
         }
-        
+
         _isSubmitting = false;
       });
     } catch (e) {
@@ -76,7 +77,8 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
 
   Future<void> _markAllAsRead() async {
     // التحقق من وجود إشعارات غير مقروءة
-    final unreadNotifications = _notifications.where((n) => !(n['isRead'] as bool? ?? false)).toList();
+    final unreadNotifications =
+        _notifications.where((n) => !(n['isRead'] as bool? ?? false)).toList();
     if (unreadNotifications.isEmpty) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -89,7 +91,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
       }
       return;
     }
-    
+
     setState(() {
       _isSubmitting = true;
       _errorMessage = '';
@@ -98,16 +100,16 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
     try {
       final notificationService = ref.read(notificationServiceProvider);
       await notificationService.markAllNotificationsAsRead();
-      
+
       // تحديث القائمة المحلية
       setState(() {
         for (final notification in _notifications) {
           notification['isRead'] = true;
         }
-        
+
         _isSubmitting = false;
       });
-      
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -135,14 +137,14 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
         cancelText: 'إلغاء',
         isDangerous: true,
       );
-      
+
       if (!confirmed) {
         return;
       }
     } else {
       return;
     }
-    
+
     setState(() {
       _isSubmitting = true;
       _errorMessage = '';
@@ -151,13 +153,13 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
     try {
       final notificationService = ref.read(notificationServiceProvider);
       await notificationService.deleteNotification(notificationId);
-      
+
       // تحديث القائمة المحلية
       setState(() {
         _notifications.removeWhere((n) => n['id'] == notificationId);
         _isSubmitting = false;
       });
-      
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -188,24 +190,25 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
       }
       return;
     }
-    
+
     if (mounted) {
       final confirmed = await AppWidgets.showConfirmDialog(
         context: context,
         title: 'حذف جميع الإشعارات',
-        message: 'هل أنت متأكد من رغبتك في حذف جميع الإشعارات؟ لا يمكن التراجع عن هذا الإجراء.',
+        message:
+            'هل أنت متأكد من رغبتك في حذف جميع الإشعارات؟ لا يمكن التراجع عن هذا الإجراء.',
         confirmText: 'حذف الكل',
         cancelText: 'إلغاء',
         isDangerous: true,
       );
-      
+
       if (!confirmed) {
         return;
       }
     } else {
       return;
     }
-    
+
     setState(() {
       _isSubmitting = true;
       _errorMessage = '';
@@ -214,13 +217,13 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
     try {
       final notificationService = ref.read(notificationServiceProvider);
       await notificationService.clearAllNotifications();
-      
+
       // تحديث القائمة المحلية
       setState(() {
         _notifications.clear();
         _isSubmitting = false;
       });
-      
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -275,7 +278,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('الإشعارات'),
@@ -332,7 +335,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
         ),
       );
     }
-    
+
     return ListView.builder(
       padding: const EdgeInsets.all(16),
       itemCount: _notifications.length,
@@ -342,9 +345,10 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
         final title = notification['title'] as String? ?? 'إشعار';
         final message = notification['message'] as String? ?? '';
         final type = notification['type'] as String? ?? 'default';
-        final timestamp = notification['timestamp'] as DateTime? ?? DateTime.now();
+        final timestamp =
+            notification['timestamp'] as DateTime? ?? DateTime.now();
         final isRead = notification['isRead'] as bool? ?? false;
-        
+
         return Dismissible(
           key: Key(notificationId),
           direction: DismissDirection.endToStart,
@@ -368,10 +372,12 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
               borderRadius: BorderRadius.circular(8),
               side: isRead
                   ? BorderSide.none
-                  : BorderSide(color: theme.colorScheme.primary.withOpacity(0.3)),
+                  : BorderSide(
+                      color: theme.colorScheme.primary.withOpacity(0.3)),
             ),
             child: ListTile(
-              contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               leading: CircleAvatar(
                 backgroundColor: _getNotificationColor(type).withOpacity(0.1),
                 child: Icon(

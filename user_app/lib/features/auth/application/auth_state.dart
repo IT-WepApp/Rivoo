@@ -91,7 +91,8 @@ class AuthState with _$AuthState {
   const AuthState._();
 
   /// هل المستخدم مسجل الدخول
-  bool get isAuthenticated => status == AuthenticationStatus.authenticated && userData != null;
+  bool get isAuthenticated =>
+      status == AuthenticationStatus.authenticated && userData != null;
 
   /// هل البريد الإلكتروني مؤكد
   bool get isEmailVerified => userData?.isEmailVerified ?? false;
@@ -100,5 +101,6 @@ class AuthState with _$AuthState {
   bool hasRole(UserRole role) => userData?.role == role;
 
   /// هل المستخدم لديه أي من الأدوار المحددة
-  bool hasAnyRole(List<UserRole> roles) => userData != null && roles.contains(userData!.role);
+  bool hasAnyRole(List<UserRole> roles) =>
+      userData != null && roles.contains(userData!.role);
 }

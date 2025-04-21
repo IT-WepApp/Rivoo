@@ -356,7 +356,7 @@ class _SellerDashboardPageState extends ConsumerState<SellerDashboardPage> {
                   borderRadius: BorderRadius.circular(4),
                   border: Border.all(color: AppColors.warning),
                 ),
-                child: Text(
+                child: const Text(
                   'جديد',
                   style: TextStyle(
                     color: AppColors.warning,
@@ -373,7 +373,7 @@ class _SellerDashboardPageState extends ConsumerState<SellerDashboardPage> {
             children: [
             Row(
               children: [
-                Icon(Icons.person_outline, size: 16, color: AppColors.textSecondary),
+                const Icon(Icons.person_outline, size: 16, color: AppColors.textSecondary),
                 const SizedBox(width: 4),
                 Text(
                   customerName,
@@ -386,7 +386,7 @@ class _SellerDashboardPageState extends ConsumerState<SellerDashboardPage> {
             const SizedBox(height: 4),
             Row(
               children: [
-                Icon(Icons.access_time, size: 16, color: AppColors.textSecondary),
+                const Icon(Icons.access_time, size: 16, color: AppColors.textSecondary),
                 const SizedBox(width: 4),
                 Text(
                   '${createdAt.day}/${createdAt.month}/${createdAt.year} - ${createdAt.hour}:${createdAt.minute.toString().padLeft(2, '0')}',
@@ -399,7 +399,7 @@ class _SellerDashboardPageState extends ConsumerState<SellerDashboardPage> {
             const SizedBox(height: 4),
             Row(
               children: [
-                Icon(Icons.attach_money, size: 16, color: AppColors.success),
+                const Icon(Icons.attach_money, size: 16, color: AppColors.success),
                 const SizedBox(width: 4),
                 Text(
                   'المجموع: ${total.toStringAsFixed(2)} ر.س',
@@ -438,7 +438,7 @@ class _SellerDashboardPageState extends ConsumerState<SellerDashboardPage> {
         padding: EdgeInsets.zero,
         children: [
           DrawerHeader(
-            decoration: BoxDecoration(
+            decoration: const BoxDecoration(
               color: AppColors.primary,
             ),
             child: Column(
@@ -452,7 +452,7 @@ class _SellerDashboardPageState extends ConsumerState<SellerDashboardPage> {
                 const SizedBox(height: 10),
                 Text(
                   storeName,
-                  style: TextStyle(
+                  style: const TextStyle(
                     color: AppColors.onPrimary,
                     fontSize: 20,
                     fontWeight: FontWeight.bold,

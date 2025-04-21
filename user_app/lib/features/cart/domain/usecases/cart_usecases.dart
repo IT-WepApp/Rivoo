@@ -32,7 +32,8 @@ class RemoveItemFromCartUseCase implements UseCase<Unit, String> {
   }
 }
 
-class UpdateCartItemQuantityUseCase implements UseCase<Unit, UpdateCartItemQuantityParams> {
+class UpdateCartItemQuantityUseCase
+    implements UseCase<Unit, UpdateCartItemQuantityParams> {
   final CartRepository repository;
 
   UpdateCartItemQuantityUseCase(this.repository);
@@ -47,7 +48,8 @@ class UpdateCartItemQuantityParams {
   final String cartItemId;
   final int newQuantity;
 
-  UpdateCartItemQuantityParams({required this.cartItemId, required this.newQuantity});
+  UpdateCartItemQuantityParams(
+      {required this.cartItemId, required this.newQuantity});
 }
 
 class IncrementCartItemUseCase implements UseCase<Unit, String> {

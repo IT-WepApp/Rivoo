@@ -16,7 +16,7 @@ class CrashlyticsManager {
   }
 
   /// تسجيل معلومات المستخدم
-  /// 
+  ///
   /// [userId] معرف المستخدم
   /// [email] البريد الإلكتروني للمستخدم
   /// [name] اسم المستخدم
@@ -28,19 +28,19 @@ class CrashlyticsManager {
     if (userId != null) {
       await _crashlytics.setUserIdentifier(userId);
     }
-    
+
     // تسجيل معلومات إضافية عن المستخدم
     if (email != null) {
       await _crashlytics.setCustomKey('email', email);
     }
-    
+
     if (name != null) {
       await _crashlytics.setCustomKey('name', name);
     }
   }
 
   /// تسجيل خطأ
-  /// 
+  ///
   /// [error] الخطأ المراد تسجيله
   /// [stackTrace] تتبع المكدس للخطأ
   /// [reason] سبب الخطأ
@@ -57,7 +57,7 @@ class CrashlyticsManager {
   }
 
   /// تسجيل رسالة خطأ
-  /// 
+  ///
   /// [message] رسالة الخطأ المراد تسجيلها
   Future<void> log(String message) async {
     await _crashlytics.log(message);

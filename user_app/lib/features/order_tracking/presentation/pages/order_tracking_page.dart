@@ -62,7 +62,9 @@ class _OrderTrackingPageState extends ConsumerState<OrderTrackingPage> {
       orderTrackingProvider(widget.orderId).select((s) => s.deliveryLocation),
       (_, next) {
         next.whenData((location) {
-          if (location != null && location.latitude != null && location.longitude != null) {
+          if (location != null &&
+              location.latitude != null &&
+              location.longitude != null) {
             _updateMarkers(location, orderDetails);
             _moveCamera(location);
           }
@@ -141,11 +143,13 @@ class _OrderTrackingPageState extends ConsumerState<OrderTrackingPage> {
                             ? Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  const Icon(Icons.directions_car, color: Colors.green),
+                                  const Icon(Icons.directions_car,
+                                      color: Colors.green),
                                   const SizedBox(width: 8),
                                   Text(
                                     l10n.estimatedArrival,
-                                    style: const TextStyle(fontWeight: FontWeight.bold),
+                                    style: const TextStyle(
+                                        fontWeight: FontWeight.bold),
                                   ),
                                   const SizedBox(width: 4),
                                   Text('15-20 ${l10n.minutesAbbreviation}'),
@@ -154,7 +158,8 @@ class _OrderTrackingPageState extends ConsumerState<OrderTrackingPage> {
                             : Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  const Icon(Icons.access_time, color: Colors.orange),
+                                  const Icon(Icons.access_time,
+                                      color: Colors.orange),
                                   const SizedBox(width: 8),
                                   Text(l10n.waitingForDriver),
                                 ],
@@ -203,7 +208,8 @@ class _OrderTrackingPageState extends ConsumerState<OrderTrackingPage> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      const Icon(Icons.error_outline, color: Colors.red, size: 48),
+                      const Icon(Icons.error_outline,
+                          color: Colors.red, size: 48),
                       const SizedBox(height: 16),
                       Text('${l10n.errorLoadingOrder}: $err'),
                       const SizedBox(height: 16),
@@ -222,10 +228,11 @@ class _OrderTrackingPageState extends ConsumerState<OrderTrackingPage> {
     );
   }
 
-  Widget _buildOrderDetailsCard(OrderModel order, AsyncValue<LocationData?> deliveryLocationAsync) {
+  Widget _buildOrderDetailsCard(
+      OrderModel order, AsyncValue<LocationData?> deliveryLocationAsync) {
     final l10n = AppLocalizations.of(context)!;
     final estimatedTime = _calculateEstimatedTime(deliveryLocationAsync);
-    
+
     return Card(
       elevation: 4,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
@@ -242,7 +249,8 @@ class _OrderTrackingPageState extends ConsumerState<OrderTrackingPage> {
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
                     color: _getStatusColor(order.status),
                     borderRadius: BorderRadius.circular(12),
@@ -292,7 +300,8 @@ class _OrderTrackingPageState extends ConsumerState<OrderTrackingPage> {
               children: [
                 const Icon(Icons.attach_money, size: 20),
                 const SizedBox(width: 8),
-                Text('${l10n.totalAmount}: ${order.total.toStringAsFixed(2)} ${l10n.currencySymbol}'),
+                Text(
+                    '${l10n.totalAmount}: ${order.total.toStringAsFixed(2)} ${l10n.currencySymbol}'),
               ],
             ),
             const Spacer(),
@@ -328,7 +337,7 @@ class _OrderTrackingPageState extends ConsumerState<OrderTrackingPage> {
 
   void _showDeliveryPersonDialog(OrderModel order) {
     final l10n = AppLocalizations.of(context)!;
-    
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -391,14 +400,16 @@ class _OrderTrackingPageState extends ConsumerState<OrderTrackingPage> {
   }
 
   // تحديث العلامات على الخريطة
-  void _updateMarkers(LocationData location, AsyncValue<OrderModel?> orderAsync) {
+  void _updateMarkers(
+      LocationData location, AsyncValue<OrderModel?> orderAsync) {
     if (location.latitude == null || location.longitude == null) return;
 
-    final deliveryMarkerId = const MarkerId('delivery_marker');
+    const deliveryMarkerId = MarkerId('delivery_marker');
     final deliveryMarker = Marker(
       markerId: deliveryMarkerId,
       position: LatLng(location.latitude!, location.longitude!),
-      infoWindow: InfoWindow(title: AppLocalizations.of(context)!.driverLocation),
+      infoWindow:
+          InfoWindow(title: AppLocalizations.of(context)!.driverLocation),
       icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
       // إضافة تدوير العلامة حسب اتجاه السائق إذا كان متوفرًا
       rotation: location.heading ?? 0.0,
@@ -406,23 +417,25 @@ class _OrderTrackingPageState extends ConsumerState<OrderTrackingPage> {
     );
 
     // إضافة علامة للعنوان المستهدف (عنوان العميل)
-    final destinationMarkerId = const MarkerId('destination_marker');
-    
+    const destinationMarkerId = MarkerId('destination_marker');
+
     // استخدام عنوان العميل من الطلب إذا كان متوفرًا
     double destinationLat = 24.7136;
     double destinationLng = 46.6753;
-    
+
     orderAsync.whenData((order) {
-      if (order?.deliveryAddress?.latitude != null && order?.deliveryAddress?.longitude != null) {
+      if (order?.deliveryAddress?.latitude != null &&
+          order?.deliveryAddress?.longitude != null) {
         destinationLat = order!.deliveryAddress!.latitude!;
         destinationLng = order.deliveryAddress!.longitude!;
       }
     });
-    
+
     final destinationMarker = Marker(
       markerId: destinationMarkerId,
       position: LatLng(destinationLat, destinationLng),
-      infoWindow: InfoWindow(title: AppLocalizations.of(context)!.deliveryAddress),
+      infoWindow:
+          InfoWindow(title: AppLocalizations.of(context)!.deliveryAddress),
       icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
     );
 
@@ -437,12 +450,12 @@ class _OrderTrackingPageState extends ConsumerState<OrderTrackingPage> {
   // تحديث المسار على الخريطة
   void _updatePolylines(List<LocationData> locationHistory) {
     if (locationHistory.length < 2) return;
-    
+
     final List<LatLng> points = locationHistory
         .where((loc) => loc.latitude != null && loc.longitude != null)
         .map((loc) => LatLng(loc.latitude!, loc.longitude!))
         .toList();
-    
+
     final polyline = Polyline(
       polylineId: const PolylineId('driver_path'),
       color: Colors.blue,
@@ -452,7 +465,7 @@ class _OrderTrackingPageState extends ConsumerState<OrderTrackingPage> {
       startCap: Cap.roundCap,
       endCap: Cap.roundCap,
     );
-    
+
     if (mounted) {
       setState(() {
         _polylines.clear();
@@ -476,7 +489,7 @@ class _OrderTrackingPageState extends ConsumerState<OrderTrackingPage> {
     return locationAsync.when(
       data: (location) {
         if (location == null) return null;
-        
+
         // في التطبيق الحقيقي، سيتم استخدام خدمة حساب المسافة والوقت
         // مثل Google Distance Matrix API
         // هنا نستخدم قيمة ثابتة للتجربة
@@ -508,7 +521,7 @@ class _OrderTrackingPageState extends ConsumerState<OrderTrackingPage> {
 
   String _getStatusText(String status) {
     final l10n = AppLocalizations.of(context)!;
-    
+
     switch (status.toLowerCase()) {
       case 'pending':
         return l10n.orderStatusPending;

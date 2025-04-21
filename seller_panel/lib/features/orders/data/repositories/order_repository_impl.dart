@@ -4,11 +4,12 @@ import 'package:seller_panel/core/error/failures.dart';
 import 'package:seller_panel/features/orders/data/datasources/order_firebase_datasource.dart';
 import 'package:seller_panel/features/orders/domain/entities/order_entity.dart';
 import 'package:seller_panel/features/orders/domain/repositories/order_repository.dart';
+
 /// تنفيذ مستودع الطلبات
 class OrderRepositoryImpl implements OrderRepository {
   final OrderFirebaseDataSource dataSource;
   OrderRepositoryImpl({required this.dataSource});
-  
+
   @override
   Future<Either<Failure, List<OrderEntity>>> getOrders(String sellerId) async {
     try {
@@ -20,7 +21,7 @@ class OrderRepositoryImpl implements OrderRepository {
       return Left(UnexpectedFailure());
     }
   }
-  
+
   @override
   Future<Either<Failure, OrderEntity>> getOrderDetails(String orderId) async {
     try {
@@ -32,9 +33,10 @@ class OrderRepositoryImpl implements OrderRepository {
       return Left(UnexpectedFailure());
     }
   }
-  
+
   @override
-  Future<Either<Failure, OrderEntity>> updateOrderStatus(String orderId, String status) async {
+  Future<Either<Failure, OrderEntity>> updateOrderStatus(
+      String orderId, String status) async {
     try {
       final updatedOrder = await dataSource.updateOrderStatus(orderId, status);
       return Right(updatedOrder);
@@ -44,9 +46,10 @@ class OrderRepositoryImpl implements OrderRepository {
       return Left(UnexpectedFailure());
     }
   }
-  
+
   @override
-  Future<Either<Failure, Map<String, dynamic>>> getOrderStatistics(String sellerId) async {
+  Future<Either<Failure, Map<String, dynamic>>> getOrderStatistics(
+      String sellerId) async {
     try {
       final statistics = await dataSource.getOrderStatistics(sellerId);
       return Right(statistics);
@@ -56,7 +59,7 @@ class OrderRepositoryImpl implements OrderRepository {
       return Left(UnexpectedFailure());
     }
   }
-  
+
   @override
   Future<Either<Failure, List<OrderEntity>>> searchOrders(
     String sellerId, {

@@ -26,11 +26,9 @@ class AppTheme {
       onError: AppColors.onError,
       errorContainer: Color(0xFFFFDAD6),
       onErrorContainer: Color(0xFF410002),
-      background: AppColors.background,
-      onBackground: AppColors.onBackground,
       surface: AppColors.surface,
       onSurface: AppColors.onSurface,
-      surfaceVariant: Color(0xFFDDE5DD),
+      surfaceContainerHighest: Color(0xFFDDE5DD),
       onSurfaceVariant: Color(0xFF414942),
       outline: Color(0xFF727971),
       outlineVariant: Color(0xFFC1C9C0),
@@ -41,9 +39,9 @@ class AppTheme {
       inversePrimary: Color(0xFF83DA85),
       surfaceTint: AppColors.primary,
     ),
-    
+
     // تكوين الخطوط
-    textTheme: TextTheme(
+    textTheme: const TextTheme(
       headlineLarge: AppTextStyles.headlineLarge,
       headlineMedium: AppTextStyles.headlineMedium,
       headlineSmall: AppTextStyles.headlineSmall,
@@ -57,7 +55,7 @@ class AppTheme {
       labelMedium: AppTextStyles.labelMedium,
       labelSmall: AppTextStyles.labelSmall,
     ),
-    
+
     // تكوين الأزرار
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
@@ -71,7 +69,7 @@ class AppTheme {
         elevation: 2,
       ),
     ),
-    
+
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
         foregroundColor: AppColors.primary,
@@ -83,7 +81,7 @@ class AppTheme {
         textStyle: AppTextStyles.buttonMedium,
       ),
     ),
-    
+
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
         foregroundColor: AppColors.primary,
@@ -94,7 +92,7 @@ class AppTheme {
         textStyle: AppTextStyles.buttonMedium,
       ),
     ),
-    
+
     // تكوين بطاقات العرض
     cardTheme: CardTheme(
       color: AppColors.surface,
@@ -104,7 +102,7 @@ class AppTheme {
       ),
       margin: const EdgeInsets.all(8),
     ),
-    
+
     // تكوين شريط التطبيق
     appBarTheme: const AppBarTheme(
       backgroundColor: AppColors.primary,
@@ -112,7 +110,7 @@ class AppTheme {
       elevation: 0,
       centerTitle: false,
     ),
-    
+
     // تكوين حقول الإدخال
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
@@ -142,28 +140,28 @@ class AppTheme {
       hintStyle: AppTextStyles.bodyMedium.copyWith(color: Colors.grey),
       errorStyle: AppTextStyles.bodySmall.copyWith(color: AppColors.error),
     ),
-    
+
     // تكوين القوائم
     listTileTheme: const ListTileThemeData(
       contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
       minLeadingWidth: 24,
       minVerticalPadding: 12,
     ),
-    
+
     // تكوين الفواصل
     dividerTheme: const DividerThemeData(
       color: AppColors.divider,
       thickness: 1,
       space: 1,
     ),
-    
+
     // تكوين مؤشرات التقدم
     progressIndicatorTheme: const ProgressIndicatorThemeData(
       color: AppColors.primary,
       circularTrackColor: Colors.grey,
       linearTrackColor: Colors.grey,
     ),
-    
+
     // تكوين الرسوم المتحركة
     pageTransitionsTheme: const PageTransitionsTheme(
       builders: {
@@ -172,7 +170,7 @@ class AppTheme {
       },
     ),
   );
-  
+
   // سمة الوضع الداكن
   static final ThemeData darkTheme = ThemeData(
     useMaterial3: true,
@@ -195,11 +193,9 @@ class AppTheme {
       onError: Color(0xFF690005),
       errorContainer: Color(0xFF93000A),
       onErrorContainer: Color(0xFFFFDAD6),
-      background: AppColors.darkBackground,
-      onBackground: AppColors.onDarkBackground,
       surface: AppColors.darkSurface,
       onSurface: AppColors.onDarkSurface,
-      surfaceVariant: Color(0xFF414942),
+      surfaceContainerHighest: Color(0xFF414942),
       onSurfaceVariant: Color(0xFFC1C9C0),
       outline: Color(0xFF8B938A),
       outlineVariant: Color(0xFF414942),
@@ -210,11 +206,12 @@ class AppTheme {
       inversePrimary: Color(0xFF006E24),
       surfaceTint: Color(0xFF83DA85),
     ),
-    
+
     // تكوين الخطوط
     textTheme: TextTheme(
       headlineLarge: AppTextStyles.headlineLarge.copyWith(color: Colors.white),
-      headlineMedium: AppTextStyles.headlineMedium.copyWith(color: Colors.white),
+      headlineMedium:
+          AppTextStyles.headlineMedium.copyWith(color: Colors.white),
       headlineSmall: AppTextStyles.headlineSmall.copyWith(color: Colors.white),
       titleLarge: AppTextStyles.titleLarge.copyWith(color: Colors.white),
       titleMedium: AppTextStyles.titleMedium.copyWith(color: Colors.white),
@@ -226,12 +223,12 @@ class AppTheme {
       labelMedium: AppTextStyles.labelMedium.copyWith(color: Colors.white),
       labelSmall: AppTextStyles.labelSmall.copyWith(color: Colors.white),
     ),
-    
+
     // تكوين الأزرار
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
-        foregroundColor: Color(0xFF00390F),
-        backgroundColor: Color(0xFF83DA85),
+        foregroundColor: const Color(0xFF00390F),
+        backgroundColor: const Color(0xFF83DA85),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8),
@@ -240,10 +237,10 @@ class AppTheme {
         elevation: 2,
       ),
     ),
-    
+
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
-        foregroundColor: Color(0xFF83DA85),
+        foregroundColor: const Color(0xFF83DA85),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8),
@@ -252,10 +249,10 @@ class AppTheme {
         textStyle: AppTextStyles.buttonMedium,
       ),
     ),
-    
+
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
-        foregroundColor: Color(0xFF83DA85),
+        foregroundColor: const Color(0xFF83DA85),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(8),
@@ -263,17 +260,17 @@ class AppTheme {
         textStyle: AppTextStyles.buttonMedium,
       ),
     ),
-    
+
     // تكوين بطاقات العرض
     cardTheme: CardTheme(
-      color: Color(0xFF1E1E1E),
+      color: const Color(0xFF1E1E1E),
       elevation: 2,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(12),
       ),
       margin: const EdgeInsets.all(8),
     ),
-    
+
     // تكوين شريط التطبيق
     appBarTheme: const AppBarTheme(
       backgroundColor: Color(0xFF1E1E1E),
@@ -281,11 +278,11 @@ class AppTheme {
       elevation: 0,
       centerTitle: false,
     ),
-    
+
     // تكوين حقول الإدخال
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
-      fillColor: Color(0xFF2A2A2A),
+      fillColor: const Color(0xFF2A2A2A),
       contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(8),
@@ -309,9 +306,10 @@ class AppTheme {
       ),
       labelStyle: AppTextStyles.labelLarge.copyWith(color: Colors.white70),
       hintStyle: AppTextStyles.bodyMedium.copyWith(color: Colors.white54),
-      errorStyle: AppTextStyles.bodySmall.copyWith(color: Color(0xFFFFB4AB)),
+      errorStyle:
+          AppTextStyles.bodySmall.copyWith(color: const Color(0xFFFFB4AB)),
     ),
-    
+
     // تكوين القوائم
     listTileTheme: const ListTileThemeData(
       contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -320,21 +318,21 @@ class AppTheme {
       textColor: Colors.white,
       iconColor: Colors.white70,
     ),
-    
+
     // تكوين الفواصل
     dividerTheme: const DividerThemeData(
       color: Color(0xFF3A3A3A),
       thickness: 1,
       space: 1,
     ),
-    
+
     // تكوين مؤشرات التقدم
     progressIndicatorTheme: const ProgressIndicatorThemeData(
       color: Color(0xFF83DA85),
       circularTrackColor: Color(0xFF3A3A3A),
       linearTrackColor: Color(0xFF3A3A3A),
     ),
-    
+
     // تكوين الرسوم المتحركة
     pageTransitionsTheme: const PageTransitionsTheme(
       builders: {

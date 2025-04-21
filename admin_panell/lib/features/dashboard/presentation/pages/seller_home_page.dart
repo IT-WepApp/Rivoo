@@ -66,7 +66,8 @@ class _DeliveryHomePageState extends State<DeliveryHomePage> {
       return Center(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
-          child: Text(_error!, style: TextStyle(color: theme.colorScheme.error)),
+          child:
+              Text(_error!, style: TextStyle(color: theme.colorScheme.error)),
         ),
       );
     }
@@ -80,12 +81,15 @@ class _DeliveryHomePageState extends State<DeliveryHomePage> {
         return Card(
           margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
           child: ListTile(
-            title: const Text('Order ID: \${order.id ?? ''}'),
-            subtitle: const Text('Status: \${order.status ?? ''}'),
+            title: const Text('Order ID: \${order.id ?? ' '}'),
+            subtitle: const Text('Status: \${order.status ?? ' '}'),
             trailing: const Icon(Icons.arrow_forward_ios, size: 16),
             onTap: () {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Navigate to details for order \${order.id ?? ''} (TODO)')),
+                const SnackBar(
+                    content: Text(
+                        'Navigate to details for order \${order.id ?? '
+                        '} (TODO)')),
               );
             },
           ),

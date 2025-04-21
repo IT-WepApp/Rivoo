@@ -123,7 +123,8 @@ class _StatisticsAndReportsPageState
     return salesDataAsync.when(
       data: (salesData) {
         if (salesData.isEmpty) {
-          return const Center(child: Text('No sales data for selected period.'));
+          return const Center(
+              child: Text('No sales data for selected period.'));
         }
         return Card(
           elevation: 2,
@@ -136,7 +137,8 @@ class _StatisticsAndReportsPageState
                   gridData: const FlGridData(show: false),
                   titlesData: FlTitlesData(
                     leftTitles: const AxisTitles(
-                      sideTitles: SideTitles(showTitles: true, reservedSize: 40),
+                      sideTitles:
+                          SideTitles(showTitles: true, reservedSize: 40),
                     ),
                     bottomTitles: AxisTitles(
                       sideTitles: SideTitles(
@@ -147,10 +149,10 @@ class _StatisticsAndReportsPageState
                             _bottomTitleWidgets(value, meta, salesData.length),
                       ),
                     ),
-                    topTitles:
-                        const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                    rightTitles:
-                        const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                    topTitles: const AxisTitles(
+                        sideTitles: SideTitles(showTitles: false)),
+                    rightTitles: const AxisTitles(
+                        sideTitles: SideTitles(showTitles: false)),
                   ),
                   borderData: FlBorderData(
                     show: true,
@@ -175,8 +177,7 @@ class _StatisticsAndReportsPageState
                   lineTouchData: LineTouchData(
                     touchTooltipData: LineTouchTooltipData(
                       // استخدم getTooltipColor بدل tooltipBgColor
-                      getTooltipColor: (_) =>
-                          Colors.blueGrey.withOpacity(0.8),
+                      getTooltipColor: (_) => Colors.blueGrey.withOpacity(0.8),
                     ),
                   ),
                 ),
@@ -185,10 +186,11 @@ class _StatisticsAndReportsPageState
           ),
         );
       },
-      loading: () =>
-          const SizedBox(height: 250, child: Center(child: CircularProgressIndicator())),
-      error: (error, _) =>
-          SizedBox(height: 250, child: Center(child: Text('Error loading chart: $error'))),
+      loading: () => const SizedBox(
+          height: 250, child: Center(child: CircularProgressIndicator())),
+      error: (error, _) => SizedBox(
+          height: 250,
+          child: Center(child: Text('Error loading chart: $error'))),
     );
   }
 
@@ -219,7 +221,8 @@ class _StatisticsAndReportsPageState
                   groupsSpace: 12,
                   titlesData: FlTitlesData(
                     leftTitles: const AxisTitles(
-                      sideTitles: SideTitles(showTitles: true, reservedSize: 40),
+                      sideTitles:
+                          SideTitles(showTitles: true, reservedSize: 40),
                     ),
                     bottomTitles: AxisTitles(
                       sideTitles: SideTitles(
@@ -242,10 +245,10 @@ class _StatisticsAndReportsPageState
                         },
                       ),
                     ),
-                    topTitles:
-                        const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                    rightTitles:
-                        const AxisTitles(sideTitles: SideTitles(showTitles: false)),
+                    topTitles: const AxisTitles(
+                        sideTitles: SideTitles(showTitles: false)),
+                    rightTitles: const AxisTitles(
+                        sideTitles: SideTitles(showTitles: false)),
                   ),
                   borderData: FlBorderData(
                     show: true,
@@ -257,8 +260,7 @@ class _StatisticsAndReportsPageState
                     touchTooltipData: BarTouchTooltipData(
                       // استخدم getTooltipColor بدل tooltipBgColor
                       getTooltipColor: (_) => Colors.grey,
-                      getTooltipItem:
-                          (group, groupIndex, rod, rodIndex) {
+                      getTooltipItem: (group, groupIndex, rod, rodIndex) {
                         final name = data[group.x.toInt()].storeName;
                         return BarTooltipItem(
                           '$name\n',
@@ -287,10 +289,11 @@ class _StatisticsAndReportsPageState
           ),
         );
       },
-      loading: () =>
-          const SizedBox(height: 250, child: Center(child: CircularProgressIndicator())),
-      error: (error, _) =>
-          SizedBox(height: 250, child: Center(child: Text('Error loading chart: $error'))),
+      loading: () => const SizedBox(
+          height: 250, child: Center(child: CircularProgressIndicator())),
+      error: (error, _) => SizedBox(
+          height: 250,
+          child: Center(child: Text('Error loading chart: $error'))),
     );
   }
 

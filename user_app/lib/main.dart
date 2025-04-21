@@ -24,10 +24,10 @@ import 'theme/app_theme.dart';
 void main() async {
   // تأكد من تهيئة Flutter
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // تهيئة Firebase
   await Firebase.initializeApp();
-  
+
   // تهيئة Crashlytics لتتبع الأخطاء
   if (!kDebugMode) {
     await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(true);
@@ -37,10 +37,10 @@ void main() async {
       return true;
     };
   }
-  
+
   // تهيئة Performance Monitoring لقياس الأداء
   await FirebasePerformance.instance.setPerformanceCollectionEnabled(true);
-  
+
   // تشغيل التطبيق مع إعداد ProviderScope لإدارة الحالة
   runApp(
     const ProviderScope(child: MyApp()),
@@ -52,7 +52,7 @@ void main() async {
 class MyApp extends ConsumerWidget {
   /// إنشاء نسخة جديدة من التطبيق
   const MyApp({Key? key}) : super(key: key);
-  
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // الحصول على مزودات التطبيق
@@ -60,14 +60,14 @@ class MyApp extends ConsumerWidget {
     final analyticsObserver = ref.watch(analyticsObserverProvider);
     final themeMode = ref.watch(themeModeProvider);
     final locale = ref.watch(localeProvider);
-    
+
     return MaterialApp.router(
       title: 'RivooSy',
       // إعداد الثيم
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: themeMode,
-      
+
       // إعداد اللغة
       locale: locale,
       supportedLocales: L10n.supportedLocales,
@@ -77,16 +77,16 @@ class MyApp extends ConsumerWidget {
         GlobalWidgetsLocalizations.delegate,
         GlobalCupertinoLocalizations.delegate,
       ],
-      
+
       // إعداد التوجيه
       routerConfig: appRouter,
-      
+
       // إعداد المراقبة التحليلية
       navigatorObservers: [
         analyticsObserver,
         FirebaseAnalyticsObserver(analytics: FirebaseAnalytics.instance),
       ],
-      
+
       // إخفاء شريط التصحيح
       debugShowCheckedModeBanner: false,
     );
@@ -105,4 +105,5 @@ final localeProvider = StateProvider<Locale?>((ref) => null);
 final appRouterProvider = Provider((ref) => appRouter);
 
 /// مزود مراقب التحليلات
-final analyticsObserverProvider = Provider<NavigatorObserver>((ref) => AnalyticsMonitor(ref.read));
+final analyticsObserverProvider =
+    Provider<NavigatorObserver>((ref) => AnalyticsMonitor(ref.read));

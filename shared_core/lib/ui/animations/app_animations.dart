@@ -11,9 +11,9 @@ class AppAnimations {
     bool repeat = true,
   }) {
     return _AnimatedPulse(
-      child: child,
       duration: duration,
       repeat: repeat,
+      child: child,
     );
   }
 
@@ -26,10 +26,10 @@ class AppAnimations {
     bool repeat = false,
   }) {
     return _AnimatedFadeIn(
-      child: child,
       duration: duration,
       curve: curve,
       repeat: repeat,
+      child: child,
     );
   }
 
@@ -43,11 +43,11 @@ class AppAnimations {
     double offset = 100.0,
   }) {
     return _AnimatedSlideIn(
-      child: child,
       duration: duration,
       curve: curve,
       direction: direction,
       offset: offset,
+      child: child,
     );
   }
 
@@ -59,9 +59,9 @@ class AppAnimations {
     Curve curve = Curves.elasticOut,
   }) {
     return _AnimatedScaleIn(
-      child: child,
       duration: duration,
       curve: curve,
+      child: child,
     );
   }
 
@@ -74,10 +74,10 @@ class AppAnimations {
     int cycles = 3,
   }) {
     return _AnimatedShake(
-      child: child,
       duration: duration,
       offset: offset,
       cycles: cycles,
+      child: child,
     );
   }
 

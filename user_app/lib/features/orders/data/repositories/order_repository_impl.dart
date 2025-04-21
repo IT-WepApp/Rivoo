@@ -26,7 +26,7 @@ class OrderRepositoryImpl implements OrderRepository {
     try {
       final userId = _auth.currentUser?.uid;
       if (userId == null) {
-        return Left(AuthFailure(message: 'المستخدم غير مسجل الدخول'));
+        return const Left(AuthFailure(message: 'المستخدم غير مسجل الدخول'));
       }
 
       final ordersSnapshot = await _firestore
@@ -51,7 +51,7 @@ class OrderRepositoryImpl implements OrderRepository {
     try {
       final userId = _auth.currentUser?.uid;
       if (userId == null) {
-        return Left(AuthFailure(message: 'المستخدم غير مسجل الدخول'));
+        return const Left(AuthFailure(message: 'المستخدم غير مسجل الدخول'));
       }
 
       final orderDoc = await _firestore.collection('orders').doc(orderId).get();
@@ -62,7 +62,8 @@ class OrderRepositoryImpl implements OrderRepository {
 
       final orderData = orderDoc.data()!;
       if (orderData['userId'] != userId) {
-        return Left(AuthFailure(message: 'ليس لديك صلاحية للوصول إلى هذا الطلب'));
+        return const Left(
+            AuthFailure(message: 'ليس لديك صلاحية للوصول إلى هذا الطلب'));
       }
 
       final order = OrderModel.fromJson(orderData);
@@ -82,7 +83,7 @@ class OrderRepositoryImpl implements OrderRepository {
     try {
       final userId = _auth.currentUser?.uid;
       if (userId == null) {
-        return Left(AuthFailure(message: 'المستخدم غير مسجل الدخول'));
+        return const Left(AuthFailure(message: 'المستخدم غير مسجل الدخول'));
       }
 
       final orderId = _uuid.v4();
@@ -129,7 +130,7 @@ class OrderRepositoryImpl implements OrderRepository {
     try {
       final userId = _auth.currentUser?.uid;
       if (userId == null) {
-        return Left(AuthFailure(message: 'المستخدم غير مسجل الدخول'));
+        return const Left(AuthFailure(message: 'المستخدم غير مسجل الدخول'));
       }
 
       final orderDoc = await _firestore.collection('orders').doc(orderId).get();
@@ -140,11 +141,14 @@ class OrderRepositoryImpl implements OrderRepository {
 
       final orderData = orderDoc.data()!;
       if (orderData['userId'] != userId) {
-        return Left(AuthFailure(message: 'ليس لديك صلاحية لإلغاء هذا الطلب'));
+        return const Left(
+            AuthFailure(message: 'ليس لديك صلاحية لإلغاء هذا الطلب'));
       }
 
-      if (orderData['status'] != 'pending' && orderData['status'] != 'processing') {
-        return Left(ValidationFailure(message: 'لا يمكن إلغاء الطلب في هذه المرحلة'));
+      if (orderData['status'] != 'pending' &&
+          orderData['status'] != 'processing') {
+        return const Left(
+            ValidationFailure(message: 'لا يمكن إلغاء الطلب في هذه المرحلة'));
       }
 
       await _firestore.collection('orders').doc(orderId).update({
@@ -162,7 +166,7 @@ class OrderRepositoryImpl implements OrderRepository {
     try {
       final userId = _auth.currentUser?.uid;
       if (userId == null) {
-        return Left(AuthFailure(message: 'المستخدم غير مسجل الدخول'));
+        return const Left(AuthFailure(message: 'المستخدم غير مسجل الدخول'));
       }
 
       final orderDoc = await _firestore.collection('orders').doc(orderId).get();
@@ -173,7 +177,8 @@ class OrderRepositoryImpl implements OrderRepository {
 
       final orderData = orderDoc.data()!;
       if (orderData['userId'] != userId) {
-        return Left(AuthFailure(message: 'ليس لديك صلاحية لتتبع هذا الطلب'));
+        return const Left(
+            AuthFailure(message: 'ليس لديك صلاحية لتتبع هذا الطلب'));
       }
 
       final status = orderData['status'] as String;
@@ -210,11 +215,12 @@ class OrderRepositoryImpl implements OrderRepository {
   }
 
   @override
-  Future<Either<Failure, Unit>> updateShippingAddress(String orderId, String newAddress) async {
+  Future<Either<Failure, Unit>> updateShippingAddress(
+      String orderId, String newAddress) async {
     try {
       final userId = _auth.currentUser?.uid;
       if (userId == null) {
-        return Left(AuthFailure(message: 'المستخدم غير مسجل الدخول'));
+        return const Left(AuthFailure(message: 'المستخدم غير مسجل الدخول'));
       }
 
       final orderDoc = await _firestore.collection('orders').doc(orderId).get();
@@ -225,11 +231,13 @@ class OrderRepositoryImpl implements OrderRepository {
 
       final orderData = orderDoc.data()!;
       if (orderData['userId'] != userId) {
-        return Left(AuthFailure(message: 'ليس لديك صلاحية لتحديث هذا الطلب'));
+        return const Left(
+            AuthFailure(message: 'ليس لديك صلاحية لتحديث هذا الطلب'));
       }
 
       if (orderData['status'] != 'pending') {
-        return Left(ValidationFailure(message: 'لا يمكن تحديث عنوان الشحن بعد بدء معالجة الطلب'));
+        return const Left(ValidationFailure(
+            message: 'لا يمكن تحديث عنوان الشحن بعد بدء معالجة الطلب'));
       }
 
       await _firestore.collection('orders').doc(orderId).update({

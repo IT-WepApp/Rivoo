@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:delivery_app/presentation/providers/locale_provider.dart';
-import 'package:delivery_app/features/settings/presentation/widgets/theme_toggle_widget.dart';
 
 class LanguageToggleWidget extends ConsumerWidget {
   const LanguageToggleWidget({super.key});
@@ -12,7 +11,7 @@ class LanguageToggleWidget extends ConsumerWidget {
     final localeNotifier = ref.read(localeProvider.notifier);
     final currentLocale = ref.watch(localeProvider);
     final supportedLanguages = localeNotifier.getSupportedLanguages();
-    
+
     return Card(
       margin: const EdgeInsets.all(16),
       child: Padding(
@@ -21,7 +20,7 @@ class LanguageToggleWidget extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              AppLocalizations.of(context)!.language,
+              AppLocalizations.of(context).language,
               style: Theme.of(context).textTheme.titleLarge,
             ),
             const SizedBox(height: 16),
@@ -29,20 +28,29 @@ class LanguageToggleWidget extends ConsumerWidget {
               spacing: 12,
               runSpacing: 12,
               children: supportedLanguages.map((language) {
-                final isSelected = language['code'] == currentLocale.languageCode;
-                
+                final isSelected =
+                    language['code'] == currentLocale.languageCode;
+
                 return InkWell(
                   onTap: () {
                     localeNotifier.changeLocale(language['code']!);
                   },
                   borderRadius: BorderRadius.circular(8),
                   child: Container(
-                    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+                    padding: const EdgeInsets.symmetric(
+                        vertical: 12, horizontal: 16),
                     decoration: BoxDecoration(
-                      color: isSelected ? Theme.of(context).colorScheme.primary.withOpacity(0.1) : null,
+                      color: isSelected
+                          ? Theme.of(context)
+                              .colorScheme
+                              .primary
+                              .withOpacity(0.1)
+                          : null,
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
-                        color: isSelected ? Theme.of(context).colorScheme.primary : Colors.grey.withOpacity(0.3),
+                        color: isSelected
+                            ? Theme.of(context).colorScheme.primary
+                            : Colors.grey.withOpacity(0.3),
                         width: isSelected ? 2 : 1,
                       ),
                     ),
@@ -57,7 +65,9 @@ class LanguageToggleWidget extends ConsumerWidget {
                         Text(
                           language['name']!,
                           style: TextStyle(
-                            color: isSelected ? Theme.of(context).colorScheme.primary : null,
+                            color: isSelected
+                                ? Theme.of(context).colorScheme.primary
+                                : null,
                             fontWeight: isSelected ? FontWeight.bold : null,
                           ),
                         ),

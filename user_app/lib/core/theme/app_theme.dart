@@ -39,11 +39,9 @@ class AppTheme {
       colorScheme: const ColorScheme.light(
         primary: _primaryLight,
         secondary: _accentLight,
-        background: _backgroundLight,
         error: _errorLight,
         onPrimary: Colors.white,
         onSecondary: Colors.white,
-        onBackground: _textPrimaryLight,
         onError: Colors.white,
         surface: _cardLight,
         onSurface: _textPrimaryLight,
@@ -51,7 +49,6 @@ class AppTheme {
       scaffoldBackgroundColor: _backgroundLight,
       cardColor: _cardLight,
       dividerColor: _dividerLight,
-      dialogBackgroundColor: _cardLight,
       appBarTheme: const AppBarTheme(
         color: _primaryLight,
         foregroundColor: Colors.white,
@@ -227,35 +224,35 @@ class AppTheme {
         behavior: SnackBarBehavior.floating,
       ),
       switchTheme: SwitchThemeData(
-        thumbColor: MaterialStateProperty.resolveWith<Color>((states) {
-          if (states.contains(MaterialState.selected)) {
+        thumbColor: WidgetStateProperty.resolveWith<Color>((states) {
+          if (states.contains(WidgetState.selected)) {
             return _primaryLight;
           }
           return Colors.grey;
         }),
-        trackColor: MaterialStateProperty.resolveWith<Color>((states) {
-          if (states.contains(MaterialState.selected)) {
+        trackColor: WidgetStateProperty.resolveWith<Color>((states) {
+          if (states.contains(WidgetState.selected)) {
             return _primaryLight.withOpacity(0.5);
           }
           return Colors.grey.withOpacity(0.5);
         }),
       ),
       checkboxTheme: CheckboxThemeData(
-        fillColor: MaterialStateProperty.resolveWith<Color>((states) {
-          if (states.contains(MaterialState.selected)) {
+        fillColor: WidgetStateProperty.resolveWith<Color>((states) {
+          if (states.contains(WidgetState.selected)) {
             return _primaryLight;
           }
           return Colors.transparent;
         }),
-        checkColor: MaterialStateProperty.all(Colors.white),
+        checkColor: WidgetStateProperty.all(Colors.white),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(4),
         ),
         side: const BorderSide(color: _textSecondaryLight),
       ),
       radioTheme: RadioThemeData(
-        fillColor: MaterialStateProperty.resolveWith<Color>((states) {
-          if (states.contains(MaterialState.selected)) {
+        fillColor: WidgetStateProperty.resolveWith<Color>((states) {
+          if (states.contains(WidgetState.selected)) {
             return _primaryLight;
           }
           return _textSecondaryLight;
@@ -312,11 +309,9 @@ class AppTheme {
       colorScheme: const ColorScheme.dark(
         primary: _primaryDark,
         secondary: _accentDark,
-        background: _backgroundDark,
         error: _errorDark,
         onPrimary: Colors.white,
         onSecondary: Colors.white,
-        onBackground: _textPrimaryDark,
         onError: Colors.white,
         surface: _cardDark,
         onSurface: _textPrimaryDark,
@@ -324,7 +319,6 @@ class AppTheme {
       scaffoldBackgroundColor: _backgroundDark,
       cardColor: _cardDark,
       dividerColor: _dividerDark,
-      dialogBackgroundColor: _cardDark,
       appBarTheme: const AppBarTheme(
         color: _cardDark,
         foregroundColor: _textPrimaryDark,
@@ -500,35 +494,35 @@ class AppTheme {
         behavior: SnackBarBehavior.floating,
       ),
       switchTheme: SwitchThemeData(
-        thumbColor: MaterialStateProperty.resolveWith<Color>((states) {
-          if (states.contains(MaterialState.selected)) {
+        thumbColor: WidgetStateProperty.resolveWith<Color>((states) {
+          if (states.contains(WidgetState.selected)) {
             return _primaryDark;
           }
           return Colors.grey;
         }),
-        trackColor: MaterialStateProperty.resolveWith<Color>((states) {
-          if (states.contains(MaterialState.selected)) {
+        trackColor: WidgetStateProperty.resolveWith<Color>((states) {
+          if (states.contains(WidgetState.selected)) {
             return _primaryDark.withOpacity(0.5);
           }
           return Colors.grey.withOpacity(0.5);
         }),
       ),
       checkboxTheme: CheckboxThemeData(
-        fillColor: MaterialStateProperty.resolveWith<Color>((states) {
-          if (states.contains(MaterialState.selected)) {
+        fillColor: WidgetStateProperty.resolveWith<Color>((states) {
+          if (states.contains(WidgetState.selected)) {
             return _primaryDark;
           }
           return Colors.transparent;
         }),
-        checkColor: MaterialStateProperty.all(Colors.white),
+        checkColor: WidgetStateProperty.all(Colors.white),
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(4),
         ),
         side: const BorderSide(color: _textSecondaryDark),
       ),
       radioTheme: RadioThemeData(
-        fillColor: MaterialStateProperty.resolveWith<Color>((states) {
-          if (states.contains(MaterialState.selected)) {
+        fillColor: WidgetStateProperty.resolveWith<Color>((states) {
+          if (states.contains(WidgetState.selected)) {
             return _primaryDark;
           }
           return _textSecondaryDark;

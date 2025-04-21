@@ -1,9 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_services/shared_services.dart'; // ✅ لاستيراد OrderService
-import 'package:shared_models/shared_models.dart';     // ✅ لاستيراد OrderModel
+import 'package:shared_models/shared_models.dart'; // ✅ لاستيراد OrderModel
 
 // استخدام OrderModel بدلاً من Order
-class OrderManagementNotifier extends StateNotifier<AsyncValue<List<OrderModel>>> {
+class OrderManagementNotifier
+    extends StateNotifier<AsyncValue<List<OrderModel>>> {
   final OrderService _orderService;
 
   OrderManagementNotifier(this._orderService) : super(const AsyncLoading()) {
@@ -37,7 +38,8 @@ final orderServiceProvider = Provider<OrderService>((ref) {
 });
 
 // ✅ Provider للـ Notifier
-final orderManagementProvider = StateNotifierProvider<OrderManagementNotifier, AsyncValue<List<OrderModel>>>((ref) {
+final orderManagementProvider = StateNotifierProvider<OrderManagementNotifier,
+    AsyncValue<List<OrderModel>>>((ref) {
   final orderService = ref.read(orderServiceProvider);
   return OrderManagementNotifier(orderService);
 });

@@ -26,10 +26,10 @@ class ProfileScreen extends ConsumerWidget {
       body: ResponsiveBuilder(
         // تنفيذ واجهة الهاتف
         mobileBuilder: (context) => _buildMobileLayout(context, l10n),
-        
+
         // تنفيذ واجهة الجهاز اللوحي
         smallTabletBuilder: (context) => _buildTabletLayout(context, l10n),
-        
+
         // تنفيذ واجهة سطح المكتب
         desktopBuilder: (context) => _buildDesktopLayout(context, l10n),
       ),
@@ -160,9 +160,9 @@ class ProfileScreen extends ConsumerWidget {
               ),
             ),
           ),
-          
+
           const SizedBox(width: 24),
-          
+
           // المحتوى الرئيسي
           Expanded(
             child: Card(
@@ -177,9 +177,10 @@ class ProfileScreen extends ConsumerWidget {
                   children: [
                     Text(
                       l10n.personalInfo,
-                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                      style:
+                          Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
                     ),
                     const SizedBox(height: 24),
                     _buildProfileInfo(context, l10n, isCompact: false),
@@ -200,7 +201,9 @@ class ProfileScreen extends ConsumerWidget {
         vertical: isCompact ? 24.0 : 16.0,
         horizontal: 16.0,
       ),
-      color: isCompact ? Theme.of(context).colorScheme.primary.withOpacity(0.1) : Colors.transparent,
+      color: isCompact
+          ? Theme.of(context).colorScheme.primary.withOpacity(0.1)
+          : Colors.transparent,
       child: Column(
         children: [
           // صورة الملف الشخصي
@@ -217,7 +220,7 @@ class ProfileScreen extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: 16),
-          
+
           // اسم المستخدم
           Text(
             'أحمد محمد',
@@ -227,16 +230,17 @@ class ProfileScreen extends ConsumerWidget {
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 4),
-          
+
           // البريد الإلكتروني
           Text(
             'ahmed@example.com',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                  color:
+                      Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
                 ),
             textAlign: TextAlign.center,
           ),
-          
+
           if (!isCompact) ...[
             const SizedBox(height: 16),
             OutlinedButton.icon(
@@ -253,7 +257,8 @@ class ProfileScreen extends ConsumerWidget {
   }
 
   // بناء معلومات الملف الشخصي
-  Widget _buildProfileInfo(BuildContext context, AppLocalizations l10n, {bool isCompact = true}) {
+  Widget _buildProfileInfo(BuildContext context, AppLocalizations l10n,
+      {bool isCompact = true}) {
     return Card(
       elevation: isCompact ? 2 : 0,
       margin: EdgeInsets.all(isCompact ? 16.0 : 0),
@@ -273,7 +278,7 @@ class ProfileScreen extends ConsumerWidget {
                     ),
               ),
             if (isCompact) const SizedBox(height: 16),
-            
+
             // المعلومات الشخصية
             _buildInfoItem(
               context,
@@ -339,7 +344,10 @@ class ProfileScreen extends ConsumerWidget {
                 Text(
                   label,
                   style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onSurface
+                            .withOpacity(0.7),
                       ),
                 ),
                 const SizedBox(height: 4),
@@ -371,7 +379,7 @@ class ProfileScreen extends ConsumerWidget {
                 ),
           ),
           const SizedBox(height: 16),
-          
+
           // قائمة الإجراءات
           _buildActionItem(
             context,
@@ -490,7 +498,10 @@ class ProfileScreen extends ConsumerWidget {
                     Text(
                       subtitle,
                       style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                            color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                            color: Theme.of(context)
+                                .colorScheme
+                                .onSurface
+                                .withOpacity(0.7),
                           ),
                     ),
                   ],
@@ -551,7 +562,8 @@ class ProfileScreen extends ConsumerWidget {
                     color: isSelected
                         ? Theme.of(context).colorScheme.primary
                         : Theme.of(context).colorScheme.onSurface,
-                    fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                    fontWeight:
+                        isSelected ? FontWeight.bold : FontWeight.normal,
                   ),
             ),
           ],

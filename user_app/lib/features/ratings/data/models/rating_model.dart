@@ -64,7 +64,7 @@ class RatingSummaryModel extends RatingSummary {
   factory RatingSummaryModel.fromJson(Map<String, dynamic> json) {
     final distributionJson = json['ratingDistribution'] as Map<String, dynamic>;
     final distribution = <int, int>{};
-    
+
     distributionJson.forEach((key, value) {
       distribution[int.parse(key)] = value as int;
     });

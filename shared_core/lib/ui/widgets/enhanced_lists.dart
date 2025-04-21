@@ -417,7 +417,8 @@ class _EnhancedDraggableList<T> extends StatelessWidget {
         final item = items[index];
         return Padding(
           key: ValueKey(index),
-          padding: EdgeInsets.only(bottom: index < items.length - 1 ? spacing : 0),
+          padding:
+              EdgeInsets.only(bottom: index < items.length - 1 ? spacing : 0),
           child: itemBuilder(context, item, index),
         );
       },

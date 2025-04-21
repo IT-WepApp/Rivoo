@@ -36,7 +36,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
   /// طريقة الدفع المختارة
   PaymentMethod? _selectedMethod;
   /// حالة معالجة الدفع
-  bool _isProcessing = false;
+  final bool _isProcessing = false;
   /// متحكمات نموذج بطاقة الائتمان
   final _cardNumberController = TextEditingController();
   final _expiryMonthController = TextEditingController();
@@ -212,3 +212,119 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
               controller: _expiryYearController,
               decoration: InputDecoration(labelText: l10n.expiryYear, border: const OutlineInputBorder()),
               keyboardType: TextInputType.number,
+              maxLength: 2,
+            ),
+          ),
+        ]),
+        const SizedBox(height: 16),
+        TextFormField(
+          controller: _cvcController,
+          decoration: InputDecoration(labelText: l10n.cvc, border: const OutlineInputBorder()),
+          keyboardType: TextInputType.number,
+          maxLength: 3,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildPayButton(BuildContext context, AppLocalizations l10n) {
+    return ElevatedButton(
+      onPressed: _selectedMethod == null || _isProcessing ? null : _processPayment,
+      style: ElevatedButton.styleFrom(
+        padding: const EdgeInsets.symmetric(horizontal: 48, vertical: 16),
+        textStyle: const TextStyle(fontSize: 18),
+      ),
+      child: Text(_isProcessing ? l10n.processing : l10n.payNow),
+    );
+  }
+
+  Future<void> _processPayment() async {
+    if (_selectedMethod == null) return;
+
+    setState(() {
+      // _isProcessing = true;
+    });
+
+    try {
+      final paymentService = ref.read(paymentServiceProvider);
+      PaymentResult result;
+
+      switch (_selectedMethod) {
+        case PaymentMethod.creditCard:
+          result = await paymentService.processCardPayment(
+            amount: widget.amount,
+            currency: widget.currency,
+            cardNumber: _cardNumberController.text,
+            expiryMonth: _expiryMonthController.text,
+            expiryYear: _expiryYearController.text,
+            cvc: _cvcController.text,
+            orderId: widget.orderId,
+            metadata: widget.metadata,
+          );
+          break;
+        case PaymentMethod.applePay:
+          result = await paymentService.processApplePay(
+            amount: widget.amount,
+            currency: widget.currency,
+            orderId: widget.orderId,
+            metadata: widget.metadata,
+          );
+          break;
+        case PaymentMethod.googlePay:
+          result = await paymentService.processGooglePay(
+            amount: widget.amount,
+            currency: widget.currency,
+            orderId: widget.orderId,
+            metadata: widget.metadata,
+          );
+          break;
+        case PaymentMethod.paypal:
+          result = await paymentService.processPayPal(
+            amount: widget.amount,
+            currency: widget.currency,
+            orderId: widget.orderId,
+            metadata: widget.metadata,
+          );
+          break;
+        case PaymentMethod.cashOnDelivery:
+          result = PaymentResult(
+            success: true,
+            paymentId: 'cod_${DateTime.now().millisecondsSinceEpoch}',
+            message: l10n.cashOnDeliveryConfirmed,
+          );
+          break;
+        default:
+          result = PaymentResult(
+            success: false,
+            message: l10n.invalidPaymentMethod,
+          );
+      }
+
+      if (!mounted) return;
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => PaymentResultScreen(
+            result: result,
+            orderId: widget.orderId,
+            amount: widget.amount,
+            currency: widget.currency,
+          ),
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('${l10n.paymentError}: ${e.toString()}')),
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          // _isProcessing = false;
+        });
+      }
+    }
+  }
+}
