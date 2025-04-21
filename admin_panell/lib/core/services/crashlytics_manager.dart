@@ -18,8 +18,8 @@ class CrashlyticsManager {
   }
 
   /// تسجيل معلومات المستخدم
-  Future<void> setUserIdentifier(String userId) async {
-    await _crashlytics.setUserIdentifier(userId);
+  Future<void> setUserIdentifier({String? userId}) async {
+    await _crashlytics.setUserIdentifier(userId ?? '');
   }
 
   /// تسجيل خطأ مع رسالة

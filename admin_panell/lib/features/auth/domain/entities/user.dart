@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'user_entity.dart';
 
 /// نموذج المستخدم الأساسي للتطبيق
 class User extends Equatable {
@@ -58,6 +59,27 @@ class User extends Equatable {
       photoUrl: map['photoUrl'],
       role: map['role'] ?? 'user',
       isEmailVerified: map['isEmailVerified'] ?? false,
+    );
+  }
+
+  /// تحويل من UserEntity إلى User
+  factory User.fromEntity(UserEntity entity) {
+    return User(
+      id: entity.id,
+      email: entity.email ?? '',
+      name: entity.name,
+      role: entity.role,
+      isEmailVerified: false,
+    );
+  }
+
+  /// تحويل User إلى UserEntity
+  UserEntity toEntity() {
+    return UserEntity(
+      id: id,
+      name: name ?? '',
+      email: email,
+      role: role,
     );
   }
 

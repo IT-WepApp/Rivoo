@@ -136,9 +136,17 @@ class _StatisticsAndReportsPageState
                 LineChartData(
                   gridData: const FlGridData(show: false),
                   titlesData: FlTitlesData(
-                    leftTitles: const AxisTitles(
-                      sideTitles:
-                          SideTitles(showTitles: true, reservedSize: 40),
+                    leftTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true, 
+                        reservedSize: 40,
+                        getTitlesWidget: (value, meta) {
+                          return SideTitleWidget(
+                            axisSide: meta.axisSide,
+                            child: Text(value.toInt().toString()),
+                          );
+                        },
+                      ),
                     ),
                     bottomTitles: AxisTitles(
                       sideTitles: SideTitles(
@@ -176,8 +184,7 @@ class _StatisticsAndReportsPageState
                   ],
                   lineTouchData: LineTouchData(
                     touchTooltipData: LineTouchTooltipData(
-                      // استخدم getTooltipColor بدل tooltipBgColor
-                      getTooltipColor: (_) => Colors.blueGrey.withOpacity(0.8),
+                      tooltipBgColor: Colors.blueGrey.withOpacity(0.8),
                     ),
                   ),
                 ),
@@ -220,9 +227,17 @@ class _StatisticsAndReportsPageState
                   minY: 0,
                   groupsSpace: 12,
                   titlesData: FlTitlesData(
-                    leftTitles: const AxisTitles(
-                      sideTitles:
-                          SideTitles(showTitles: true, reservedSize: 40),
+                    leftTitles: AxisTitles(
+                      sideTitles: SideTitles(
+                        showTitles: true, 
+                        reservedSize: 40,
+                        getTitlesWidget: (value, meta) {
+                          return SideTitleWidget(
+                            axisSide: meta.axisSide,
+                            child: Text(value.toInt().toString()),
+                          );
+                        },
+                      ),
                     ),
                     bottomTitles: AxisTitles(
                       sideTitles: SideTitles(
@@ -232,8 +247,7 @@ class _StatisticsAndReportsPageState
                           final idx = value.toInt();
                           if (idx >= 0 && idx < data.length) {
                             return SideTitleWidget(
-                              // مُنشئ جديد يستقبل meta
-                              meta: meta,
+                              axisSide: meta.axisSide,
                               space: 4,
                               child: Text(
                                 data[idx].storeName,
@@ -241,7 +255,7 @@ class _StatisticsAndReportsPageState
                               ),
                             );
                           }
-                          return const Text('');
+                          return const SizedBox.shrink();
                         },
                       ),
                     ),
@@ -258,8 +272,7 @@ class _StatisticsAndReportsPageState
                   barGroups: _generateBarGroups(data),
                   barTouchData: BarTouchData(
                     touchTooltipData: BarTouchTooltipData(
-                      // استخدم getTooltipColor بدل tooltipBgColor
-                      getTooltipColor: (_) => Colors.grey,
+                      tooltipBgColor: Colors.grey,
                       getTooltipItem: (group, groupIndex, rod, rodIndex) {
                         final name = data[group.x.toInt()].storeName;
                         return BarTooltipItem(
@@ -330,8 +343,7 @@ class _StatisticsAndReportsPageState
         (idx >= 0 && idx < len) ? 'Day ${idx + 1}' : ''; // عدّل حسب الحاجة
 
     return SideTitleWidget(
-      // مُنشئ جديد يستقبل meta
-      meta: meta,
+      axisSide: meta.axisSide,
       space: 8.0,
       child: Text(text, style: style),
     );
