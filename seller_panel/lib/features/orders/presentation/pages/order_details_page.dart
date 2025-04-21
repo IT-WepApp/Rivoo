@@ -465,11 +465,13 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
     final postalCode = address['postalCode'] as String? ?? '';
     final country = address['country'] as String? ?? '';
 
-    return AppWidgets.appCard(
+    return Container(
       padding: const EdgeInsets.all(12),
-      elevation: 0,
-      backgroundColor: theme.colorScheme.surface,
-      borderColor: Colors.grey.shade300,
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: Colors.grey.shade300),
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -492,8 +494,8 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
 
   Widget _buildPriceSummary(ThemeData theme, Map<String, dynamic> order) {
     final subtotal = order['subtotal'] as num? ?? 0;
-    final tax = order['tax'] as num? ?? 0;
     final shippingFee = order['shippingFee'] as num? ?? 0;
+    final tax = order['tax'] as num? ?? 0;
     final discount = order['discount'] as num? ?? 0;
     final totalAmount = order['totalAmount'] as num? ?? 0;
 
@@ -502,51 +504,83 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('المجموع الفرعي', style: theme.textTheme.bodyMedium),
-            Text('${subtotal.toStringAsFixed(2)} ر.س',
-                style: theme.textTheme.bodyMedium),
+            Text(
+              'المجموع الفرعي:',
+              style: theme.textTheme.bodyMedium,
+            ),
+            Text(
+              '${subtotal.toStringAsFixed(2)} ر.س',
+              style: theme.textTheme.bodyMedium,
+            ),
           ],
         ),
         const SizedBox(height: 8),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text('الضريبة', style: theme.textTheme.bodyMedium),
-            Text('${tax.toStringAsFixed(2)} ر.س',
-                style: theme.textTheme.bodyMedium),
-          ],
-        ),
-        const SizedBox(height: 8),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text('رسوم الشحن', style: theme.textTheme.bodyMedium),
-            Text('${shippingFee.toStringAsFixed(2)} ر.س',
-                style: theme.textTheme.bodyMedium),
-          ],
-        ),
-        if (discount > 0) ...[
-          const SizedBox(height: 8),
+        if (shippingFee > 0) ...[
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text('الخصم', style: theme.textTheme.bodyMedium),
-              Text('-${discount.toStringAsFixed(2)} ر.س',
-                  style: theme.textTheme.bodyMedium
-                      ?.copyWith(color: Colors.green)),
+              Text(
+                'رسوم الشحن:',
+                style: theme.textTheme.bodyMedium,
+              ),
+              Text(
+                '${shippingFee.toStringAsFixed(2)} ر.س',
+                style: theme.textTheme.bodyMedium,
+              ),
             ],
           ),
+          const SizedBox(height: 8),
         ],
-        const Divider(height: 24),
+        if (tax > 0) ...[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'الضريبة:',
+                style: theme.textTheme.bodyMedium,
+              ),
+              Text(
+                '${tax.toStringAsFixed(2)} ر.س',
+                style: theme.textTheme.bodyMedium,
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+        ],
+        if (discount > 0) ...[
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'الخصم:',
+                style: theme.textTheme.bodyMedium,
+              ),
+              Text(
+                '- ${discount.toStringAsFixed(2)} ر.س',
+                style: theme.textTheme.bodyMedium?.copyWith(
+                  color: AppColors.success,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+        ],
+        const Divider(),
+        const SizedBox(height: 8),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text('المجموع', style: theme.textTheme.titleMedium),
+            Text(
+              'المجموع:',
+              style: theme.textTheme.titleMedium?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
             Text(
               '${totalAmount.toStringAsFixed(2)} ر.س',
               style: theme.textTheme.titleMedium?.copyWith(
-                color: theme.colorScheme.primary,
                 fontWeight: FontWeight.bold,
+                color: AppColors.primary,
               ),
             ),
           ],
@@ -555,67 +589,67 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
     );
   }
 
-  Widget _buildActionButtons(ThemeData theme, String currentStatus) {
-    // تحديد الإجراءات المتاحة بناءً على الحالة الحالية
-    if (currentStatus == 'ملغي' || currentStatus == 'تم التسليم') {
-      // لا توجد إجراءات متاحة للطلبات الملغاة أو المسلمة
+  Widget _buildActionButtons(ThemeData theme, String status) {
+    // لا نعرض أزرار التحكم للطلبات المكتملة أو الملغاة
+    if (status == 'تم التسليم' || status == 'ملغي') {
       return const SizedBox.shrink();
     }
 
-    // تحديد الحالة التالية
-    String nextStatus;
-    Color nextStatusColor;
-
-    switch (currentStatus) {
-      case 'جديد':
-        nextStatus = 'قيد التحضير';
-        nextStatusColor = Colors.orange;
-        break;
-      case 'قيد التحضير':
-        nextStatus = 'جاهز للتسليم';
-        nextStatusColor = Colors.purple;
-        break;
-      case 'جاهز للتسليم':
-        nextStatus = 'قيد التوصيل';
-        nextStatusColor = Colors.amber;
-        break;
-      case 'قيد التوصيل':
-        nextStatus = 'تم التسليم';
-        nextStatusColor = Colors.green;
-        break;
-      default:
-        nextStatus = 'قيد التحضير';
-        nextStatusColor = Colors.orange;
-    }
-
-    return Row(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         // زر تحديث الحالة
-        Expanded(
-          child: AppWidgets.appButton(
-            text: 'تحديث إلى $nextStatus',
-            onPressed: () => _updateOrderStatus(nextStatus),
-            icon: Icons.arrow_forward,
-            backgroundColor: nextStatusColor,
-            textColor: Colors.white,
-            height: 48,
+        if (status != 'تم التسليم' && status != 'ملغي') ...[
+          AppWidgets.appButton(
+            text: _getNextStatusButtonText(status),
+            onPressed: () => _updateOrderStatus(_getNextStatus(status)),
+            backgroundColor: AppColors.primary,
+            textColor: AppColors.onPrimary,
+            icon: Icons.update,
           ),
-        ),
-        const SizedBox(width: 16),
+          const SizedBox(height: 12),
+        ],
 
         // زر إلغاء الطلب
-        Expanded(
-          child: AppWidgets.appButton(
+        if (status != 'تم التسليم' && status != 'ملغي')
+          AppWidgets.appButton(
             text: 'إلغاء الطلب',
             onPressed: _cancelOrder,
+            backgroundColor: AppColors.error,
+            textColor: AppColors.onError,
             icon: Icons.cancel,
-            backgroundColor: Colors.white,
-            textColor: Colors.red,
-            borderColor: Colors.red,
-            height: 48,
           ),
-        ),
       ],
     );
+  }
+
+  String _getNextStatusButtonText(String currentStatus) {
+    switch (currentStatus) {
+      case 'جديد':
+        return 'بدء تحضير الطلب';
+      case 'قيد التحضير':
+        return 'تحديد الطلب كجاهز للتسليم';
+      case 'جاهز للتسليم':
+        return 'تحديد الطلب كقيد التوصيل';
+      case 'قيد التوصيل':
+        return 'تأكيد تسليم الطلب';
+      default:
+        return 'تحديث حالة الطلب';
+    }
+  }
+
+  String _getNextStatus(String currentStatus) {
+    switch (currentStatus) {
+      case 'جديد':
+        return 'قيد التحضير';
+      case 'قيد التحضير':
+        return 'جاهز للتسليم';
+      case 'جاهز للتسليم':
+        return 'قيد التوصيل';
+      case 'قيد التوصيل':
+        return 'تم التسليم';
+      default:
+        return currentStatus;
+    }
   }
 }

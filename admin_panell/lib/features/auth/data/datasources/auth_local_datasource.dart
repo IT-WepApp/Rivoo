@@ -38,17 +38,14 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
           );
     
     // تخزين بيانات المستخدم كسلسلة JSON
-    await secureStorage.write(
-      key: USER_KEY,
-      value: json.encode(userModel.toJson()),
-    );
+    await secureStorage.write(USER_KEY, json.encode(userModel.toJson()));
   }
 
   @override
   Future<UserEntity?> getLastSignedInUser() async {
     try {
       // قراءة بيانات المستخدم المخزنة
-      final jsonString = await secureStorage.read(key: USER_KEY);
+      final jsonString = await secureStorage.read(USER_KEY);
       
       if (jsonString == null) {
         return null;
@@ -63,6 +60,6 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
 
   @override
   Future<void> clearUser() async {
-    await secureStorage.delete(key: USER_KEY);
+    await secureStorage.delete(USER_KEY);
   }
 }

@@ -50,6 +50,11 @@ class OrderService {
 
     return null;
   }
+  
+  // الحصول على تفاصيل طلب محدد
+  Future<Map<String, dynamic>?> getOrderDetails(String orderId) async {
+    return await getOrder(orderId);
+  }
 
   // تحديث حالة الطلب
   Future<void> updateOrderStatus(String orderId, String status) async {
@@ -220,17 +225,18 @@ class OrderService {
   // الاستماع للطلبات الجديدة
   Stream<QuerySnapshot> listenToNewOrders() {
     final authService = AuthService();
-    return authService.getCurrentUserId().then((sellerId) {
-      if (sellerId != null) {
-        return _firestore
-            .collection(AppConstants.ordersCollection)
-            .where('sellerId', isEqualTo: sellerId)
-            .where('status', isEqualTo: AppConstants.orderStatusPending)
-            .snapshots();
-      } else {
-        throw Exception('المستخدم غير مسجل الدخول');
-      }
-    });
+    final sellerId = authService.getCurrentUserId();
+    
+    if (sellerId == null) {
+      // إرجاع تدفق فارغ في حالة عدم وجود مستخدم
+      return Stream.empty();
+    }
+    
+    return _firestore
+        .collection(AppConstants.ordersCollection)
+        .where('sellerId', isEqualTo: sellerId)
+        .where('status', isEqualTo: AppConstants.orderStatusPending)
+        .snapshots();
   }
 }
 

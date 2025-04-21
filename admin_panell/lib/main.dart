@@ -1,9 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'router.dart';
 import 'theme.dart';
 import 'core/services/crashlytics_manager.dart';
+
+// تعريف مزود خدمة Crashlytics
+final crashlyticsManagerProvider = Provider<CrashlyticsManager>((ref) {
+  return CrashlyticsManagerImpl();
+});
+
+// تعريف مزود خدمة التوجيه
+final routerProvider = Provider<GoRouter>((ref) {
+  return appRouter;
+});
+
+// تعريف سمة التطبيق
+final appTheme = AppTheme.lightTheme;
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

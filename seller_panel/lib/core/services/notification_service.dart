@@ -159,18 +159,19 @@ class NotificationService {
   // الحصول على إشعارات البائع
   Stream<QuerySnapshot> getSellerNotifications() {
     final authService = AuthService();
-    return authService.getCurrentUserId().then((userId) {
-      if (userId != null) {
-        return _firestore
-            .collection(AppConstants.sellersCollection)
-            .doc(userId)
-            .collection(AppConstants.notificationsCollection)
-            .orderBy('timestamp', descending: true)
-            .snapshots();
-      } else {
-        throw Exception('المستخدم غير مسجل الدخول');
-      }
-    });
+    final userId = authService.getCurrentUserId();
+    
+    if (userId == null) {
+      // إرجاع تدفق فارغ في حالة عدم وجود مستخدم
+      return Stream.empty();
+    }
+    
+    return _firestore
+        .collection(AppConstants.sellersCollection)
+        .doc(userId)
+        .collection(AppConstants.notificationsCollection)
+        .orderBy('timestamp', descending: true)
+        .snapshots();
   }
 
   // تحديث حالة قراءة الإشعار
@@ -221,6 +222,27 @@ class NotificationService {
 
       for (final doc in notifications.docs) {
         batch.update(doc.reference, {'read': true});
+      }
+
+      await batch.commit();
+    }
+  }
+  
+  // مسح جميع الإشعارات
+  Future<void> clearAllNotifications() async {
+    final authService = AuthService();
+    final userId = await authService.getCurrentUserId();
+
+    if (userId != null) {
+      final batch = _firestore.batch();
+      final notifications = await _firestore
+          .collection(AppConstants.sellersCollection)
+          .doc(userId)
+          .collection(AppConstants.notificationsCollection)
+          .get();
+
+      for (final doc in notifications.docs) {
+        batch.delete(doc.reference);
       }
 
       await batch.commit();
