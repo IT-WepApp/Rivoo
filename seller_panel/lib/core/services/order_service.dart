@@ -50,7 +50,7 @@ class OrderService {
 
     return null;
   }
-  
+
   // الحصول على تفاصيل طلب محدد
   Future<Map<String, dynamic>?> getOrderDetails(String orderId) async {
     return await getOrder(orderId);
@@ -222,17 +222,163 @@ class OrderService {
     };
   }
 
-  // الاستماع للطلبات الجديدة
-  Stream<QuerySnapshot> listenToNewOrders() {
+  // الحصول على إحصائيات المبيعات للبائع
+  Future<Map<String, dynamic>> getSellerSalesStatistics() async {
     final authService = AuthService();
-    final sellerId = authService.getCurrentUserId();
-    
+    final sellerId = await authService.getCurrentUserId();
+
     if (sellerId == null) {
-      // إرجاع تدفق فارغ في حالة عدم وجود مستخدم
-      return Stream.empty();
+      throw Exception('المستخدم غير مسجل الدخول');
     }
-    
-    return _firestore
+
+    final allOrders = await getSellerOrders();
+    final completedOrders = allOrders
+        .where((order) => order['status'] == AppConstants.orderStatusDelivered)
+        .toList();
+
+    // حساب إجمالي المبيعات
+    double totalSales = 0;
+    for (final order in completedOrders) {
+      totalSales += (order['total'] as num? ?? 0).toDouble();
+    }
+
+    // حساب متوسط قيمة الطلب
+    double averageOrderValue = completedOrders.isEmpty
+        ? 0
+        : totalSales / completedOrders.length;
+
+    // حساب المبيعات الشهرية
+    final now = DateTime.now();
+    final currentMonth = DateTime(now.year, now.month);
+    final monthlySales = <String, double>{};
+
+    for (int i = 0; i < 6; i++) {
+      final month = DateTime(currentMonth.year, currentMonth.month - i);
+      final monthKey = '${month.month}-${month.year}';
+      monthlySales[monthKey] = 0;
+    }
+
+    for (final order in completedOrders) {
+      final createdAt = (order['createdAt'] as Timestamp?)?.toDate();
+      if (createdAt != null) {
+        final monthKey = '${createdAt.month}-${createdAt.year}';
+        if (monthlySales.containsKey(monthKey)) {
+          monthlySales[monthKey] = (monthlySales[monthKey] ?? 0) +
+              (order['total'] as num? ?? 0).toDouble();
+        }
+      }
+    }
+
+    return {
+      'totalSales': totalSales,
+      'completedOrders': completedOrders.length,
+      'averageOrderValue': averageOrderValue,
+      'monthlySales': monthlySales,
+    };
+  }
+
+  // الحصول على إحصائيات المنتجات للبائع
+  Future<Map<String, dynamic>> getSellerProductsStatistics() async {
+    final authService = AuthService();
+    final sellerId = await authService.getCurrentUserId();
+
+    if (sellerId == null) {
+      throw Exception('المستخدم غير مسجل الدخول');
+    }
+
+    final allOrders = await getSellerOrders();
+    final completedOrders = allOrders
+        .where((order) => order['status'] == AppConstants.orderStatusDelivered)
+        .toList();
+
+    // حساب المنتجات الأكثر مبيعًا
+    final productSales = <String, int>{};
+    final productRevenue = <String, double>{};
+
+    for (final order in completedOrders) {
+      final items = order['items'] as List<dynamic>? ?? [];
+      for (final item in items) {
+        final productId = item['productId'] as String? ?? '';
+        final quantity = (item['quantity'] as num? ?? 0).toInt();
+        final price = (item['price'] as num? ?? 0).toDouble();
+
+        productSales[productId] = (productSales[productId] ?? 0) + quantity;
+        productRevenue[productId] =
+            (productRevenue[productId] ?? 0) + (price * quantity);
+      }
+    }
+
+    // ترتيب المنتجات حسب المبيعات
+    final topProducts = productSales.entries.toList()
+      ..sort((a, b) => b.value.compareTo(a.value));
+
+    // ترتيب المنتجات حسب الإيرادات
+    final topRevenueProducts = productRevenue.entries.toList()
+      ..sort((a, b) => b.value.compareTo(a.value));
+
+    return {
+      'totalProducts': productSales.length,
+      'topProducts': topProducts.take(10).toList(),
+      'topRevenueProducts': topRevenueProducts.take(10).toList(),
+    };
+  }
+
+  // الحصول على إحصائيات العملاء للبائع
+  Future<Map<String, dynamic>> getSellerCustomersStatistics() async {
+    final authService = AuthService();
+    final sellerId = await authService.getCurrentUserId();
+
+    if (sellerId == null) {
+      throw Exception('المستخدم غير مسجل الدخول');
+    }
+
+    final allOrders = await getSellerOrders();
+    final completedOrders = allOrders
+        .where((order) => order['status'] == AppConstants.orderStatusDelivered)
+        .toList();
+
+    // حساب العملاء الأكثر شراءً
+    final customerOrders = <String, int>{};
+    final customerSpending = <String, double>{};
+
+    for (final order in completedOrders) {
+      final customerId = order['customerId'] as String? ?? '';
+      final total = (order['total'] as num? ?? 0).toDouble();
+
+      customerOrders[customerId] = (customerOrders[customerId] ?? 0) + 1;
+      customerSpending[customerId] =
+          (customerSpending[customerId] ?? 0) + total;
+    }
+
+    // ترتيب العملاء حسب عدد الطلبات
+    final topCustomersByOrders = customerOrders.entries.toList()
+      ..sort((a, b) => b.value.compareTo(a.value));
+
+    // ترتيب العملاء حسب الإنفاق
+    final topCustomersBySpending = customerSpending.entries.toList()
+      ..sort((a, b) => b.value.compareTo(a.value));
+
+    return {
+      'totalCustomers': customerOrders.length,
+      'topCustomersByOrders': topCustomersByOrders.take(10).toList(),
+      'topCustomersBySpending': topCustomersBySpending.take(10).toList(),
+      'averageCustomerSpending': customerSpending.isEmpty
+          ? 0
+          : customerSpending.values.reduce((a, b) => a + b) /
+              customerSpending.length,
+    };
+  }
+
+  // الاستماع للطلبات الجديدة
+  Stream<QuerySnapshot> listenToNewOrders() async* {
+    final authService = AuthService();
+    final sellerId = await authService.getCurrentUserId();
+
+    if (sellerId == null) {
+      throw Exception('المستخدم غير مسجل الدخول');
+    }
+
+    yield* _firestore
         .collection(AppConstants.ordersCollection)
         .where('sellerId', isEqualTo: sellerId)
         .where('status', isEqualTo: AppConstants.orderStatusPending)

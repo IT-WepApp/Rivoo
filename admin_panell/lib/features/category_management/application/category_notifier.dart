@@ -32,11 +32,15 @@ class CategoryState {
   }
 }
 
-class CategoryNotifier extends StateNotifier<CategoryState> {
-  final CategoryService _categoryService;
+class CategoryNotifier extends Notifier<CategoryState> {
+  late final CategoryService _categoryService;
 
-  CategoryNotifier(this._categoryService) : super(CategoryState()) {
-    loadCategories();
+  @override
+  CategoryState build() {
+    _categoryService = ref.read(categoryServiceProvider);
+    // تحميل الفئات عند بناء الـ Notifier
+    Future.microtask(() => loadCategories());
+    return CategoryState();
   }
 
   Future<void> loadCategories() async {
@@ -128,7 +132,4 @@ final categoryServiceProvider = Provider<CategoryService>((ref) {
 });
 
 final categoryNotifierProvider =
-    StateNotifierProvider<CategoryNotifier, CategoryState>((ref) {
-  final categoryService = ref.read(categoryServiceProvider);
-  return CategoryNotifier(categoryService);
-});
+    NotifierProvider<CategoryNotifier, CategoryState>(() => CategoryNotifier());

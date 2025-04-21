@@ -12,7 +12,7 @@ class AuthService {
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final SecureStorageService _secureStorage = SecureStorageService();
+  final SecureStorageService _secureStorage = SecureStorageServiceImpl();
 
   // تسجيل الدخول باستخدام البريد الإلكتروني وكلمة المرور
   Future<User?> signInWithEmailAndPassword(

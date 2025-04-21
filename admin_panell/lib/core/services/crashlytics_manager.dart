@@ -12,7 +12,7 @@ class CrashlyticsManager {
   Future<void> initialize() async {
     // تعطيل Crashlytics في وضع التصحيح
     await _crashlytics.setCrashlyticsCollectionEnabled(!kDebugMode);
-    
+
     // تسجيل الأخطاء غير المعالجة في Flutter
     FlutterError.onError = _crashlytics.recordFlutterError;
   }
@@ -23,7 +23,8 @@ class CrashlyticsManager {
   }
 
   /// تسجيل خطأ مع رسالة
-  Future<void> recordError(dynamic error, StackTrace stackTrace, {String? reason}) async {
+  Future<void> recordError(dynamic error, StackTrace stackTrace,
+      {String? reason}) async {
     await _crashlytics.recordError(
       error,
       stackTrace,

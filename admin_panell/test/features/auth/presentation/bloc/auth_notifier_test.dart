@@ -2,21 +2,24 @@ import 'package:admin_panell/features/auth/domain/usecases/sign_in_usecase.dart'
 import 'package:admin_panell/features/auth/domain/usecases/sign_out_usecase.dart';
 import 'package:admin_panell/features/auth/domain/usecases/get_current_user_usecase.dart';
 import 'package:admin_panell/features/auth/domain/usecases/is_signed_in_usecase.dart';
-import 'package:admin_panell/features/auth/application/auth_notifier.dart';
-import 'package:admin_panell/features/auth/domain/entities/user.dart';
+import 'package:admin_panell/features/auth/presentation/bloc/auth_notifier.dart';
+import 'package:admin_panell/features/auth/domain/entities/user_entity.dart';
 import 'package:admin_panell/core/services/crashlytics_manager.dart';
 import 'package:admin_panell/core/storage/secure_storage_service.dart';
 import 'package:mockito/mockito.dart';
-import 'package:mockito/annotations.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // إنشاء فئات وهمية يدوياً للاختبارات
 class MockSignInUseCase extends Mock implements SignInUseCase {}
+
 class MockSignOutUseCase extends Mock implements SignOutUseCase {}
+
 class MockGetCurrentUserUseCase extends Mock implements GetCurrentUserUseCase {}
+
 class MockIsSignedInUseCase extends Mock implements IsSignedInUseCase {}
+
 class MockSecureStorageService extends Mock implements SecureStorageService {}
+
 class MockCrashlyticsManager extends Mock implements CrashlyticsManager {}
 
 void main() {
@@ -35,7 +38,7 @@ void main() {
     mockIsSignedInUseCase = MockIsSignedInUseCase();
     mockSecureStorageService = MockSecureStorageService();
     mockCrashlyticsManager = MockCrashlyticsManager();
-    
+
     authNotifier = AuthNotifier(
       signInUseCase: mockSignInUseCase,
       signOutUseCase: mockSignOutUseCase,
@@ -49,9 +52,9 @@ void main() {
   group('تسجيل الدخول', () {
     const email = 'test@example.com';
     const password = 'password123';
-    final user = User(
-      id: '1', 
-      email: email, 
+    const user = UserEntity(
+      id: '1',
+      email: email,
       role: 'admin',
       name: 'Test User',
     );
@@ -80,7 +83,7 @@ void main() {
       final exception = Exception('فشل تسجيل الدخول');
       when(mockSignInUseCase.execute(email: email, password: password))
           .thenThrow(exception);
-      when(mockCrashlyticsManager.recordError(any, any))
+      when(mockCrashlyticsManager.recordError(any, StackTrace.current))
           .thenAnswer((_) async => {});
 
       // تنفيذ

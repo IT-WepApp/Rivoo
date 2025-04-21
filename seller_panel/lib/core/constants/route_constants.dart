@@ -11,6 +11,7 @@ class RouteConstants {
   static const String products = '/sellerHome/sellerProducts';
   static const String addProduct = '/sellerHome/addProduct';
   static const String editProduct = '/sellerHome/editProduct';
+  static const String inventory = '/sellerHome/inventory';
 
   // مسارات الطلبات
   static const String orders = '/sellerHome/sellerOrders';
@@ -24,6 +25,8 @@ class RouteConstants {
 
   // مسارات الملف الشخصي
   static const String profile = '/sellerHome/sellerProfile';
+  static const String editProfile = '/sellerHome/editProfile';
+  static const String settings = '/sellerHome/settings';
 
   // مسارات الإشعارات
   static const String notifications = '/sellerHome/sellerNotifications';

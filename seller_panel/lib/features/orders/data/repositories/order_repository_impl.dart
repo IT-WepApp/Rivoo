@@ -16,9 +16,9 @@ class OrderRepositoryImpl implements OrderRepository {
       final orders = await dataSource.getOrders(sellerId);
       return Right(orders);
     } on ServerException {
-      return Left(ServerFailure());
+      return const Left(ServerFailure());
     } catch (e) {
-      return Left(UnexpectedFailure());
+      return const Left(UnexpectedFailure());
     }
   }
 
@@ -28,9 +28,9 @@ class OrderRepositoryImpl implements OrderRepository {
       final order = await dataSource.getOrderDetails(orderId);
       return Right(order);
     } on ServerException {
-      return Left(ServerFailure());
+      return const Left(ServerFailure());
     } catch (e) {
-      return Left(UnexpectedFailure());
+      return const Left(UnexpectedFailure());
     }
   }
 
@@ -41,9 +41,9 @@ class OrderRepositoryImpl implements OrderRepository {
       final updatedOrder = await dataSource.updateOrderStatus(orderId, status);
       return Right(updatedOrder);
     } on ServerException {
-      return Left(ServerFailure());
+      return const Left(ServerFailure());
     } catch (e) {
-      return Left(UnexpectedFailure());
+      return const Left(UnexpectedFailure());
     }
   }
 
@@ -54,9 +54,9 @@ class OrderRepositoryImpl implements OrderRepository {
       final statistics = await dataSource.getOrderStatistics(sellerId);
       return Right(statistics);
     } on ServerException {
-      return Left(ServerFailure());
+      return const Left(ServerFailure());
     } catch (e) {
-      return Left(UnexpectedFailure());
+      return const Left(UnexpectedFailure());
     }
   }
 
@@ -78,9 +78,9 @@ class OrderRepositoryImpl implements OrderRepository {
       );
       return Right(orders);
     } on ServerException {
-      return Left(ServerFailure());
+      return const Left(ServerFailure());
     } catch (e) {
-      return Left(UnexpectedFailure());
+      return const Left(UnexpectedFailure());
     }
   }
 }

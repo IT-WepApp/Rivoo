@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'router.dart';
 import 'theme.dart';
 import 'core/services/crashlytics_manager.dart';
+import 'core/services/crashlytics_manager_impl.dart';
 
 // تعريف مزود خدمة Crashlytics
 final crashlyticsManagerProvider = Provider<CrashlyticsManager>((ref) {
@@ -26,7 +27,7 @@ void main() async {
   await Firebase.initializeApp();
 
   // تهيئة Crashlytics
-  final crashlyticsManager = crashlyticsManagerProvider;
+  final crashlyticsManager = crashlyticsManagerProvider.read(ProviderContainer());
   await crashlyticsManager.initialize();
 
   // تغليف التطبيق بمعالج استثناءات لالتقاط جميع الأخطاء غير المتوقعة

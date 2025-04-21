@@ -29,7 +29,8 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   });
 
   @override
-  Future<UserModel> signIn({required String email, required String password}) async {
+  Future<UserModel> signIn(
+      {required String email, required String password}) async {
     try {
       // تسجيل الدخول باستخدام Firebase Auth
       final userCredential = await firebaseAuth.signInWithEmailAndPassword(
@@ -81,14 +82,15 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
   Future<UserModel?> getCurrentUser() async {
     try {
       final firebaseUser = firebaseAuth.currentUser;
-      
+
       if (firebaseUser == null) {
         return null;
       }
 
       // التحقق من أن المستخدم هو مشرف
-      final userDoc = await firestore.collection('admins').doc(firebaseUser.uid).get();
-      
+      final userDoc =
+          await firestore.collection('admins').doc(firebaseUser.uid).get();
+
       if (!userDoc.exists) {
         // إذا لم يكن المستخدم موجودًا في مجموعة المشرفين، قم بتسجيل الخروج
         await firebaseAuth.signOut();

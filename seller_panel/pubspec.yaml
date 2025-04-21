@@ -11,6 +11,7 @@ dependencies:
     sdk: flutter
   # إدارة الحالة
   flutter_riverpod: ^2.4.9
+  riverpod_annotation: ^2.3.3
   go_router: ^13.0.1
   
   # Firebase حزم
@@ -37,6 +38,9 @@ dependencies:
   # إضافة تبعيات مفقودة
   equatable: ^2.0.5
   dartz: ^0.10.1
+  json_annotation: ^4.8.1
+  freezed_annotation: ^2.4.1
+  
   # الحزم المشتركة في المونوربو
   shared_models:
     path: ../shared_modules/shared_models
@@ -53,6 +57,9 @@ dev_dependencies:
   flutter_lints: ^2.0.0
   build_runner: ^2.4.6
   mockito: ^5.4.2
+  json_serializable: ^6.7.1
+  freezed: ^2.4.6
+  riverpod_generator: ^2.3.9
 flutter:
   uses-material-design: true
   

@@ -200,7 +200,7 @@ class _EnhancedLineChartState extends State<_EnhancedLineChart>
     final effectiveLineColor = widget.lineColor ?? theme.primaryColor;
     final effectivePointColor = widget.pointColor ?? theme.primaryColor;
     final effectiveFillColor =
-        widget.fillColor ?? theme.primaryColor.withOpacity(0.2);
+        widget.fillColor ?? theme.primaryColor.withValues(alpha: 51); // 0.2 * 255 = 51
     final effectiveGridColor = widget.gridColor ??
         (theme.brightness == Brightness.dark
             ? Colors.grey.shade700
@@ -586,9 +586,6 @@ class _EnhancedPieChartState extends State<_EnhancedPieChart>
     final effectiveTitleColor = widget.titleColor ??
         (theme.brightness == Brightness.dark ? Colors.white : Colors.black87);
 
-    // Calculate total for percentages
-    final total = widget.data.fold(0.0, (sum, value) => sum + value);
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -605,72 +602,22 @@ class _EnhancedPieChartState extends State<_EnhancedPieChart>
         ],
         SizedBox(
           height: widget.height,
-          child: Row(
-            children: [
-              // Pie chart
-              Expanded(
-                flex: 3,
-                child: AnimatedBuilder(
-                  animation: _animation,
-                  builder: (context, child) {
-                    return CustomPaint(
-                      size: Size.infinite,
-                      painter: _PieChartPainter(
-                        data: widget.data,
-                        colors: widget.colors,
-                        animationValue: _animation.value,
-                      ),
-                    );
-                  },
+          child: AnimatedBuilder(
+            animation: _animation,
+            builder: (context, child) {
+              return CustomPaint(
+                size: Size.infinite,
+                painter: _PieChartPainter(
+                  data: widget.data,
+                  labels: widget.labels,
+                  colors: widget.colors,
+                  labelColor: effectiveLabelColor,
+                  showLabels: widget.showLabels,
+                  showPercentages: widget.showPercentages,
+                  animationValue: _animation.value,
                 ),
-              ),
-              // Legend
-              if (widget.showLabels) ...[
-                const SizedBox(width: 16),
-                Expanded(
-                  flex: 2,
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: List.generate(
-                      widget.data.length,
-                      (index) {
-                        final percentage = (widget.data[index] / total) * 100;
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 4.0),
-                          child: Row(
-                            children: [
-                              Container(
-                                width: 16,
-                                height: 16,
-                                decoration: BoxDecoration(
-                                  color: widget
-                                      .colors[index % widget.colors.length],
-                                  shape: BoxShape.circle,
-                                ),
-                              ),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: Text(
-                                  widget.showPercentages
-                                      ? '${widget.labels[index]} (${percentage.toStringAsFixed(1)}%)'
-                                      : widget.labels[index],
-                                  style: TextStyle(
-                                    color: effectiveLabelColor,
-                                    fontSize: 12,
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
-                    ),
-                  ),
-                ),
-              ],
-            ],
+              );
+            },
           ),
         ),
       ],
@@ -680,56 +627,95 @@ class _EnhancedPieChartState extends State<_EnhancedPieChart>
 
 class _PieChartPainter extends CustomPainter {
   final List<double> data;
+  final List<String> labels;
   final List<Color> colors;
+  final Color labelColor;
+  final bool showLabels;
+  final bool showPercentages;
   final double animationValue;
 
   _PieChartPainter({
     required this.data,
+    required this.labels,
     required this.colors,
+    required this.labelColor,
+    required this.showLabels,
+    required this.showPercentages,
     required this.animationValue,
   });
 
   @override
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
-    final radius = size.width < size.height ? size.width / 2 : size.height / 2;
+    final radius = size.width < size.height ? size.width / 2.5 : size.height / 2.5;
 
-    // Calculate total
+    // Calculate total value
     final total = data.fold(0.0, (sum, value) => sum + value);
 
-    // Draw pie slices
-    double startAngle = -90 * (3.14159 / 180); // Start from top (in radians)
+    // Draw pie chart
+    if (total > 0) {
+      double startAngle = -90 * (3.14159265359 / 180); // Start from top (in radians)
 
-    for (int i = 0; i < data.length; i++) {
-      final sweepAngle = (data[i] / total) * 2 * 3.14159 * animationValue;
+      for (int i = 0; i < data.length; i++) {
+        final sweepAngle = (data[i] / total) * 2 * 3.14159265359 * animationValue;
 
-      final paint = Paint()
-        ..color = colors[i % colors.length]
-        ..style = PaintingStyle.fill;
+        final paint = Paint()
+          ..color = colors[i % colors.length]
+          ..style = PaintingStyle.fill;
 
-      canvas.drawArc(
-        Rect.fromCircle(center: center, radius: radius * 0.8),
-        startAngle,
-        sweepAngle,
-        true,
-        paint,
-      );
+        canvas.drawArc(
+          Rect.fromCircle(center: center, radius: radius),
+          startAngle,
+          sweepAngle,
+          true,
+          paint,
+        );
 
-      startAngle += sweepAngle;
+        // Draw labels
+        if (showLabels && animationValue > 0.5) {
+          final midAngle = startAngle + sweepAngle / 2;
+          final labelRadius = radius * 1.3;
+          final x = center.dx + labelRadius * cos(midAngle);
+          final y = center.dy + labelRadius * sin(midAngle);
+
+          final labelPaint = TextPainter(
+            textDirection: TextDirection.ltr,
+            textAlign: TextAlign.center,
+          );
+
+          final percentage = (data[i] / total * 100).toStringAsFixed(1) + '%';
+          final label = showPercentages
+              ? '${labels[i]}: $percentage'
+              : labels[i];
+
+          labelPaint.text = TextSpan(
+            text: label,
+            style: TextStyle(
+              color: labelColor,
+              fontSize: 10,
+              fontWeight: FontWeight.bold,
+            ),
+          );
+
+          labelPaint.layout();
+
+          labelPaint.paint(
+            canvas,
+            Offset(x - labelPaint.width / 2, y - labelPaint.height / 2),
+          );
+        }
+
+        startAngle += sweepAngle;
+      }
     }
-
-    // Draw center circle for donut effect
-    final centerPaint = Paint()
-      ..color = Colors.white
-      ..style = PaintingStyle.fill;
-
-    canvas.drawCircle(center, radius * 0.4, centerPaint);
   }
 
   @override
   bool shouldRepaint(_PieChartPainter oldDelegate) {
     return oldDelegate.data != data ||
-        oldDelegate.animationValue != animationValue;
+        oldDelegate.animationValue != animationValue ||
+        oldDelegate.showLabels != showLabels ||
+        oldDelegate.showPercentages != showPercentages;
   }
 }
 
@@ -932,7 +918,8 @@ class _BarChartPainter extends CustomPainter {
 
       // X-axis labels
       for (int i = 0; i < labels.length; i++) {
-        final barCenterX = graphLeft + ((i + 0.5) / data.length) * graphWidth;
+        final barCenterX = graphLeft +
+            ((i + 0.5) / data.length) * graphWidth;
 
         labelPaint.text = TextSpan(
           text: labels[i],
@@ -974,30 +961,26 @@ class _BarChartPainter extends CustomPainter {
     }
 
     // Draw bars
-    final barPaint = Paint()
-      ..color = barColor
-      ..style = PaintingStyle.fill;
+    if (data.isNotEmpty) {
+      final barPaint = Paint()
+        ..color = barColor
+        ..style = PaintingStyle.fill;
 
-    for (int i = 0; i < data.length; i++) {
-      final normalizedValue = data[i] / maxValue;
-      final barHeight = normalizedValue * graphHeight * animationValue;
+      for (int i = 0; i < data.length; i++) {
+        final normalizedValue = data[i] / maxValue;
+        final barHeight = normalizedValue * graphHeight * animationValue;
+        final barLeft = graphLeft + (i / data.length) * graphWidth;
+        final barRight = barLeft + (graphWidth / data.length) * barWidth;
+        final barTop = graphBottom - barHeight;
 
-      final barLeft = graphLeft + (i / data.length) * graphWidth;
-      final barRight = barLeft + (graphWidth / data.length) * barWidth;
-      final barTop = graphBottom - barHeight;
+        final rect = RRect.fromRectAndCorners(
+          Rect.fromLTRB(barLeft, barTop, barRight, graphBottom),
+          topLeft: Radius.circular(cornerRadius),
+          topRight: Radius.circular(cornerRadius),
+        );
 
-      final rect = RRect.fromRectAndCorners(
-        Rect.fromLTRB(
-          barLeft + (graphWidth / data.length) * (1 - barWidth) / 2,
-          barTop,
-          barRight - (graphWidth / data.length) * (1 - barWidth) / 2,
-          graphBottom,
-        ),
-        topLeft: Radius.circular(cornerRadius),
-        topRight: Radius.circular(cornerRadius),
-      );
-
-      canvas.drawRRect(rect, barPaint);
+        canvas.drawRRect(rect, barPaint);
+      }
     }
   }
 

@@ -1,5 +1,4 @@
 import '../entities/user.dart';
-import '../entities/user_entity.dart';
 import '../repositories/auth_repository.dart';
 
 /// حالة استخدام تسجيل الدخول
@@ -8,7 +7,8 @@ class SignInUseCase {
 
   SignInUseCase(this.repository);
 
-  Future<User> execute({required String email, required String password}) async {
+  Future<User> execute(
+      {required String email, required String password}) async {
     // يمكن إضافة منطق أعمال إضافي هنا قبل استدعاء المستودع
     if (email.isEmpty || password.isEmpty) {
       throw Exception('البريد الإلكتروني وكلمة المرور مطلوبان');
@@ -22,7 +22,8 @@ class SignInUseCase {
       throw Exception('كلمة المرور يجب أن تكون 6 أحرف على الأقل');
     }
 
-    final userEntity = await repository.signIn(email: email, password: password);
+    final userEntity =
+        await repository.signIn(email: email, password: password);
     return User.fromEntity(userEntity);
   }
 }

@@ -138,7 +138,7 @@ class _StatisticsAndReportsPageState
                   titlesData: FlTitlesData(
                     leftTitles: AxisTitles(
                       sideTitles: SideTitles(
-                        showTitles: true, 
+                        showTitles: true,
                         reservedSize: 40,
                         getTitlesWidget: (value, meta) {
                           return SideTitleWidget(
@@ -229,7 +229,7 @@ class _StatisticsAndReportsPageState
                   titlesData: FlTitlesData(
                     leftTitles: AxisTitles(
                       sideTitles: SideTitles(
-                        showTitles: true, 
+                        showTitles: true,
                         reservedSize: 40,
                         getTitlesWidget: (value, meta) {
                           return SideTitleWidget(

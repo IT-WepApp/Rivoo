@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../../core/services/notification_service.dart';
 import '../../../../core/widgets/app_widgets.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -17,6 +18,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
   bool _isSubmitting = false;
   String _errorMessage = '';
 
+  // تغيير نوع المتغير ليتوافق مع البيانات المرجعة من getSellerNotifications
   List<Map<String, dynamic>> _notifications = [];
 
   @override
@@ -32,12 +34,39 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
     });
 
     try {
-      final notificationService = ref.read(notificationServiceProvider);
-      final notifications = notificationService.getSellerNotifications();
+      // استخدام مزود sellerNotificationsProvider بدلاً من استدعاء getSellerNotifications مباشرة
+      ref.listen(sellerNotificationsProvider, (previous, next) {
+        next.when(
+          data: (snapshot) {
+            final notificationsList = snapshot.docs.map((doc) {
+              final data = doc.data() as Map<String, dynamic>;
+              return {
+                'id': doc.id,
+                'title': data['title'] ?? 'إشعار',
+                'message': data['body'] ?? '',
+                'type': data['type'] ?? 'default',
+                'timestamp': data['timestamp']?.toDate() ?? DateTime.now(),
+                'isRead': data['read'] ?? false,
+              };
+            }).toList();
 
-      setState(() {
-        _notifications = notifications;
-        _isLoading = false;
+            setState(() {
+              _notifications = notificationsList;
+              _isLoading = false;
+            });
+          },
+          loading: () {
+            setState(() {
+              _isLoading = true;
+            });
+          },
+          error: (error, stackTrace) {
+            setState(() {
+              _isLoading = false;
+              _errorMessage = 'حدث خطأ أثناء تحميل الإشعارات: $error';
+            });
+          },
+        );
       });
     } catch (e) {
       setState(() {

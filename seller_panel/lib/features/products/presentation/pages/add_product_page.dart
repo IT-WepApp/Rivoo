@@ -3,9 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../../../../core/constants/app_constants.dart';
 import '../../../../core/services/product_service.dart';
 import '../../../../core/widgets/app_widgets.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -163,10 +161,10 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
       // إعداد بيانات المنتج
       final priceText = _priceController.text;
       final stockText = _stockQuantityController.text;
-      
+
       final double price = double.tryParse(priceText) ?? 0.0;
       final int stockQuantity = int.tryParse(stockText) ?? 0;
-      
+
       final productData = {
         'name': _nameController.text,
         'description': _descriptionController.text,
@@ -182,7 +180,8 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
       if (_hasDiscount) {
         productData['hasDiscount'] = true;
         productData['discountPercentage'] = _discountPercentage;
-        productData['discountedPrice'] = price * (1 - _discountPercentage / 100);
+        productData['discountedPrice'] =
+            price * (1 - _discountPercentage / 100);
       }
 
       // إضافة المنتج إلى Firestore
@@ -436,7 +435,7 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
                     },
                     activeColor: theme.colorScheme.primary,
                   ),
-                  if (_priceController.text.isNotEmpty) 
+                  if (_priceController.text.isNotEmpty)
                     Text(
                       'السعر بعد الخصم: ${((double.tryParse(_priceController.text) ?? 0) * (1 - _discountPercentage / 100)).toStringAsFixed(2)} ر.س',
                       style: TextStyle(

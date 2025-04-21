@@ -21,9 +21,9 @@ class StatisticsRepositoryImpl implements StatisticsRepository {
           await dataSource.getDailySalesStatistics(sellerId, date: date);
       return Right(statistics);
     } on ServerException {
-      return Left(ServerFailure());
+      return const Left(ServerFailure());
     } catch (e) {
-      return Left(UnexpectedFailure());
+      return const Left(UnexpectedFailure());
     }
   }
 
@@ -37,9 +37,9 @@ class StatisticsRepositoryImpl implements StatisticsRepository {
           startDate: startDate);
       return Right(statistics);
     } on ServerException {
-      return Left(ServerFailure());
+      return const Left(ServerFailure());
     } catch (e) {
-      return Left(UnexpectedFailure());
+      return const Left(UnexpectedFailure());
     }
   }
 
@@ -53,9 +53,9 @@ class StatisticsRepositoryImpl implements StatisticsRepository {
           await dataSource.getMonthlySalesStatistics(sellerId, month: month);
       return Right(statistics);
     } on ServerException {
-      return Left(ServerFailure());
+      return const Left(ServerFailure());
     } catch (e) {
-      return Left(UnexpectedFailure());
+      return const Left(UnexpectedFailure());
     }
   }
 
@@ -69,9 +69,9 @@ class StatisticsRepositoryImpl implements StatisticsRepository {
           await dataSource.getYearlySalesStatistics(sellerId, year: year);
       return Right(statistics);
     } on ServerException {
-      return Left(ServerFailure());
+      return const Left(ServerFailure());
     } catch (e) {
-      return Left(UnexpectedFailure());
+      return const Left(UnexpectedFailure());
     }
   }
 
@@ -91,9 +91,9 @@ class StatisticsRepositoryImpl implements StatisticsRepository {
       );
       return Right(products);
     } on ServerException {
-      return Left(ServerFailure());
+      return const Left(ServerFailure());
     } catch (e) {
-      return Left(UnexpectedFailure());
+      return const Left(UnexpectedFailure());
     }
   }
 
@@ -113,9 +113,9 @@ class StatisticsRepositoryImpl implements StatisticsRepository {
       );
       return Right(categories);
     } on ServerException {
-      return Left(ServerFailure());
+      return const Left(ServerFailure());
     } catch (e) {
-      return Left(UnexpectedFailure());
+      return const Left(UnexpectedFailure());
     }
   }
 }

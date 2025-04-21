@@ -389,7 +389,7 @@ class CartScreen extends ConsumerWidget {
         color: Theme.of(context).colorScheme.surface,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.1),
+            color: Colors.black.withValues(alpha: 26), // 0.1 * 255 = 26
             blurRadius: 8,
             offset: const Offset(0, -2),
           ),
@@ -450,7 +450,7 @@ class CartScreen extends ConsumerWidget {
             Icon(
               Icons.shopping_cart_outlined,
               size: context.responsiveIconSize(100),
-              color: Theme.of(context).colorScheme.primary.withOpacity(0.5),
+              color: Theme.of(context).colorScheme.primary.withValues(alpha: 128), // 0.5 * 255 = 128
             ),
             const SizedBox(height: 24),
             Text(
@@ -572,7 +572,7 @@ class CartItemCard extends StatelessWidget {
             ),
             const SizedBox(width: 12),
 
-            // معلومات المنتج
+            // تفاصيل المنتج
             Expanded(
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -582,101 +582,114 @@ class CartItemCard extends StatelessWidget {
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                         ),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 4),
                   if (item.color != null || item.size != null)
-                    Text(
-                      [
-                        if (item.color != null) 'اللون: ${item.color}',
-                        if (item.size != null) 'الحجم: ${item.size}',
-                      ].join(' | '),
-                      style: Theme.of(context).textTheme.bodySmall,
+                    Padding(
+                      padding: const EdgeInsets.only(bottom: 4.0),
+                      child: Text(
+                        [
+                          if (item.color != null) '${l10n.color}: ${item.color}',
+                          if (item.size != null) '${l10n.size}: ${item.size}',
+                        ].join(' | '),
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
                     ),
-                  const SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Text(
-                        '${l10n.currencySymbol} ${item.price.toStringAsFixed(2)}',
-                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                              color: Theme.of(context).colorScheme.primary,
-                              fontWeight: FontWeight.bold,
-                            ),
-                      ),
-                      const Spacer(),
-                      // محدد الكمية
-                      Container(
-                        decoration: BoxDecoration(
-                          border: Border.all(
-                            color: Theme.of(context).colorScheme.outline,
-                            width: 1,
-                          ),
-                          borderRadius: BorderRadius.circular(4),
+                  Text(
+                    '${l10n.currencySymbol} ${item.price.toStringAsFixed(2)}',
+                    style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                          color: Theme.of(context).colorScheme.primary,
+                          fontWeight: FontWeight.bold,
                         ),
-                        child: Row(
-                          children: [
-                            InkWell(
-                              onTap: () {
-                                if (item.quantity > 1) {
-                                  onQuantityChanged(item.quantity - 1);
-                                }
-                              },
-                              child: Container(
-                                padding: const EdgeInsets.all(4),
-                                child: const Icon(Icons.remove, size: 16),
-                              ),
-                            ),
-                            Container(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 8),
-                              child: Text(
-                                '${item.quantity}',
-                                style: Theme.of(context).textTheme.bodyMedium,
-                              ),
-                            ),
-                            InkWell(
-                              onTap: () {
-                                onQuantityChanged(item.quantity + 1);
-                              },
-                              child: Container(
-                                padding: const EdgeInsets.all(4),
-                                child: const Icon(Icons.add, size: 16),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 8),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        '${l10n.total}: ${l10n.currencySymbol} ${(item.price * item.quantity).toStringAsFixed(2)}',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
-                      ),
-                      TextButton.icon(
-                        onPressed: onRemove,
-                        icon: const Icon(Icons.delete_outline, size: 16),
-                        label: Text(l10n.remove),
-                        style: TextButton.styleFrom(
-                          foregroundColor: Theme.of(context).colorScheme.error,
-                          padding: EdgeInsets.zero,
-                          tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                          visualDensity: VisualDensity.compact,
-                        ),
-                      ),
-                    ],
                   ),
                 ],
               ),
             ),
+
+            // التحكم في الكمية
+            Column(
+              children: [
+                Row(
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.remove_circle_outline),
+                      onPressed: () {
+                        if (item.quantity > 1) {
+                          onQuantityChanged(item.quantity - 1);
+                        }
+                      },
+                      iconSize: 20,
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                      child: Text(
+                        '${item.quantity}',
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.add_circle_outline),
+                      onPressed: () {
+                        onQuantityChanged(item.quantity + 1);
+                      },
+                      iconSize: 20,
+                      padding: EdgeInsets.zero,
+                      constraints: const BoxConstraints(),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                IconButton(
+                  icon: const Icon(Icons.delete_outline),
+                  onPressed: onRemove,
+                  color: Theme.of(context).colorScheme.error,
+                  iconSize: 20,
+                  padding: EdgeInsets.zero,
+                  constraints: const BoxConstraints(),
+                ),
+              ],
+            ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+// زر متجاوب (يجب نقله إلى ملف منفصل)
+class ResponsiveButton extends StatelessWidget {
+  final String text;
+  final IconData? icon;
+  final VoidCallback onPressed;
+
+  const ResponsiveButton({
+    Key? key,
+    required this.text,
+    this.icon,
+    required this.onPressed,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ElevatedButton(
+      onPressed: onPressed,
+      style: ElevatedButton.styleFrom(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8),
+        ),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          if (icon != null) ...[
+            Icon(icon),
+            const SizedBox(width: 8),
+          ],
+          Text(text),
+        ],
       ),
     );
   }

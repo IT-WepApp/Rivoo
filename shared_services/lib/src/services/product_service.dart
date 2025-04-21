@@ -1,11 +1,14 @@
 import 'package:shared_models/src/models/product.dart';
 import 'package:shared_models/src/models/promotion.dart';
+import 'package:shared_core/utils/logger.dart';
 
 class ProductService {
   // Assuming you have a way to interact with your database (e.g., Firestore, a REST API)
   // Replace this with your actual database interaction logic.
   // For example, you might have a DatabaseClient class.
   // DatabaseClient _dbClient;
+  
+  final AppLogger _logger = AppLogger();
 
   // Constructor (adjust as needed)
   ProductService(/*this._dbClient*/);
@@ -44,8 +47,8 @@ class ProductService {
       // 3. Save the updated product to the database
       // await _dbClient.updateProduct(updatedProduct);
     } catch (e) {
-      // Handle errors appropriately, e.g., log them, throw a specific exception
-      // TODO: Implement logging instead of print()
+      // Handle errors appropriately
+      _logger.error('Failed to create promotion', e);
       throw Exception('Failed to create promotion: $e');
     }
   }
@@ -84,7 +87,7 @@ class ProductService {
       // 3. Save the updated product to the database
       // await _dbClient.updateProduct(updatedProduct);
     } catch (e) {
-      // TODO: Implement logging instead of print()
+      _logger.error('Failed to update promotion', e);
       throw Exception('Failed to update promotion: $e');
     }
   }
@@ -117,7 +120,7 @@ class ProductService {
       // 3. Save the updated product to the database
       // await _dbClient.updateProduct(updatedProduct);
     } catch (e) {
-      // TODO: Implement logging instead of print()
+      _logger.error('Failed to delete promotion', e);
       throw Exception('Failed to delete promotion: $e');
     }
   }
@@ -157,7 +160,7 @@ class ProductService {
         return null;
       }
     } catch (e) {
-      // TODO: Implement logging instead of print()
+      _logger.error('Failed to get promotion for product', e);
       throw Exception('Failed to get promotion for product: $e');
     }
   }

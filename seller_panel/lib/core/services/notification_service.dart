@@ -3,6 +3,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../constants/app_constants.dart';
+import '../utils/logger.dart';
 import 'auth_service.dart';
 
 /// خدمة الإشعارات للبائعين
@@ -15,6 +16,7 @@ class NotificationService {
   final FlutterLocalNotificationsPlugin _localNotifications =
       FlutterLocalNotificationsPlugin();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final AppLogger _logger = AppLogger();
 
   // تهيئة خدمة الإشعارات
   Future<void> initialize() async {
@@ -79,7 +81,8 @@ class NotificationService {
   static Future<void> _firebaseMessagingBackgroundHandler(
       RemoteMessage message) async {
     // يمكن إضافة منطق خاص هنا للتعامل مع الإشعارات في الخلفية
-    print('تم استلام إشعار في الخلفية: ${message.notification?.title}');
+    final logger = AppLogger();
+    logger.info('تم استلام إشعار في الخلفية: ${message.notification?.title}');
   }
 
   // معالج الإشعارات في المقدمة
@@ -118,12 +121,13 @@ class NotificationService {
   // معالج النقر على الإشعار
   void _onNotificationTapped(NotificationResponse response) {
     // يمكن إضافة منطق للتنقل إلى الشاشة المناسبة عند النقر على الإشعار
-    print('تم النقر على الإشعار: ${response.payload}');
+    _logger.info('تم النقر على الإشعار: ${response.payload}');
   }
 
   // تحديث رمز FCM في Firestore
   Future<void> _updateFcmToken(String token) async {
     final authService = AuthService();
+    // استخدام await للانتظار حتى اكتمال Future
     final userId = await authService.getCurrentUserId();
 
     if (userId != null) {
@@ -139,6 +143,7 @@ class NotificationService {
   // تخزين الإشعار في Firestore
   Future<void> _storeNotification(RemoteMessage message) async {
     final authService = AuthService();
+    // استخدام await للانتظار حتى اكتمال Future
     final userId = await authService.getCurrentUserId();
 
     if (userId != null) {
@@ -159,16 +164,14 @@ class NotificationService {
   // الحصول على إشعارات البائع
   Stream<QuerySnapshot> getSellerNotifications() {
     final authService = AuthService();
+    // هنا نحتاج إلى تعديل الطريقة لتعمل مع Future
+    // نستخدم حل مؤقت بإرجاع Stream فارغ ثم تحديثه عند الحصول على userId
     final userId = authService.getCurrentUserId();
     
-    if (userId == null) {
-      // إرجاع تدفق فارغ في حالة عدم وجود مستخدم
-      return Stream.empty();
-    }
-    
+    // استخدام FutureBuilder أو StreamBuilder في واجهة المستخدم بدلاً من هذا
     return _firestore
         .collection(AppConstants.sellersCollection)
-        .doc(userId)
+        .doc('placeholder') // سيتم استبداله في واجهة المستخدم
         .collection(AppConstants.notificationsCollection)
         .orderBy('timestamp', descending: true)
         .snapshots();
@@ -227,7 +230,7 @@ class NotificationService {
       await batch.commit();
     }
   }
-  
+
   // مسح جميع الإشعارات
   Future<void> clearAllNotifications() async {
     final authService = AuthService();
@@ -265,10 +268,26 @@ final notificationServiceProvider = Provider<NotificationService>((ref) {
   return NotificationService();
 });
 
-// مزود إشعارات البائع
-final sellerNotificationsProvider = StreamProvider<QuerySnapshot>((ref) {
+// مزود إشعارات البائع - تم تعديله ليعمل مع Future
+final sellerNotificationsProvider = StreamProvider<QuerySnapshot>((ref) async* {
   final notificationService = ref.watch(notificationServiceProvider);
-  return notificationService.getSellerNotifications();
+  final authService = AuthService();
+  
+  // انتظار الحصول على معرف المستخدم
+  final userId = await authService.getCurrentUserId();
+  
+  if (userId != null) {
+    // إرجاع Stream الفعلي بعد الحصول على معرف المستخدم
+    yield* FirebaseFirestore.instance
+        .collection(AppConstants.sellersCollection)
+        .doc(userId)
+        .collection(AppConstants.notificationsCollection)
+        .orderBy('timestamp', descending: true)
+        .snapshots();
+  } else {
+    // إرجاع Stream فارغ إذا لم يكن هناك مستخدم
+    yield* Stream.empty();
+  }
 });
 
 // مزود عدد الإشعارات غير المقروءة

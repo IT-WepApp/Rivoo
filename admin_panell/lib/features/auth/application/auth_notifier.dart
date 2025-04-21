@@ -38,29 +38,25 @@ class AuthState {
 }
 
 /// مدير حالة المصادقة في التطبيق
-class AuthNotifier extends StateNotifier<AuthState> {
-  final SignInUseCase _signInUseCase;
-  final SignOutUseCase _signOutUseCase;
-  final GetCurrentUserUseCase _getCurrentUserUseCase;
-  final IsSignedInUseCase _isSignedInUseCase;
-  final SecureStorageService _secureStorage;
-  final CrashlyticsManager _crashlytics;
+class AuthNotifier extends Notifier<AuthState> {
+  late final SignInUseCase _signInUseCase;
+  late final SignOutUseCase _signOutUseCase;
+  late final GetCurrentUserUseCase _getCurrentUserUseCase;
+  late final IsSignedInUseCase _isSignedInUseCase;
+  late final SecureStorageService _secureStorage;
+  late final CrashlyticsManager _crashlytics;
 
-  /// إنشاء مدير حالة المصادقة
-  AuthNotifier({
-    required SignInUseCase signInUseCase,
-    required SignOutUseCase signOutUseCase,
-    required GetCurrentUserUseCase getCurrentUserUseCase,
-    required IsSignedInUseCase isSignedInUseCase,
-    required SecureStorageService secureStorage,
-    required CrashlyticsManager crashlytics,
-  })  : _signInUseCase = signInUseCase,
-        _signOutUseCase = signOutUseCase,
-        _getCurrentUserUseCase = getCurrentUserUseCase,
-        _isSignedInUseCase = isSignedInUseCase,
-        _secureStorage = secureStorage,
-        _crashlytics = crashlytics,
-        super(const AuthState());
+  @override
+  AuthState build() {
+    _signInUseCase = ref.read(signInUseCaseProvider);
+    _signOutUseCase = ref.read(signOutUseCaseProvider);
+    _getCurrentUserUseCase = ref.read(getCurrentUserUseCaseProvider);
+    _isSignedInUseCase = ref.read(isSignedInUseCaseProvider);
+    _secureStorage = ref.read(secureStorageServiceProvider);
+    _crashlytics = ref.read(crashlyticsManagerProvider);
+    
+    return const AuthState();
+  }
 
   /// التحقق من حالة المصادقة الحالية
   Future<void> checkAuthStatus() async {
@@ -139,3 +135,14 @@ class AuthNotifier extends StateNotifier<AuthState> {
     }
   }
 }
+
+// تعريف مزودات لحالات الاستخدام
+final signInUseCaseProvider = Provider<SignInUseCase>((ref) => throw UnimplementedError());
+final signOutUseCaseProvider = Provider<SignOutUseCase>((ref) => throw UnimplementedError());
+final getCurrentUserUseCaseProvider = Provider<GetCurrentUserUseCase>((ref) => throw UnimplementedError());
+final isSignedInUseCaseProvider = Provider<IsSignedInUseCase>((ref) => throw UnimplementedError());
+final secureStorageServiceProvider = Provider<SecureStorageService>((ref) => throw UnimplementedError());
+final crashlyticsManagerProvider = Provider<CrashlyticsManager>((ref) => throw UnimplementedError());
+
+// تعريف مزود AuthNotifier
+final authNotifierProvider = NotifierProvider<AuthNotifier, AuthState>(() => AuthNotifier());

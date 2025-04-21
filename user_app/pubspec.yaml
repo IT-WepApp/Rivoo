@@ -11,6 +11,7 @@ dependencies:
     sdk: flutter
   # إدارة الحالة
   flutter_riverpod: ^2.4.9
+  riverpod: ^2.4.9
   riverpod_annotation: ^2.3.3
   freezed: ^2.4.6
   freezed_annotation: ^2.4.1
@@ -34,6 +35,8 @@ dependencies:
   cloud_firestore: ^4.13.6
   firebase_crashlytics: ^3.4.8
   firebase_storage: ^11.5.6
+  firebase_analytics: ^10.7.4
+  firebase_performance: ^0.9.3+8
   # إشعارات وتخزين محلي
   flutter_local_notifications: ^16.3.0
   overlay_support: ^2.0.0
