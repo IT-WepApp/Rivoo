@@ -219,4 +219,242 @@ class AppWidgets {
       ),
     );
   }
+  
+  // حقل إدخال نص
+  static Widget appTextField({
+    required TextEditingController controller,
+    required String label,
+    String? hint,
+    String? Function(String?)? validator,
+    bool obscureText = false,
+    TextInputType keyboardType = TextInputType.text,
+    Widget? prefixIcon,
+    Widget? suffixIcon,
+    bool enabled = true,
+    int? maxLines = 1,
+    int? minLines,
+    int? maxLength,
+    void Function(String)? onChanged,
+    void Function()? onTap,
+    void Function(String)? onFieldSubmitted,
+    FocusNode? focusNode,
+    TextInputAction? textInputAction,
+    EdgeInsetsGeometry? contentPadding,
+    bool autofocus = false,
+    bool readOnly = false,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8.0),
+      child: TextFormField(
+        controller: controller,
+        decoration: InputDecoration(
+          labelText: label,
+          hintText: hint,
+          prefixIcon: prefixIcon,
+          suffixIcon: suffixIcon,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(8.0),
+          ),
+          contentPadding: contentPadding ?? const EdgeInsets.all(16.0),
+        ),
+        validator: validator,
+        obscureText: obscureText,
+        keyboardType: keyboardType,
+        enabled: enabled,
+        maxLines: maxLines,
+        minLines: minLines,
+        maxLength: maxLength,
+        onChanged: onChanged,
+        onTap: onTap,
+        onFieldSubmitted: onFieldSubmitted,
+        focusNode: focusNode,
+        textInputAction: textInputAction,
+        autofocus: autofocus,
+        readOnly: readOnly,
+      ),
+    );
+  }
+  
+  // زر تطبيق
+  static Widget appButton({
+    required String text,
+    required VoidCallback onPressed,
+    bool isLoading = false,
+    bool isFullWidth = true,
+    Color? backgroundColor,
+    Color? textColor,
+    EdgeInsetsGeometry? padding,
+    double? borderRadius,
+    IconData? icon,
+    bool isOutlined = false,
+  }) {
+    final buttonStyle = isOutlined
+        ? OutlinedButton.styleFrom(
+            foregroundColor: textColor,
+            side: BorderSide(color: backgroundColor ?? Colors.blue),
+            padding: padding ?? const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(borderRadius ?? 8),
+            ),
+          )
+        : ElevatedButton.styleFrom(
+            backgroundColor: backgroundColor,
+            foregroundColor: textColor,
+            padding: padding ?? const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(borderRadius ?? 8),
+            ),
+          );
+
+    final buttonChild = isLoading
+        ? const SizedBox(
+            width: 24,
+            height: 24,
+            child: CircularProgressIndicator(
+              strokeWidth: 2,
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+            ),
+          )
+        : Row(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              if (icon != null) ...[
+                Icon(icon),
+                const SizedBox(width: 8),
+              ],
+              Text(
+                text,
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ],
+          );
+
+    final button = isOutlined
+        ? OutlinedButton(
+            onPressed: isLoading ? null : onPressed,
+            style: buttonStyle,
+            child: buttonChild,
+          )
+        : ElevatedButton(
+            onPressed: isLoading ? null : onPressed,
+            style: buttonStyle,
+            child: buttonChild,
+          );
+
+    return isFullWidth
+        ? SizedBox(
+            width: double.infinity,
+            child: button,
+          )
+        : button;
+  }
+  
+  // مؤشر التحميل
+  static Widget loadingIndicator({
+    String? message,
+    double size = 40,
+    Color? color,
+  }) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SizedBox(
+            width: size,
+            height: size,
+            child: CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(
+                color ?? Colors.blue,
+              ),
+            ),
+          ),
+          if (message != null) ...[
+            const SizedBox(height: 16),
+            Text(
+              message,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+  
+  // رسالة خطأ
+  static Widget errorMessage({
+    required String message,
+    VoidCallback? onRetry,
+    String retryText = 'إعادة المحاولة',
+  }) {
+    return Center(
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Icon(
+              Icons.error_outline,
+              color: Colors.red,
+              size: 48,
+            ),
+            const SizedBox(height: 16),
+            Text(
+              message,
+              textAlign: TextAlign.center,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+            if (onRetry != null) ...[
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: onRetry,
+                child: Text(retryText),
+              ),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+  
+  // بطاقة تطبيق
+  static Widget appCard({
+    required Widget child,
+    EdgeInsetsGeometry? padding,
+    EdgeInsetsGeometry? margin,
+    double? elevation,
+    Color? color,
+    double? borderRadius,
+    VoidCallback? onTap,
+  }) {
+    final card = Card(
+      elevation: elevation ?? 2,
+      margin: margin ?? const EdgeInsets.all(8),
+      color: color,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(borderRadius ?? 8),
+      ),
+      child: Padding(
+        padding: padding ?? const EdgeInsets.all(16),
+        child: child,
+      ),
+    );
+    
+    if (onTap != null) {
+      return InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(borderRadius ?? 8),
+        child: card,
+      );
+    }
+    
+    return card;
+  }
 }

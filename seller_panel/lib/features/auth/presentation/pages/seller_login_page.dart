@@ -61,7 +61,7 @@ class _SellerLoginPageState extends ConsumerState<SellerLoginPage> {
 
       if (user != null) {
         // التنقل إلى الصفحة الرئيسية بعد تسجيل الدخول بنجاح
-        context.go(RouteConstants.sellerDashboard);
+        context.go(RouteConstants.home);
       } else {
         _showErrorSnackBar(
             'فشل تسجيل الدخول. يرجى التحقق من بيانات الاعتماد الخاصة بك.');
@@ -169,7 +169,7 @@ class _SellerLoginPageState extends ConsumerState<SellerLoginPage> {
                   controller: _emailController,
                   label: 'البريد الإلكتروني',
                   hint: 'أدخل بريدك الإلكتروني',
-                  prefixIcon: Icons.email_outlined,
+                  prefixIcon: const Icon(Icons.email_outlined),
                   keyboardType: TextInputType.emailAddress,
                   textInputAction: TextInputAction.next,
                   validator: (value) {
@@ -190,7 +190,7 @@ class _SellerLoginPageState extends ConsumerState<SellerLoginPage> {
                   controller: _passwordController,
                   label: 'كلمة المرور',
                   hint: 'أدخل كلمة المرور',
-                  prefixIcon: Icons.lock_outline,
+                  prefixIcon: const Icon(Icons.lock_outline),
                   obscureText: _obscurePassword,
                   textInputAction: TextInputAction.done,
                   validator: (value) {
@@ -210,7 +210,7 @@ class _SellerLoginPageState extends ConsumerState<SellerLoginPage> {
                     ),
                     onPressed: _togglePasswordVisibility,
                   ),
-                  onSubmitted: (_) => _login(),
+                  onFieldSubmitted: (_) => _login(),
                 ),
 
                 const SizedBox(height: 24),

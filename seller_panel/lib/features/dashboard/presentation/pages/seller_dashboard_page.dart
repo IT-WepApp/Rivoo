@@ -371,59 +371,60 @@ class _SellerDashboardPageState extends ConsumerState<SellerDashboardPage> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-            Row(
-              children: [
-                const Icon(Icons.person_outline, size: 16, color: AppColors.textSecondary),
-                const SizedBox(width: 4),
-                Text(
-                  customerName,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: AppColors.textSecondary,
+              Row(
+                children: [
+                  const Icon(Icons.person_outline, size: 16, color: AppColors.textSecondary),
+                  const SizedBox(width: 4),
+                  Text(
+                    customerName,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 4),
-            Row(
-              children: [
-                const Icon(Icons.access_time, size: 16, color: AppColors.textSecondary),
-                const SizedBox(width: 4),
-                Text(
-                  '${createdAt.day}/${createdAt.month}/${createdAt.year} - ${createdAt.hour}:${createdAt.minute.toString().padLeft(2, '0')}',
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: AppColors.textSecondary,
+                ],
+              ),
+              const SizedBox(height: 4),
+              Row(
+                children: [
+                  const Icon(Icons.access_time, size: 16, color: AppColors.textSecondary),
+                  const SizedBox(width: 4),
+                  Text(
+                    '${createdAt.day}/${createdAt.month}/${createdAt.year} - ${createdAt.hour}:${createdAt.minute.toString().padLeft(2, '0')}',
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      color: AppColors.textSecondary,
+                    ),
                   ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 4),
-            Row(
-              children: [
-                const Icon(Icons.attach_money, size: 16, color: AppColors.success),
-                const SizedBox(width: 4),
-                Text(
-                  'المجموع: ${total.toStringAsFixed(2)} ر.س',
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.bold,
-                    color: AppColors.success,
+                ],
+              ),
+              const SizedBox(height: 4),
+              Row(
+                children: [
+                  const Icon(Icons.attach_money, size: 16, color: AppColors.success),
+                  const SizedBox(width: 4),
+                  Text(
+                    'المجموع: ${total.toStringAsFixed(2)} ر.س',
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.success,
+                    ),
                   ),
-                ),
-              ],
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        Align(
-          alignment: Alignment.centerRight,
-          child: TextButton.icon(
-            onPressed: () => context.push('${RouteConstants.orderDetails}/$orderId'),
-            icon: const Icon(Icons.arrow_forward),
-            label: const Text('عرض التفاصيل'),
-            style: TextButton.styleFrom(
-              foregroundColor: AppColors.primary,
+                ],
+              ),
+            ],
+          ),
+          const SizedBox(height: 8),
+          Align(
+            alignment: Alignment.centerRight,
+            child: TextButton.icon(
+              onPressed: () => context.push('${RouteConstants.orderDetails}/$orderId'),
+              icon: const Icon(Icons.arrow_forward),
+              label: const Text('عرض التفاصيل'),
+              style: TextButton.styleFrom(
+                foregroundColor: AppColors.primary,
+              ),
             ),
           ),
-        ),
+        ],
       ),
     );
   }

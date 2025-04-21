@@ -4,8 +4,8 @@ import '../domain/usecases/sign_out_usecase.dart';
 import '../domain/usecases/get_current_user_usecase.dart';
 import '../domain/usecases/is_signed_in_usecase.dart';
 import '../domain/entities/user.dart';
-import '../../core/storage/secure_storage_service.dart';
-import '../../core/services/crashlytics_manager.dart';
+import '../../../core/storage/secure_storage_service.dart';
+import '../../../core/services/crashlytics_manager.dart';
 
 /// حالة المصادقة في التطبيق
 class AuthState {
@@ -43,7 +43,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
   final SignOutUseCase _signOutUseCase;
   final GetCurrentUserUseCase _getCurrentUserUseCase;
   final IsSignedInUseCase _isSignedInUseCase;
-  final SecureStorageServiceImpl _secureStorage;
+  final SecureStorageService _secureStorage;
   final CrashlyticsManager _crashlytics;
 
   /// إنشاء مدير حالة المصادقة
@@ -52,7 +52,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
     required SignOutUseCase signOutUseCase,
     required GetCurrentUserUseCase getCurrentUserUseCase,
     required IsSignedInUseCase isSignedInUseCase,
-    required SecureStorageServiceImpl secureStorage,
+    required SecureStorageService secureStorage,
     required CrashlyticsManager crashlytics,
   })  : _signInUseCase = signInUseCase,
         _signOutUseCase = signOutUseCase,
