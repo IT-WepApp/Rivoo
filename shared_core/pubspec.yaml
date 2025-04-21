@@ -1,0 +1,49 @@
+name: shared_core
+description: حزمة مشتركة موحدة تجمع النماذج والخدمات المشتركة لمشروع RivooSy Flutter
+version: 1.0.0
+publish_to: 'none'
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+  flutter: ">=3.10.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  
+  # إدارة الحالة
+  flutter_riverpod: ^2.3.6
+  
+  # الشبكة والاتصال
+  dio: ^5.3.2
+  connectivity_plus: ^4.0.2
+  
+  # التخزين المحلي
+  shared_preferences: ^2.2.1
+  flutter_secure_storage: ^8.0.0
+  
+  # المصادقة والأمان
+  firebase_auth: ^4.9.0
+  firebase_core: ^2.15.1
+  cloud_firestore: ^4.9.1
+  firebase_storage: ^11.2.6
+  
+  # المساعدة والأدوات
+  intl: ^0.18.1
+  uuid: ^3.0.7
+  logger: ^1.4.0
+  path_provider: ^2.1.1
+  
+  # واجهة المستخدم
+  flutter_svg: ^2.0.7
+  cached_network_image: ^3.2.3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.3
+  mockito: ^5.4.2
+  build_runner: ^2.4.6
+
+flutter:
+  uses-material-design: true

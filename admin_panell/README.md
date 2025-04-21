@@ -1,16 +1,123 @@
-# admin_panell
+# لوحة تحكم المشرف - RivooSy Flutter
 
-A new Flutter project.
+## نظرة عامة
+لوحة تحكم المشرف هي واجهة إدارية متكاملة تمكن مديري النظام من إدارة جميع جوانب منصة RivooSy. تم تطويرها باستخدام Flutter لضمان تجربة مستخدم سلسة وأداء عالي.
 
-## Getting Started
+## الميزات الرئيسية
 
-This project is a starting point for a Flutter application.
+### إدارة المستخدمين
+- عرض وإدارة حسابات المستخدمين
+- تفعيل/تعطيل الحسابات
+- إدارة الأدوار والصلاحيات
+- مراقبة نشاط المستخدمين
 
-A few resources to get you started if this is your first Flutter project:
+### إدارة البائعين
+- الموافقة على طلبات البائعين الجدد
+- مراقبة أداء المتاجر
+- إدارة عمولات المنصة
+- تعليق أو إلغاء حسابات البائعين المخالفين
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### إدارة المنتجات
+- مراجعة المنتجات المضافة
+- إدارة فئات المنتجات
+- إدارة العلامات والتصنيفات
+- إزالة المنتجات المخالفة
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### إدارة الطلبات
+- عرض جميع الطلبات في النظام
+- متابعة حالة الطلبات
+- معالجة المشكلات والنزاعات
+- إدارة عمليات الاسترداد
+
+### لوحة المعلومات والتقارير
+- إحصائيات المبيعات والإيرادات
+- تقارير نشاط المستخدمين
+- تحليلات أداء المنصة
+- تقارير مخصصة قابلة للتصدير
+
+### إدارة المحتوى
+- إدارة الإعلانات والعروض الترويجية
+- تحديث صفحات المعلومات
+- إدارة الإشعارات العامة
+- تخصيص واجهة المستخدم
+
+## المتطلبات التقنية
+
+### المتطلبات الأساسية
+- Flutter SDK (أحدث إصدار)
+- Dart SDK (أحدث إصدار)
+- حساب Firebase مع الخدمات التالية:
+  - Firebase Authentication
+  - Cloud Firestore
+  - Firebase Storage
+  - Firebase Cloud Messaging
+
+### التبعيات الرئيسية
+- flutter_riverpod: لإدارة حالة التطبيق
+- go_router: للتنقل بين الصفحات
+- shared: الحزمة المشتركة للمكونات المشتركة بين تطبيقات المنصة
+
+## البدء بالاستخدام
+
+### متطلبات التشغيل
+- نظام تشغيل: Windows 10/11، macOS 10.15+، أو Linux
+- ذاكرة: 8GB RAM على الأقل
+- مساحة تخزين: 2GB على الأقل
+
+### خطوات التثبيت
+1. استنساخ المستودع:
+   ```bash
+   git clone https://github.com/IT-WepApp/Rivoo.git
+   cd Rivoo/admin_panell
+   ```
+
+2. تثبيت التبعيات:
+   ```bash
+   flutter pub get
+   ```
+
+3. تشغيل التطبيق:
+   ```bash
+   flutter run -d chrome  # للتشغيل على متصفح الويب
+   # أو
+   flutter run             # للتشغيل على جهاز متصل
+   ```
+
+### بناء نسخة للإنتاج
+```bash
+flutter build web          # لبناء نسخة ويب
+# أو
+flutter build apk          # لبناء تطبيق Android
+# أو
+flutter build ios          # لبناء تطبيق iOS (يتطلب جهاز Mac)
+```
+
+## هيكل المشروع
+```
+admin_panell/
+├── lib/
+│   ├── core/                  # المكونات الأساسية
+│   ├── features/              # ميزات التطبيق
+│   │   ├── auth/              # المصادقة
+│   │   ├── dashboard/         # لوحة المعلومات
+│   │   ├── users/             # إدارة المستخدمين
+│   │   ├── sellers/           # إدارة البائعين
+│   │   ├── products/          # إدارة المنتجات
+│   │   ├── orders/            # إدارة الطلبات
+│   │   └── settings/          # إعدادات النظام
+│   ├── main.dart              # نقطة الدخول للتطبيق
+│   └── app.dart               # تكوين التطبيق
+├── test/                      # اختبارات الوحدة
+└── integration_test/          # اختبارات التكامل
+```
+
+## المساهمة في التطوير
+نرحب بمساهماتكم في تطوير لوحة تحكم المشرف. يرجى اتباع الخطوات التالية:
+
+1. إنشاء فرع جديد من الفرع الرئيسي
+2. تنفيذ التغييرات المطلوبة
+3. التأكد من اجتياز جميع الاختبارات
+4. تقديم طلب سحب مع وصف مفصل للتغييرات
+
+## الترخيص
+هذا المشروع مرخص بموجب [ترخيص MIT](LICENSE).
