@@ -1,0 +1,163 @@
+{
+  "@@locale": "tr",
+  
+  "appName": "RivooSy",
+  "@appName": {
+    "description": "Uygulamanın adı"
+  },
+  
+  "loginTitle": "Giriş Yap",
+  "@loginTitle": {
+    "description": "Giriş ekranı başlığı"
+  },
+  
+  "loginButton": "Giriş Yap",
+  "@loginButton": {
+    "description": "Giriş düğmesi metni"
+  },
+  
+  "registerButton": "Hesap Oluştur",
+  "@registerButton": {
+    "description": "Kayıt düğmesi metni"
+  },
+  
+  "emailHint": "E-posta",
+  "@emailHint": {
+    "description": "E-posta giriş alanı ipucu metni"
+  },
+  
+  "passwordHint": "Şifre",
+  "@passwordHint": {
+    "description": "Şifre giriş alanı ipucu metni"
+  },
+  
+  "forgotPassword": "Şifremi Unuttum?",
+  "@forgotPassword": {
+    "description": "Şifremi unuttum düğmesi metni"
+  },
+  
+  "homeTitle": "Ana Sayfa",
+  "@homeTitle": {
+    "description": "Ana sayfa ekranı başlığı"
+  },
+  
+  "ordersTitle": "Siparişler",
+  "@ordersTitle": {
+    "description": "Siparişler ekranı başlığı"
+  },
+  
+  "profileTitle": "Profil",
+  "@profileTitle": {
+    "description": "Profil ekranı başlığı"
+  },
+  
+  "settingsTitle": "Ayarlar",
+  "@settingsTitle": {
+    "description": "Ayarlar ekranı başlığı"
+  },
+  
+  "languageTitle": "Dil",
+  "@languageTitle": {
+    "description": "Dil seçimi başlığı"
+  },
+  
+  "themeTitle": "Tema",
+  "@themeTitle": {
+    "description": "Tema seçimi başlığı"
+  },
+  
+  "lightTheme": "Açık",
+  "@lightTheme": {
+    "description": "Açık tema seçeneği metni"
+  },
+  
+  "darkTheme": "Koyu",
+  "@darkTheme": {
+    "description": "Koyu tema seçeneği metni"
+  },
+  
+  "systemTheme": "Sistem",
+  "@systemTheme": {
+    "description": "Sistem teması seçeneği metni"
+  },
+  
+  "logoutButton": "Çıkış Yap",
+  "@logoutButton": {
+    "description": "Çıkış düğmesi metni"
+  },
+  
+  "searchHint": "Ara...",
+  "@searchHint": {
+    "description": "Arama giriş alanı ipucu metni"
+  },
+  
+  "notificationsTitle": "Bildirimler",
+  "@notificationsTitle": {
+    "description": "Bildirimler ekranı başlığı"
+  },
+  
+  "cartTitle": "Sepet",
+  "@cartTitle": {
+    "description": "Sepet ekranı başlığı"
+  },
+  
+  "checkoutButton": "Ödeme Yap",
+  "@checkoutButton": {
+    "description": "Ödeme düğmesi metni"
+  },
+  
+  "totalAmount": "Toplam",
+  "@totalAmount": {
+    "description": "Toplam tutar etiketi"
+  },
+  
+  "emptyCart": "Sepetiniz boş",
+  "@emptyCart": {
+    "description": "Boş sepet mesajı"
+  },
+  
+  "addToCartButton": "Sepete Ekle",
+  "@addToCartButton": {
+    "description": "Sepete ekle düğmesi metni"
+  },
+  
+  "removeButton": "Kaldır",
+  "@removeButton": {
+    "description": "Kaldır düğmesi metni"
+  },
+  
+  "confirmButton": "Onayla",
+  "@confirmButton": {
+    "description": "Onaylama düğmesi metni"
+  },
+  
+  "cancelButton": "İptal",
+  "@cancelButton": {
+    "description": "İptal düğmesi metni"
+  },
+  
+  "errorTitle": "Hata",
+  "@errorTitle": {
+    "description": "Hata iletişim kutuları başlığı"
+  },
+  
+  "successTitle": "Başarılı",
+  "@successTitle": {
+    "description": "Başarı iletişim kutuları başlığı"
+  },
+  
+  "loadingMessage": "Yükleniyor...",
+  "@loadingMessage": {
+    "description": "Yükleme sırasında gösterilen mesaj"
+  },
+  
+  "noDataMessage": "Veri bulunamadı",
+  "@noDataMessage": {
+    "description": "Veri olmadığında gösterilen mesaj"
+  },
+  
+  "tryAgainButton": "Tekrar Dene",
+  "@tryAgainButton": {
+    "description": "Tekrar deneme düğmesi metni"
+  }
+}

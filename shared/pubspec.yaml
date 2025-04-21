@@ -1,0 +1,54 @@
+name: shared
+description: حزمة مشتركة لجميع تطبيقات RivooSy_Flutter
+publish_to: "none"
+version: 1.0.0
+
+environment:
+  sdk: ">=3.2.0 <4.0.0"
+  flutter: ">=3.16.5 <4.0.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+
+  # إدارة الحالة
+  flutter_riverpod: ^2.4.9
+  riverpod_annotation: ^2.3.3
+  freezed: ^2.4.6
+  freezed_annotation: ^2.4.1
+  json_annotation: ^4.8.1
+
+  # التوجيه
+  go_router: ^13.0.1
+
+  # Firebase حزم
+  firebase_core: ^3.13.0
+  firebase_auth: ^5.5.2
+  firebase_messaging: ^15.2.5
+  cloud_firestore: ^5.6.6
+  firebase_crashlytics: ^3.4.8
+  firebase_storage: ^11.6.0
+
+  # تخزين محلي
+  flutter_secure_storage: ^9.0.0
+  shared_preferences: ^2.2.2
+
+  # واجهة المستخدم
+  cached_network_image: ^3.3.1
+  intl: ^0.20.2
+  connectivity_plus: ^5.0.2
+  equatable: ^2.0.5
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+  build_runner: ^2.4.7
+  riverpod_generator: ^2.3.9
+  json_serializable: ^6.7.1
+
+flutter:
+  uses-material-design: true
+  generate: true # لتفعيل توليد ملفات الترجمة
