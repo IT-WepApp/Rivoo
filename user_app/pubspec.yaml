@@ -50,6 +50,15 @@ dependencies:
     path: ../shared_modules/shared_services
   shared_widgets:
     path: ../shared_modules/shared_widgets
+  dartz: any
+  equatable: any
+  firebase_analytics: any
+  firebase_performance: any
+  google_sign_in: any
+  uuid: any
+  riverpod: any
+  flutter_dotenv: any
+  firebase_storage: any
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -60,6 +69,11 @@ dev_dependencies:
   mockito: ^5.4.4
   integration_test:
     sdk: flutter
+  firebase_analytics: any
+  firebase_performance: any
+  riverpod: any
+  dartz: any
+  firebase_storage: any
 flutter:
   uses-material-design: true
   generate: true # إضافة هذا السطر لتفعيل توليد ملفات الترجمة

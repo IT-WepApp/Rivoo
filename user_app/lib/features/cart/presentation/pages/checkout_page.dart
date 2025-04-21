@@ -104,7 +104,7 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
       // In a real app, we would create the order in the database here
       // For now, we'll just simulate a delay
       await Future.delayed(const Duration(seconds: 2));
-      
+
       if (mounted) {
         // Navigate to order confirmation page
         context.goNamed('order-confirmation');
@@ -132,10 +132,10 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
     // Get cart items and total from provider
     // final cartItems = ref.watch(cartProvider);
     // final cartTotal = ref.watch(cartTotalProvider);
-    
+
     // For now, we'll use dummy data
-    final cartTotal = 150.0;
-    
+    const cartTotal = 150.0;
+
     // Get default address if no address is selected
     final defaultAddress = ref.watch(defaultAddressProvider);
     final addressToUse = _selectedAddress ?? defaultAddress;
@@ -160,7 +160,7 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  
+
                   if (addressToUse != null)
                     Card(
                       elevation: 2,
@@ -246,9 +246,9 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
                         ),
                       ),
                     ),
-                  
+
                   const SizedBox(height: 24),
-                  
+
                   // Payment Method Section
                   const Text(
                     'طريقة الدفع',
@@ -258,7 +258,7 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  
+
                   Card(
                     elevation: 2,
                     shape: RoundedRectangleBorder(
@@ -305,9 +305,9 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
                       ),
                     ),
                   ),
-                  
+
                   const SizedBox(height: 24),
-                  
+
                   // Order Notes Section
                   const Text(
                     'ملاحظات الطلب (اختياري)',
@@ -317,15 +317,15 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  
+
                   AppTextField(
                     controller: _notesController,
                     hintText: 'أضف أي ملاحظات خاصة بالطلب هنا...',
                     maxLines: 3,
                   ),
-                  
+
                   const SizedBox(height: 24),
-                  
+
                   // Order Summary Section
                   const Text(
                     'ملخص الطلب',
@@ -335,7 +335,7 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
                     ),
                   ),
                   const SizedBox(height: 8),
-                  
+
                   Card(
                     elevation: 2,
                     shape: RoundedRectangleBorder(
@@ -393,9 +393,9 @@ class _CheckoutPageState extends ConsumerState<CheckoutPage> {
                       ),
                     ),
                   ),
-                  
+
                   const SizedBox(height: 32),
-                  
+
                   // Place Order Button
                   SizedBox(
                     width: double.infinity,

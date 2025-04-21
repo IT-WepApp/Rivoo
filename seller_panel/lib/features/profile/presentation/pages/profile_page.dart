@@ -11,10 +11,13 @@ class ProfilePage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final profileState = ref.watch(sellerProfileProvider);
 
-    ref.listen<AsyncValue<SellerModel?>>(sellerProfileProvider, (previous, next) {
+    ref.listen<AsyncValue<SellerModel?>>(sellerProfileProvider,
+        (previous, next) {
       if (next is AsyncError && next != previous) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: ${next.error}'), backgroundColor: Colors.red),
+          SnackBar(
+              content: Text('Error: ${next.error}'),
+              backgroundColor: Colors.red),
         );
       }
     });
@@ -29,7 +32,8 @@ class ProfilePage extends ConsumerWidget {
           return _ProfileContent(profile: profile);
         },
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (error, _) => Center(child: Text('Failed to load profile: $error')),
+        error: (error, _) =>
+            Center(child: Text('Failed to load profile: $error')),
       ),
     );
   }
@@ -54,7 +58,8 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
   void initState() {
     super.initState();
     _nameController = TextEditingController(text: widget.profile.name);
-    _storeNameController = TextEditingController(text: widget.profile.storeName ?? '');
+    _storeNameController =
+        TextEditingController(text: widget.profile.storeName ?? '');
   }
 
   @override
@@ -85,17 +90,23 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
       storeName: _storeNameController.text.trim(),
     );
 
-    final success = await ref.read(sellerProfileProvider.notifier).updateProfile(updatedProfile);
+    final success = await ref
+        .read(sellerProfileProvider.notifier)
+        .updateProfile(updatedProfile);
 
     if (mounted) {
       if (success) {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Profile updated successfully.'), backgroundColor: Colors.green),
+          const SnackBar(
+              content: Text('Profile updated successfully.'),
+              backgroundColor: Colors.green),
         );
         _toggleEdit();
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to update profile.'), backgroundColor: Colors.red),
+          const SnackBar(
+              content: Text('Failed to update profile.'),
+              backgroundColor: Colors.red),
         );
       }
       setState(() => _isSaving = false);
@@ -115,33 +126,37 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
             CircleAvatar(
               radius: 50,
               backgroundColor: theme.colorScheme.secondaryContainer,
-              child: Text(widget.profile.name.isNotEmpty ? widget.profile.name[0].toUpperCase() : '?',
+              child: Text(
+                  widget.profile.name.isNotEmpty
+                      ? widget.profile.name[0].toUpperCase()
+                      : '?',
                   style: theme.textTheme.displaySmall),
             ),
             const SizedBox(height: 16),
-
             ListTile(
               leading: const Icon(Icons.email_outlined),
               title: const Text('Email'),
               subtitle: Text(widget.profile.email),
             ),
             const Divider(),
-
             AppTextField(
               controller: _nameController,
               label: 'Your Name',
               enabled: _isEditing,
-              validator: (value) => value == null || value.isEmpty ? 'Name cannot be empty' : null,
+              validator: (value) => value == null || value.isEmpty
+                  ? 'Name cannot be empty'
+                  : null,
             ),
             const SizedBox(height: 16),
             AppTextField(
               controller: _storeNameController,
               label: 'Store Name',
               enabled: _isEditing,
-              validator: (value) => value == null || value.isEmpty ? 'Store name cannot be empty' : null,
+              validator: (value) => value == null || value.isEmpty
+                  ? 'Store name cannot be empty'
+                  : null,
             ),
             const SizedBox(height: 24),
-
             if (_isEditing)
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -153,7 +168,10 @@ class _ProfileContentState extends ConsumerState<_ProfileContent> {
                   ),
                   ElevatedButton.icon(
                     icon: _isSaving
-                        ? const SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2))
+                        ? const SizedBox(
+                            width: 18,
+                            height: 18,
+                            child: CircularProgressIndicator(strokeWidth: 2))
                         : const Icon(Icons.save_outlined),
                     label: const Text('Save Changes'),
                     onPressed: _isSaving ? null : _saveChanges,

@@ -15,8 +15,9 @@ class MessageBubble extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isFromSupport = message.isFromSupport;
-    final alignment = isFromSupport ? CrossAxisAlignment.start : CrossAxisAlignment.end;
-    
+    final alignment =
+        isFromSupport ? CrossAxisAlignment.start : CrossAxisAlignment.end;
+
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
       child: Column(
@@ -25,7 +26,9 @@ class MessageBubble extends StatelessWidget {
           // عرض معلومات المرسل فقط إذا كان مطلوباً
           if (showAvatar) ...[
             Row(
-              mainAxisAlignment: isFromSupport ? MainAxisAlignment.start : MainAxisAlignment.end,
+              mainAxisAlignment: isFromSupport
+                  ? MainAxisAlignment.start
+                  : MainAxisAlignment.end,
               children: [
                 if (isFromSupport) _buildAvatar(context),
                 const SizedBox(width: 8),
@@ -43,10 +46,11 @@ class MessageBubble extends StatelessWidget {
             ),
             const SizedBox(height: 4),
           ],
-          
+
           // فقاعة الرسالة
           Row(
-            mainAxisAlignment: isFromSupport ? MainAxisAlignment.start : MainAxisAlignment.end,
+            mainAxisAlignment:
+                isFromSupport ? MainAxisAlignment.start : MainAxisAlignment.end,
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
               // وقت الرسالة للرسائل من الدعم
@@ -56,19 +60,26 @@ class MessageBubble extends StatelessWidget {
                   child: Text(
                     _formatTime(message.timestamp),
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onSurface
+                              .withOpacity(0.5),
                         ),
                   ),
                 ),
-              
+
               // محتوى الرسالة
               Flexible(
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 12.0),
+                  padding: const EdgeInsets.symmetric(
+                      horizontal: 16.0, vertical: 12.0),
                   decoration: BoxDecoration(
                     color: isFromSupport
                         ? Theme.of(context).colorScheme.surface
-                        : Theme.of(context).colorScheme.primary.withOpacity(0.2),
+                        : Theme.of(context)
+                            .colorScheme
+                            .primary
+                            .withOpacity(0.2),
                     borderRadius: BorderRadius.circular(16.0).copyWith(
                       bottomLeft: isFromSupport ? Radius.zero : null,
                       bottomRight: !isFromSupport ? Radius.zero : null,
@@ -93,7 +104,7 @@ class MessageBubble extends StatelessWidget {
                               : Theme.of(context).colorScheme.primary,
                         ),
                       ),
-                      
+
                       // المرفقات إذا وجدت
                       if (message.attachmentUrl != null) ...[
                         const SizedBox(height: 8),
@@ -103,7 +114,7 @@ class MessageBubble extends StatelessWidget {
                   ),
                 ),
               ),
-              
+
               // وقت الرسالة للرسائل من المستخدم
               if (!isFromSupport)
                 Padding(
@@ -111,7 +122,10 @@ class MessageBubble extends StatelessWidget {
                   child: Text(
                     _formatTime(message.timestamp),
                     style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                          color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onSurface
+                              .withOpacity(0.5),
                         ),
                   ),
                 ),
@@ -234,7 +248,7 @@ class MessageBubble extends StatelessWidget {
   String _formatTime(DateTime time) {
     final now = DateTime.now();
     final difference = now.difference(time);
-    
+
     if (difference.inDays < 1) {
       return timeago.format(time, locale: 'ar');
     } else if (difference.inDays < 7) {

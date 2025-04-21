@@ -8,7 +8,7 @@ import 'dart:convert';
 class FavoritesNotifier extends StateNotifier<List<Product>> {
   final String? userId;
   final FirebaseFirestore _firestore;
-  
+
   FavoritesNotifier(this.userId, this._firestore) : super([]) {
     if (userId != null) {
       _loadFavorites();
@@ -19,7 +19,7 @@ class FavoritesNotifier extends StateNotifier<List<Product>> {
 
   Future<void> _loadFavorites() async {
     if (userId == null) return;
-    
+
     try {
       // تحميل المفضلة من Firestore
       final snapshot = await _firestore
@@ -27,7 +27,7 @@ class FavoritesNotifier extends StateNotifier<List<Product>> {
           .doc(userId)
           .collection('favorites')
           .get();
-      
+
       final favorites = snapshot.docs.map((doc) {
         final data = doc.data();
         return Product(
@@ -40,9 +40,9 @@ class FavoritesNotifier extends StateNotifier<List<Product>> {
           storeId: data['storeId'] ?? '',
         );
       }).toList();
-      
+
       state = favorites;
-      
+
       // حفظ المفضلة محلياً أيضاً
       _saveLocalFavorites(favorites);
     } catch (e) {
@@ -56,7 +56,7 @@ class FavoritesNotifier extends StateNotifier<List<Product>> {
     try {
       final prefs = await SharedPreferences.getInstance();
       final favoritesJson = prefs.getStringList('favorites') ?? [];
-      
+
       final favorites = favoritesJson.map((json) {
         final data = jsonDecode(json);
         return Product(
@@ -69,7 +69,7 @@ class FavoritesNotifier extends StateNotifier<List<Product>> {
           storeId: data['storeId'] ?? '',
         );
       }).toList();
-      
+
       state = favorites;
     } catch (e) {
       print('خطأ في تحميل المفضلة المحلية: $e');
@@ -90,7 +90,7 @@ class FavoritesNotifier extends StateNotifier<List<Product>> {
           'storeId': product.storeId,
         });
       }).toList();
-      
+
       await prefs.setStringList('favorites', favoritesJson);
     } catch (e) {
       print('خطأ في حفظ المفضلة المحلية: $e');
@@ -99,11 +99,11 @@ class FavoritesNotifier extends StateNotifier<List<Product>> {
 
   Future<void> toggleFavorite(Product product) async {
     final isFavorite = state.any((p) => p.id == product.id);
-    
+
     if (isFavorite) {
       // إزالة من المفضلة
       state = state.where((p) => p.id != product.id).toList();
-      
+
       if (userId != null) {
         try {
           await _firestore
@@ -119,7 +119,7 @@ class FavoritesNotifier extends StateNotifier<List<Product>> {
     } else {
       // إضافة إلى المفضلة
       state = [...state, product];
-      
+
       if (userId != null) {
         try {
           await _firestore
@@ -128,20 +128,20 @@ class FavoritesNotifier extends StateNotifier<List<Product>> {
               .collection('favorites')
               .doc(product.id)
               .set({
-                'name': product.name,
-                'price': product.price,
-                'description': product.description,
-                'imageUrl': product.imageUrl,
-                'categoryId': product.categoryId,
-                'storeId': product.storeId,
-                'addedAt': FieldValue.serverTimestamp(),
-              });
+            'name': product.name,
+            'price': product.price,
+            'description': product.description,
+            'imageUrl': product.imageUrl,
+            'categoryId': product.categoryId,
+            'storeId': product.storeId,
+            'addedAt': FieldValue.serverTimestamp(),
+          });
         } catch (e) {
           print('خطأ في إضافة المنتج إلى المفضلة: $e');
         }
       }
     }
-    
+
     // حفظ المفضلة محلياً
     _saveLocalFavorites(state);
   }
@@ -152,7 +152,7 @@ class FavoritesNotifier extends StateNotifier<List<Product>> {
 
   Future<void> clearFavorites() async {
     state = [];
-    
+
     if (userId != null) {
       try {
         final snapshot = await _firestore
@@ -160,7 +160,7 @@ class FavoritesNotifier extends StateNotifier<List<Product>> {
             .doc(userId)
             .collection('favorites')
             .get();
-        
+
         final batch = _firestore.batch();
         for (final doc in snapshot.docs) {
           batch.delete(doc.reference);
@@ -170,7 +170,7 @@ class FavoritesNotifier extends StateNotifier<List<Product>> {
         print('خطأ في حذف جميع المفضلة: $e');
       }
     }
-    
+
     // حذف المفضلة المحلية
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -182,7 +182,7 @@ class FavoritesNotifier extends StateNotifier<List<Product>> {
 
   Future<void> syncFavorites() async {
     if (userId == null) return;
-    
+
     try {
       // تحميل المفضلة من Firestore
       final snapshot = await _firestore
@@ -190,7 +190,7 @@ class FavoritesNotifier extends StateNotifier<List<Product>> {
           .doc(userId)
           .collection('favorites')
           .get();
-      
+
       final remoteFavorites = snapshot.docs.map((doc) {
         final data = doc.data();
         return Product(
@@ -203,11 +203,11 @@ class FavoritesNotifier extends StateNotifier<List<Product>> {
           storeId: data['storeId'] ?? '',
         );
       }).toList();
-      
+
       // تحميل المفضلة المحلية
       final prefs = await SharedPreferences.getInstance();
       final localFavoritesJson = prefs.getStringList('favorites') ?? [];
-      
+
       final localFavorites = localFavoritesJson.map((json) {
         final data = jsonDecode(json);
         return Product(
@@ -220,11 +220,11 @@ class FavoritesNotifier extends StateNotifier<List<Product>> {
           storeId: data['storeId'] ?? '',
         );
       }).toList();
-      
+
       // دمج المفضلة المحلية والبعيدة
       final mergedFavorites = <Product>[];
       final mergedIds = <String>{};
-      
+
       // إضافة المفضلة البعيدة
       for (final product in remoteFavorites) {
         if (!mergedIds.contains(product.id)) {
@@ -232,13 +232,13 @@ class FavoritesNotifier extends StateNotifier<List<Product>> {
           mergedIds.add(product.id);
         }
       }
-      
+
       // إضافة المفضلة المحلية التي لم تكن موجودة في البعيدة
       for (final product in localFavorites) {
         if (!mergedIds.contains(product.id)) {
           mergedFavorites.add(product);
           mergedIds.add(product.id);
-          
+
           // إضافة المنتج إلى Firestore
           await _firestore
               .collection('users')
@@ -246,19 +246,19 @@ class FavoritesNotifier extends StateNotifier<List<Product>> {
               .collection('favorites')
               .doc(product.id)
               .set({
-                'name': product.name,
-                'price': product.price,
-                'description': product.description,
-                'imageUrl': product.imageUrl,
-                'categoryId': product.categoryId,
-                'storeId': product.storeId,
-                'addedAt': FieldValue.serverTimestamp(),
-              });
+            'name': product.name,
+            'price': product.price,
+            'description': product.description,
+            'imageUrl': product.imageUrl,
+            'categoryId': product.categoryId,
+            'storeId': product.storeId,
+            'addedAt': FieldValue.serverTimestamp(),
+          });
         }
       }
-      
+
       state = mergedFavorites;
-      
+
       // حفظ المفضلة المدمجة محلياً
       _saveLocalFavorites(mergedFavorites);
     } catch (e) {
@@ -267,7 +267,8 @@ class FavoritesNotifier extends StateNotifier<List<Product>> {
   }
 }
 
-final favoritesProvider = StateNotifierProvider<FavoritesNotifier, List<Product>>((ref) {
+final favoritesProvider =
+    StateNotifierProvider<FavoritesNotifier, List<Product>>((ref) {
   final userId = ref.watch(userIdProvider);
   final firestore = FirebaseFirestore.instance;
   return FavoritesNotifier(userId, firestore);

@@ -30,14 +30,15 @@ class SettingsScreen extends ConsumerWidget {
             children: [
               // معلومات المستخدم
               if (isAuthenticated && authState.userData != null)
-                _buildUserInfoCard(context, authState.userData!.displayName ?? l10n.user, theme),
-              
+                _buildUserInfoCard(context,
+                    authState.userData!.displayName ?? l10n.user, theme),
+
               const SizedBox(height: 24),
-              
+
               // قسم المظهر
               _buildSectionHeader(l10n.appearance, Icons.palette, theme),
               const SizedBox(height: 8),
-              
+
               // إعدادات السمة
               _buildSettingCard(
                 context,
@@ -57,7 +58,7 @@ class SettingsScreen extends ConsumerWidget {
                   },
                 ),
               ),
-              
+
               // إعدادات اللغة
               _buildSettingCard(
                 context,
@@ -66,13 +67,13 @@ class SettingsScreen extends ConsumerWidget {
                 Icons.language,
                 () => context.pushNamed('language-settings'),
               ),
-              
+
               const SizedBox(height: 24),
-              
+
               // قسم الحساب
               _buildSectionHeader(l10n.account, Icons.person, theme),
               const SizedBox(height: 8),
-              
+
               // معلومات الحساب
               if (isAuthenticated)
                 _buildSettingCard(
@@ -82,12 +83,14 @@ class SettingsScreen extends ConsumerWidget {
                   Icons.account_circle,
                   () => context.pushNamed('profile'),
                 ),
-              
+
               // تسجيل الدخول / الخروج
               _buildSettingCard(
                 context,
                 isAuthenticated ? l10n.signOut : l10n.signIn,
-                isAuthenticated ? l10n.signOutDescription : l10n.signInDescription,
+                isAuthenticated
+                    ? l10n.signOutDescription
+                    : l10n.signInDescription,
                 isAuthenticated ? Icons.logout : Icons.login,
                 () {
                   if (isAuthenticated) {
@@ -98,13 +101,13 @@ class SettingsScreen extends ConsumerWidget {
                 },
                 color: isAuthenticated ? Colors.red : null,
               ),
-              
+
               const SizedBox(height: 24),
-              
+
               // قسم التطبيق
               _buildSectionHeader(l10n.application, Icons.apps, theme),
               const SizedBox(height: 8),
-              
+
               // الإشعارات
               _buildSettingCard(
                 context,
@@ -113,7 +116,7 @@ class SettingsScreen extends ConsumerWidget {
                 Icons.notifications,
                 () => context.pushNamed('notifications-settings'),
               ),
-              
+
               // الخصوصية
               _buildSettingCard(
                 context,
@@ -122,7 +125,7 @@ class SettingsScreen extends ConsumerWidget {
                 Icons.privacy_tip,
                 () => context.pushNamed('privacy'),
               ),
-              
+
               // عن التطبيق
               _buildSettingCard(
                 context,
@@ -131,7 +134,7 @@ class SettingsScreen extends ConsumerWidget {
                 Icons.info,
                 () => context.pushNamed('about'),
               ),
-              
+
               // الدعم الفني
               _buildSettingCard(
                 context,
@@ -140,9 +143,9 @@ class SettingsScreen extends ConsumerWidget {
                 Icons.support_agent,
                 () => context.pushNamed('support'),
               ),
-              
+
               const SizedBox(height: 24),
-              
+
               // معلومات الإصدار
               Center(
                 child: Text(
@@ -161,7 +164,8 @@ class SettingsScreen extends ConsumerWidget {
   }
 
   /// بناء بطاقة معلومات المستخدم
-  Widget _buildUserInfoCard(BuildContext context, String name, ThemeData theme) {
+  Widget _buildUserInfoCard(
+      BuildContext context, String name, ThemeData theme) {
     return Card(
       elevation: 2,
       shape: RoundedRectangleBorder(
@@ -247,7 +251,7 @@ class SettingsScreen extends ConsumerWidget {
     Color? color,
   }) {
     final theme = Theme.of(context);
-    
+
     return Card(
       elevation: 1,
       margin: const EdgeInsets.only(bottom: 8),
@@ -279,7 +283,7 @@ class SettingsScreen extends ConsumerWidget {
   /// عرض حوار تأكيد تسجيل الخروج
   void _showSignOutConfirmationDialog(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
-    
+
     showDialog(
       context: context,
       builder: (context) => AlertDialog(

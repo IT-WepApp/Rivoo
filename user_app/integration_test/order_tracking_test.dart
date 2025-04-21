@@ -10,7 +10,8 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   group('اختبار تتبع الطلبات', () {
-    testWidgets('تسجيل الدخول، عرض الطلبات، تتبع حالة الطلب', (WidgetTester tester) async {
+    testWidgets('تسجيل الدخول، عرض الطلبات، تتبع حالة الطلب',
+        (WidgetTester tester) async {
       // تشغيل التطبيق
       app.main();
       await tester.pumpAndSettle();
@@ -19,8 +20,10 @@ void main() {
       expect(find.byType(LoginScreen), findsOneWidget);
 
       // إدخال بيانات تسجيل الدخول
-      await tester.enterText(find.byKey(const Key('email_field')), 'test@example.com');
-      await tester.enterText(find.byKey(const Key('password_field')), 'password123');
+      await tester.enterText(
+          find.byKey(const Key('email_field')), 'test@example.com');
+      await tester.enterText(
+          find.byKey(const Key('password_field')), 'password123');
       await tester.pumpAndSettle();
 
       // النقر على زر تسجيل الدخول

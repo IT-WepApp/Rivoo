@@ -43,12 +43,10 @@ class AppTheme {
       primary: AppColors.primaryLight,
       primaryContainer: AppColors.primaryVariantLight,
       secondary: AppColors.secondaryLight,
-      background: AppColors.backgroundLight,
       surface: AppColors.surfaceLight,
       error: AppColors.errorLight,
       onPrimary: AppColors.onPrimaryLight,
       onSecondary: AppColors.onSecondaryLight,
-      onBackground: AppColors.onBackgroundLight,
       onSurface: AppColors.onSurfaceLight,
       onError: AppColors.onErrorLight,
     ),
@@ -124,14 +122,14 @@ class AppTheme {
       foregroundColor: AppColors.onPrimaryLight,
     ),
     switchTheme: SwitchThemeData(
-      thumbColor: MaterialStateProperty.resolveWith<Color>((states) {
-        if (states.contains(MaterialState.selected)) {
+      thumbColor: WidgetStateProperty.resolveWith<Color>((states) {
+        if (states.contains(WidgetState.selected)) {
           return AppColors.primaryLight;
         }
         return Colors.grey;
       }),
-      trackColor: MaterialStateProperty.resolveWith<Color>((states) {
-        if (states.contains(MaterialState.selected)) {
+      trackColor: WidgetStateProperty.resolveWith<Color>((states) {
+        if (states.contains(WidgetState.selected)) {
           return AppColors.primaryLight.withOpacity(0.5);
         }
         return Colors.grey.withOpacity(0.5);
@@ -147,12 +145,10 @@ class AppTheme {
       primary: AppColors.primaryDark,
       primaryContainer: AppColors.primaryVariantDark,
       secondary: AppColors.secondaryDark,
-      background: AppColors.backgroundDark,
       surface: AppColors.surfaceDark,
       error: AppColors.errorDark,
       onPrimary: AppColors.onPrimaryDark,
       onSecondary: AppColors.onSecondaryDark,
-      onBackground: AppColors.onBackgroundDark,
       onSurface: AppColors.onSurfaceDark,
       onError: AppColors.onErrorDark,
     ),
@@ -228,14 +224,14 @@ class AppTheme {
       foregroundColor: AppColors.onPrimaryDark,
     ),
     switchTheme: SwitchThemeData(
-      thumbColor: MaterialStateProperty.resolveWith<Color>((states) {
-        if (states.contains(MaterialState.selected)) {
+      thumbColor: WidgetStateProperty.resolveWith<Color>((states) {
+        if (states.contains(WidgetState.selected)) {
           return AppColors.primaryDark;
         }
         return Colors.grey;
       }),
-      trackColor: MaterialStateProperty.resolveWith<Color>((states) {
-        if (states.contains(MaterialState.selected)) {
+      trackColor: WidgetStateProperty.resolveWith<Color>((states) {
+        if (states.contains(WidgetState.selected)) {
           return AppColors.primaryDark.withOpacity(0.5);
         }
         return Colors.grey.withOpacity(0.5);

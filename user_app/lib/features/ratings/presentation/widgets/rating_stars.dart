@@ -31,7 +31,8 @@ class RatingStars extends StatelessWidget {
           children: List.generate(5, (index) {
             if (index < rating.floor()) {
               return Icon(Icons.star, color: color, size: size);
-            } else if (index < rating.ceil() && rating.floor() != rating.ceil()) {
+            } else if (index < rating.ceil() &&
+                rating.floor() != rating.ceil()) {
               return Icon(Icons.star_half, color: color, size: size);
             } else {
               return Icon(Icons.star_border, color: borderColor, size: size);
@@ -42,10 +43,11 @@ class RatingStars extends StatelessWidget {
           const SizedBox(width: 4),
           Text(
             rating.toStringAsFixed(1),
-            style: ratingTextStyle ?? TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: size * 0.8,
-            ),
+            style: ratingTextStyle ??
+                TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: size * 0.8,
+                ),
           ),
         ],
       ],
@@ -114,10 +116,11 @@ class _InteractiveRatingStarsState extends State<InteractiveRatingStars> {
           const SizedBox(width: 8),
           Text(
             _rating.toStringAsFixed(1),
-            style: widget.ratingTextStyle ?? TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: widget.size * 0.7,
-            ),
+            style: widget.ratingTextStyle ??
+                TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: widget.size * 0.7,
+                ),
           ),
         ],
       ],

@@ -41,8 +41,10 @@ class NotificationState {
   }
 
   /// نسخة من الحالة مع إشعارات جديدة
-  NotificationState copyWithNotifications(List<NotificationModel> newNotifications) {
-    final unread = newNotifications.where((notification) => !notification.isRead).length;
+  NotificationState copyWithNotifications(
+      List<NotificationModel> newNotifications) {
+    final unread =
+        newNotifications.where((notification) => !notification.isRead).length;
     return NotificationState(
       notifications: newNotifications,
       isLoading: false,
@@ -79,7 +81,8 @@ final notificationServiceProvider = Provider<NotificationService>((ref) {
 });
 
 /// مزود حالة الإشعارات
-final notificationProvider = StateNotifierProvider<NotificationNotifier, NotificationState>((ref) {
+final notificationProvider =
+    StateNotifierProvider<NotificationNotifier, NotificationState>((ref) {
   final notificationService = ref.watch(notificationServiceProvider);
   return NotificationNotifier(notificationService);
 });
@@ -88,14 +91,15 @@ final notificationProvider = StateNotifierProvider<NotificationNotifier, Notific
 class NotificationNotifier extends StateNotifier<NotificationState> {
   final NotificationService _notificationService;
 
-  NotificationNotifier(this._notificationService) : super(NotificationState.initial()) {
+  NotificationNotifier(this._notificationService)
+      : super(NotificationState.initial()) {
     fetchNotifications();
   }
 
   /// جلب الإشعارات
   Future<void> fetchNotifications() async {
     state = state.copyWithLoading();
-    
+
     try {
       final notifications = await _notificationService.getNotifications();
       state = state.copyWithNotifications(notifications);
@@ -108,7 +112,7 @@ class NotificationNotifier extends StateNotifier<NotificationState> {
   Future<void> markAsRead(String notificationId) async {
     try {
       await _notificationService.markAsRead(notificationId);
-      
+
       final updatedNotifications = state.notifications.map((notification) {
         if (notification.id == notificationId) {
           return NotificationModel(
@@ -123,7 +127,7 @@ class NotificationNotifier extends StateNotifier<NotificationState> {
         }
         return notification;
       }).toList();
-      
+
       state = state.copyWithNotifications(updatedNotifications);
     } catch (e) {
       state = state.copyWithError(e.toString());
@@ -134,7 +138,7 @@ class NotificationNotifier extends StateNotifier<NotificationState> {
   Future<void> markAllAsRead() async {
     try {
       await _notificationService.markAllAsRead();
-      
+
       final updatedNotifications = state.notifications.map((notification) {
         return NotificationModel(
           id: notification.id,
@@ -146,7 +150,7 @@ class NotificationNotifier extends StateNotifier<NotificationState> {
           data: notification.data,
         );
       }).toList();
-      
+
       state = state.copyWithNotifications(updatedNotifications);
     } catch (e) {
       state = state.copyWithError(e.toString());

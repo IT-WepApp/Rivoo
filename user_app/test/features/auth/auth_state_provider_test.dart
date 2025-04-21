@@ -37,11 +37,13 @@ void main() {
       expect(authState, const AuthState.initial());
     });
 
-    test('يجب أن تتغير الحالة إلى unauthenticated عندما يكون المستخدم null', () async {
+    test('يجب أن تتغير الحالة إلى unauthenticated عندما يكون المستخدم null',
+        () async {
       // محاكاة تغير حالة المصادقة مع مستخدم فارغ
       final controller = StreamController<User?>();
-      when(mockFirebaseAuth.authStateChanges()).thenAnswer((_) => controller.stream);
-      
+      when(mockFirebaseAuth.authStateChanges())
+          .thenAnswer((_) => controller.stream);
+
       // إعادة إنشاء المزود مع المحاكاة الجديدة
       container = ProviderContainer(
         overrides: [
@@ -49,22 +51,23 @@ void main() {
           // تجاوز مزود FirebaseAuth
         ],
       );
-      
+
       // إرسال قيمة null في تدفق حالة المصادقة
       controller.add(null);
-      
+
       // الانتظار لتحديث الحالة
       await Future.delayed(Duration.zero);
-      
+
       // التحقق من الحالة الجديدة
       final authState = container.read(authStateNotifierProvider);
       expect(authState, const AuthState.unauthenticated());
-      
+
       // تنظيف
       await controller.close();
     });
 
-    test('يجب أن تتغير الحالة إلى authenticated عند تسجيل الدخول بنجاح', () async {
+    test('يجب أن تتغير الحالة إلى authenticated عند تسجيل الدخول بنجاح',
+        () async {
       // إعداد نموذج المستخدم المتوقع
       final userModel = UserModel(
         id: 'test-user-id',
@@ -72,24 +75,24 @@ void main() {
         email: 'test@example.com',
         role: 'customer',
       );
-      
+
       // محاكاة تسجيل الدخول الناجح
       when(mockAuthService.signInWithEmailAndPassword(
-        'test@example.com', 
-        'password123'
-      )).thenAnswer((_) async {});
-      
+              'test@example.com', 'password123'))
+          .thenAnswer((_) async {});
+
       // محاكاة الحصول على بيانات المستخدم
       when(mockAuthService.getUserData('test-user-id'))
           .thenAnswer((_) async => userModel);
-      
+
       // محاكاة تغير حالة المصادقة
       final mockUser = MockUser();
       when(mockUser.uid).thenReturn('test-user-id');
-      
+
       final controller = StreamController<User?>();
-      when(mockFirebaseAuth.authStateChanges()).thenAnswer((_) => controller.stream);
-      
+      when(mockFirebaseAuth.authStateChanges())
+          .thenAnswer((_) => controller.stream);
+
       // إعادة إنشاء المزود مع المحاكاة الجديدة
       container = ProviderContainer(
         overrides: [
@@ -97,24 +100,25 @@ void main() {
           // تجاوز مزود FirebaseAuth
         ],
       );
-      
+
       // تنفيذ تسجيل الدخول
-      await container.read(authStateNotifierProvider.notifier)
+      await container
+          .read(authStateNotifierProvider.notifier)
           .signInWithEmailAndPassword('test@example.com', 'password123');
-      
+
       // إرسال حالة المستخدم المسجل
       controller.add(mockUser);
-      
+
       // الانتظار لتحديث الحالة
       await Future.delayed(Duration.zero);
-      
+
       // التحقق من الحالة النهائية
       final authState = container.read(authStateNotifierProvider);
       expect(
         authState,
         AuthState.authenticated(userModel),
       );
-      
+
       // تنظيف
       await controller.close();
     });
@@ -122,22 +126,21 @@ void main() {
     test('يجب أن تتغير الحالة إلى error عند فشل تسجيل الدخول', () async {
       // محاكاة فشل تسجيل الدخول
       when(mockAuthService.signInWithEmailAndPassword(
-        'test@example.com', 
-        'wrong_password'
-      )).thenThrow(Exception('Invalid credentials'));
-      
+              'test@example.com', 'wrong_password'))
+          .thenThrow(Exception('Invalid credentials'));
+
       // تنفيذ تسجيل الدخول مع بيانات خاطئة
-      await container.read(authStateNotifierProvider.notifier)
+      await container
+          .read(authStateNotifierProvider.notifier)
           .signInWithEmailAndPassword('test@example.com', 'wrong_password');
-      
+
       // التحقق من الحالة النهائية
       final authState = container.read(authStateNotifierProvider);
       expect(
         authState,
-        predicate<AuthState>((state) => 
-          state.toString().contains('AuthState.error') &&
-          state.toString().contains('Invalid credentials')
-        ),
+        predicate<AuthState>((state) =>
+            state.toString().contains('AuthState.error') &&
+            state.toString().contains('Invalid credentials')),
       );
     });
   });
@@ -148,33 +151,36 @@ void main() {
       container = ProviderContainer(
         overrides: [
           authStateNotifierProvider.overrideWith(
-            (ref) => AuthStateNotifier()..state = AuthState.authenticated(
-              UserModel(
-                id: 'test-id',
-                name: 'Test User',
-                email: 'test@example.com',
-                role: 'customer',
+            (ref) => AuthStateNotifier()
+              ..state = AuthState.authenticated(
+                UserModel(
+                  id: 'test-id',
+                  name: 'Test User',
+                  email: 'test@example.com',
+                  role: 'customer',
+                ),
               ),
-            ),
           ),
         ],
       );
-      
+
       // التحقق من قيمة isAuthenticated
       final isAuthenticated = container.read(isAuthenticatedProvider);
       expect(isAuthenticated, true);
     });
 
-    test('isAuthenticated يجب أن يعيد false عندما لا يكون المستخدم مصادقًا', () {
+    test('isAuthenticated يجب أن يعيد false عندما لا يكون المستخدم مصادقًا',
+        () {
       // تعيين حالة المصادقة إلى unauthenticated
       container = ProviderContainer(
         overrides: [
           authStateNotifierProvider.overrideWith(
-            (ref) => AuthStateNotifier()..state = const AuthState.unauthenticated(),
+            (ref) =>
+                AuthStateNotifier()..state = const AuthState.unauthenticated(),
           ),
         ],
       );
-      
+
       // التحقق من قيمة isAuthenticated
       final isAuthenticated = container.read(isAuthenticatedProvider);
       expect(isAuthenticated, false);
@@ -188,16 +194,17 @@ void main() {
         email: 'test@example.com',
         role: 'customer',
       );
-      
+
       // تعيين حالة المصادقة إلى authenticated
       container = ProviderContainer(
         overrides: [
           authStateNotifierProvider.overrideWith(
-            (ref) => AuthStateNotifier()..state = AuthState.authenticated(userModel),
+            (ref) =>
+                AuthStateNotifier()..state = AuthState.authenticated(userModel),
           ),
         ],
       );
-      
+
       // التحقق من قيمة currentUser
       final currentUser = container.read(currentUserProvider);
       expect(currentUser, userModel);
@@ -211,16 +218,17 @@ void main() {
         email: 'test@example.com',
         role: 'admin',
       );
-      
+
       // تعيين حالة المصادقة إلى authenticated
       container = ProviderContainer(
         overrides: [
           authStateNotifierProvider.overrideWith(
-            (ref) => AuthStateNotifier()..state = AuthState.authenticated(userModel),
+            (ref) =>
+                AuthStateNotifier()..state = AuthState.authenticated(userModel),
           ),
         ],
       );
-      
+
       // التحقق من قيمة userRole
       final userRole = container.read(userRoleProvider);
       expect(userRole, 'admin');

@@ -12,16 +12,16 @@ part 'auth_state_provider.g.dart';
 class AuthState with _$AuthState {
   /// حالة التحميل الأولي
   const factory AuthState.initial() = _Initial;
-  
+
   /// حالة التحميل
   const factory AuthState.loading() = _Loading;
-  
+
   /// حالة المصادقة الناجحة
   const factory AuthState.authenticated(UserModel user) = _Authenticated;
-  
+
   /// حالة عدم المصادقة
   const factory AuthState.unauthenticated() = _Unauthenticated;
-  
+
   /// حالة الخطأ
   const factory AuthState.error(String message) = _Error;
 }
@@ -30,17 +30,17 @@ class AuthState with _$AuthState {
 @Riverpod(keepAlive: true)
 class AuthStateNotifier extends _$AuthStateNotifier {
   late final AuthService _authService;
-  
+
   @override
   AuthState build() {
     _authService = ref.read(authServiceProvider);
-    
+
     // الاستماع لتغييرات حالة المصادقة من Firebase
     FirebaseAuth.instance.authStateChanges().listen(_handleAuthStateChange);
-    
+
     return const AuthState.initial();
   }
-  
+
   /// معالجة تغييرات حالة المصادقة
   void _handleAuthStateChange(User? user) async {
     if (user == null) {
@@ -55,7 +55,7 @@ class AuthStateNotifier extends _$AuthStateNotifier {
       }
     }
   }
-  
+
   /// تسجيل الدخول باستخدام البريد الإلكتروني وكلمة المرور
   Future<void> signInWithEmailAndPassword(String email, String password) async {
     state = const AuthState.loading();
@@ -66,9 +66,10 @@ class AuthStateNotifier extends _$AuthStateNotifier {
       state = AuthState.error(e.toString());
     }
   }
-  
+
   /// إنشاء حساب جديد
-  Future<void> createUserWithEmailAndPassword(String email, String password, String name) async {
+  Future<void> createUserWithEmailAndPassword(
+      String email, String password, String name) async {
     state = const AuthState.loading();
     try {
       await _authService.createUserWithEmailAndPassword(email, password, name);
@@ -77,7 +78,7 @@ class AuthStateNotifier extends _$AuthStateNotifier {
       state = AuthState.error(e.toString());
     }
   }
-  
+
   /// تسجيل الخروج
   Future<void> signOut() async {
     state = const AuthState.loading();

@@ -34,23 +34,24 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
       try {
         final authNotifier = ref.read(authStateProvider.notifier);
         await authNotifier.sendPasswordResetEmail(_emailController.text);
-        
+
         if (!mounted) return;
-        
+
         setState(() {
           _isSuccess = true;
           _isSubmitting = false;
         });
       } catch (e) {
         if (!mounted) return;
-        
+
         setState(() {
           _isSubmitting = false;
         });
-        
+
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('فشل إرسال رابط إعادة تعيين كلمة المرور: ${e.toString()}'),
+            content:
+                Text('فشل إرسال رابط إعادة تعيين كلمة المرور: ${e.toString()}'),
             backgroundColor: Colors.red,
           ),
         );
@@ -80,31 +81,24 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           const SizedBox(height: 24),
-          
           const Icon(
             Icons.lock_reset,
             size: 80,
             color: Colors.blue,
           ),
-          
           const SizedBox(height: 32),
-          
           Text(
             'نسيت كلمة المرور؟',
             style: Theme.of(context).textTheme.headlineMedium,
             textAlign: TextAlign.center,
           ),
-          
           const SizedBox(height: 16),
-          
           Text(
             'أدخل بريدك الإلكتروني وسنرسل لك رابطاً لإعادة تعيين كلمة المرور',
             style: Theme.of(context).textTheme.bodyLarge,
             textAlign: TextAlign.center,
           ),
-          
           const SizedBox(height: 32),
-          
           AppWidgets.AppTextField(
             controller: _emailController,
             label: 'البريد الإلكتروني',
@@ -115,22 +109,17 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
             validator: Validators.validateEmail,
             enabled: !_isSubmitting,
           ),
-          
           const SizedBox(height: 32),
-          
           AppWidgets.AppButton(
             text: 'إرسال رابط إعادة التعيين',
             onPressed: _resetPassword,
             isLoading: _isSubmitting,
             icon: const Icon(Icons.send),
           ),
-          
           const SizedBox(height: 16),
-          
           TextButton(
-            onPressed: _isSubmitting
-                ? null
-                : () => context.go(RouteConstants.login),
+            onPressed:
+                _isSubmitting ? null : () => context.go(RouteConstants.login),
             child: const Text('العودة إلى تسجيل الدخول'),
           ),
         ],
@@ -148,33 +137,25 @@ class _ForgotPasswordPageState extends ConsumerState<ForgotPasswordPage> {
           size: 80,
           color: Colors.green,
         ),
-        
         const SizedBox(height: 32),
-        
         Text(
           'تم إرسال رابط إعادة التعيين',
           style: Theme.of(context).textTheme.headlineMedium,
           textAlign: TextAlign.center,
         ),
-        
         const SizedBox(height: 16),
-        
         Text(
           'لقد أرسلنا رابط إعادة تعيين كلمة المرور إلى ${_emailController.text}',
           style: Theme.of(context).textTheme.bodyLarge,
           textAlign: TextAlign.center,
         ),
-        
         const SizedBox(height: 8),
-        
         Text(
           'يرجى التحقق من بريدك الإلكتروني واتباع التعليمات لإعادة تعيين كلمة المرور',
           style: Theme.of(context).textTheme.bodyMedium,
           textAlign: TextAlign.center,
         ),
-        
         const SizedBox(height: 32),
-        
         AppButton(
           text: 'العودة إلى تسجيل الدخول',
           onPressed: () => context.go(RouteConstants.login),

@@ -5,7 +5,8 @@ part 'delivery_person_model.g.dart'; // For json_serializable
 class DeliveryPersonModel {
   final String id;
   final String name;
-  final String? email; // Make email nullable if it might not always be available
+  final String?
+      email; // Make email nullable if it might not always be available
   final double? currentLat;
   final double? currentLng;
   final bool isAvailable;

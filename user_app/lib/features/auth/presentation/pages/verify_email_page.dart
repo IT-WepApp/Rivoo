@@ -56,32 +56,33 @@ class _VerifyEmailPageState extends ConsumerState<VerifyEmailPage> {
     try {
       final authNotifier = ref.read(authStateProvider.notifier);
       await authNotifier.checkEmailVerification();
-      
+
       final authState = ref.read(authStateProvider);
       if (authState.status == AuthStatus.authenticated) {
         if (!mounted) return;
-        
+
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text('تم تأكيد البريد الإلكتروني بنجاح'),
             backgroundColor: Colors.green,
           ),
         );
-        
+
         context.go(RouteConstants.home);
       } else {
         if (!mounted) return;
-        
+
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('لم يتم تأكيد البريد الإلكتروني بعد، يرجى التحقق من بريدك الإلكتروني'),
+            content: Text(
+                'لم يتم تأكيد البريد الإلكتروني بعد، يرجى التحقق من بريدك الإلكتروني'),
             backgroundColor: Colors.orange,
           ),
         );
       }
     } catch (e) {
       if (!mounted) return;
-      
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('حدث خطأ: ${e.toString()}'),
@@ -107,20 +108,21 @@ class _VerifyEmailPageState extends ConsumerState<VerifyEmailPage> {
     try {
       final authNotifier = ref.read(authStateProvider.notifier);
       await authNotifier.sendEmailVerification();
-      
+
       if (!mounted) return;
-      
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('تم إرسال رابط التأكيد مرة أخرى، يرجى التحقق من بريدك الإلكتروني'),
+          content: Text(
+              'تم إرسال رابط التأكيد مرة أخرى، يرجى التحقق من بريدك الإلكتروني'),
           backgroundColor: Colors.green,
         ),
       );
-      
+
       _startResendTimer();
     } catch (e) {
       if (!mounted) return;
-      
+
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('فشل إرسال رابط التأكيد: ${e.toString()}'),
@@ -158,42 +160,32 @@ class _VerifyEmailPageState extends ConsumerState<VerifyEmailPage> {
                 size: 80,
                 color: Colors.green,
               ),
-              
               const SizedBox(height: 32),
-              
               Text(
                 'تأكيد البريد الإلكتروني',
                 style: Theme.of(context).textTheme.headlineMedium,
                 textAlign: TextAlign.center,
               ),
-              
               const SizedBox(height: 16),
-              
               Text(
                 'لقد أرسلنا رابط تأكيد إلى $email',
                 style: Theme.of(context).textTheme.bodyLarge,
                 textAlign: TextAlign.center,
               ),
-              
               const SizedBox(height: 8),
-              
               Text(
                 'يرجى التحقق من بريدك الإلكتروني والنقر على الرابط لتأكيد حسابك',
                 style: Theme.of(context).textTheme.bodyMedium,
                 textAlign: TextAlign.center,
               ),
-              
               const SizedBox(height: 32),
-              
               AppButton(
                 text: 'لقد قمت بتأكيد بريدي الإلكتروني',
                 onPressed: _checkEmailVerification,
                 isLoading: _isCheckingVerification,
                 icon: Icons.check_circle,
               ),
-              
               const SizedBox(height: 16),
-              
               AppButton(
                 text: _canResend
                     ? 'إعادة إرسال رابط التأكيد'
@@ -203,9 +195,7 @@ class _VerifyEmailPageState extends ConsumerState<VerifyEmailPage> {
                 isOutlined: true,
                 icon: Icons.refresh,
               ),
-              
               const SizedBox(height: 24),
-              
               TextButton(
                 onPressed: () {
                   ref.read(authStateProvider.notifier).signOut();

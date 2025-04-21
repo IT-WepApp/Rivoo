@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../core/constants/route_constants.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/widgets/app_widgets.dart';
 
@@ -17,33 +16,34 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
   bool _isDarkMode = false;
   bool _isNotificationsEnabled = true;
   String _language = 'ar';
-  
+
   // إعدادات المتجر
   final _storeNameController = TextEditingController();
   final _storeDescriptionController = TextEditingController();
   final _storeAddressController = TextEditingController();
   final _storePhoneController = TextEditingController();
   final _storeEmailController = TextEditingController();
-  
+
   // إعدادات الشحن
   bool _isFreeShippingEnabled = false;
-  final _minimumOrderForFreeShippingController = TextEditingController(text: '100');
+  final _minimumOrderForFreeShippingController =
+      TextEditingController(text: '100');
   final _shippingFeeController = TextEditingController(text: '15');
-  
+
   // إعدادات الضرائب
   bool _isTaxIncluded = true;
   final _taxRateController = TextEditingController(text: '15');
-  
+
   bool _isLoading = false;
   String _errorMessage = '';
   String _successMessage = '';
-  
+
   @override
   void initState() {
     super.initState();
     _loadSettings();
   }
-  
+
   @override
   void dispose() {
     _storeNameController.dispose();
@@ -56,35 +56,36 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
     _taxRateController.dispose();
     super.dispose();
   }
-  
+
   Future<void> _loadSettings() async {
     setState(() {
       _isLoading = true;
       _errorMessage = '';
     });
-    
+
     try {
       // هنا يتم تحميل الإعدادات من Firebase
       // في هذا المثال، نستخدم بيانات وهمية
-      
+
       setState(() {
         _isDarkMode = false;
         _isNotificationsEnabled = true;
         _language = 'ar';
-        
+
         _storeNameController.text = 'متجر الريفوسي';
-        _storeDescriptionController.text = 'متجر متخصص في بيع المنتجات الغذائية الطازجة';
+        _storeDescriptionController.text =
+            'متجر متخصص في بيع المنتجات الغذائية الطازجة';
         _storeAddressController.text = 'الرياض، المملكة العربية السعودية';
         _storePhoneController.text = '0512345678';
         _storeEmailController.text = 'store@rivosy.com';
-        
+
         _isFreeShippingEnabled = true;
         _minimumOrderForFreeShippingController.text = '100';
         _shippingFeeController.text = '15';
-        
+
         _isTaxIncluded = true;
         _taxRateController.text = '15';
-        
+
         _isLoading = false;
       });
     } catch (e) {
@@ -94,25 +95,25 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
       });
     }
   }
-  
+
   Future<void> _saveSettings() async {
     setState(() {
       _isLoading = true;
       _errorMessage = '';
       _successMessage = '';
     });
-    
+
     try {
       // هنا يتم حفظ الإعدادات في Firebase
       // في هذا المثال، نتظاهر بأن العملية نجحت
-      
+
       await Future.delayed(const Duration(seconds: 1));
-      
+
       setState(() {
         _isLoading = false;
         _successMessage = 'تم حفظ الإعدادات بنجاح';
       });
-      
+
       // إخفاء رسالة النجاح بعد 3 ثوانٍ
       Future.delayed(const Duration(seconds: 3), () {
         if (mounted) {
@@ -128,11 +129,11 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
       });
     }
   }
-  
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('الإعدادات'),
@@ -158,7 +159,8 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                       ),
                       child: Row(
                         children: [
-                          const Icon(Icons.check_circle, color: AppColors.success),
+                          const Icon(Icons.check_circle,
+                              color: AppColors.success),
                           const SizedBox(width: 8),
                           Expanded(
                             child: Text(
@@ -169,7 +171,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                         ],
                       ),
                     ),
-                  
+
                   if (_errorMessage.isNotEmpty)
                     Container(
                       padding: const EdgeInsets.all(12),
@@ -192,7 +194,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                         ],
                       ),
                     ),
-                  
+
                   // إعدادات التطبيق
                   _buildSectionTitle(theme, 'إعدادات التطبيق'),
                   Card(
@@ -232,7 +234,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                     ),
                   ),
                   const SizedBox(height: 24),
-                  
+
                   // إعدادات المتجر
                   _buildSectionTitle(theme, 'إعدادات المتجر'),
                   Card(
@@ -287,7 +289,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                     ),
                   ),
                   const SizedBox(height: 24),
-                  
+
                   // إعدادات الشحن
                   _buildSectionTitle(theme, 'إعدادات الشحن'),
                   Card(
@@ -334,7 +336,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                     ),
                   ),
                   const SizedBox(height: 24),
-                  
+
                   // إعدادات الضرائب
                   _buildSectionTitle(theme, 'إعدادات الضرائب'),
                   Card(
@@ -369,7 +371,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
                     ),
                   ),
                   const SizedBox(height: 32),
-                  
+
                   // زر الحفظ
                   SizedBox(
                     width: double.infinity,
@@ -392,7 +394,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
             ),
     );
   }
-  
+
   Widget _buildSectionTitle(ThemeData theme, String title) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
@@ -404,7 +406,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
       ),
     );
   }
-  
+
   Widget _buildSwitchSetting(
     ThemeData theme,
     String title,
@@ -442,11 +444,11 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
       ],
     );
   }
-  
+
   Widget _buildLanguageSetting(ThemeData theme) {
     return Row(
       children: [
-        Icon(Icons.language, color: AppColors.primary),
+        const Icon(Icons.language, color: AppColors.primary),
         const SizedBox(width: 16),
         Expanded(
           child: Column(
@@ -488,7 +490,7 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
       ],
     );
   }
-  
+
   Widget _buildTextFieldSetting(
     ThemeData theme,
     String label,
@@ -509,7 +511,8 @@ class _SettingsPageState extends ConsumerState<SettingsPage> {
         prefixIcon: Icon(icon),
         suffixText: suffix,
         border: const OutlineInputBorder(),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        contentPadding:
+            const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       ),
     );
   }

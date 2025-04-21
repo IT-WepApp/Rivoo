@@ -22,7 +22,8 @@ class UserModel with _$UserModel {
   }) = _UserModel;
 
   /// إنشاء نموذج من JSON
-  factory UserModel.fromJson(Map<String, dynamic> json) => _$UserModelFromJson(json);
+  factory UserModel.fromJson(Map<String, dynamic> json) =>
+      _$UserModelFromJson(json);
 
   /// إنشاء نموذج فارغ
   factory UserModel.empty() => const UserModel(

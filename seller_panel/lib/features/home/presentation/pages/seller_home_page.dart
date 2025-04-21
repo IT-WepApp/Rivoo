@@ -11,7 +11,8 @@ final currentSellerIdProvider = Provider<String?>((ref) {
   return FirebaseAuth.instance.currentUser?.uid;
 });
 
-final sellerDashboardProvider = FutureProvider.autoDispose<Map<String, dynamic>>((ref) async {
+final sellerDashboardProvider =
+    FutureProvider.autoDispose<Map<String, dynamic>>((ref) async {
   final orderService = ref.watch(orderServiceProvider);
   final sellerId = ref.watch(currentSellerIdProvider);
 
@@ -23,7 +24,8 @@ final sellerDashboardProvider = FutureProvider.autoDispose<Map<String, dynamic>>
 
   return {
     'recentOrders': recentOrders.take(5).toList(),
-    'totalPendingOrders': recentOrders.where((o) => o.status == 'pending').length,
+    'totalPendingOrders':
+        recentOrders.where((o) => o.status == 'pending').length,
   };
 });
 
@@ -52,7 +54,8 @@ class SellerHomePage extends ConsumerWidget {
         data: (data) => _buildDashboardContent(context, data, theme),
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stack) {
-          developer.log('Error loading dashboard', error: error, stackTrace: stack, name: 'SellerHomePage');
+          developer.log('Error loading dashboard',
+              error: error, stackTrace: stack, name: 'SellerHomePage');
           return Center(child: Text('Error loading dashboard data: $error'));
         },
       ),
@@ -60,7 +63,8 @@ class SellerHomePage extends ConsumerWidget {
     );
   }
 
-  Widget _buildDashboardContent(BuildContext context, Map<String, dynamic> data, ThemeData theme) {
+  Widget _buildDashboardContent(
+      BuildContext context, Map<String, dynamic> data, ThemeData theme) {
     final List<OrderModel> recentOrders = data['recentOrders'] ?? [];
     final int pendingOrders = data['totalPendingOrders'] ?? 0;
 
@@ -72,7 +76,8 @@ class SellerHomePage extends ConsumerWidget {
           runSpacing: 16.0,
           alignment: WrapAlignment.center,
           children: [
-            _buildStatCard(theme, 'Pending Orders', pendingOrders.toString(), Icons.pending_actions, Colors.orange),
+            _buildStatCard(theme, 'Pending Orders', pendingOrders.toString(),
+                Icons.pending_actions, Colors.orange),
           ],
         ),
         const SizedBox(height: 24),
@@ -104,21 +109,27 @@ class SellerHomePage extends ConsumerWidget {
         recentOrders.isEmpty
             ? const Text('No recent orders found.')
             : Column(
-                children: recentOrders.map((order) => AppCard(
-                  margin: const EdgeInsets.only(bottom: 8),
-                  child: ListTile(
-                    title: Text('Order #${order.id}'),
-                    subtitle: Text('Status: ${order.status} | Total: \$${order.total.toStringAsFixed(2)}'),
-                    trailing: const Icon(Icons.arrow_forward_ios, size: 16),
-                    onTap: () => context.go('/sellerOrderDetails/${order.id}'),
-                  ),
-                )).toList(),
+                children: recentOrders
+                    .map((order) => AppCard(
+                          margin: const EdgeInsets.only(bottom: 8),
+                          child: ListTile(
+                            title: Text('Order #${order.id}'),
+                            subtitle: Text(
+                                'Status: ${order.status} | Total: \$${order.total.toStringAsFixed(2)}'),
+                            trailing:
+                                const Icon(Icons.arrow_forward_ios, size: 16),
+                            onTap: () =>
+                                context.go('/sellerOrderDetails/${order.id}'),
+                          ),
+                        ))
+                    .toList(),
               ),
       ],
     );
   }
 
-  Widget _buildStatCard(ThemeData theme, String title, String value, IconData icon, Color color) {
+  Widget _buildStatCard(
+      ThemeData theme, String title, String value, IconData icon, Color color) {
     return Card(
       elevation: 2,
       child: Padding(
@@ -131,7 +142,9 @@ class SellerHomePage extends ConsumerWidget {
             const SizedBox(height: 8),
             Text(title, style: theme.textTheme.labelLarge),
             const SizedBox(height: 4),
-            Text(value, style: theme.textTheme.headlineMedium?.copyWith(color: color, fontWeight: FontWeight.bold)),
+            Text(value,
+                style: theme.textTheme.headlineMedium
+                    ?.copyWith(color: color, fontWeight: FontWeight.bold)),
           ],
         ),
       ),
@@ -149,7 +162,8 @@ class SellerHomePage extends ConsumerWidget {
             ),
             child: Text(
               'Seller Menu',
-              style: TextStyle(color: theme.colorScheme.onPrimary, fontSize: 24),
+              style:
+                  TextStyle(color: theme.colorScheme.onPrimary, fontSize: 24),
             ),
           ),
           ListTile(

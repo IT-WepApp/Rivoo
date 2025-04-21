@@ -47,11 +47,16 @@ dependencies:
   shared_widgets:
     path: ../shared_modules/shared_widgets
 
+  dartz: any
+  equatable: any
+  firebase_storage: any
+  image_picker: any
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^2.0.0
 
+  mockito: any
 flutter:
   uses-material-design: true
   

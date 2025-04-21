@@ -6,14 +6,17 @@ import 'package:shared_services/shared_services.dart'; // Import shared services
 import 'package:go_router/go_router.dart'; // Import GoRouter
 import 'package:shared_models/shared_models.dart'; // Import UserModel
 
-class DeliveryLoginPage extends ConsumerStatefulWidget { // Changed to Consumer
+class DeliveryLoginPage extends ConsumerStatefulWidget {
+  // Changed to Consumer
   const DeliveryLoginPage({Key? key}) : super(key: key);
 
   @override
-  ConsumerState<DeliveryLoginPage> createState() => _DeliveryLoginPageState(); // Changed State
+  ConsumerState<DeliveryLoginPage> createState() =>
+      _DeliveryLoginPageState(); // Changed State
 }
 
-class _DeliveryLoginPageState extends ConsumerState<DeliveryLoginPage> { // Changed State type
+class _DeliveryLoginPageState extends ConsumerState<DeliveryLoginPage> {
+  // Changed State type
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
@@ -54,20 +57,23 @@ class _DeliveryLoginPageState extends ConsumerState<DeliveryLoginPage> { // Chan
 
       // Use ref to read the UserService provider
       final userService = ref.read(userServiceProvider);
-      final UserModel? userData = await userService.getUser(user.uid); // Use UserModel
+      final UserModel? userData =
+          await userService.getUser(user.uid); // Use UserModel
 
       if (!mounted) return;
 
       // Check user role from the fetched userData
       if (userData != null && userData.role == 'delivery') {
-         context.go('/deliveryHome');
+        context.go('/deliveryHome');
       } else {
         _showErrorSnackBar('Unauthorized: Delivery personnel only.');
         await FirebaseAuth.instance.signOut(); // Sign out if role is incorrect
       }
     } on FirebaseAuthException catch (e) {
       if (!mounted) return;
-      final errorMessage = (e.code == 'user-not-found' || e.code == 'invalid-credential' || e.code == 'wrong-password')
+      final errorMessage = (e.code == 'user-not-found' ||
+              e.code == 'invalid-credential' ||
+              e.code == 'wrong-password')
           ? 'البريد الإلكتروني أو كلمة المرور غير صحيحة'
           : 'حدث خطأ أثناء تسجيل الدخول: ${e.message}';
       _showErrorSnackBar(errorMessage);

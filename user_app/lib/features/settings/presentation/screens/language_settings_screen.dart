@@ -48,7 +48,7 @@ class LanguageSettingsScreen extends ConsumerWidget {
         itemBuilder: (context, index) {
           final locale = L10n.all[index];
           final isSelected = currentLocale.languageCode == locale.languageCode;
-          
+
           return ListTile(
             title: Text(
               L10n.getLanguageName(locale.languageCode),
@@ -56,13 +56,16 @@ class LanguageSettingsScreen extends ConsumerWidget {
                 fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
               ),
             ),
-            trailing: isSelected ? const Icon(Icons.check, color: Colors.green) : null,
+            trailing: isSelected
+                ? const Icon(Icons.check, color: Colors.green)
+                : null,
             onTap: () {
               ref.read(localeProvider.notifier).setLocale(locale);
               // إظهار رسالة تأكيد
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('تم تغيير اللغة إلى ${L10n.getLanguageName(locale.languageCode)}'),
+                  content: Text(
+                      'تم تغيير اللغة إلى ${L10n.getLanguageName(locale.languageCode)}'),
                   duration: const Duration(seconds: 2),
                 ),
               );

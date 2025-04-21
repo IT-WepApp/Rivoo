@@ -11,7 +11,7 @@ class ThemeToggleWidget extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(themeModeProvider);
     final themeNotifier = ref.read(themeModeProvider.notifier);
-    
+
     return Card(
       margin: const EdgeInsets.all(16),
       child: Padding(
@@ -35,7 +35,7 @@ class ThemeToggleWidget extends ConsumerWidget {
                   themeMode == ThemeMode.light,
                   () => themeNotifier.changeThemeMode(ThemeMode.light),
                 ),
-                
+
                 // زر الوضع الليلي
                 _buildThemeModeButton(
                   context,
@@ -44,7 +44,7 @@ class ThemeToggleWidget extends ConsumerWidget {
                   themeMode == ThemeMode.dark,
                   () => themeNotifier.changeThemeMode(ThemeMode.dark),
                 ),
-                
+
                 // زر إعدادات النظام
                 _buildThemeModeButton(
                   context,
@@ -60,7 +60,7 @@ class ThemeToggleWidget extends ConsumerWidget {
       ),
     );
   }
-  
+
   Widget _buildThemeModeButton(
     BuildContext context,
     IconData icon,
@@ -74,10 +74,14 @@ class ThemeToggleWidget extends ConsumerWidget {
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
         decoration: BoxDecoration(
-          color: isSelected ? Theme.of(context).colorScheme.primary.withOpacity(0.1) : null,
+          color: isSelected
+              ? Theme.of(context).colorScheme.primary.withOpacity(0.1)
+              : null,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: isSelected ? Theme.of(context).colorScheme.primary : Colors.grey.withOpacity(0.3),
+            color: isSelected
+                ? Theme.of(context).colorScheme.primary
+                : Colors.grey.withOpacity(0.3),
             width: isSelected ? 2 : 1,
           ),
         ),
@@ -92,7 +96,8 @@ class ThemeToggleWidget extends ConsumerWidget {
             Text(
               label,
               style: TextStyle(
-                color: isSelected ? Theme.of(context).colorScheme.primary : null,
+                color:
+                    isSelected ? Theme.of(context).colorScheme.primary : null,
                 fontWeight: isSelected ? FontWeight.bold : null,
               ),
             ),

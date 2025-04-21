@@ -12,7 +12,8 @@ void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
 
   group('تدفق المستخدم الكامل', () {
-    testWidgets('تسجيل الدخول، تصفح المنتجات، إضافة إلى السلة، الدفع', (WidgetTester tester) async {
+    testWidgets('تسجيل الدخول، تصفح المنتجات، إضافة إلى السلة، الدفع',
+        (WidgetTester tester) async {
       // تشغيل التطبيق
       app.main();
       await tester.pumpAndSettle();
@@ -21,8 +22,10 @@ void main() {
       expect(find.byType(LoginScreen), findsOneWidget);
 
       // إدخال بيانات تسجيل الدخول
-      await tester.enterText(find.byKey(const Key('email_field')), 'test@example.com');
-      await tester.enterText(find.byKey(const Key('password_field')), 'password123');
+      await tester.enterText(
+          find.byKey(const Key('email_field')), 'test@example.com');
+      await tester.enterText(
+          find.byKey(const Key('password_field')), 'password123');
       await tester.pumpAndSettle();
 
       // النقر على زر تسجيل الدخول
@@ -71,10 +74,13 @@ void main() {
       await tester.pumpAndSettle();
 
       // إدخال بيانات البطاقة
-      await tester.enterText(find.byKey(const Key('card_number_field')), '4242424242424242');
-      await tester.enterText(find.byKey(const Key('expiry_date_field')), '12/25');
+      await tester.enterText(
+          find.byKey(const Key('card_number_field')), '4242424242424242');
+      await tester.enterText(
+          find.byKey(const Key('expiry_date_field')), '12/25');
       await tester.enterText(find.byKey(const Key('cvv_field')), '123');
-      await tester.enterText(find.byKey(const Key('card_holder_field')), 'محمد أحمد');
+      await tester.enterText(
+          find.byKey(const Key('card_holder_field')), 'محمد أحمد');
       await tester.pumpAndSettle();
 
       // النقر على زر إتمام الدفع

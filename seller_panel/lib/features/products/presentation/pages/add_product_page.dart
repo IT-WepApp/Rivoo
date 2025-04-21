@@ -26,22 +26,29 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
   final _descriptionController = TextEditingController();
   final _priceController = TextEditingController();
   final _stockQuantityController = TextEditingController();
-  
+
   String _selectedCategory = 'أخرى';
-  List<String> _categories = ['أخرى', 'طعام', 'مشروبات', 'إلكترونيات', 'ملابس', 'أدوات منزلية'];
-  
+  final List<String> _categories = [
+    'أخرى',
+    'طعام',
+    'مشروبات',
+    'إلكترونيات',
+    'ملابس',
+    'أدوات منزلية'
+  ];
+
   bool _isAvailable = true;
   bool _isFeatured = false;
   bool _hasDiscount = false;
   double _discountPercentage = 0;
-  
+
   // تعديل: استخدام قائمة من الملفات بدلاً من ملف واحد
-  List<File> _imageFiles = [];
+  final List<File> _imageFiles = [];
   List<String> _imageUrls = [];
   bool _isUploading = false;
   double _uploadProgress = 0;
   int _currentUploadIndex = 0;
-  
+
   bool _isSubmitting = false;
   String _errorMessage = '';
 
@@ -68,7 +75,7 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
   Future<void> _pickImage() async {
     final picker = ImagePicker();
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
-    
+
     if (pickedFile != null) {
       setState(() {
         _imageFiles.add(File(pickedFile.path));
@@ -80,7 +87,7 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
   Future<void> _pickMultipleImages() async {
     final picker = ImagePicker();
     final pickedFiles = await picker.pickMultiImage();
-    
+
     if (pickedFiles.isNotEmpty) {
       setState(() {
         for (var pickedFile in pickedFiles) {
@@ -102,23 +109,24 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
     if (_imageFiles.isEmpty) {
       return [];
     }
-    
+
     setState(() {
       _isUploading = true;
       _uploadProgress = 0;
       _currentUploadIndex = 0;
     });
-    
+
     try {
       // استخدام مستودع المنتجات لرفع الصور
       List<String> localPaths = _imageFiles.map((file) => file.path).toList();
-      List<String> urls = await _productRepository.uploadProductImages(productId, localPaths);
-      
+      List<String> urls =
+          await _productRepository.uploadProductImages(productId, localPaths);
+
       setState(() {
         _isUploading = false;
         _imageUrls = urls;
       });
-      
+
       return urls;
     } catch (e) {
       setState(() {
@@ -133,19 +141,19 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
     if (!_formKey.currentState!.validate()) {
       return;
     }
-    
+
     if (_imageFiles.isEmpty) {
       setState(() {
         _errorMessage = 'يرجى إضافة صورة واحدة على الأقل للمنتج';
       });
       return;
     }
-    
+
     setState(() {
       _isSubmitting = true;
       _errorMessage = '';
     });
-    
+
     try {
       // إعداد بيانات المنتج
       final productData = {
@@ -158,32 +166,33 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
         'isFeatured': _isFeatured,
         'imageUrls': [], // سيتم تحديثها بعد رفع الصور
       };
-      
+
       // إضافة بيانات الخصم إذا كان مفعلاً
       if (_hasDiscount) {
         productData['hasDiscount'] = true;
         productData['discountPercentage'] = _discountPercentage;
-        productData['discountedPrice'] = productData['price'] * (1 - _discountPercentage / 100);
+        productData['discountedPrice'] =
+            productData['price'] * (1 - _discountPercentage / 100);
       }
-      
+
       // إضافة المنتج إلى Firestore
       final productService = ref.read(productServiceProvider);
       final productId = await productService.addProduct(productData);
-      
+
       // رفع الصور بعد إنشاء المنتج
       final imageUrls = await _uploadImages(productId);
-      
+
       if (imageUrls.isNotEmpty) {
         // تحديث المنتج بروابط الصور
         await _firestore.collection('products').doc(productId).update({
           'imageUrls': imageUrls,
         });
       }
-      
+
       setState(() {
         _isSubmitting = false;
       });
-      
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -192,7 +201,7 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
             behavior: SnackBarBehavior.floating,
           ),
         );
-        
+
         // العودة إلى صفحة إدارة المنتجات
         context.pop();
       }
@@ -207,7 +216,7 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('إضافة منتج جديد'),
@@ -229,14 +238,14 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
           // صور المنتج
           _buildImagesPicker(theme),
           const SizedBox(height: 24),
-          
+
           // معلومات المنتج الأساسية
           Text(
             'معلومات المنتج',
             style: theme.textTheme.titleLarge,
           ),
           const SizedBox(height: 16),
-          
+
           // اسم المنتج
           TextFormField(
             controller: _nameController,
@@ -253,7 +262,7 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
             },
           ),
           const SizedBox(height: 16),
-          
+
           // وصف المنتج
           TextFormField(
             controller: _descriptionController,
@@ -271,7 +280,7 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
             },
           ),
           const SizedBox(height: 16),
-          
+
           // فئة المنتج
           DropdownButtonFormField<String>(
             value: _selectedCategory,
@@ -294,7 +303,7 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
             },
           ),
           const SizedBox(height: 16),
-          
+
           // السعر والمخزون
           Row(
             children: [
@@ -322,7 +331,7 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
                 ),
               ),
               const SizedBox(width: 16),
-              
+
               // كمية المخزون
               Expanded(
                 child: TextFormField(
@@ -348,14 +357,14 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
             ],
           ),
           const SizedBox(height: 24),
-          
+
           // خيارات إضافية
           Text(
             'خيارات إضافية',
             style: theme.textTheme.titleLarge,
           ),
           const SizedBox(height: 16),
-          
+
           // توفر المنتج
           SwitchListTile(
             title: const Text('متاح للبيع'),
@@ -368,7 +377,7 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
             },
             activeColor: theme.colorScheme.primary,
           ),
-          
+
           // منتج مميز
           SwitchListTile(
             title: const Text('منتج مميز'),
@@ -381,7 +390,7 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
             },
             activeColor: theme.colorScheme.primary,
           ),
-          
+
           // خصم على المنتج
           SwitchListTile(
             title: const Text('تطبيق خصم'),
@@ -394,7 +403,7 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
             },
             activeColor: theme.colorScheme.primary,
           ),
-          
+
           // نسبة الخصم
           if (_hasDiscount)
             Padding(
@@ -402,7 +411,8 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text('نسبة الخصم: ${_discountPercentage.toStringAsFixed(0)}%'),
+                  Text(
+                      'نسبة الخصم: ${_discountPercentage.toStringAsFixed(0)}%'),
                   Slider(
                     value: _discountPercentage,
                     min: 0,
@@ -427,9 +437,9 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
                 ],
               ),
             ),
-          
+
           const SizedBox(height: 24),
-          
+
           // رسالة الخطأ
           if (_errorMessage.isNotEmpty)
             Container(
@@ -442,10 +452,10 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
               ),
               child: Text(
                 _errorMessage,
-                style: TextStyle(color: AppColors.error),
+                style: const TextStyle(color: AppColors.error),
               ),
             ),
-          
+
           // زر الإضافة
           ElevatedButton(
             onPressed: _submitForm,
@@ -476,10 +486,10 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
           style: TextStyle(color: Colors.grey),
         ),
         const SizedBox(height: 16),
-        
+
         // عرض الصور المختارة
         if (_imageFiles.isNotEmpty)
-          Container(
+          SizedBox(
             height: 120,
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
@@ -494,7 +504,9 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(8),
                         border: Border.all(
-                          color: index == 0 ? theme.colorScheme.primary : AppColors.border,
+                          color: index == 0
+                              ? theme.colorScheme.primary
+                              : AppColors.border,
                           width: index == 0 ? 2 : 1,
                         ),
                       ),
@@ -530,7 +542,8 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
                         bottom: 4,
                         left: 4,
                         child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 6, vertical: 2),
                           decoration: BoxDecoration(
                             color: theme.colorScheme.primary,
                             borderRadius: BorderRadius.circular(4),
@@ -550,9 +563,9 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
               },
             ),
           ),
-        
+
         const SizedBox(height: 16),
-        
+
         // أزرار إضافة الصور
         Row(
           children: [
@@ -581,7 +594,7 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
             ),
           ],
         ),
-        
+
         // مؤشر التقدم أثناء الرفع
         if (_isUploading)
           Padding(
@@ -597,7 +610,8 @@ class _AddProductPageState extends ConsumerState<AddProductPage> {
                 LinearProgressIndicator(
                   value: _uploadProgress,
                   backgroundColor: Colors.grey.shade300,
-                  valueColor: AlwaysStoppedAnimation<Color>(theme.colorScheme.primary),
+                  valueColor:
+                      AlwaysStoppedAnimation<Color>(theme.colorScheme.primary),
                 ),
               ],
             ),

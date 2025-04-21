@@ -350,4 +350,5 @@ class AuthRepositoryImpl implements AuthRepository {
       return Right(role);
     } catch (e) {
       return Left(AuthFailure(
-        message: 'فشل الحصول على دور المستخدم: $
+        message: 'فشل الحصول على دور المستخدم: ${e.toString()}'
+      ));

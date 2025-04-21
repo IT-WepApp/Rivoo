@@ -152,7 +152,7 @@ class _SellerProfilePageState extends ConsumerState<SellerProfilePage> {
                   ? NetworkImage(_sellerProfileImage)
                   : null,
               child: _sellerProfileImage.isEmpty
-                  ? Icon(
+                  ? const Icon(
                       Icons.person,
                       size: 40,
                       color: AppColors.primary,
@@ -175,7 +175,7 @@ class _SellerProfilePageState extends ConsumerState<SellerProfilePage> {
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.email,
                         size: 16,
                         color: AppColors.textSecondary,
@@ -192,7 +192,7 @@ class _SellerProfilePageState extends ConsumerState<SellerProfilePage> {
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.phone,
                         size: 16,
                         color: AppColors.textSecondary,
@@ -209,7 +209,7 @@ class _SellerProfilePageState extends ConsumerState<SellerProfilePage> {
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      Icon(
+                      const Icon(
                         Icons.location_on,
                         size: 16,
                         color: AppColors.textSecondary,
@@ -249,7 +249,7 @@ class _SellerProfilePageState extends ConsumerState<SellerProfilePage> {
           children: [
             Row(
               children: [
-                Icon(
+                const Icon(
                   Icons.store,
                   color: AppColors.primary,
                 ),
@@ -285,7 +285,7 @@ class _SellerProfilePageState extends ConsumerState<SellerProfilePage> {
             const SizedBox(height: 8),
             Row(
               children: [
-                Icon(
+                const Icon(
                   Icons.calendar_today,
                   size: 16,
                   color: AppColors.textSecondary,
@@ -302,7 +302,7 @@ class _SellerProfilePageState extends ConsumerState<SellerProfilePage> {
             const SizedBox(height: 4),
             Row(
               children: [
-                Icon(
+                const Icon(
                   Icons.star,
                   size: 16,
                   color: AppColors.warning,
@@ -475,7 +475,7 @@ class _SellerProfilePageState extends ConsumerState<SellerProfilePage> {
               style: theme.textTheme.titleMedium,
             ),
             const Spacer(),
-            Icon(
+            const Icon(
               Icons.arrow_forward_ios,
               size: 16,
               color: AppColors.textSecondary,

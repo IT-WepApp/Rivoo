@@ -102,9 +102,9 @@ class FavoritesPage extends ConsumerWidget {
             children: [
               AspectRatio(
                 aspectRatio: 1,
-                child: product.imageUrl != null && product.imageUrl!.isNotEmpty
+                child: product.imageUrl.isNotEmpty
                     ? Image.network(
-                        product.imageUrl!,
+                        product.imageUrl,
                         fit: BoxFit.cover,
                         errorBuilder: (ctx, err, st) => Container(
                           color: Colors.grey.shade200,
@@ -195,7 +195,8 @@ class FavoritesPage extends ConsumerWidget {
                         cartNotifier.addItem(product);
                         ScaffoldMessenger.of(context).showSnackBar(
                           SnackBar(
-                            content: Text('تمت إضافة ${product.name} إلى السلة'),
+                            content:
+                                Text('تمت إضافة ${product.name} إلى السلة'),
                             action: SnackBarAction(
                               label: 'عرض السلة',
                               onPressed: () => context.go('/cart'),
@@ -224,7 +225,8 @@ class FavoritesPage extends ConsumerWidget {
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('حذف جميع المفضلة'),
-        content: const Text('هل أنت متأكد من رغبتك في حذف جميع المنتجات من المفضلة؟'),
+        content: const Text(
+            'هل أنت متأكد من رغبتك في حذف جميع المنتجات من المفضلة؟'),
         actions: [
           TextButton(
             onPressed: () => Navigator.of(context).pop(),

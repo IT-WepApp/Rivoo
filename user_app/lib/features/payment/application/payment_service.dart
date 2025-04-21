@@ -11,10 +11,10 @@ import 'dart:convert';
 class PaymentService {
   /// مرجع Firestore للمدفوعات
   final CollectionReference _paymentsCollection;
-  
+
   /// خدمة التخزين الآمن
   final SecureStorageService _secureStorage;
-  
+
   /// عنوان الخادم للتعامل مع Stripe
   final String _backendUrl;
 
@@ -23,15 +23,17 @@ class PaymentService {
     required FirebaseFirestore firestore,
     required SecureStorageService secureStorage,
     String? backendUrl,
-  }) : _paymentsCollection = firestore.collection('payments'),
-       _secureStorage = secureStorage,
-       _backendUrl = backendUrl ?? dotenv.env['STRIPE_BACKEND_URL'] ?? 'https://us-central1-rivoosyflutter.cloudfunctions.net/stripePayment';
+  })  : _paymentsCollection = firestore.collection('payments'),
+        _secureStorage = secureStorage,
+        _backendUrl = backendUrl ??
+            dotenv.env['STRIPE_BACKEND_URL'] ??
+            'https://us-central1-rivoosyflutter.cloudfunctions.net/stripePayment';
 
   /// تهيئة Stripe
   Future<void> initializeStripe() async {
-    final publishableKey = dotenv.env['STRIPE_PUBLISHABLE_KEY'] ?? 
+    final publishableKey = dotenv.env['STRIPE_PUBLISHABLE_KEY'] ??
         await _secureStorage.read(key: 'stripe_publishable_key');
-    
+
     if (publishableKey != null && publishableKey.isNotEmpty) {
       Stripe.publishableKey = publishableKey;
       await Stripe.instance.applySettings();
@@ -55,7 +57,7 @@ class PaymentService {
       currency: currency,
       method: method,
     );
-    
+
     final docRef = await _paymentsCollection.add(payment.toFirestore());
     return payment.copyWith(id: docRef.id);
   }
@@ -75,7 +77,7 @@ class PaymentService {
         .where('userId', isEqualTo: userId)
         .orderBy('createdAt', descending: true)
         .get();
-    
+
     return querySnapshot.docs
         .map((doc) => PaymentModel.fromFirestore(doc))
         .toList();
@@ -87,7 +89,7 @@ class PaymentService {
         .where('orderId', isEqualTo: orderId)
         .orderBy('createdAt', descending: true)
         .get();
-    
+
     return querySnapshot.docs
         .map((doc) => PaymentModel.fromFirestore(doc))
         .toList();
@@ -103,9 +105,12 @@ class PaymentService {
     if (payment == null) {
       throw Exception('Payment not found');
     }
-    
-    final updatedPayment = payment.updateStatus(status, errorMessage: errorMessage);
-    await _paymentsCollection.doc(paymentId).update(updatedPayment.toFirestore());
+
+    final updatedPayment =
+        payment.updateStatus(status, errorMessage: errorMessage);
+    await _paymentsCollection
+        .doc(paymentId)
+        .update(updatedPayment.toFirestore());
     return updatedPayment;
   }
 
@@ -123,7 +128,7 @@ class PaymentService {
         payment.id,
         PaymentStatus.processing,
       );
-      
+
       // إنشاء بطاقة Stripe
       final cardDetails = CardDetails(
         number: cardNumber,
@@ -131,7 +136,7 @@ class PaymentService {
         expirationYear: int.parse(expYear),
         cvc: cvc,
       );
-      
+
       // إنشاء طريقة دفع
       final billingDetails = BillingDetails();
       final paymentMethod = await Stripe.instance.createPaymentMethod(
@@ -142,7 +147,7 @@ class PaymentService {
           options: const PaymentMethodOptionsParams(),
         ),
       );
-      
+
       // إرسال طلب إلى الخادم لإكمال الدفع
       final response = await http.post(
         Uri.parse('$_backendUrl/create-payment-intent'),
@@ -155,9 +160,9 @@ class PaymentService {
           'order_id': payment.orderId,
         }),
       );
-      
+
       final responseData = json.decode(response.body);
-      
+
       if (response.statusCode == 200) {
         // تحديث معرف المعاملة وحالة الدفع
         final String transactionId = responseData['transaction_id'];
@@ -193,15 +198,19 @@ class PaymentService {
         payment.id,
         PaymentStatus.processing,
       );
-      
+
       // محاكاة عملية الدفع
       await Future.delayed(const Duration(seconds: 2));
-      
+
       // تحديث معرف المعاملة وحالة الدفع
-      final mockTransactionId = 'paypal_${DateTime.now().millisecondsSinceEpoch}';
-      final paymentWithTransaction = updatedPayment.updateTransactionId(mockTransactionId);
-      await _paymentsCollection.doc(payment.id).update(paymentWithTransaction.toFirestore());
-      
+      final mockTransactionId =
+          'paypal_${DateTime.now().millisecondsSinceEpoch}';
+      final paymentWithTransaction =
+          updatedPayment.updateTransactionId(mockTransactionId);
+      await _paymentsCollection
+          .doc(payment.id)
+          .update(paymentWithTransaction.toFirestore());
+
       return await updatePaymentStatus(payment.id, PaymentStatus.completed);
     } catch (e) {
       // فشل الدفع بسبب استثناء
@@ -220,7 +229,7 @@ class PaymentService {
     try {
       // تحديث حالة الدفع إلى "قيد المعالجة"
       await updatePaymentStatus(payment.id, PaymentStatus.processing);
-      
+
       // إعداد Apple Pay
       final applePayOptions = ApplePayPresentParams(
         cartItems: [
@@ -232,10 +241,11 @@ class PaymentService {
         country: 'US',
         currency: payment.currency,
       );
-      
+
       // عرض واجهة Apple Pay
-      final applePayResult = await Stripe.instance.presentApplePay(applePayOptions);
-      
+      final applePayResult =
+          await Stripe.instance.presentApplePay(applePayOptions);
+
       // إرسال طلب إلى الخادم لإكمال الدفع
       final response = await http.post(
         Uri.parse('$_backendUrl/confirm-apple-pay'),
@@ -248,14 +258,16 @@ class PaymentService {
           'order_id': payment.orderId,
         }),
       );
-      
+
       final responseData = json.decode(response.body);
-      
+
       if (response.statusCode == 200) {
         // تحديث معرف المعاملة وحالة الدفع
         final String transactionId = responseData['transaction_id'];
         final updatedPayment = payment.updateTransactionId(transactionId);
-        await _paymentsCollection.doc(payment.id).update(updatedPayment.toFirestore());
+        await _paymentsCollection
+            .doc(payment.id)
+            .update(updatedPayment.toFirestore());
         return await updatePaymentStatus(payment.id, PaymentStatus.completed);
       } else {
         // فشل الدفع
@@ -283,21 +295,24 @@ class PaymentService {
     try {
       // تحديث حالة الدفع إلى "قيد المعالجة"
       await updatePaymentStatus(payment.id, PaymentStatus.processing);
-      
+
       // إعداد Google Pay
       final googlePayOptions = GooglePayPresentParams(
         clientSecret: await _createPaymentIntent(payment),
         merchantName: 'RivooSy',
       );
-      
+
       // عرض واجهة Google Pay
       await Stripe.instance.presentGooglePay(googlePayOptions);
-      
+
       // تحديث معرف المعاملة وحالة الدفع
-      final mockTransactionId = 'googlepay_${DateTime.now().millisecondsSinceEpoch}';
+      final mockTransactionId =
+          'googlepay_${DateTime.now().millisecondsSinceEpoch}';
       final updatedPayment = payment.updateTransactionId(mockTransactionId);
-      await _paymentsCollection.doc(payment.id).update(updatedPayment.toFirestore());
-      
+      await _paymentsCollection
+          .doc(payment.id)
+          .update(updatedPayment.toFirestore());
+
       return await updatePaymentStatus(payment.id, PaymentStatus.completed);
     } catch (e) {
       // فشل الدفع بسبب استثناء
@@ -329,13 +344,14 @@ class PaymentService {
         'order_id': payment.orderId,
       }),
     );
-    
+
     final responseData = json.decode(response.body);
-    
+
     if (response.statusCode == 200) {
       return responseData['client_secret'];
     } else {
-      throw Exception(responseData['error'] ?? 'Failed to create payment intent');
+      throw Exception(
+          responseData['error'] ?? 'Failed to create payment intent');
     }
   }
 
@@ -350,11 +366,11 @@ class PaymentService {
     if (payment == null) {
       throw Exception('Payment not found');
     }
-    
+
     if (payment.status != PaymentStatus.completed) {
       throw Exception('Only completed payments can be refunded');
     }
-    
+
     // إرسال طلب إلى الخادم لرد المبلغ
     final response = await http.post(
       Uri.parse('$_backendUrl/refund-payment'),
@@ -364,9 +380,9 @@ class PaymentService {
         'transaction_id': payment.transactionId,
       }),
     );
-    
+
     final responseData = json.decode(response.body);
-    
+
     if (response.statusCode == 200) {
       return await updatePaymentStatus(paymentId, PaymentStatus.refunded);
     } else {

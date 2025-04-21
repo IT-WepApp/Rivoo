@@ -40,7 +40,8 @@ class CategoryNotifier extends StateNotifier<CategoryState> {
   }
 
   Future<void> loadCategories() async {
-    state = state.copyWith(isLoading: true, clearError: true, clearErrors: true);
+    state =
+        state.copyWith(isLoading: true, clearError: true, clearErrors: true);
     try {
       final categories = await _categoryService.getAllCategories();
       state = state.copyWith(categories: categories, isLoading: false);
@@ -53,7 +54,8 @@ class CategoryNotifier extends StateNotifier<CategoryState> {
   }
 
   Future<bool> addCategory(Category category) async {
-    state = state.copyWith(isLoading: true, clearError: true, clearErrors: true);
+    state =
+        state.copyWith(isLoading: true, clearError: true, clearErrors: true);
 
     if (category.name.isEmpty) {
       state = state.copyWith(
@@ -77,7 +79,8 @@ class CategoryNotifier extends StateNotifier<CategoryState> {
   }
 
   Future<bool> updateCategory(Category category) async {
-    state = state.copyWith(isLoading: true, clearError: true, clearErrors: true);
+    state =
+        state.copyWith(isLoading: true, clearError: true, clearErrors: true);
 
     if (category.name.isEmpty) {
       state = state.copyWith(

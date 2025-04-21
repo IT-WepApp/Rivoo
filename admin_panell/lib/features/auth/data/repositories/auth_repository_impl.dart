@@ -24,10 +24,10 @@ class AuthRepositoryImpl implements AuthRepository {
     try {
       final userModel = await remoteDataSource.signIn(email, password);
       await localDataSource.cacheUser(userModel);
-      
+
       // تعيين معرف المستخدم في Crashlytics لتسهيل تتبع الأخطاء
       await crashlytics.setUserIdentifier(userModel.id);
-      
+
       return userModel;
     } catch (e, stack) {
       // تسجيل الخطأ في Crashlytics
@@ -53,24 +53,24 @@ class AuthRepositoryImpl implements AuthRepository {
     try {
       // محاولة الحصول على المستخدم من المصدر البعيد أولاً
       final remoteUser = await remoteDataSource.getCurrentUser();
-      
+
       if (remoteUser != null) {
         await localDataSource.cacheUser(remoteUser);
-        
+
         // تعيين معرف المستخدم في Crashlytics
         await crashlytics.setUserIdentifier(remoteUser.id);
-        
+
         return remoteUser;
       }
-      
+
       // إذا لم يكن هناك مستخدم حالي، نحاول الحصول على آخر مستخدم مخزن محلياً
       final localUser = await localDataSource.getLastSignedInUser();
-      
+
       if (localUser != null) {
         // تعيين معرف المستخدم في Crashlytics
         await crashlytics.setUserIdentifier(localUser.id);
       }
-      
+
       return localUser;
     } catch (e, stack) {
       // تسجيل الخطأ في Crashlytics

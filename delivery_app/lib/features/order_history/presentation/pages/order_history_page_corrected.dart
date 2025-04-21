@@ -21,7 +21,14 @@ class _OrderHistoryPageState extends ConsumerState<OrderHistoryPage> {
   String? _sortOrder = 'desc';
   String? _filterStatus = 'delivered';
 
-  final List<String?> _statusOptions = [null, 'delivered', 'cancelled', 'pending', 'processing', 'accepted'];
+  final List<String?> _statusOptions = [
+    null,
+    'delivered',
+    'cancelled',
+    'pending',
+    'processing',
+    'accepted'
+  ];
   final List<String?> _sortOptions = ['createdAt', 'total'];
   final List<String?> _sortOrderOptions = ['asc', 'desc'];
 
@@ -49,7 +56,8 @@ class _OrderHistoryPageState extends ConsumerState<OrderHistoryPage> {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
-            content: Text('Error: Delivery person ID not found. Please log in.'),
+            content:
+                Text('Error: Delivery person ID not found. Please log in.'),
             backgroundColor: Colors.red,
           ),
         );
@@ -62,10 +70,13 @@ class _OrderHistoryPageState extends ConsumerState<OrderHistoryPage> {
     final historyState = ref.watch(orderHistoryNotifierProvider);
     final theme = Theme.of(context);
 
-    ref.listen<OrderHistoryState>(orderHistoryNotifierProvider, (previous, next) {
+    ref.listen<OrderHistoryState>(orderHistoryNotifierProvider,
+        (previous, next) {
       if (next.error != null && next.error != previous?.error && mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: ${next.error!}'), backgroundColor: Colors.red),
+          SnackBar(
+              content: Text('Error: ${next.error!}'),
+              backgroundColor: Colors.red),
         );
       }
     });
@@ -92,13 +103,15 @@ class _OrderHistoryPageState extends ConsumerState<OrderHistoryPage> {
                         ),
                       )
                     : historyState.orders.isEmpty
-                        ? const Center(child: Text('No historical orders found.'))
+                        ? const Center(
+                            child: Text('No historical orders found.'))
                         : RefreshIndicator(
                             onRefresh: () async => _fetchHistory(),
                             child: ListView.builder(
                               itemCount: historyState.orders.length,
                               itemBuilder: (context, index) {
-                                final OrderModel order = historyState.orders[index];
+                                final OrderModel order =
+                                    historyState.orders[index];
                                 return OrderHistoryItem(order: order);
                               },
                             ),
@@ -123,7 +136,9 @@ class _OrderHistoryPageState extends ConsumerState<OrderHistoryPage> {
             items: _statusOptions.map((status) {
               return DropdownMenuItem<String?>(
                 value: status,
-                child: Text(status == null ? 'All Statuses' : status[0].toUpperCase() + status.substring(1)),
+                child: Text(status == null
+                    ? 'All Statuses'
+                    : status[0].toUpperCase() + status.substring(1)),
               );
             }).toList(),
             onChanged: (newValue) {
@@ -137,7 +152,11 @@ class _OrderHistoryPageState extends ConsumerState<OrderHistoryPage> {
             items: _sortOptions.map((field) {
               return DropdownMenuItem<String?>(
                 value: field,
-                child: Text(field == 'createdAt' ? 'Date' : field == 'total' ? 'Amount' : field ?? 'Default'),
+                child: Text(field == 'createdAt'
+                    ? 'Date'
+                    : field == 'total'
+                        ? 'Amount'
+                        : field ?? 'Default'),
               );
             }).toList(),
             onChanged: (newValue) {
@@ -185,7 +204,8 @@ class OrderHistoryItem extends StatelessWidget {
             Text('Customer ID: ${order.userId}'),
             Text('Date: ${formatter.format(order.createdAt.toDate())}'),
             Text('Total: \$${order.total.toStringAsFixed(2)}'),
-            Text('Status: ${order.status[0].toUpperCase()}${order.status.substring(1)}'),
+            Text(
+                'Status: ${order.status[0].toUpperCase()}${order.status.substring(1)}'),
           ],
         ),
         trailing: Icon(Icons.history, color: theme.colorScheme.secondary),

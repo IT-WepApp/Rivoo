@@ -26,7 +26,8 @@ class Promotion {
     this.endDate,
   });
 
-  factory Promotion.fromJson(Map<String, dynamic> json) => _$PromotionFromJson(json);
+  factory Promotion.fromJson(Map<String, dynamic> json) =>
+      _$PromotionFromJson(json);
 
   Map<String, dynamic> toJson() => _$PromotionToJson(this);
 

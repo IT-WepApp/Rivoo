@@ -61,7 +61,9 @@ class _AddReviewScreenState extends ConsumerState<AddReviewScreen> {
             targetId: widget.targetId,
             targetType: widget.targetType,
             rating: _rating,
-            comment: _commentController.text.isEmpty ? null : _commentController.text,
+            comment: _commentController.text.isEmpty
+                ? null
+                : _commentController.text,
           );
 
       if (mounted) {

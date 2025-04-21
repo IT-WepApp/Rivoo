@@ -13,44 +13,48 @@ class OrderListPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final ordersState = ref.watch(ordersProvider);
 
-     // Listen for errors
-     ref.listen<AsyncValue<List<OrderModel>>>(ordersProvider, (previous, next) {
-       if (next is AsyncError && next != previous) {
-         ScaffoldMessenger.of(context).showSnackBar(
-           SnackBar(content: Text('Error: ${next.error}'), backgroundColor: Colors.red),
-         );
-       }
+    // Listen for errors
+    ref.listen<AsyncValue<List<OrderModel>>>(ordersProvider, (previous, next) {
+      if (next is AsyncError && next != previous) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+              content: Text('Error: ${next.error}'),
+              backgroundColor: Colors.red),
+        );
+      }
     });
 
     return Scaffold(
       appBar: AppBar(
-         title: const Text('Current Deliveries'),
-       ),
+        title: const Text('Current Deliveries'),
+      ),
       body: ordersState.when(
         data: (orders) {
-           if (orders.isEmpty) {
-             return const Center(child: Text('No deliveries assigned right now.'));
-           }
-           return RefreshIndicator(
-             onRefresh: () => ref.refresh(ordersProvider.notifier).fetchAssignedOrders(),
-             child: ListView.builder(
-                itemCount: orders.length,
-                itemBuilder: (context, index) {
-                  final order = orders[index];
-                  return OrderListItem(
-                    order: order,
-                     onTap: () {
-                        // Navigate to map/details view
-                         context.go('/deliveryMap/${order.id}'); 
-                                           },
-                  );
-                },
-              ),
-           );
+          if (orders.isEmpty) {
+            return const Center(
+                child: Text('No deliveries assigned right now.'));
+          }
+          return RefreshIndicator(
+            onRefresh: () =>
+                ref.refresh(ordersProvider.notifier).fetchAssignedOrders(),
+            child: ListView.builder(
+              itemCount: orders.length,
+              itemBuilder: (context, index) {
+                final order = orders[index];
+                return OrderListItem(
+                  order: order,
+                  onTap: () {
+                    // Navigate to map/details view
+                    context.go('/deliveryMap/${order.id}');
+                  },
+                );
+              },
+            ),
+          );
         },
         error: (error, stackTrace) => Center(
-          child: Text('Failed to load deliveries. Pull down to retry. Error: $error')
-        ),
+            child: Text(
+                'Failed to load deliveries. Pull down to retry. Error: $error')),
         loading: () => const Center(child: CircularProgressIndicator()),
       ),
     );
@@ -65,12 +69,12 @@ class OrderListItem extends StatelessWidget {
   const OrderListItem({
     super.key,
     required this.order,
-     this.onTap,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-     final theme = Theme.of(context);
+    final theme = Theme.of(context);
     final DateFormat formatter = DateFormat('yyyy-MM-dd HH:mm');
 
     return Card(
@@ -78,25 +82,26 @@ class OrderListItem extends StatelessWidget {
       child: ListTile(
         title: Text('Order ID: ${order.id}'),
         subtitle: Column(
-         crossAxisAlignment: CrossAxisAlignment.start,
-         children: [
-          Text('Customer ID: ${order.userId}'),
-          Text('Date: ${formatter.format(order.createdAt.toDate())}'),
-         ],
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Customer ID: ${order.userId}'),
+            Text('Date: ${formatter.format(order.createdAt.toDate())}'),
+          ],
         ),
         trailing: Chip(
-           label: Text(order.status),
-           backgroundColor: _getStatusColor(order.status, theme),
-           padding: const EdgeInsets.symmetric(horizontal: 6),
-           labelStyle: TextStyle(fontSize: 12, color: theme.colorScheme.onSecondaryContainer),
-            visualDensity: VisualDensity.compact,
-         ),
+          label: Text(order.status),
+          backgroundColor: _getStatusColor(order.status, theme),
+          padding: const EdgeInsets.symmetric(horizontal: 6),
+          labelStyle: TextStyle(
+              fontSize: 12, color: theme.colorScheme.onSecondaryContainer),
+          visualDensity: VisualDensity.compact,
+        ),
         onTap: onTap,
       ),
     );
   }
 
-    Color _getStatusColor(String status, ThemeData theme) {
+  Color _getStatusColor(String status, ThemeData theme) {
     switch (status.toLowerCase()) {
       case 'processing':
         return Colors.blue.shade100;

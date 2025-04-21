@@ -37,16 +37,17 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     if (_formKey.currentState!.validate()) {
       try {
         final authNotifier = ref.read(authStateProvider.notifier);
-        await authNotifier.signIn(_emailController.text, _passwordController.text);
-        
+        await authNotifier.signIn(
+            _emailController.text, _passwordController.text);
+
         final authState = ref.read(authStateProvider);
         if (authState.status == AuthStatus.authenticated) {
           if (!mounted) return;
-          
+
           // التحقق مما إذا كان البريد الإلكتروني مؤكداً
           final authService = ref.read(authServiceProvider);
           final isVerified = await authService.isEmailVerified();
-          
+
           if (isVerified) {
             context.go(RouteConstants.home);
           } else {
@@ -83,7 +84,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const SizedBox(height: 24),
-                
+
                 // شعار التطبيق
                 Center(
                   child: Image.asset(
@@ -96,9 +97,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     ),
                   ),
                 ),
-                
+
                 const SizedBox(height: 32),
-                
+
                 // حقل البريد الإلكتروني
                 AppWidgets.AppTextField(
                   controller: _emailController,
@@ -110,9 +111,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   validator: Validators.validateEmail,
                   enabled: !isLoading,
                 ),
-                
+
                 const SizedBox(height: 16),
-                
+
                 // حقل كلمة المرور
                 AppWidgets.AppTextField(
                   controller: _passwordController,
@@ -130,14 +131,16 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   enabled: !isLoading,
                   suffixIcon: IconButton(
                     icon: Icon(
-                      _obscurePassword ? Icons.visibility : Icons.visibility_off,
+                      _obscurePassword
+                          ? Icons.visibility
+                          : Icons.visibility_off,
                     ),
                     onPressed: _togglePasswordVisibility,
                   ),
                 ),
-                
+
                 const SizedBox(height: 16),
-                
+
                 // تذكرني ونسيت كلمة المرور
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -172,18 +175,18 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     ),
                   ],
                 ),
-                
+
                 const SizedBox(height: 32),
-                
+
                 // زر تسجيل الدخول
                 AppWidgets.AppButton(
                   text: 'تسجيل الدخول',
                   onPressed: _login,
                   isLoading: isLoading,
                 ),
-                
+
                 const SizedBox(height: 16),
-                
+
                 // رابط إنشاء حساب جديد
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
@@ -197,9 +200,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                     ),
                   ],
                 ),
-                
+
                 const SizedBox(height: 24),
-                
+
                 // أو تسجيل الدخول باستخدام
                 if (!isLoading) ...[
                   const Row(
@@ -212,9 +215,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                       Expanded(child: Divider()),
                     ],
                   ),
-                  
+
                   const SizedBox(height: 16),
-                  
+
                   // أزرار تسجيل الدخول بواسطة وسائل التواصل الاجتماعي
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,

@@ -82,8 +82,7 @@ void main() {
 
     test('should get orders from repository', () async {
       // Arrange
-      when(mockRepository.getOrders())
-          .thenAnswer((_) async => Right(orders));
+      when(mockRepository.getOrders()).thenAnswer((_) async => Right(orders));
 
       // Act
       final result = await getOrdersUseCase(NoParams());
@@ -97,8 +96,7 @@ void main() {
     test('should return failure when repository fails', () async {
       // Arrange
       final failure = ServerFailure(message: 'Server error');
-      when(mockRepository.getOrders())
-          .thenAnswer((_) async => Left(failure));
+      when(mockRepository.getOrders()).thenAnswer((_) async => Left(failure));
 
       // Act
       final result = await getOrdersUseCase(NoParams());
@@ -111,7 +109,7 @@ void main() {
   });
 
   group('GetOrderDetailsUseCase', () {
-    final orderId = 'order1';
+    const orderId = 'order1';
     final order = Order(
       id: orderId,
       userId: 'user1',
@@ -209,7 +207,7 @@ void main() {
   });
 
   group('CancelOrderUseCase', () {
-    final orderId = 'order1';
+    const orderId = 'order1';
 
     test('should cancel order through repository', () async {
       // Arrange

@@ -3,7 +3,8 @@ import 'package:json_annotation/json_annotation.dart';
 part 'store_model.g.dart'; // Add part file
 
 @JsonSerializable() // Add annotation
-class StoreModel { // Rename class to StoreModel
+class StoreModel {
+  // Rename class to StoreModel
   final String id;
   final String name;
   final String? imageUrl; // Rename image to imageUrl and make optional

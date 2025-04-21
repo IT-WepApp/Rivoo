@@ -21,70 +21,71 @@ Future<String?> sellerAuthGuard(GoRouterState state) async {
 }
 
 final GoRouter appRouter = GoRouter(
-   // redirect: (context, state) => sellerAuthGuard(state),
-   initialLocation: '/', // Start at login
+  // redirect: (context, state) => sellerAuthGuard(state),
+  initialLocation: '/', // Start at login
   routes: <RouteBase>[
     GoRoute(
       path: '/',
-      builder: (context, state) => const SellerLoginPage(), 
+      builder: (context, state) => const SellerLoginPage(),
     ),
     GoRoute(
-      path: '/sellerHome',
-      builder: (context, state) => const SellerHomePage(),
-       routes: [
+        path: '/sellerHome',
+        builder: (context, state) => const SellerHomePage(),
+        routes: [
           GoRoute(
-             path: 'sellerProducts', //   /sellerHome/sellerProducts
-             builder: (context, state) => const ProductListPage(),
-          ),
-           GoRoute(
-             path: 'addProduct', //      /sellerHome/addProduct
-             builder: (context, state) => const AddProductPage(),
+            path: 'sellerProducts', //   /sellerHome/sellerProducts
+            builder: (context, state) => const ProductListPage(),
           ),
           GoRoute(
-             path: 'editProduct/:productId', // /sellerHome/editProduct/some_id
-             builder: (context, state) {
+            path: 'addProduct', //      /sellerHome/addProduct
+            builder: (context, state) => const AddProductPage(),
+          ),
+          GoRoute(
+              path: 'editProduct/:productId', // /sellerHome/editProduct/some_id
+              builder: (context, state) {
                 final productId = state.pathParameters['productId'];
-                if (productId == null) return const Scaffold(body: Center(child: Text('Missing Product ID')));
+                if (productId == null)
+                  return const Scaffold(
+                      body: Center(child: Text('Missing Product ID')));
                 return EditProductPage(productId: productId);
-              }
-          ),
-           GoRoute(
-             path: 'sellerOrders', //      /sellerHome/sellerOrders
-             builder: (context, state) => const OrderListPage(),
+              }),
+          GoRoute(
+            path: 'sellerOrders', //      /sellerHome/sellerOrders
+            builder: (context, state) => const OrderListPage(),
           ),
           GoRoute(
-             path: 'sellerPromotions', // /sellerHome/sellerPromotions
-             builder: (context, state) {
-                 // Decide if promotions are general or per-product
-                 // Example: Navigating to general promotions page
-                 return const PromotionManagementPage(productId: '_general_'); // Or specific product ID
+              path: 'sellerPromotions', // /sellerHome/sellerPromotions
+              builder: (context, state) {
+                // Decide if promotions are general or per-product
+                // Example: Navigating to general promotions page
+                return const PromotionManagementPage(
+                    productId: '_general_'); // Or specific product ID
               },
-             routes: [
+              routes: [
                 // Optional: Route for managing promotion for a specific product
                 GoRoute(
-                  path: ':productId', // /sellerHome/sellerPromotions/some_id
-                  builder: (context, state) {
-                     final productId = state.pathParameters['productId'];
-                     if (productId == null) return const Scaffold(body: Center(child: Text('Missing Product ID')));
-                     return PromotionManagementPage(productId: productId);
-                  }
-                )
-             ]
+                    path: ':productId', // /sellerHome/sellerPromotions/some_id
+                    builder: (context, state) {
+                      final productId = state.pathParameters['productId'];
+                      if (productId == null)
+                        return const Scaffold(
+                            body: Center(child: Text('Missing Product ID')));
+                      return PromotionManagementPage(productId: productId);
+                    })
+              ]),
+          GoRoute(
+            path: 'sellerStats', //       /sellerHome/sellerStats
+            builder: (context, state) => const StatisticsPage(),
           ),
-           GoRoute(
-             path: 'sellerStats', //       /sellerHome/sellerStats
-             builder: (context, state) => const StatisticsPage(),
+          GoRoute(
+            path: 'sellerProfile', //     /sellerHome/sellerProfile
+            builder: (context, state) => const ProfilePage(),
           ),
-           GoRoute(
-             path: 'sellerProfile', //     /sellerHome/sellerProfile
-             builder: (context, state) => const ProfilePage(),
-          ),
-       ]
-    ),
+        ]),
     // Add other top-level routes if necessary
   ],
-   errorBuilder: (context, state) => Scaffold(
-      appBar: AppBar(title: const Text('Error')),
-      body: Center(child: Text('Page not found: ${state.error}')),
-    ),
+  errorBuilder: (context, state) => Scaffold(
+    appBar: AppBar(title: const Text('Error')),
+    body: Center(child: Text('Page not found: ${state.error}')),
+  ),
 );

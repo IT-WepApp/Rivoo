@@ -57,13 +57,16 @@ class StatisticsFirebaseDataSourceImpl implements StatisticsFirebaseDataSource {
     DateTime? date,
   }) async {
     final targetDate = date ?? DateTime.now();
-    final startOfDay = DateTime(targetDate.year, targetDate.month, targetDate.day);
-    final endOfDay = DateTime(targetDate.year, targetDate.month, targetDate.day, 23, 59, 59);
+    final startOfDay =
+        DateTime(targetDate.year, targetDate.month, targetDate.day);
+    final endOfDay =
+        DateTime(targetDate.year, targetDate.month, targetDate.day, 23, 59, 59);
 
     final querySnapshot = await _firestore
         .collection('orders')
         .where('sellerId', isEqualTo: sellerId)
-        .where('orderDate', isGreaterThanOrEqualTo: Timestamp.fromDate(startOfDay))
+        .where('orderDate',
+            isGreaterThanOrEqualTo: Timestamp.fromDate(startOfDay))
         .where('orderDate', isLessThanOrEqualTo: Timestamp.fromDate(endOfDay))
         .get();
 
@@ -82,18 +85,22 @@ class StatisticsFirebaseDataSourceImpl implements StatisticsFirebaseDataSource {
   }) async {
     final now = DateTime.now();
     final targetDate = startDate ?? now;
-    
+
     // حساب بداية الأسبوع (الأحد)
-    final startOfWeek = targetDate.subtract(Duration(days: targetDate.weekday % 7));
-    final startDay = DateTime(startOfWeek.year, startOfWeek.month, startOfWeek.day);
-    
+    final startOfWeek =
+        targetDate.subtract(Duration(days: targetDate.weekday % 7));
+    final startDay =
+        DateTime(startOfWeek.year, startOfWeek.month, startOfWeek.day);
+
     // حساب نهاية الأسبوع (السبت)
-    final endDay = startDay.add(const Duration(days: 6, hours: 23, minutes: 59, seconds: 59));
+    final endDay = startDay
+        .add(const Duration(days: 6, hours: 23, minutes: 59, seconds: 59));
 
     final querySnapshot = await _firestore
         .collection('orders')
         .where('sellerId', isEqualTo: sellerId)
-        .where('orderDate', isGreaterThanOrEqualTo: Timestamp.fromDate(startDay))
+        .where('orderDate',
+            isGreaterThanOrEqualTo: Timestamp.fromDate(startDay))
         .where('orderDate', isLessThanOrEqualTo: Timestamp.fromDate(endDay))
         .get();
 
@@ -119,7 +126,8 @@ class StatisticsFirebaseDataSourceImpl implements StatisticsFirebaseDataSource {
     final querySnapshot = await _firestore
         .collection('orders')
         .where('sellerId', isEqualTo: sellerId)
-        .where('orderDate', isGreaterThanOrEqualTo: Timestamp.fromDate(startOfMonth))
+        .where('orderDate',
+            isGreaterThanOrEqualTo: Timestamp.fromDate(startOfMonth))
         .where('orderDate', isLessThanOrEqualTo: Timestamp.fromDate(endOfMonth))
         .get();
 
@@ -143,7 +151,8 @@ class StatisticsFirebaseDataSourceImpl implements StatisticsFirebaseDataSource {
     final querySnapshot = await _firestore
         .collection('orders')
         .where('sellerId', isEqualTo: sellerId)
-        .where('orderDate', isGreaterThanOrEqualTo: Timestamp.fromDate(startOfYear))
+        .where('orderDate',
+            isGreaterThanOrEqualTo: Timestamp.fromDate(startOfYear))
         .where('orderDate', isLessThanOrEqualTo: Timestamp.fromDate(endOfYear))
         .get();
 
@@ -162,7 +171,8 @@ class StatisticsFirebaseDataSourceImpl implements StatisticsFirebaseDataSource {
     DateTime? startDate,
     DateTime? endDate,
   }) async {
-    final start = startDate ?? DateTime.now().subtract(const Duration(days: 30));
+    final start =
+        startDate ?? DateTime.now().subtract(const Duration(days: 30));
     final end = endDate ?? DateTime.now();
 
     final querySnapshot = await _firestore
@@ -174,7 +184,7 @@ class StatisticsFirebaseDataSourceImpl implements StatisticsFirebaseDataSource {
 
     // تجميع المنتجات وكمياتها
     final Map<String, Map<String, dynamic>> productSales = {};
-    
+
     for (var doc in querySnapshot.docs) {
       final data = doc.data();
       if (data.containsKey('items') && data['items'] is List) {
@@ -183,7 +193,7 @@ class StatisticsFirebaseDataSourceImpl implements StatisticsFirebaseDataSource {
           final quantity = (item['quantity'] as num).toInt();
           final price = (item['price'] as num).toDouble();
           final totalPrice = price * quantity;
-          
+
           if (productSales.containsKey(productId)) {
             productSales[productId]!['quantity'] += quantity;
             productSales[productId]!['totalSales'] += totalPrice;
@@ -199,11 +209,11 @@ class StatisticsFirebaseDataSourceImpl implements StatisticsFirebaseDataSource {
         }
       }
     }
-    
+
     // تحويل إلى قائمة وترتيبها حسب الكمية
     final topProducts = productSales.values.toList()
       ..sort((a, b) => (b['quantity'] as int).compareTo(a['quantity'] as int));
-    
+
     // إرجاع العدد المطلوب من المنتجات
     return topProducts.take(limit).toList();
   }
@@ -222,22 +232,22 @@ class StatisticsFirebaseDataSourceImpl implements StatisticsFirebaseDataSource {
       startDate: startDate,
       endDate: endDate,
     );
-    
+
     // الحصول على فئات المنتجات
     final Map<String, Map<String, dynamic>> categorySales = {};
-    
+
     for (var product in topProducts) {
       // نحتاج إلى الحصول على فئة المنتج من مجموعة المنتجات
       final productSnapshot = await _firestore
           .collection('products')
           .doc(product['productId'])
           .get();
-      
+
       if (productSnapshot.exists) {
         final productData = productSnapshot.data()!;
         final categoryId = productData['categoryId'] ?? 'uncategorized';
         final categoryName = productData['categoryName'] ?? 'غير مصنف';
-        
+
         if (categorySales.containsKey(categoryId)) {
           categorySales[categoryId]!['quantity'] += product['quantity'];
           categorySales[categoryId]!['totalSales'] += product['totalSales'];
@@ -251,11 +261,12 @@ class StatisticsFirebaseDataSourceImpl implements StatisticsFirebaseDataSource {
         }
       }
     }
-    
+
     // تحويل إلى قائمة وترتيبها حسب المبيعات
     final topCategories = categorySales.values.toList()
-      ..sort((a, b) => (b['totalSales'] as double).compareTo(a['totalSales'] as double));
-    
+      ..sort((a, b) =>
+          (b['totalSales'] as double).compareTo(a['totalSales'] as double));
+
     // إرجاع العدد المطلوب من الفئات
     return topCategories.take(limit).toList();
   }
@@ -272,49 +283,51 @@ class StatisticsFirebaseDataSourceImpl implements StatisticsFirebaseDataSource {
     final Set<String> uniqueProducts = {};
     final Map<String, double> salesByCategory = {};
     final Map<DateTime, double> salesByDate = {};
-    
+
     for (var doc in docs) {
       final data = doc.data();
       totalSales += (data['totalAmount'] as num).toDouble();
-      
+
       // جمع المنتجات الفريدة
       if (data.containsKey('items') && data['items'] is List) {
         for (var item in data['items']) {
           uniqueProducts.add(item['productId']);
-          
+
           // جمع المبيعات حسب الفئة
           final categoryId = item['categoryId'] ?? 'uncategorized';
           final price = (item['price'] as num).toDouble();
           final quantity = (item['quantity'] as num).toInt();
           final itemTotal = price * quantity;
-          
+
           if (salesByCategory.containsKey(categoryId)) {
-            salesByCategory[categoryId] = salesByCategory[categoryId]! + itemTotal;
+            salesByCategory[categoryId] =
+                salesByCategory[categoryId]! + itemTotal;
           } else {
             salesByCategory[categoryId] = itemTotal;
           }
         }
       }
-      
+
       // جمع المبيعات حسب التاريخ
       final orderDate = (data['orderDate'] as Timestamp).toDate();
       final dateKey = DateTime(orderDate.year, orderDate.month, orderDate.day);
-      
+
       if (salesByDate.containsKey(dateKey)) {
-        salesByDate[dateKey] = salesByDate[dateKey]! + (data['totalAmount'] as num).toDouble();
+        salesByDate[dateKey] =
+            salesByDate[dateKey]! + (data['totalAmount'] as num).toDouble();
       } else {
         salesByDate[dateKey] = (data['totalAmount'] as num).toDouble();
       }
     }
-    
+
     // تحويل بيانات المبيعات حسب التاريخ إلى قائمة اتجاهات
     final List<SalesTrendEntity> trends = salesByDate.entries
         .map((entry) => SalesTrendEntity(date: entry.key, value: entry.value))
         .toList();
-    
+
     // ترتيب الاتجاهات حسب التاريخ
     trends.sort((a, b) => a.date.compareTo(b.date));
-    
+
     return SalesStatisticsEntity(
       sellerId: sellerId,
       period: period,

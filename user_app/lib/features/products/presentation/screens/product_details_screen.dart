@@ -52,7 +52,8 @@ class ProductDetailsScreen extends ConsumerWidget {
                             MaterialPageRoute(
                               builder: (context) => ProductReviewsScreen(
                                 productId: productId,
-                                productName: 'اسم المنتج', // استبدل بالاسم الفعلي
+                                productName:
+                                    'اسم المنتج', // استبدل بالاسم الفعلي
                               ),
                             ),
                           );
@@ -62,7 +63,7 @@ class ProductDetailsScreen extends ConsumerWidget {
                     ],
                   ),
                   const SizedBox(height: 8),
-                  
+
                   // عرض متوسط التقييم
                   averageRatingAsync.when(
                     data: (averageRating) {
@@ -86,9 +87,9 @@ class ProductDetailsScreen extends ConsumerWidget {
                     loading: () => const CircularProgressIndicator(),
                     error: (_, __) => const Text('غير متوفر'),
                   ),
-                  
+
                   const SizedBox(height: 16),
-                  
+
                   // زر إضافة تقييم
                   SizedBox(
                     width: double.infinity,
@@ -118,7 +119,7 @@ class ProductDetailsScreen extends ConsumerWidget {
                 ],
               ),
             ),
-            
+
             // باقي محتوى الصفحة
             // ...
           ],

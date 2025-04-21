@@ -105,7 +105,9 @@ class PaymentResultScreen extends StatelessWidget {
       width: 120,
       height: 120,
       decoration: BoxDecoration(
-        color: success ? colorScheme.primary.withOpacity(0.1) : colorScheme.error.withOpacity(0.1),
+        color: success
+            ? colorScheme.primary.withOpacity(0.1)
+            : colorScheme.error.withOpacity(0.1),
         shape: BoxShape.circle,
       ),
       child: Icon(
@@ -119,10 +121,12 @@ class PaymentResultScreen extends StatelessWidget {
   /// بناء عنوان النتيجة
   Widget _buildResultTitle(BuildContext context, AppLocalizations l10n) {
     final theme = Theme.of(context);
-    final color = _isSuccessful() ? theme.colorScheme.primary : theme.colorScheme.error;
+    final color =
+        _isSuccessful() ? theme.colorScheme.primary : theme.colorScheme.error;
     return Text(
       _isSuccessful() ? l10n.paymentSuccessful : l10n.paymentFailed,
-      style: theme.textTheme.headlineMedium?.copyWith(color: color, fontWeight: FontWeight.bold),
+      style: theme.textTheme.headlineMedium
+          ?.copyWith(color: color, fontWeight: FontWeight.bold),
       textAlign: TextAlign.center,
     );
   }
@@ -155,11 +159,15 @@ class PaymentResultScreen extends StatelessWidget {
           children: [
             Text(l10n.paymentDetails, style: theme.textTheme.titleLarge),
             const Divider(height: 24),
-            _buildDetailRow(context, label: l10n.orderId, value: payment.orderId),
+            _buildDetailRow(context,
+                label: l10n.orderId, value: payment.orderId),
             const SizedBox(height: 12),
-            _buildDetailRow(context, label: l10n.paymentMethod, value: payment.method.getName()),
+            _buildDetailRow(context,
+                label: l10n.paymentMethod, value: payment.method.getName()),
             const SizedBox(height: 12),
-            _buildDetailRow(context, label: l10n.amount, value: '${payment.amount} ${payment.currency}'),
+            _buildDetailRow(context,
+                label: l10n.amount,
+                value: '${payment.amount} ${payment.currency}'),
             const SizedBox(height: 12),
             _buildDetailRow(
               context,
@@ -169,10 +177,12 @@ class PaymentResultScreen extends StatelessWidget {
             ),
             if (payment.transactionId != null) ...[
               const SizedBox(height: 12),
-              _buildDetailRow(context, label: l10n.transactionId, value: payment.transactionId!),
+              _buildDetailRow(context,
+                  label: l10n.transactionId, value: payment.transactionId!),
             ],
             const SizedBox(height: 12),
-            _buildDetailRow(context, label: l10n.date, value: _formatDate(payment.updatedAt)),
+            _buildDetailRow(context,
+                label: l10n.date, value: _formatDate(payment.updatedAt)),
           ],
         ),
       ),
@@ -190,7 +200,10 @@ class PaymentResultScreen extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: [
         Text(label, style: theme.textTheme.titleMedium),
-        Text(value, style: theme.textTheme.titleMedium?.copyWith(color: valueColor, fontWeight: valueColor != null ? FontWeight.bold : null)),
+        Text(value,
+            style: theme.textTheme.titleMedium?.copyWith(
+                color: valueColor,
+                fontWeight: valueColor != null ? FontWeight.bold : null)),
       ],
     );
   }
@@ -199,8 +212,11 @@ class PaymentResultScreen extends StatelessWidget {
     return Column(
       children: [
         ElevatedButton(
-          onPressed: () => Navigator.pushNamedAndRemoveUntil(context, '/home', (route) => false),
-          style: ElevatedButton.styleFrom(padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 32), minimumSize: const Size(200, 50)),
+          onPressed: () => Navigator.pushNamedAndRemoveUntil(
+              context, '/home', (route) => false),
+          style: ElevatedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 32),
+              minimumSize: const Size(200, 50)),
           child: Text(l10n.backToHome, style: const TextStyle(fontSize: 18)),
         ),
         const SizedBox(height: 16),
@@ -214,7 +230,8 @@ class PaymentResultScreen extends StatelessWidget {
 
   bool _isSuccessful() =>
       payment.status == PaymentStatus.completed ||
-      (payment.status == PaymentStatus.pending && payment.method == PaymentMethod.cashOnDelivery);
+      (payment.status == PaymentStatus.pending &&
+          payment.method == PaymentMethod.cashOnDelivery);
 
   Color _getStatusColor(BuildContext context) {
     switch (payment.status) {
@@ -234,6 +251,6 @@ class PaymentResultScreen extends StatelessWidget {
   }
 
   String _formatDate(DateTime date) =>
-      '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')} ' +
+      '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')} '
       '${date.hour.toString().padLeft(2, '0')}:${date.minute.toString().padLeft(2, '0')}';
 }

@@ -13,7 +13,7 @@ class PaymentState extends BaseViewState {
   final PaymentIntentEntity? paymentIntent;
   final PaymentResultEntity? paymentResult;
   final List<PaymentResultEntity> paymentHistory;
-  
+
   const PaymentState({
     required bool isInitial,
     required bool isLoading,
@@ -28,14 +28,14 @@ class PaymentState extends BaseViewState {
     this.paymentResult,
     this.paymentHistory = const [],
   }) : super(
-    isInitial: isInitial,
-    isLoading: isLoading,
-    isSuccess: isSuccess,
-    isFailure: isFailure,
-    message: message,
-    failure: failure,
-  );
-  
+          isInitial: isInitial,
+          isLoading: isLoading,
+          isSuccess: isSuccess,
+          isFailure: isFailure,
+          message: message,
+          failure: failure,
+        );
+
   /// الحالة الأولية
   const PaymentState.initial()
       : availablePaymentMethods = const [],
@@ -45,7 +45,7 @@ class PaymentState extends BaseViewState {
         paymentResult = null,
         paymentHistory = const [],
         super.initial();
-  
+
   /// حالة التحميل
   const PaymentState.loading({
     List<PaymentMethodEntity> availablePaymentMethods = const [],
@@ -54,14 +54,14 @@ class PaymentState extends BaseViewState {
     PaymentIntentEntity? paymentIntent,
     PaymentResultEntity? paymentResult,
     List<PaymentResultEntity> paymentHistory = const [],
-  }) : availablePaymentMethods = availablePaymentMethods,
+  })  : availablePaymentMethods = availablePaymentMethods,
         savedPaymentMethods = savedPaymentMethods,
         selectedPaymentMethod = selectedPaymentMethod,
         paymentIntent = paymentIntent,
         paymentResult = paymentResult,
         paymentHistory = paymentHistory,
         super.loading();
-  
+
   /// حالة النجاح
   const PaymentState.success({
     String? message,
@@ -71,14 +71,14 @@ class PaymentState extends BaseViewState {
     PaymentIntentEntity? paymentIntent,
     PaymentResultEntity? paymentResult,
     List<PaymentResultEntity> paymentHistory = const [],
-  }) : availablePaymentMethods = availablePaymentMethods,
+  })  : availablePaymentMethods = availablePaymentMethods,
         savedPaymentMethods = savedPaymentMethods,
         selectedPaymentMethod = selectedPaymentMethod,
         paymentIntent = paymentIntent,
         paymentResult = paymentResult,
         paymentHistory = paymentHistory,
         super.success(message: message);
-  
+
   /// حالة الفشل
   const PaymentState.failure({
     required Failure failure,
@@ -88,14 +88,14 @@ class PaymentState extends BaseViewState {
     PaymentIntentEntity? paymentIntent,
     PaymentResultEntity? paymentResult,
     List<PaymentResultEntity> paymentHistory = const [],
-  }) : availablePaymentMethods = availablePaymentMethods,
+  })  : availablePaymentMethods = availablePaymentMethods,
         savedPaymentMethods = savedPaymentMethods,
         selectedPaymentMethod = selectedPaymentMethod,
         paymentIntent = paymentIntent,
         paymentResult = paymentResult,
         paymentHistory = paymentHistory,
         super.failure(failure: failure);
-  
+
   /// نسخ الحالة مع تحديث بعض الحقول
   PaymentState copyWith({
     bool? isInitial,
@@ -118,9 +118,11 @@ class PaymentState extends BaseViewState {
       isFailure: isFailure ?? this.isFailure,
       message: message ?? this.message,
       failure: failure ?? this.failure,
-      availablePaymentMethods: availablePaymentMethods ?? this.availablePaymentMethods,
+      availablePaymentMethods:
+          availablePaymentMethods ?? this.availablePaymentMethods,
       savedPaymentMethods: savedPaymentMethods ?? this.savedPaymentMethods,
-      selectedPaymentMethod: selectedPaymentMethod ?? this.selectedPaymentMethod,
+      selectedPaymentMethod:
+          selectedPaymentMethod ?? this.selectedPaymentMethod,
       paymentIntent: paymentIntent ?? this.paymentIntent,
       paymentResult: paymentResult ?? this.paymentResult,
       paymentHistory: paymentHistory ?? this.paymentHistory,
@@ -139,9 +141,10 @@ class PaymentViewModel extends StateNotifier<PaymentState> {
   final ConfirmPaymentUseCase _confirmPaymentUseCase;
   final ProcessPaymentUseCase _processPaymentUseCase;
   final GetPaymentHistoryUseCase _getPaymentHistoryUseCase;
-  
+
   PaymentViewModel({
-    required GetAvailablePaymentMethodsUseCase getAvailablePaymentMethodsUseCase,
+    required GetAvailablePaymentMethodsUseCase
+        getAvailablePaymentMethodsUseCase,
     required GetSavedPaymentMethodsUseCase getSavedPaymentMethodsUseCase,
     required SavePaymentMethodUseCase savePaymentMethodUseCase,
     required DeletePaymentMethodUseCase deletePaymentMethodUseCase,
@@ -150,27 +153,27 @@ class PaymentViewModel extends StateNotifier<PaymentState> {
     required ConfirmPaymentUseCase confirmPaymentUseCase,
     required ProcessPaymentUseCase processPaymentUseCase,
     required GetPaymentHistoryUseCase getPaymentHistoryUseCase,
-  }) : _getAvailablePaymentMethodsUseCase = getAvailablePaymentMethodsUseCase,
-       _getSavedPaymentMethodsUseCase = getSavedPaymentMethodsUseCase,
-       _savePaymentMethodUseCase = savePaymentMethodUseCase,
-       _deletePaymentMethodUseCase = deletePaymentMethodUseCase,
-       _setDefaultPaymentMethodUseCase = setDefaultPaymentMethodUseCase,
-       _createPaymentIntentUseCase = createPaymentIntentUseCase,
-       _confirmPaymentUseCase = confirmPaymentUseCase,
-       _processPaymentUseCase = processPaymentUseCase,
-       _getPaymentHistoryUseCase = getPaymentHistoryUseCase,
-       super(const PaymentState.initial());
-  
+  })  : _getAvailablePaymentMethodsUseCase = getAvailablePaymentMethodsUseCase,
+        _getSavedPaymentMethodsUseCase = getSavedPaymentMethodsUseCase,
+        _savePaymentMethodUseCase = savePaymentMethodUseCase,
+        _deletePaymentMethodUseCase = deletePaymentMethodUseCase,
+        _setDefaultPaymentMethodUseCase = setDefaultPaymentMethodUseCase,
+        _createPaymentIntentUseCase = createPaymentIntentUseCase,
+        _confirmPaymentUseCase = confirmPaymentUseCase,
+        _processPaymentUseCase = processPaymentUseCase,
+        _getPaymentHistoryUseCase = getPaymentHistoryUseCase,
+        super(const PaymentState.initial());
+
   /// تهيئة نموذج العرض
   Future<void> initialize() async {
     state = const PaymentState.loading();
-    
+
     await Future.wait([
       loadAvailablePaymentMethods(),
       loadSavedPaymentMethods(),
       loadPaymentHistory(),
     ]);
-    
+
     state = PaymentState.success(
       availablePaymentMethods: state.availablePaymentMethods,
       savedPaymentMethods: state.savedPaymentMethods,
@@ -178,11 +181,11 @@ class PaymentViewModel extends StateNotifier<PaymentState> {
       message: 'تم تحميل بيانات الدفع بنجاح',
     );
   }
-  
+
   /// تحميل طرق الدفع المتاحة
   Future<void> loadAvailablePaymentMethods() async {
     final result = await _getAvailablePaymentMethodsUseCase(NoParams());
-    
+
     result.fold(
       (failure) => state = PaymentState.failure(
         failure: failure,
@@ -197,11 +200,11 @@ class PaymentViewModel extends StateNotifier<PaymentState> {
       ),
     );
   }
-  
+
   /// تحميل طرق الدفع المحفوظة
   Future<void> loadSavedPaymentMethods() async {
     final result = await _getSavedPaymentMethodsUseCase(NoParams());
-    
+
     result.fold(
       (failure) => state = PaymentState.failure(
         failure: failure,
@@ -215,14 +218,14 @@ class PaymentViewModel extends StateNotifier<PaymentState> {
         state = state.copyWith(
           savedPaymentMethods: paymentMethods,
         );
-        
+
         // تحديد طريقة الدفع الافتراضية
         if (paymentMethods.isNotEmpty && state.selectedPaymentMethod == null) {
           final defaultMethod = paymentMethods.firstWhere(
             (method) => method.isDefault,
             orElse: () => paymentMethods.first,
           );
-          
+
           state = state.copyWith(
             selectedPaymentMethod: defaultMethod,
           );
@@ -230,11 +233,11 @@ class PaymentViewModel extends StateNotifier<PaymentState> {
       },
     );
   }
-  
+
   /// تحميل سجل المدفوعات
   Future<void> loadPaymentHistory() async {
     final result = await _getPaymentHistoryUseCase(NoParams());
-    
+
     result.fold(
       (failure) => state = PaymentState.failure(
         failure: failure,
@@ -249,14 +252,14 @@ class PaymentViewModel extends StateNotifier<PaymentState> {
       ),
     );
   }
-  
+
   /// اختيار طريقة دفع
   void selectPaymentMethod(PaymentMethodEntity paymentMethod) {
     state = state.copyWith(
       selectedPaymentMethod: paymentMethod,
     );
   }
-  
+
   /// حفظ طريقة دفع جديدة
   Future<void> savePaymentMethod(PaymentMethodEntity paymentMethod) async {
     state = PaymentState.loading(
@@ -267,10 +270,10 @@ class PaymentViewModel extends StateNotifier<PaymentState> {
       paymentResult: state.paymentResult,
       paymentHistory: state.paymentHistory,
     );
-    
+
     final params = SavePaymentMethodParams(paymentMethod: paymentMethod);
     final result = await _savePaymentMethodUseCase(params);
-    
+
     result.fold(
       (failure) => state = PaymentState.failure(
         failure: failure,
@@ -284,7 +287,7 @@ class PaymentViewModel extends StateNotifier<PaymentState> {
       (savedMethod) async {
         // إعادة تحميل طرق الدفع المحفوظة
         await loadSavedPaymentMethods();
-        
+
         state = PaymentState.success(
           message: 'تم حفظ طريقة الدفع بنجاح',
           availablePaymentMethods: state.availablePaymentMethods,
@@ -297,7 +300,7 @@ class PaymentViewModel extends StateNotifier<PaymentState> {
       },
     );
   }
-  
+
   /// حذف طريقة دفع
   Future<void> deletePaymentMethod(String paymentMethodId) async {
     state = PaymentState.loading(
@@ -308,10 +311,10 @@ class PaymentViewModel extends StateNotifier<PaymentState> {
       paymentResult: state.paymentResult,
       paymentHistory: state.paymentHistory,
     );
-    
+
     final params = DeletePaymentMethodParams(paymentMethodId: paymentMethodId);
     final result = await _deletePaymentMethodUseCase(params);
-    
+
     result.fold(
       (failure) => state = PaymentState.failure(
         failure: failure,
@@ -325,18 +328,18 @@ class PaymentViewModel extends StateNotifier<PaymentState> {
       (success) async {
         // إعادة تحميل طرق الدفع المحفوظة
         await loadSavedPaymentMethods();
-        
+
         // إعادة تعيين طريقة الدفع المحددة إذا تم حذفها
         if (state.selectedPaymentMethod?.id == paymentMethodId) {
           final newSelectedMethod = state.savedPaymentMethods.isNotEmpty
               ? state.savedPaymentMethods.first
               : null;
-          
+
           state = state.copyWith(
             selectedPaymentMethod: newSelectedMethod,
           );
         }
-        
+
         state = PaymentState.success(
           message: 'تم حذف طريقة الدفع بنجاح',
           availablePaymentMethods: state.availablePaymentMethods,
@@ -349,7 +352,7 @@ class PaymentViewModel extends StateNotifier<PaymentState> {
       },
     );
   }
-  
+
   /// تعيين طريقة دفع افتراضية
   Future<void> setDefaultPaymentMethod(String paymentMethodId) async {
     state = PaymentState.loading(
@@ -360,10 +363,11 @@ class PaymentViewModel extends StateNotifier<PaymentState> {
       paymentResult: state.paymentResult,
       paymentHistory: state.paymentHistory,
     );
-    
-    final params = SetDefaultPaymentMethodParams(paymentMethodId: paymentMethodId);
+
+    final params =
+        SetDefaultPaymentMethodParams(paymentMethodId: paymentMethodId);
     final result = await _setDefaultPaymentMethodUseCase(params);
-    
+
     result.fold(
       (failure) => state = PaymentState.failure(
         failure: failure,
@@ -377,7 +381,7 @@ class PaymentViewModel extends StateNotifier<PaymentState> {
       (success) async {
         // إعادة تحميل طرق الدفع المحفوظة
         await loadSavedPaymentMethods();
-        
+
         state = PaymentState.success(
           message: 'تم تعيين طريقة الدفع الافتراضية بنجاح',
           availablePaymentMethods: state.availablePaymentMethods,
@@ -390,7 +394,7 @@ class PaymentViewModel extends StateNotifier<PaymentState> {
       },
     );
   }
-  
+
   /// إنشاء نية دفع
   Future<void> createPaymentIntent({
     required int amount,
@@ -405,10 +409,10 @@ class PaymentViewModel extends StateNotifier<PaymentState> {
       paymentResult: state.paymentResult,
       paymentHistory: state.paymentHistory,
     );
-    
+
     // استخدام طريقة الدفع المحددة إذا لم يتم تحديد طريقة دفع
     final methodId = paymentMethodId ?? state.selectedPaymentMethod?.id;
-    
+
     if (methodId == null) {
       state = PaymentState.failure(
         failure: ValidationFailure(
@@ -423,14 +427,14 @@ class PaymentViewModel extends StateNotifier<PaymentState> {
       );
       return;
     }
-    
+
     final params = CreatePaymentIntentParams(
       amount: amount,
       currency: currency,
       paymentMethodId: methodId,
     );
     final result = await _createPaymentIntentUseCase(params);
-    
+
     result.fold(
       (failure) => state = PaymentState.failure(
         failure: failure,
@@ -452,7 +456,7 @@ class PaymentViewModel extends StateNotifier<PaymentState> {
       ),
     );
   }
-  
+
   /// تأكيد الدفع
   Future<void> confirmPayment({
     String? paymentIntentId,
@@ -466,11 +470,11 @@ class PaymentViewModel extends StateNotifier<PaymentState> {
       paymentResult: state.paymentResult,
       paymentHistory: state.paymentHistory,
     );
-    
+
     // استخدام نية الدفع المحددة إذا لم يتم تحديد نية دفع
     final intentId = paymentIntentId ?? state.paymentIntent?.id;
     final secret = clientSecret ?? state.paymentIntent?.clientSecret;
-    
+
     if (intentId == null || secret == null) {
       state = PaymentState.failure(
         failure: ValidationFailure(
@@ -485,13 +489,13 @@ class PaymentViewModel extends StateNotifier<PaymentState> {
       );
       return;
     }
-    
+
     final params = ConfirmPaymentParams(
       paymentIntentId: intentId,
       clientSecret: secret,
     );
     final result = await _confirmPaymentUseCase(params);
-    
+
     result.fold(
       (failure) => state = PaymentState.failure(
         failure: failure,
@@ -505,7 +509,7 @@ class PaymentViewModel extends StateNotifier<PaymentState> {
       (paymentResult) async {
         // إعادة تحميل سجل المدفوعات
         await loadPaymentHistory();
-        
+
         state = PaymentState.success(
           message: paymentResult.success
               ? 'تم تأكيد الدفع بنجاح'
@@ -520,7 +524,7 @@ class PaymentViewModel extends StateNotifier<PaymentState> {
       },
     );
   }
-  
+
   /// معالجة عملية الدفع بالكامل
   Future<void> processPayment({
     required int amount,
@@ -535,10 +539,10 @@ class PaymentViewModel extends StateNotifier<PaymentState> {
       paymentResult: state.paymentResult,
       paymentHistory: state.paymentHistory,
     );
-    
+
     // استخدام طريقة الدفع المحددة إذا لم يتم تحديد طريقة دفع
     final methodId = paymentMethodId ?? state.selectedPaymentMethod?.id;
-    
+
     if (methodId == null) {
       state = PaymentState.failure(
         failure: ValidationFailure(
@@ -553,14 +557,14 @@ class PaymentViewModel extends StateNotifier<PaymentState> {
       );
       return;
     }
-    
+
     final params = ProcessPaymentParams(
       amount: amount,
       currency: currency,
       paymentMethodId: methodId,
     );
     final result = await _processPaymentUseCase(params);
-    
+
     result.fold(
       (failure) => state = PaymentState.failure(
         failure: failure,
@@ -574,7 +578,7 @@ class PaymentViewModel extends StateNotifier<PaymentState> {
       (paymentResult) async {
         // إعادة تحميل سجل المدفوعات
         await loadPaymentHistory();
-        
+
         state = PaymentState.success(
           message: paymentResult.success
               ? 'تم إتمام عملية الدفع بنجاح'
@@ -592,17 +596,23 @@ class PaymentViewModel extends StateNotifier<PaymentState> {
 }
 
 /// مزود نموذج عرض الدفع
-final paymentViewModelProvider = StateNotifierProvider<PaymentViewModel, PaymentState>((ref) {
-  final getAvailablePaymentMethodsUseCase = ref.watch(getAvailablePaymentMethodsUseCaseProvider);
-  final getSavedPaymentMethodsUseCase = ref.watch(getSavedPaymentMethodsUseCaseProvider);
+final paymentViewModelProvider =
+    StateNotifierProvider<PaymentViewModel, PaymentState>((ref) {
+  final getAvailablePaymentMethodsUseCase =
+      ref.watch(getAvailablePaymentMethodsUseCaseProvider);
+  final getSavedPaymentMethodsUseCase =
+      ref.watch(getSavedPaymentMethodsUseCaseProvider);
   final savePaymentMethodUseCase = ref.watch(savePaymentMethodUseCaseProvider);
-  final deletePaymentMethodUseCase = ref.watch(deletePaymentMethodUseCaseProvider);
-  final setDefaultPaymentMethodUseCase = ref.watch(setDefaultPaymentMethodUseCaseProvider);
-  final createPaymentIntentUseCase = ref.watch(createPaymentIntentUseCaseProvider);
+  final deletePaymentMethodUseCase =
+      ref.watch(deletePaymentMethodUseCaseProvider);
+  final setDefaultPaymentMethodUseCase =
+      ref.watch(setDefaultPaymentMethodUseCaseProvider);
+  final createPaymentIntentUseCase =
+      ref.watch(createPaymentIntentUseCaseProvider);
   final confirmPaymentUseCase = ref.watch(confirmPaymentUseCaseProvider);
   final processPaymentUseCase = ref.watch(processPaymentUseCaseProvider);
   final getPaymentHistoryUseCase = ref.watch(getPaymentHistoryUseCaseProvider);
-  
+
   return PaymentViewModel(
     getAvailablePaymentMethodsUseCase: getAvailablePaymentMethodsUseCase,
     getSavedPaymentMethodsUseCase: getSavedPaymentMethodsUseCase,
@@ -622,32 +632,38 @@ final paymentRepositoryProvider = Provider<PaymentRepository>((ref) {
   throw UnimplementedError();
 });
 
-final getAvailablePaymentMethodsUseCaseProvider = Provider<GetAvailablePaymentMethodsUseCase>((ref) {
+final getAvailablePaymentMethodsUseCaseProvider =
+    Provider<GetAvailablePaymentMethodsUseCase>((ref) {
   final repository = ref.watch(paymentRepositoryProvider);
   return GetAvailablePaymentMethodsUseCase(repository);
 });
 
-final getSavedPaymentMethodsUseCaseProvider = Provider<GetSavedPaymentMethodsUseCase>((ref) {
+final getSavedPaymentMethodsUseCaseProvider =
+    Provider<GetSavedPaymentMethodsUseCase>((ref) {
   final repository = ref.watch(paymentRepositoryProvider);
   return GetSavedPaymentMethodsUseCase(repository);
 });
 
-final savePaymentMethodUseCaseProvider = Provider<SavePaymentMethodUseCase>((ref) {
+final savePaymentMethodUseCaseProvider =
+    Provider<SavePaymentMethodUseCase>((ref) {
   final repository = ref.watch(paymentRepositoryProvider);
   return SavePaymentMethodUseCase(repository);
 });
 
-final deletePaymentMethodUseCaseProvider = Provider<DeletePaymentMethodUseCase>((ref) {
+final deletePaymentMethodUseCaseProvider =
+    Provider<DeletePaymentMethodUseCase>((ref) {
   final repository = ref.watch(paymentRepositoryProvider);
   return DeletePaymentMethodUseCase(repository);
 });
 
-final setDefaultPaymentMethodUseCaseProvider = Provider<SetDefaultPaymentMethodUseCase>((ref) {
+final setDefaultPaymentMethodUseCaseProvider =
+    Provider<SetDefaultPaymentMethodUseCase>((ref) {
   final repository = ref.watch(paymentRepositoryProvider);
   return SetDefaultPaymentMethodUseCase(repository);
 });
 
-final createPaymentIntentUseCaseProvider = Provider<CreatePaymentIntentUseCase>((ref) {
+final createPaymentIntentUseCaseProvider =
+    Provider<CreatePaymentIntentUseCase>((ref) {
   final repository = ref.watch(paymentRepositoryProvider);
   return CreatePaymentIntentUseCase(repository);
 });
@@ -662,7 +678,8 @@ final processPaymentUseCaseProvider = Provider<ProcessPaymentUseCase>((ref) {
   return ProcessPaymentUseCase(repository);
 });
 
-final getPaymentHistoryUseCaseProvider = Provider<GetPaymentHistoryUseCase>((ref) {
+final getPaymentHistoryUseCaseProvider =
+    Provider<GetPaymentHistoryUseCase>((ref) {
   final repository = ref.watch(paymentRepositoryProvider);
   return GetPaymentHistoryUseCase(repository);
 });

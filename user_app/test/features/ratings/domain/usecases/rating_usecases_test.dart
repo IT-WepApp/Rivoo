@@ -22,14 +22,15 @@ void main() {
   setUp(() {
     mockRepository = MockRatingRepository();
     getProductRatingsUseCase = GetProductRatingsUseCase(mockRepository);
-    getProductRatingSummaryUseCase = GetProductRatingSummaryUseCase(mockRepository);
+    getProductRatingSummaryUseCase =
+        GetProductRatingSummaryUseCase(mockRepository);
     addRatingUseCase = AddRatingUseCase(mockRepository);
     updateRatingUseCase = UpdateRatingUseCase(mockRepository);
     deleteRatingUseCase = DeleteRatingUseCase(mockRepository);
   });
 
   group('GetProductRatingsUseCase', () {
-    final productId = 'product123';
+    const productId = 'product123';
     final ratings = [
       Rating(
         id: 'rating1',
@@ -81,7 +82,7 @@ void main() {
   });
 
   group('GetProductRatingSummaryUseCase', () {
-    final productId = 'product123';
+    const productId = 'product123';
     final summary = RatingSummary(
       productId: productId,
       averageRating: 4.2,
@@ -183,7 +184,7 @@ void main() {
   });
 
   group('DeleteRatingUseCase', () {
-    final ratingId = 'rating1';
+    const ratingId = 'rating1';
 
     test('should delete rating through repository', () async {
       // Arrange

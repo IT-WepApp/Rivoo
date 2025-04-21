@@ -10,25 +10,28 @@ class PerformanceAnalysisPage extends ConsumerStatefulWidget {
   const PerformanceAnalysisPage({Key? key}) : super(key: key);
 
   @override
-  ConsumerState<PerformanceAnalysisPage> createState() => _PerformanceAnalysisPageState();
+  ConsumerState<PerformanceAnalysisPage> createState() =>
+      _PerformanceAnalysisPageState();
 }
 
-class _PerformanceAnalysisPageState extends ConsumerState<PerformanceAnalysisPage> with SingleTickerProviderStateMixin {
+class _PerformanceAnalysisPageState
+    extends ConsumerState<PerformanceAnalysisPage>
+    with SingleTickerProviderStateMixin {
   bool _isLoading = true;
   String _errorMessage = '';
-  
+
   late TabController _tabController;
-  
+
   // بيانات تحليل الأداء
   Map<String, dynamic> _performanceData = {};
-  
+
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 3, vsync: this);
     _loadPerformanceData();
   }
-  
+
   @override
   void dispose() {
     _tabController.dispose();
@@ -44,9 +47,9 @@ class _PerformanceAnalysisPageState extends ConsumerState<PerformanceAnalysisPag
     try {
       // هنا يتم تحميل بيانات تحليل الأداء من Firebase
       // في هذا المثال، نستخدم بيانات وهمية
-      
+
       await Future.delayed(const Duration(seconds: 1));
-      
+
       setState(() {
         _performanceData = {
           'conversionRate': 3.8,
@@ -81,7 +84,7 @@ class _PerformanceAnalysisPageState extends ConsumerState<PerformanceAnalysisPag
             'إضافة حوافز للعملاء لإكمال عمليات الشراء المتروكة',
           ],
         };
-        
+
         _isLoading = false;
       });
     } catch (e) {
@@ -95,7 +98,7 @@ class _PerformanceAnalysisPageState extends ConsumerState<PerformanceAnalysisPag
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('تحليل الأداء والتحسين'),
@@ -121,7 +124,8 @@ class _PerformanceAnalysisPageState extends ConsumerState<PerformanceAnalysisPag
         ),
       ),
       body: _isLoading
-          ? AppWidgets.loadingIndicator(message: 'جاري تحميل بيانات تحليل الأداء...')
+          ? AppWidgets.loadingIndicator(
+              message: 'جاري تحميل بيانات تحليل الأداء...')
           : _errorMessage.isNotEmpty
               ? AppWidgets.errorMessage(
                   message: _errorMessage,
@@ -144,16 +148,21 @@ class _PerformanceAnalysisPageState extends ConsumerState<PerformanceAnalysisPag
         child: Text('لا توجد بيانات متاحة'),
       );
     }
-    
+
     final conversionRate = _performanceData['conversionRate'] as double? ?? 0;
-    final cartAbandonmentRate = _performanceData['cartAbandonmentRate'] as double? ?? 0;
-    final averageOrderValue = _performanceData['averageOrderValue'] as double? ?? 0;
+    final cartAbandonmentRate =
+        _performanceData['cartAbandonmentRate'] as double? ?? 0;
+    final averageOrderValue =
+        _performanceData['averageOrderValue'] as double? ?? 0;
     final returnRate = _performanceData['returnRate'] as double? ?? 0;
-    final customerRetentionRate = _performanceData['customerRetentionRate'] as double? ?? 0;
+    final customerRetentionRate =
+        _performanceData['customerRetentionRate'] as double? ?? 0;
     final pageLoadTime = _performanceData['pageLoadTime'] as double? ?? 0;
-    final searchSuccessRate = _performanceData['searchSuccessRate'] as double? ?? 0;
-    final checkoutCompletionRate = _performanceData['checkoutCompletionRate'] as double? ?? 0;
-    
+    final searchSuccessRate =
+        _performanceData['searchSuccessRate'] as double? ?? 0;
+    final checkoutCompletionRate =
+        _performanceData['checkoutCompletionRate'] as double? ?? 0;
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -161,7 +170,7 @@ class _PerformanceAnalysisPageState extends ConsumerState<PerformanceAnalysisPag
         children: [
           _buildSectionTitle(theme, 'مؤشرات الأداء الرئيسية'),
           const SizedBox(height: 16),
-          
+
           // مؤشرات الأداء الرئيسية
           _buildPerformanceIndicator(
             theme,
@@ -173,7 +182,7 @@ class _PerformanceAnalysisPageState extends ConsumerState<PerformanceAnalysisPag
             conversionRate / 10, // تحويل النسبة إلى قيمة بين 0 و 1
           ),
           const SizedBox(height: 16),
-          
+
           _buildPerformanceIndicator(
             theme,
             'معدل ترك سلة التسوق',
@@ -184,7 +193,7 @@ class _PerformanceAnalysisPageState extends ConsumerState<PerformanceAnalysisPag
             1 - (cartAbandonmentRate / 100), // تحويل النسبة إلى قيمة بين 0 و 1
           ),
           const SizedBox(height: 16),
-          
+
           _buildPerformanceIndicator(
             theme,
             'متوسط قيمة الطلب',
@@ -195,7 +204,7 @@ class _PerformanceAnalysisPageState extends ConsumerState<PerformanceAnalysisPag
             averageOrderValue / 300, // تحويل القيمة إلى نسبة بين 0 و 1
           ),
           const SizedBox(height: 16),
-          
+
           _buildPerformanceIndicator(
             theme,
             'معدل الإرجاع',
@@ -206,7 +215,7 @@ class _PerformanceAnalysisPageState extends ConsumerState<PerformanceAnalysisPag
             1 - (returnRate / 10), // تحويل النسبة إلى قيمة بين 0 و 1
           ),
           const SizedBox(height: 16),
-          
+
           _buildPerformanceIndicator(
             theme,
             'معدل الاحتفاظ بالعملاء',
@@ -217,7 +226,7 @@ class _PerformanceAnalysisPageState extends ConsumerState<PerformanceAnalysisPag
             customerRetentionRate / 100, // تحويل النسبة إلى قيمة بين 0 و 1
           ),
           const SizedBox(height: 16),
-          
+
           _buildPerformanceIndicator(
             theme,
             'زمن تحميل الصفحة',
@@ -228,7 +237,7 @@ class _PerformanceAnalysisPageState extends ConsumerState<PerformanceAnalysisPag
             1 - (pageLoadTime / 3), // تحويل الزمن إلى قيمة بين 0 و 1
           ),
           const SizedBox(height: 16),
-          
+
           _buildPerformanceIndicator(
             theme,
             'معدل نجاح البحث',
@@ -239,7 +248,7 @@ class _PerformanceAnalysisPageState extends ConsumerState<PerformanceAnalysisPag
             searchSuccessRate / 100, // تحويل النسبة إلى قيمة بين 0 و 1
           ),
           const SizedBox(height: 16),
-          
+
           _buildPerformanceIndicator(
             theme,
             'معدل إتمام عملية الدفع',
@@ -260,12 +269,16 @@ class _PerformanceAnalysisPageState extends ConsumerState<PerformanceAnalysisPag
         child: Text('لا توجد بيانات متاحة'),
       );
     }
-    
-    final productViewsToCartAdds = _performanceData['productViewsToCartAdds'] as double? ?? 0;
-    final cartAddsToCheckout = _performanceData['cartAddsToCheckout'] as double? ?? 0;
-    final topSearchTerms = _performanceData['topSearchTerms'] as List<dynamic>? ?? [];
-    final topExitPages = _performanceData['topExitPages'] as List<dynamic>? ?? [];
-    
+
+    final productViewsToCartAdds =
+        _performanceData['productViewsToCartAdds'] as double? ?? 0;
+    final cartAddsToCheckout =
+        _performanceData['cartAddsToCheckout'] as double? ?? 0;
+    final topSearchTerms =
+        _performanceData['topSearchTerms'] as List<dynamic>? ?? [];
+    final topExitPages =
+        _performanceData['topExitPages'] as List<dynamic>? ?? [];
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -273,7 +286,7 @@ class _PerformanceAnalysisPageState extends ConsumerState<PerformanceAnalysisPag
         children: [
           _buildSectionTitle(theme, 'سلوك المستخدم'),
           const SizedBox(height: 16),
-          
+
           // نسب التحويل في مراحل الشراء
           Card(
             elevation: 2,
@@ -292,7 +305,6 @@ class _PerformanceAnalysisPageState extends ConsumerState<PerformanceAnalysisPag
                     ),
                   ),
                   const SizedBox(height: 16),
-                  
                   Row(
                     children: [
                       Expanded(
@@ -308,7 +320,8 @@ class _PerformanceAnalysisPageState extends ConsumerState<PerformanceAnalysisPag
                               value: productViewsToCartAdds / 100,
                               backgroundColor: Colors.grey.shade200,
                               valueColor: AlwaysStoppedAnimation<Color>(
-                                _getIndicatorColor(productViewsToCartAdds, 10, 20),
+                                _getIndicatorColor(
+                                    productViewsToCartAdds, 10, 20),
                               ),
                               minHeight: 8,
                               borderRadius: BorderRadius.circular(4),
@@ -359,7 +372,7 @@ class _PerformanceAnalysisPageState extends ConsumerState<PerformanceAnalysisPag
             ),
           ),
           const SizedBox(height: 24),
-          
+
           // الكلمات الأكثر بحثاً
           _buildSectionTitle(theme, 'الكلمات الأكثر بحثاً'),
           const SizedBox(height: 8),
@@ -385,7 +398,7 @@ class _PerformanceAnalysisPageState extends ConsumerState<PerformanceAnalysisPag
             ),
           ),
           const SizedBox(height: 24),
-          
+
           // الصفحات الأكثر خروجاً
           _buildSectionTitle(theme, 'الصفحات الأكثر خروجاً'),
           const SizedBox(height: 8),
@@ -421,9 +434,10 @@ class _PerformanceAnalysisPageState extends ConsumerState<PerformanceAnalysisPag
         child: Text('لا توجد بيانات متاحة'),
       );
     }
-    
-    final improvementSuggestions = _performanceData['improvementSuggestions'] as List<dynamic>? ?? [];
-    
+
+    final improvementSuggestions =
+        _performanceData['improvementSuggestions'] as List<dynamic>? ?? [];
+
     return SingleChildScrollView(
       padding: const EdgeInsets.all(16),
       child: Column(
@@ -431,7 +445,6 @@ class _PerformanceAnalysisPageState extends ConsumerState<PerformanceAnalysisPag
         children: [
           _buildSectionTitle(theme, 'التحسينات المقترحة'),
           const SizedBox(height: 16),
-          
           Card(
             elevation: 2,
             shape: RoundedRectangleBorder(
@@ -447,18 +460,15 @@ class _PerformanceAnalysisPageState extends ConsumerState<PerformanceAnalysisPag
                     style: theme.textTheme.bodyMedium,
                   ),
                   const SizedBox(height: 16),
-                  
                   for (int i = 0; i < improvementSuggestions.length; i++)
                     _buildSuggestionItem(
                       theme,
                       improvementSuggestions[i] as String? ?? '',
                       i + 1,
                     ),
-                  
                   const SizedBox(height: 16),
                   const Divider(),
                   const SizedBox(height: 16),
-                  
                   Text(
                     'إجراءات موصى بها',
                     style: theme.textTheme.titleMedium?.copyWith(
@@ -466,7 +476,6 @@ class _PerformanceAnalysisPageState extends ConsumerState<PerformanceAnalysisPag
                     ),
                   ),
                   const SizedBox(height: 8),
-                  
                   _buildActionButton(
                     theme,
                     'تحسين سرعة تحميل الصفحات',
@@ -474,7 +483,6 @@ class _PerformanceAnalysisPageState extends ConsumerState<PerformanceAnalysisPag
                     Colors.blue,
                   ),
                   const SizedBox(height: 8),
-                  
                   _buildActionButton(
                     theme,
                     'تبسيط عملية الدفع',
@@ -482,7 +490,6 @@ class _PerformanceAnalysisPageState extends ConsumerState<PerformanceAnalysisPag
                     Colors.green,
                   ),
                   const SizedBox(height: 8),
-                  
                   _buildActionButton(
                     theme,
                     'تحسين نتائج البحث',
@@ -490,7 +497,6 @@ class _PerformanceAnalysisPageState extends ConsumerState<PerformanceAnalysisPag
                     Colors.orange,
                   ),
                   const SizedBox(height: 8),
-                  
                   _buildActionButton(
                     theme,
                     'إضافة توصيات منتجات',

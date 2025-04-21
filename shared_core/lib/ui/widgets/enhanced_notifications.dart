@@ -26,39 +26,47 @@ class EnhancedNotifications {
     NotificationType type = NotificationType.info,
   }) {
     final theme = Theme.of(context);
-    
+
     Color effectiveBackgroundColor;
     Color effectiveIconColor;
     IconData effectiveIcon;
-    
+
     switch (type) {
       case NotificationType.success:
-        effectiveBackgroundColor = backgroundColor ?? 
-            (theme.brightness == Brightness.dark ? Colors.green.shade800 : Colors.green.shade600);
+        effectiveBackgroundColor = backgroundColor ??
+            (theme.brightness == Brightness.dark
+                ? Colors.green.shade800
+                : Colors.green.shade600);
         effectiveIconColor = iconColor ?? Colors.white;
         effectiveIcon = icon ?? Icons.check_circle;
         break;
       case NotificationType.error:
-        effectiveBackgroundColor = backgroundColor ?? 
-            (theme.brightness == Brightness.dark ? Colors.red.shade800 : Colors.red.shade600);
+        effectiveBackgroundColor = backgroundColor ??
+            (theme.brightness == Brightness.dark
+                ? Colors.red.shade800
+                : Colors.red.shade600);
         effectiveIconColor = iconColor ?? Colors.white;
         effectiveIcon = icon ?? Icons.error;
         break;
       case NotificationType.warning:
-        effectiveBackgroundColor = backgroundColor ?? 
-            (theme.brightness == Brightness.dark ? Colors.amber.shade800 : Colors.amber.shade600);
+        effectiveBackgroundColor = backgroundColor ??
+            (theme.brightness == Brightness.dark
+                ? Colors.amber.shade800
+                : Colors.amber.shade600);
         effectiveIconColor = iconColor ?? Colors.white;
         effectiveIcon = icon ?? Icons.warning;
         break;
       case NotificationType.info:
       default:
-        effectiveBackgroundColor = backgroundColor ?? 
-            (theme.brightness == Brightness.dark ? Colors.blue.shade800 : Colors.blue.shade600);
+        effectiveBackgroundColor = backgroundColor ??
+            (theme.brightness == Brightness.dark
+                ? Colors.blue.shade800
+                : Colors.blue.shade600);
         effectiveIconColor = iconColor ?? Colors.white;
         effectiveIcon = icon ?? Icons.info;
         break;
     }
-    
+
     final effectiveTextColor = textColor ?? Colors.white;
     final effectiveActionColor = actionColor ?? Colors.white;
 
@@ -123,43 +131,53 @@ class EnhancedNotifications {
     Color? iconColor,
   }) async {
     final theme = Theme.of(context);
-    
+
     Color effectiveIconColor;
     IconData effectiveIcon;
-    
+
     switch (type) {
       case NotificationType.success:
-        effectiveIconColor = iconColor ?? 
-            (theme.brightness == Brightness.dark ? Colors.green.shade400 : Colors.green);
+        effectiveIconColor = iconColor ??
+            (theme.brightness == Brightness.dark
+                ? Colors.green.shade400
+                : Colors.green);
         effectiveIcon = icon ?? Icons.check_circle;
         break;
       case NotificationType.error:
-        effectiveIconColor = iconColor ?? 
-            (theme.brightness == Brightness.dark ? Colors.red.shade400 : Colors.red);
+        effectiveIconColor = iconColor ??
+            (theme.brightness == Brightness.dark
+                ? Colors.red.shade400
+                : Colors.red);
         effectiveIcon = icon ?? Icons.error;
         break;
       case NotificationType.warning:
-        effectiveIconColor = iconColor ?? 
-            (theme.brightness == Brightness.dark ? Colors.amber.shade400 : Colors.amber);
+        effectiveIconColor = iconColor ??
+            (theme.brightness == Brightness.dark
+                ? Colors.amber.shade400
+                : Colors.amber);
         effectiveIcon = icon ?? Icons.warning;
         break;
       case NotificationType.info:
       default:
-        effectiveIconColor = iconColor ?? 
-            (theme.brightness == Brightness.dark ? Colors.blue.shade400 : Colors.blue);
+        effectiveIconColor = iconColor ??
+            (theme.brightness == Brightness.dark
+                ? Colors.blue.shade400
+                : Colors.blue);
         effectiveIcon = icon ?? Icons.info;
         break;
     }
-    
-    final effectiveBackgroundColor = backgroundColor ?? 
-        (theme.brightness == Brightness.dark ? Colors.grey.shade800 : Colors.white);
-    
-    final effectiveTitleColor = titleColor ?? 
+
+    final effectiveBackgroundColor = backgroundColor ??
+        (theme.brightness == Brightness.dark
+            ? Colors.grey.shade800
+            : Colors.white);
+
+    final effectiveTitleColor = titleColor ??
         (theme.brightness == Brightness.dark ? Colors.white : Colors.black87);
-    
-    final effectiveMessageColor = messageColor ?? 
+
+    final effectiveMessageColor = messageColor ??
         (theme.brightness == Brightness.dark ? Colors.white70 : Colors.black54);
-    
+
     final effectiveConfirmColor = confirmColor ?? theme.primaryColor;
     final effectiveCancelColor = cancelColor ?? Colors.grey;
 
@@ -167,7 +185,8 @@ class EnhancedNotifications {
       context: context,
       barrierDismissible: barrierDismissible,
       barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
-      pageBuilder: (BuildContext context, Animation<double> animation, Animation<double> secondaryAnimation) {
+      pageBuilder: (BuildContext context, Animation<double> animation,
+          Animation<double> secondaryAnimation) {
         return AlertDialog(
           backgroundColor: effectiveBackgroundColor,
           shape: RoundedRectangleBorder(
@@ -253,7 +272,8 @@ class EnhancedNotifications {
         const end = Offset.zero;
         const curve = Curves.easeOutCubic;
 
-        final tween = Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
+        final tween =
+            Tween(begin: begin, end: end).chain(CurveTween(curve: curve));
         final offsetAnimation = animation.drive(tween);
 
         return FadeTransition(
@@ -280,9 +300,11 @@ class EnhancedNotifications {
     BoxConstraints? constraints,
   }) async {
     final theme = Theme.of(context);
-    
-    final effectiveBackgroundColor = backgroundColor ?? 
-        (theme.brightness == Brightness.dark ? Colors.grey.shade800 : Colors.white);
+
+    final effectiveBackgroundColor = backgroundColor ??
+        (theme.brightness == Brightness.dark
+            ? Colors.grey.shade800
+            : Colors.white);
 
     return showModalBottomSheet<T>(
       context: context,
@@ -352,39 +374,47 @@ class EnhancedNotifications {
     Alignment alignment = Alignment.bottomCenter,
   }) {
     final theme = Theme.of(context);
-    
+
     Color effectiveBackgroundColor;
     Color effectiveIconColor;
     IconData effectiveIcon;
-    
+
     switch (type) {
       case NotificationType.success:
-        effectiveBackgroundColor = backgroundColor ?? 
-            (theme.brightness == Brightness.dark ? Colors.green.shade800.withOpacity(0.9) : Colors.green.shade600.withOpacity(0.9));
+        effectiveBackgroundColor = backgroundColor ??
+            (theme.brightness == Brightness.dark
+                ? Colors.green.shade800.withOpacity(0.9)
+                : Colors.green.shade600.withOpacity(0.9));
         effectiveIconColor = iconColor ?? Colors.white;
         effectiveIcon = icon ?? Icons.check_circle;
         break;
       case NotificationType.error:
-        effectiveBackgroundColor = backgroundColor ?? 
-            (theme.brightness == Brightness.dark ? Colors.red.shade800.withOpacity(0.9) : Colors.red.shade600.withOpacity(0.9));
+        effectiveBackgroundColor = backgroundColor ??
+            (theme.brightness == Brightness.dark
+                ? Colors.red.shade800.withOpacity(0.9)
+                : Colors.red.shade600.withOpacity(0.9));
         effectiveIconColor = iconColor ?? Colors.white;
         effectiveIcon = icon ?? Icons.error;
         break;
       case NotificationType.warning:
-        effectiveBackgroundColor = backgroundColor ?? 
-            (theme.brightness == Brightness.dark ? Colors.amber.shade800.withOpacity(0.9) : Colors.amber.shade600.withOpacity(0.9));
+        effectiveBackgroundColor = backgroundColor ??
+            (theme.brightness == Brightness.dark
+                ? Colors.amber.shade800.withOpacity(0.9)
+                : Colors.amber.shade600.withOpacity(0.9));
         effectiveIconColor = iconColor ?? Colors.white;
         effectiveIcon = icon ?? Icons.warning;
         break;
       case NotificationType.info:
       default:
-        effectiveBackgroundColor = backgroundColor ?? 
-            (theme.brightness == Brightness.dark ? Colors.blue.shade800.withOpacity(0.9) : Colors.blue.shade600.withOpacity(0.9));
+        effectiveBackgroundColor = backgroundColor ??
+            (theme.brightness == Brightness.dark
+                ? Colors.blue.shade800.withOpacity(0.9)
+                : Colors.blue.shade600.withOpacity(0.9));
         effectiveIconColor = iconColor ?? Colors.white;
         effectiveIcon = icon ?? Icons.info;
         break;
     }
-    
+
     final effectiveTextColor = textColor ?? Colors.white;
 
     final overlay = Overlay.of(context);
@@ -393,7 +423,8 @@ class EnhancedNotifications {
         return Positioned(
           left: margin.horizontal / 2,
           right: margin.horizontal / 2,
-          bottom: alignment == Alignment.bottomCenter ? margin.vertical / 2 : null,
+          bottom:
+              alignment == Alignment.bottomCenter ? margin.vertical / 2 : null,
           top: alignment == Alignment.topCenter ? margin.vertical / 2 : null,
           child: _ToastWidget(
             message: message,
@@ -452,7 +483,8 @@ class _ToastWidget extends StatefulWidget {
   _ToastWidgetState createState() => _ToastWidgetState();
 }
 
-class _ToastWidgetState extends State<_ToastWidget> with SingleTickerProviderStateMixin {
+class _ToastWidgetState extends State<_ToastWidget>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
@@ -473,7 +505,8 @@ class _ToastWidgetState extends State<_ToastWidget> with SingleTickerProviderSta
       ),
     );
 
-    _slideAnimation = Tween<Offset>(begin: const Offset(0.0, 0.5), end: Offset.zero).animate(
+    _slideAnimation =
+        Tween<Offset>(begin: const Offset(0.0, 0.5), end: Offset.zero).animate(
       CurvedAnimation(
         parent: _controller,
         curve: Curves.easeOutCubic,

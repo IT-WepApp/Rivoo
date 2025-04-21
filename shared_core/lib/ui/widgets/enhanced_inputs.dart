@@ -301,24 +301,29 @@ class _EnhancedTextFieldState extends State<_EnhancedTextField> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
-    final effectiveFillColor = widget.fillColor ?? 
-        (theme.brightness == Brightness.dark ? Colors.grey.shade800 : Colors.grey.shade100);
-    
-    final effectiveBorderColor = widget.borderColor ?? 
-        (theme.brightness == Brightness.dark ? Colors.grey.shade700 : Colors.grey.shade300);
-    
-    final effectiveFocusedBorderColor = widget.focusedBorderColor ?? theme.primaryColor;
-    
-    final effectiveTextColor = widget.textColor ?? 
+
+    final effectiveFillColor = widget.fillColor ??
+        (theme.brightness == Brightness.dark
+            ? Colors.grey.shade800
+            : Colors.grey.shade100);
+
+    final effectiveBorderColor = widget.borderColor ??
+        (theme.brightness == Brightness.dark
+            ? Colors.grey.shade700
+            : Colors.grey.shade300);
+
+    final effectiveFocusedBorderColor =
+        widget.focusedBorderColor ?? theme.primaryColor;
+
+    final effectiveTextColor = widget.textColor ??
         (theme.brightness == Brightness.dark ? Colors.white : Colors.black87);
-    
-    final effectiveLabelColor = widget.labelColor ?? 
+
+    final effectiveLabelColor = widget.labelColor ??
         (theme.brightness == Brightness.dark ? Colors.white70 : Colors.black54);
-    
-    final effectiveHintColor = widget.hintColor ?? 
+
+    final effectiveHintColor = widget.hintColor ??
         (theme.brightness == Brightness.dark ? Colors.white38 : Colors.black38);
-    
+
     final effectiveErrorColor = widget.errorColor ?? theme.colorScheme.error;
 
     return MouseRegion(
@@ -520,20 +525,24 @@ class _EnhancedSearchFieldState extends State<_EnhancedSearchField> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
-    final effectiveFillColor = widget.fillColor ?? 
-        (theme.brightness == Brightness.dark ? Colors.grey.shade800 : Colors.grey.shade100);
-    
-    final effectiveBorderColor = widget.borderColor ?? 
-        (theme.brightness == Brightness.dark ? Colors.grey.shade700 : Colors.grey.shade300);
-    
-    final effectiveTextColor = widget.textColor ?? 
+
+    final effectiveFillColor = widget.fillColor ??
+        (theme.brightness == Brightness.dark
+            ? Colors.grey.shade800
+            : Colors.grey.shade100);
+
+    final effectiveBorderColor = widget.borderColor ??
+        (theme.brightness == Brightness.dark
+            ? Colors.grey.shade700
+            : Colors.grey.shade300);
+
+    final effectiveTextColor = widget.textColor ??
         (theme.brightness == Brightness.dark ? Colors.white : Colors.black87);
-    
-    final effectiveHintColor = widget.hintColor ?? 
+
+    final effectiveHintColor = widget.hintColor ??
         (theme.brightness == Brightness.dark ? Colors.white38 : Colors.black38);
-    
-    final effectiveIconColor = widget.iconColor ?? 
+
+    final effectiveIconColor = widget.iconColor ??
         (theme.brightness == Brightness.dark ? Colors.white54 : Colors.black54);
 
     return MouseRegion(
@@ -576,9 +585,7 @@ class _EnhancedSearchFieldState extends State<_EnhancedSearchField> {
             border: InputBorder.none,
             prefixIcon: Icon(
               Icons.search,
-              color: _isFocused
-                  ? theme.primaryColor
-                  : effectiveIconColor,
+              color: _isFocused ? theme.primaryColor : effectiveIconColor,
             ),
             suffixIcon: _controller.text.isNotEmpty
                 ? IconButton(
@@ -656,23 +663,27 @@ class _EnhancedDropdownState<T> extends State<_EnhancedDropdown<T>> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
-    final effectiveFillColor = widget.fillColor ?? 
-        (theme.brightness == Brightness.dark ? Colors.grey.shade800 : Colors.grey.shade100);
-    
-    final effectiveBorderColor = widget.borderColor ?? 
-        (theme.brightness == Brightness.dark ? Colors.grey.shade700 : Colors.grey.shade300);
-    
-    final effectiveTextColor = widget.textColor ?? 
+
+    final effectiveFillColor = widget.fillColor ??
+        (theme.brightness == Brightness.dark
+            ? Colors.grey.shade800
+            : Colors.grey.shade100);
+
+    final effectiveBorderColor = widget.borderColor ??
+        (theme.brightness == Brightness.dark
+            ? Colors.grey.shade700
+            : Colors.grey.shade300);
+
+    final effectiveTextColor = widget.textColor ??
         (theme.brightness == Brightness.dark ? Colors.white : Colors.black87);
-    
-    final effectiveLabelColor = widget.labelColor ?? 
+
+    final effectiveLabelColor = widget.labelColor ??
         (theme.brightness == Brightness.dark ? Colors.white70 : Colors.black54);
-    
-    final effectiveHintColor = widget.hintColor ?? 
+
+    final effectiveHintColor = widget.hintColor ??
         (theme.brightness == Brightness.dark ? Colors.white38 : Colors.black38);
-    
-    final effectiveIconColor = widget.iconColor ?? 
+
+    final effectiveIconColor = widget.iconColor ??
         (theme.brightness == Brightness.dark ? Colors.white54 : Colors.black54);
 
     return MouseRegion(
@@ -832,7 +843,7 @@ class _EnhancedDateFieldState extends State<_EnhancedDateField> {
     final year = date.year.toString();
     final month = date.month.toString().padLeft(2, '0');
     final day = date.day.toString().padLeft(2, '0');
-    
+
     return format
         .replaceAll('yyyy', year)
         .replaceAll('MM', month)
@@ -857,12 +868,12 @@ class _EnhancedDateFieldState extends State<_EnhancedDateField> {
 
   Future<void> _selectDate(BuildContext context) async {
     if (!widget.enabled) return;
-    
+
     final theme = Theme.of(context);
-    
+
     // إخفاء لوحة المفاتيح إذا كانت مفتوحة
     FocusScope.of(context).requestFocus(FocusNode());
-    
+
     final initialDate = widget.value ?? DateTime.now();
     final pickedDate = await showDatePicker(
       context: context,
@@ -880,7 +891,7 @@ class _EnhancedDateFieldState extends State<_EnhancedDateField> {
         );
       },
     );
-    
+
     if (pickedDate != null) {
       widget.onChanged(pickedDate);
     }
@@ -889,23 +900,27 @@ class _EnhancedDateFieldState extends State<_EnhancedDateField> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
-    final effectiveFillColor = widget.fillColor ?? 
-        (theme.brightness == Brightness.dark ? Colors.grey.shade800 : Colors.grey.shade100);
-    
-    final effectiveBorderColor = widget.borderColor ?? 
-        (theme.brightness == Brightness.dark ? Colors.grey.shade700 : Colors.grey.shade300);
-    
-    final effectiveTextColor = widget.textColor ?? 
+
+    final effectiveFillColor = widget.fillColor ??
+        (theme.brightness == Brightness.dark
+            ? Colors.grey.shade800
+            : Colors.grey.shade100);
+
+    final effectiveBorderColor = widget.borderColor ??
+        (theme.brightness == Brightness.dark
+            ? Colors.grey.shade700
+            : Colors.grey.shade300);
+
+    final effectiveTextColor = widget.textColor ??
         (theme.brightness == Brightness.dark ? Colors.white : Colors.black87);
-    
-    final effectiveLabelColor = widget.labelColor ?? 
+
+    final effectiveLabelColor = widget.labelColor ??
         (theme.brightness == Brightness.dark ? Colors.white70 : Colors.black54);
-    
-    final effectiveHintColor = widget.hintColor ?? 
+
+    final effectiveHintColor = widget.hintColor ??
         (theme.brightness == Brightness.dark ? Colors.white38 : Colors.black38);
-    
-    final effectiveIconColor = widget.iconColor ?? 
+
+    final effectiveIconColor = widget.iconColor ??
         (theme.brightness == Brightness.dark ? Colors.white54 : Colors.black54);
 
     return MouseRegion(

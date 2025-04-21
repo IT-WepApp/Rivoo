@@ -12,9 +12,10 @@ class NotificationService {
   NotificationService._internal();
 
   final FirebaseMessaging _messaging = FirebaseMessaging.instance;
-  final FlutterLocalNotificationsPlugin _localNotifications = FlutterLocalNotificationsPlugin();
+  final FlutterLocalNotificationsPlugin _localNotifications =
+      FlutterLocalNotificationsPlugin();
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  
+
   // تهيئة خدمة الإشعارات
   Future<void> initialize() async {
     // طلب إذن الإشعارات
@@ -24,23 +25,25 @@ class NotificationService {
       sound: true,
       provisional: false,
     );
-    
+
     if (settings.authorizationStatus == AuthorizationStatus.authorized ||
         settings.authorizationStatus == AuthorizationStatus.provisional) {
       // تهيئة الإشعارات المحلية
-      const androidSettings = AndroidInitializationSettings('@mipmap/ic_launcher');
+      const androidSettings =
+          AndroidInitializationSettings('@mipmap/ic_launcher');
       const iosSettings = DarwinInitializationSettings(
         requestAlertPermission: true,
         requestBadgePermission: true,
         requestSoundPermission: true,
       );
-      const initSettings = InitializationSettings(android: androidSettings, iOS: iosSettings);
-      
+      const initSettings =
+          InitializationSettings(android: androidSettings, iOS: iosSettings);
+
       await _localNotifications.initialize(
         initSettings,
         onDidReceiveNotificationResponse: _onNotificationTapped,
       );
-      
+
       // إعداد قناة الإشعارات للأندرويد
       const androidChannel = AndroidNotificationChannel(
         AppConstants.notificationChannelId,
@@ -48,39 +51,42 @@ class NotificationService {
         description: AppConstants.notificationChannelDescription,
         importance: Importance.high,
       );
-      
+
       await _localNotifications
-          .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>()
+          .resolvePlatformSpecificImplementation<
+              AndroidFlutterLocalNotificationsPlugin>()
           ?.createNotificationChannel(androidChannel);
-      
+
       // الاستماع للإشعارات في الخلفية
-      FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
-      
+      FirebaseMessaging.onBackgroundMessage(
+          _firebaseMessagingBackgroundHandler);
+
       // الاستماع للإشعارات في المقدمة
       FirebaseMessaging.onMessage.listen(_handleForegroundMessage);
-      
+
       // الحصول على رمز FCM وتحديثه في Firestore
       final token = await _messaging.getToken();
       if (token != null) {
         await _updateFcmToken(token);
       }
-      
+
       // الاستماع لتغييرات رمز FCM
       _messaging.onTokenRefresh.listen(_updateFcmToken);
     }
   }
-  
+
   // معالج الإشعارات في الخلفية
-  static Future<void> _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  static Future<void> _firebaseMessagingBackgroundHandler(
+      RemoteMessage message) async {
     // يمكن إضافة منطق خاص هنا للتعامل مع الإشعارات في الخلفية
     print('تم استلام إشعار في الخلفية: ${message.notification?.title}');
   }
-  
+
   // معالج الإشعارات في المقدمة
   Future<void> _handleForegroundMessage(RemoteMessage message) async {
     final notification = message.notification;
     final android = message.notification?.android;
-    
+
     if (notification != null && android != null) {
       _localNotifications.show(
         notification.hashCode,
@@ -104,36 +110,40 @@ class NotificationService {
         payload: message.data.toString(),
       );
     }
-    
+
     // تخزين الإشعار في Firestore
     await _storeNotification(message);
   }
-  
+
   // معالج النقر على الإشعار
   void _onNotificationTapped(NotificationResponse response) {
     // يمكن إضافة منطق للتنقل إلى الشاشة المناسبة عند النقر على الإشعار
     print('تم النقر على الإشعار: ${response.payload}');
   }
-  
+
   // تحديث رمز FCM في Firestore
   Future<void> _updateFcmToken(String token) async {
     final authService = AuthService();
     final userId = await authService.getCurrentUserId();
-    
+
     if (userId != null) {
-      await _firestore.collection(AppConstants.sellersCollection).doc(userId).update({
+      await _firestore
+          .collection(AppConstants.sellersCollection)
+          .doc(userId)
+          .update({
         'fcmTokens': FieldValue.arrayUnion([token]),
       });
     }
   }
-  
+
   // تخزين الإشعار في Firestore
   Future<void> _storeNotification(RemoteMessage message) async {
     final authService = AuthService();
     final userId = await authService.getCurrentUserId();
-    
+
     if (userId != null) {
-      await _firestore.collection(AppConstants.sellersCollection)
+      await _firestore
+          .collection(AppConstants.sellersCollection)
           .doc(userId)
           .collection(AppConstants.notificationsCollection)
           .add({
@@ -145,13 +155,14 @@ class NotificationService {
       });
     }
   }
-  
+
   // الحصول على إشعارات البائع
   Stream<QuerySnapshot> getSellerNotifications() {
     final authService = AuthService();
     return authService.getCurrentUserId().then((userId) {
       if (userId != null) {
-        return _firestore.collection(AppConstants.sellersCollection)
+        return _firestore
+            .collection(AppConstants.sellersCollection)
             .doc(userId)
             .collection(AppConstants.notificationsCollection)
             .orderBy('timestamp', descending: true)
@@ -161,14 +172,15 @@ class NotificationService {
       }
     });
   }
-  
+
   // تحديث حالة قراءة الإشعار
   Future<void> markNotificationAsRead(String notificationId) async {
     final authService = AuthService();
     final userId = await authService.getCurrentUserId();
-    
+
     if (userId != null) {
-      await _firestore.collection(AppConstants.sellersCollection)
+      await _firestore
+          .collection(AppConstants.sellersCollection)
           .doc(userId)
           .collection(AppConstants.notificationsCollection)
           .doc(notificationId)
@@ -177,42 +189,44 @@ class NotificationService {
       });
     }
   }
-  
+
   // حذف إشعار
   Future<void> deleteNotification(String notificationId) async {
     final authService = AuthService();
     final userId = await authService.getCurrentUserId();
-    
+
     if (userId != null) {
-      await _firestore.collection(AppConstants.sellersCollection)
+      await _firestore
+          .collection(AppConstants.sellersCollection)
           .doc(userId)
           .collection(AppConstants.notificationsCollection)
           .doc(notificationId)
           .delete();
     }
   }
-  
+
   // تحديث حالة قراءة جميع الإشعارات
   Future<void> markAllNotificationsAsRead() async {
     final authService = AuthService();
     final userId = await authService.getCurrentUserId();
-    
+
     if (userId != null) {
       final batch = _firestore.batch();
-      final notifications = await _firestore.collection(AppConstants.sellersCollection)
+      final notifications = await _firestore
+          .collection(AppConstants.sellersCollection)
           .doc(userId)
           .collection(AppConstants.notificationsCollection)
           .where('read', isEqualTo: false)
           .get();
-      
+
       for (final doc in notifications.docs) {
         batch.update(doc.reference, {'read': true});
       }
-      
+
       await batch.commit();
     }
   }
-  
+
   // إلغاء الاشتراك في الإشعارات
   Future<void> unsubscribe() async {
     final token = await _messaging.getToken();
@@ -238,10 +252,11 @@ final sellerNotificationsProvider = StreamProvider<QuerySnapshot>((ref) {
 // مزود عدد الإشعارات غير المقروءة
 final unreadNotificationsCountProvider = StreamProvider<int>((ref) {
   final notificationsStream = ref.watch(sellerNotificationsProvider);
-  
+
   return notificationsStream.when(
     data: (snapshot) {
-      final unreadCount = snapshot.docs.where((doc) => doc['read'] == false).length;
+      final unreadCount =
+          snapshot.docs.where((doc) => doc['read'] == false).length;
       return Stream.value(unreadCount);
     },
     loading: () => Stream.value(0),

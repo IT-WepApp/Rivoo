@@ -61,10 +61,11 @@ class _InteractiveRatingStarsState extends State<InteractiveRatingStars> {
           const SizedBox(width: 8),
           Text(
             _rating.toStringAsFixed(1),
-            style: widget.ratingTextStyle ?? TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: widget.size * 0.7,
-            ),
+            style: widget.ratingTextStyle ??
+                TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: widget.size * 0.7,
+                ),
           ),
         ],
       ],

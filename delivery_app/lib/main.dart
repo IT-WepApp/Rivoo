@@ -34,7 +34,8 @@ final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
     FlutterLocalNotificationsPlugin();
 
 Future<void> _setupNotifications() async {
-  const initializationSettingsAndroid = AndroidInitializationSettings('@mipmap/ic_launcher');
+  const initializationSettingsAndroid =
+      AndroidInitializationSettings('@mipmap/ic_launcher');
   const initializationSettings = InitializationSettings(
     android: initializationSettingsAndroid,
     iOS: null,
@@ -55,7 +56,8 @@ Future<void> _setupNotifications() async {
   FirebaseMessaging.instance.subscribeToTopic('all');
   FirebaseMessaging.instance.subscribeToTopic('delivery');
 
-  await FirebaseMessaging.instance.requestPermission(alert: true, badge: true, sound: true);
+  await FirebaseMessaging.instance
+      .requestPermission(alert: true, badge: true, sound: true);
 
   FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
 
@@ -96,7 +98,8 @@ Future<void> _setupNotifications() async {
   });
 }
 
-Future<void> _sendFCMTokenToServerIfNeeded(String? deliveryPersonId, String? token) async {
+Future<void> _sendFCMTokenToServerIfNeeded(
+    String? deliveryPersonId, String? token) async {
   if (deliveryPersonId == null || token == null) return;
   debugPrint("Sending FCM Token: $token for user: $deliveryPersonId");
 
@@ -105,13 +108,13 @@ Future<void> _sendFCMTokenToServerIfNeeded(String? deliveryPersonId, String? tok
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // تهيئة Firebase
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  
+
   // تكوين Firebase Crashlytics
   await _setupCrashlytics();
-  
+
   // إعداد الإشعارات
   await _setupNotifications();
 
@@ -130,11 +133,12 @@ Future<void> main() async {
 
 Future<void> _setupCrashlytics() async {
   // تمكين التقاط الأخطاء بواسطة Crashlytics في وضع الإنتاج فقط
-  await FirebaseCrashlytics.instance.setCrashlyticsCollectionEnabled(!kDebugMode);
-  
+  await FirebaseCrashlytics.instance
+      .setCrashlyticsCollectionEnabled(!kDebugMode);
+
   // التقاط أخطاء Flutter غير المعالجة
   FlutterError.onError = FirebaseCrashlytics.instance.recordFlutterFatalError;
-  
+
   // التقاط أخطاء Dart غير المعالجة
   PlatformDispatcher.instance.onError = (error, stack) {
     FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
@@ -146,17 +150,22 @@ final GoRouter _router = GoRouter(
   initialLocation: '/',
   routes: [
     GoRoute(path: '/', builder: (_, __) => const DeliveryLoginPage()),
-    GoRoute(path: '/deliveryHome', builder: (_, __) => const DeliveryHomePage()),
-    GoRoute(path: '/deliveryHistory', builder: (_, __) => const OrderHistoryPage()),
+    GoRoute(
+        path: '/deliveryHome', builder: (_, __) => const DeliveryHomePage()),
+    GoRoute(
+        path: '/deliveryHistory', builder: (_, __) => const OrderHistoryPage()),
     GoRoute(path: '/deliveryProfile', builder: (_, __) => const ProfilePage()),
     GoRoute(path: '/settings', builder: (_, __) => const SettingsPage()),
-    GoRoute(path: '/settings/language', builder: (_, __) => const LanguageSelectionPage()),
+    GoRoute(
+        path: '/settings/language',
+        builder: (_, __) => const LanguageSelectionPage()),
     GoRoute(
       path: '/deliveryMap/:orderId',
       builder: (context, state) {
         final orderId = state.pathParameters['orderId'];
         if (orderId == null) {
-          return const Scaffold(body: Center(child: Text('Error: Missing Order ID')));
+          return const Scaffold(
+              body: Center(child: Text('Error: Missing Order ID')));
         }
         return DeliveryMapPage(orderId: orderId);
       },
@@ -175,7 +184,7 @@ class DeliveryApp extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final locale = ref.watch(localeProvider);
     final themeMode = ref.watch(themeModeProvider);
-    
+
     return MaterialApp.router(
       routerConfig: _router,
       title: AppLocalizations.of(context)?.appTitle ?? 'Delivery App',

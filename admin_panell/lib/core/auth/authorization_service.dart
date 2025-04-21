@@ -10,7 +10,7 @@ class AuthorizationService {
       : _functions = functions ?? FirebaseFunctions.instance;
 
   /// التحقق من صلاحيات المستخدم
-  /// 
+  ///
   /// [userId] معرف المستخدم
   /// [permission] الصلاحية المطلوب التحقق منها
   /// يعيد true إذا كان المستخدم يملك الصلاحية، وfalse إذا لم يكن يملكها
@@ -21,7 +21,7 @@ class AuthorizationService {
         'userId': userId,
         'permission': permission,
       });
-      
+
       return result.data['hasPermission'] as bool;
     } catch (e) {
       // في حالة حدوث خطأ، نفترض أن المستخدم لا يملك الصلاحية
@@ -30,7 +30,7 @@ class AuthorizationService {
   }
 
   /// الحصول على أدوار المستخدم
-  /// 
+  ///
   /// [userId] معرف المستخدم
   /// يعيد قائمة بأدوار المستخدم
   Future<List<String>> getUserRoles(String userId) async {
@@ -39,7 +39,7 @@ class AuthorizationService {
       final result = await callable.call<Map<String, dynamic>>({
         'userId': userId,
       });
-      
+
       final roles = result.data['roles'] as List<dynamic>;
       return roles.map((role) => role.toString()).toList();
     } catch (e) {
@@ -49,7 +49,7 @@ class AuthorizationService {
   }
 
   /// إضافة دور للمستخدم
-  /// 
+  ///
   /// [userId] معرف المستخدم
   /// [role] الدور المراد إضافته
   /// يعيد true إذا تمت الإضافة بنجاح، وfalse إذا فشلت العملية
@@ -60,7 +60,7 @@ class AuthorizationService {
         'userId': userId,
         'role': role,
       });
-      
+
       return result.data['success'] as bool;
     } catch (e) {
       return false;
@@ -68,7 +68,7 @@ class AuthorizationService {
   }
 
   /// إزالة دور من المستخدم
-  /// 
+  ///
   /// [userId] معرف المستخدم
   /// [role] الدور المراد إزالته
   /// يعيد true إذا تمت الإزالة بنجاح، وfalse إذا فشلت العملية
@@ -79,7 +79,7 @@ class AuthorizationService {
         'userId': userId,
         'role': role,
       });
-      
+
       return result.data['success'] as bool;
     } catch (e) {
       return false;

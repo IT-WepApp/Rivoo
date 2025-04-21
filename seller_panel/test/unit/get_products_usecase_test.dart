@@ -17,7 +17,7 @@ void main() {
     useCase = GetProductsUseCase(mockRepository);
   });
 
-  final testSellerId = 'seller1';
+  const testSellerId = 'seller1';
   final testProducts = [
     ProductEntity(
       id: '1',
@@ -47,7 +47,8 @@ void main() {
     ),
   ];
 
-  test('يجب أن تستدعي حالة الاستخدام مستودع المنتجات وتعيد قائمة المنتجات', () async {
+  test('يجب أن تستدعي حالة الاستخدام مستودع المنتجات وتعيد قائمة المنتجات',
+      () async {
     // الإعداد
     when(mockRepository.getProducts(testSellerId))
         .thenAnswer((_) async => testProducts);

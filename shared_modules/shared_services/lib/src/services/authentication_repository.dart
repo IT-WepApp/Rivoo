@@ -1,8 +1,9 @@
-import 'auth_service.dart'; 
+import 'auth_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart'; // Need riverpod
 
 // Provider for AuthenticationRepository
-final authenticationRepositoryProvider = Provider<AuthenticationRepository>((ref) {
+final authenticationRepositoryProvider =
+    Provider<AuthenticationRepository>((ref) {
   // Get instances of dependencies from other providers
   final authService = ref.watch(authServiceProvider);
   return AuthenticationRepository(authService);

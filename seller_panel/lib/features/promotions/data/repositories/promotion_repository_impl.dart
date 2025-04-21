@@ -12,7 +12,8 @@ class PromotionRepositoryImpl implements PromotionRepository {
   PromotionRepositoryImpl({required this.dataSource});
 
   @override
-  Future<Either<Failure, List<PromotionEntity>>> getPromotions(String sellerId) async {
+  Future<Either<Failure, List<PromotionEntity>>> getPromotions(
+      String sellerId) async {
     try {
       final promotions = await dataSource.getPromotions(sellerId);
       return Right(promotions);
@@ -24,7 +25,8 @@ class PromotionRepositoryImpl implements PromotionRepository {
   }
 
   @override
-  Future<Either<Failure, PromotionEntity>> getPromotionDetails(String promotionId) async {
+  Future<Either<Failure, PromotionEntity>> getPromotionDetails(
+      String promotionId) async {
     try {
       final promotion = await dataSource.getPromotionDetails(promotionId);
       return Right(promotion);
@@ -36,7 +38,8 @@ class PromotionRepositoryImpl implements PromotionRepository {
   }
 
   @override
-  Future<Either<Failure, PromotionEntity>> createPromotion(PromotionEntity promotion) async {
+  Future<Either<Failure, PromotionEntity>> createPromotion(
+      PromotionEntity promotion) async {
     try {
       final createdPromotion = await dataSource.createPromotion(promotion);
       return Right(createdPromotion);
@@ -48,7 +51,8 @@ class PromotionRepositoryImpl implements PromotionRepository {
   }
 
   @override
-  Future<Either<Failure, PromotionEntity>> updatePromotion(PromotionEntity promotion) async {
+  Future<Either<Failure, PromotionEntity>> updatePromotion(
+      PromotionEntity promotion) async {
     try {
       final updatedPromotion = await dataSource.updatePromotion(promotion);
       return Right(updatedPromotion);
@@ -72,9 +76,11 @@ class PromotionRepositoryImpl implements PromotionRepository {
   }
 
   @override
-  Future<Either<Failure, PromotionEntity>> togglePromotionStatus(String promotionId, bool isActive) async {
+  Future<Either<Failure, PromotionEntity>> togglePromotionStatus(
+      String promotionId, bool isActive) async {
     try {
-      final updatedPromotion = await dataSource.togglePromotionStatus(promotionId, isActive);
+      final updatedPromotion =
+          await dataSource.togglePromotionStatus(promotionId, isActive);
       return Right(updatedPromotion);
     } on ServerException {
       return Left(ServerFailure());

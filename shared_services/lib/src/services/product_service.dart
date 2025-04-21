@@ -26,7 +26,7 @@ class ProductService {
       // }
 
       // 2. Update the product with the promotion details
-       Product(
+      Product(
           id: 'temp',
           name: 'temp',
           description: 'temp',
@@ -66,7 +66,7 @@ class ProductService {
       // }
 
       // 2. Update the product with the new promotion details
-        Product(
+      Product(
           id: 'temp',
           name: 'temp',
           description: 'temp',
@@ -80,7 +80,6 @@ class ProductService {
           promotionValue: value,
           promotionStartDate: startDate,
           promotionEndDate: endDate);
-
 
       // 3. Save the updated product to the database
       // await _dbClient.updateProduct(updatedProduct);
@@ -100,7 +99,7 @@ class ProductService {
       // }
 
       // 2. Remove the promotion details from the product
-         const Product(
+      const Product(
           id: 'temp',
           name: 'temp',
           description: 'temp',
@@ -118,7 +117,7 @@ class ProductService {
       // 3. Save the updated product to the database
       // await _dbClient.updateProduct(updatedProduct);
     } catch (e) {
-       // TODO: Implement logging instead of print()
+      // TODO: Implement logging instead of print()
       throw Exception('Failed to delete promotion: $e');
     }
   }
@@ -131,7 +130,7 @@ class ProductService {
       // if (product == null) {
       //   throw Exception('Product not found');
       // }
-        const product = Product(
+      const product = Product(
           id: 'temp',
           name: 'temp',
           description: 'temp',

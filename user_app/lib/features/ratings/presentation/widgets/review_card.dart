@@ -37,7 +37,9 @@ class ReviewCard extends StatelessWidget {
             Row(
               children: [
                 CircleAvatar(
-                  backgroundColor: isProduct ? Colors.blue.withOpacity(0.1) : Colors.green.withOpacity(0.1),
+                  backgroundColor: isProduct
+                      ? Colors.blue.withOpacity(0.1)
+                      : Colors.green.withOpacity(0.1),
                   child: Icon(
                     isProduct ? Icons.shopping_bag : Icons.delivery_dining,
                     color: isProduct ? Colors.blue : Colors.green,

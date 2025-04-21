@@ -7,7 +7,8 @@ import 'package:user_app/features/ratings/presentation/widgets/review_card.dart'
 import 'package:user_app/features/ratings/presentation/screens/add_review_screen.dart';
 
 // مزود لقائمة مراجعات منتج معين
-final productReviewsProvider = FutureProvider.family<List<RatingModel>, String>((ref, productId) async {
+final productReviewsProvider =
+    FutureProvider.family<List<RatingModel>, String>((ref, productId) async {
   final firestore = FirebaseFirestore.instance;
   final snapshot = await firestore
       .collection('ratings')
@@ -22,7 +23,8 @@ final productReviewsProvider = FutureProvider.family<List<RatingModel>, String>(
 });
 
 // مزود لتوزيع التقييمات لمنتج معين (1-5 نجوم)
-final productRatingDistributionProvider = FutureProvider.family<Map<int, int>, String>((ref, productId) async {
+final productRatingDistributionProvider =
+    FutureProvider.family<Map<int, int>, String>((ref, productId) async {
   final firestore = FirebaseFirestore.instance;
   final snapshot = await firestore
       .collection('ratings')
@@ -59,7 +61,8 @@ class ProductReviewsScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final reviewsAsync = ref.watch(productReviewsProvider(productId));
-    final distributionAsync = ref.watch(productRatingDistributionProvider(productId));
+    final distributionAsync =
+        ref.watch(productRatingDistributionProvider(productId));
     final averageRatingAsync = ref.watch(productRatingProvider(productId));
 
     return Scaffold(
@@ -81,8 +84,8 @@ class ProductReviewsScreen extends ConsumerWidget {
                       Text(
                         productName,
                         style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
+                              fontWeight: FontWeight.bold,
+                            ),
                       ),
                       const SizedBox(height: 24),
 
@@ -97,16 +100,18 @@ class ProductReviewsScreen extends ConsumerWidget {
                                 ratingDistribution: distribution,
                               );
                             },
-                            loading: () => const Center(child: CircularProgressIndicator()),
+                            loading: () => const Center(
+                                child: CircularProgressIndicator()),
                             error: (_, __) => const SizedBox.shrink(),
                           );
                         },
-                        loading: () => const Center(child: CircularProgressIndicator()),
+                        loading: () =>
+                            const Center(child: CircularProgressIndicator()),
                         error: (_, __) => const SizedBox.shrink(),
                       ),
 
                       const SizedBox(height: 24),
-                      
+
                       // عنوان المراجعات
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,

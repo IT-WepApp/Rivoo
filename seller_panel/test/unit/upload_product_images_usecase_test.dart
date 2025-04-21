@@ -17,7 +17,7 @@ void main() {
     useCase = UploadProductImagesUseCase(mockRepository);
   });
 
-  final testProductId = 'product1';
+  const testProductId = 'product1';
   final testLocalImagePaths = [
     '/path/to/image1.jpg',
     '/path/to/image2.jpg',
@@ -29,7 +29,8 @@ void main() {
     'https://example.com/image3.jpg',
   ];
 
-  test('يجب أن تستدعي حالة الاستخدام مستودع المنتجات وتعيد قائمة روابط الصور', () async {
+  test('يجب أن تستدعي حالة الاستخدام مستودع المنتجات وتعيد قائمة روابط الصور',
+      () async {
     // الإعداد
     when(mockRepository.uploadProductImages(testProductId, testLocalImagePaths))
         .thenAnswer((_) async => testImageUrls);
@@ -39,7 +40,8 @@ void main() {
 
     // التحقق
     expect(result, testImageUrls);
-    verify(mockRepository.uploadProductImages(testProductId, testLocalImagePaths));
+    verify(
+        mockRepository.uploadProductImages(testProductId, testLocalImagePaths));
     verifyNoMoreInteractions(mockRepository);
   });
 }

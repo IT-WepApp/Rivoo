@@ -11,8 +11,7 @@ class AdminLoginPage extends ConsumerWidget {
     final authNotifier = ref.read(authProvider.notifier);
 
     return Scaffold(
-      appBar: AppBar(
-          title: const Text('Admin Login')),
+      appBar: AppBar(title: const Text('Admin Login')),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
@@ -28,7 +27,8 @@ class AdminLoginPage extends ConsumerWidget {
               onPressed: authState == null
                   ? () async {
                       // Example: Call signIn with dummy credentials
-                      await authNotifier.signIn('admin@example.com', 'password');
+                      await authNotifier.signIn(
+                          'admin@example.com', 'password');
                     }
                   : () async {
                       await authNotifier.signOut();

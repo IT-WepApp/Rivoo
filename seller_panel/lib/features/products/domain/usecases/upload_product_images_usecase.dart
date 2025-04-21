@@ -6,7 +6,8 @@ class UploadProductImagesUseCase {
 
   UploadProductImagesUseCase(this.repository);
 
-  Future<List<String>> call(String productId, List<String> localImagePaths) async {
+  Future<List<String>> call(
+      String productId, List<String> localImagePaths) async {
     return await repository.uploadProductImages(productId, localImagePaths);
   }
 }

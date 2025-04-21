@@ -25,10 +25,10 @@ class ProductDetailsScreen extends ConsumerWidget {
         child: ResponsiveBuilder(
           // تنفيذ واجهة الهاتف
           mobileBuilder: (context) => _buildMobileLayout(context, l10n),
-          
+
           // تنفيذ واجهة الجهاز اللوحي
           smallTabletBuilder: (context) => _buildTabletLayout(context, l10n),
-          
+
           // تنفيذ واجهة سطح المكتب
           desktopBuilder: (context) => _buildDesktopLayout(context, l10n),
         ),
@@ -36,7 +36,8 @@ class ProductDetailsScreen extends ConsumerWidget {
       bottomNavigationBar: ResponsiveBuilder(
         mobileBuilder: (context) => _buildBottomBar(context, l10n),
         smallTabletBuilder: (context) => _buildBottomBar(context, l10n),
-        desktopBuilder: (context) => const SizedBox.shrink(), // لا نعرض شريط التنقل السفلي في وضع سطح المكتب
+        desktopBuilder: (context) => const SizedBox
+            .shrink(), // لا نعرض شريط التنقل السفلي في وضع سطح المكتب
       ),
     );
   }
@@ -207,7 +208,7 @@ class ProductDetailsScreen extends ConsumerWidget {
               height: context.responsiveHeight(250),
             ),
           ),
-          
+
           // مؤشرات الصور المصغرة
           Positioned(
             bottom: 16,
@@ -225,13 +226,16 @@ class ProductDetailsScreen extends ConsumerWidget {
                     shape: BoxShape.circle,
                     color: index == 0
                         ? Theme.of(context).colorScheme.primary
-                        : Theme.of(context).colorScheme.onSurface.withOpacity(0.3),
+                        : Theme.of(context)
+                            .colorScheme
+                            .onSurface
+                            .withOpacity(0.3),
                   ),
                 ),
               ),
             ),
           ),
-          
+
           // زر التكبير
           Positioned(
             bottom: 16,
@@ -265,7 +269,7 @@ class ProductDetailsScreen extends ConsumerWidget {
                 ),
           ),
           const SizedBox(height: 8),
-          
+
           // التقييم
           Row(
             children: [
@@ -274,13 +278,16 @@ class ProductDetailsScreen extends ConsumerWidget {
               Text(
                 '(${product.reviewCount} ${l10n.reviews})',
                 style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                      color: Theme.of(context)
+                          .colorScheme
+                          .onSurface
+                          .withOpacity(0.7),
                     ),
               ),
             ],
           ),
           const SizedBox(height: 16),
-          
+
           // السعر
           Row(
             children: [
@@ -297,7 +304,10 @@ class ProductDetailsScreen extends ConsumerWidget {
                   '${l10n.currencySymbol} ${product.discountPrice!.toStringAsFixed(2)}',
                   style: Theme.of(context).textTheme.titleMedium?.copyWith(
                         decoration: TextDecoration.lineThrough,
-                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.5),
+                        color: Theme.of(context)
+                            .colorScheme
+                            .onSurface
+                            .withOpacity(0.5),
                       ),
                 ),
               const Spacer(),
@@ -318,7 +328,7 @@ class ProductDetailsScreen extends ConsumerWidget {
             ],
           ),
           const SizedBox(height: 16),
-          
+
           // خيارات المنتج
           if (context.isPhone || context.isSmallTablet) ...[
             _buildProductOptions(context, l10n),
@@ -351,7 +361,7 @@ class ProductDetailsScreen extends ConsumerWidget {
             style: Theme.of(context).textTheme.bodyMedium,
           ),
           const SizedBox(height: 16),
-          
+
           // المواصفات
           ExpansionTile(
             title: Text(
@@ -368,7 +378,8 @@ class ProductDetailsScreen extends ConsumerWidget {
                     _buildSpecificationRow(context, 'Brand', 'RivooSy'),
                     _buildSpecificationRow(context, 'Model', 'RS-2023'),
                     _buildSpecificationRow(context, 'Weight', '250g'),
-                    _buildSpecificationRow(context, 'Dimensions', '10 x 5 x 2 cm'),
+                    _buildSpecificationRow(
+                        context, 'Dimensions', '10 x 5 x 2 cm'),
                     _buildSpecificationRow(context, 'Material', 'Aluminum'),
                     _buildSpecificationRow(context, 'Warranty', '1 Year'),
                   ],
@@ -382,7 +393,8 @@ class ProductDetailsScreen extends ConsumerWidget {
   }
 
   // بناء صف المواصفات
-  Widget _buildSpecificationRow(BuildContext context, String label, String value) {
+  Widget _buildSpecificationRow(
+      BuildContext context, String label, String value) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0),
       child: Row(
@@ -392,7 +404,10 @@ class ProductDetailsScreen extends ConsumerWidget {
             child: Text(
               label,
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withOpacity(0.7),
                   ),
             ),
           ),
@@ -433,7 +448,7 @@ class ProductDetailsScreen extends ConsumerWidget {
           ],
         ),
         const SizedBox(height: 16),
-        
+
         // الحجم
         Text(
           l10n.size,
@@ -456,7 +471,8 @@ class ProductDetailsScreen extends ConsumerWidget {
   }
 
   // بناء خيار اللون
-  Widget _buildColorOption(BuildContext context, Color color, {bool isSelected = false}) {
+  Widget _buildColorOption(BuildContext context, Color color,
+      {bool isSelected = false}) {
     return GestureDetector(
       onTap: () {},
       child: Container(
@@ -483,7 +499,9 @@ class ProductDetailsScreen extends ConsumerWidget {
         child: isSelected
             ? Icon(
                 Icons.check,
-                color: color.computeLuminance() > 0.5 ? Colors.black : Colors.white,
+                color: color.computeLuminance() > 0.5
+                    ? Colors.black
+                    : Colors.white,
                 size: 16,
               )
             : null,
@@ -492,7 +510,8 @@ class ProductDetailsScreen extends ConsumerWidget {
   }
 
   // بناء خيار الحجم
-  Widget _buildSizeOption(BuildContext context, String size, {bool isSelected = false}) {
+  Widget _buildSizeOption(BuildContext context, String size,
+      {bool isSelected = false}) {
     return GestureDetector(
       onTap: () {},
       child: Container(
@@ -716,14 +735,14 @@ class ProductDetailsScreen extends ConsumerWidget {
             ],
           ),
           const SizedBox(height: 16),
-          
+
           // ملخص التقييمات
           RatingSummary(
             rating: product.rating,
             reviewCount: product.reviewCount,
           ),
           const SizedBox(height: 16),
-          
+
           // زر إضافة تقييم
           OutlinedButton.icon(
             onPressed: () {},
@@ -737,7 +756,7 @@ class ProductDetailsScreen extends ConsumerWidget {
             ),
           ),
           const SizedBox(height: 16),
-          
+
           // قائمة التقييمات
           ListView.separated(
             shrinkWrap: true,
@@ -749,7 +768,8 @@ class ProductDetailsScreen extends ConsumerWidget {
                 userName: 'User ${index + 1}',
                 rating: 4.0 + (index % 2) * 0.5,
                 date: DateTime.now().subtract(Duration(days: index * 5)),
-                comment: 'This is a great product! I really like it and would recommend it to others.',
+                comment:
+                    'This is a great product! I really like it and would recommend it to others.',
                 isVerifiedPurchase: index % 2 == 0,
               );
             },
@@ -773,7 +793,7 @@ class ProductDetailsScreen extends ConsumerWidget {
                 ),
           ),
           const SizedBox(height: 16),
-          
+
           // قائمة المنتجات ذات الصلة
           SizedBox(
             height: context.responsiveHeight(220),
@@ -782,7 +802,8 @@ class ProductDetailsScreen extends ConsumerWidget {
               itemCount: 5,
               itemBuilder: (context, index) {
                 return Container(
-                  width: context.responsiveWidthRatio(0.4) * context.screenWidth,
+                  width:
+                      context.responsiveWidthRatio(0.4) * context.screenWidth,
                   margin: const EdgeInsets.only(right: 16),
                   decoration: BoxDecoration(
                     color: Theme.of(context).colorScheme.surface,
@@ -800,7 +821,8 @@ class ProductDetailsScreen extends ConsumerWidget {
                     children: [
                       // صورة المنتج
                       ClipRRect(
-                        borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                        borderRadius: const BorderRadius.vertical(
+                            top: Radius.circular(16)),
                         child: Image.network(
                           'https://via.placeholder.com/150',
                           height: 120,
@@ -808,7 +830,7 @@ class ProductDetailsScreen extends ConsumerWidget {
                           fit: BoxFit.cover,
                         ),
                       ),
-                      
+
                       // معلومات المنتج
                       Padding(
                         padding: const EdgeInsets.all(8.0),
@@ -817,7 +839,10 @@ class ProductDetailsScreen extends ConsumerWidget {
                           children: [
                             Text(
                               'Related Product ${index + 1}',
-                              style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .titleSmall
+                                  ?.copyWith(
                                     fontWeight: FontWeight.bold,
                                   ),
                               maxLines: 1,
@@ -826,15 +851,20 @@ class ProductDetailsScreen extends ConsumerWidget {
                             const SizedBox(height: 4),
                             Text(
                               '${l10n.currencySymbol} ${(50.0 + index * 10).toStringAsFixed(2)}',
-                              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    color: Theme.of(context).colorScheme.primary,
+                              style: Theme.of(context)
+                                  .textTheme
+                                  .bodyMedium
+                                  ?.copyWith(
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
                                     fontWeight: FontWeight.bold,
                                   ),
                             ),
                             const SizedBox(height: 4),
                             Row(
                               children: [
-                                RatingStars(rating: 4.0 + (index % 2) * 0.5, size: 16),
+                                RatingStars(
+                                    rating: 4.0 + (index % 2) * 0.5, size: 16),
                                 const SizedBox(width: 4),
                                 Text(
                                   '(${30 + index * 5})',

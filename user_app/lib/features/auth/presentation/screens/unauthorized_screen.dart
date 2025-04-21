@@ -11,7 +11,7 @@ class UnauthorizedScreen extends ConsumerWidget {
     final theme = Theme.of(context);
     final localizations = AppLocalizations.of(context)!;
     final authState = ref.watch(authViewModelProvider);
-    
+
     return Scaffold(
       appBar: AppBar(
         title: Text(localizations.unauthorized),
@@ -48,7 +48,8 @@ class UnauthorizedScreen extends ConsumerWidget {
                   Navigator.of(context).pushReplacementNamed('/');
                 },
                 style: ElevatedButton.styleFrom(
-                  padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 32, vertical: 16),
                 ),
                 child: Text(localizations.backToHome),
               ),

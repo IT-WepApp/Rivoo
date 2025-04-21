@@ -14,7 +14,7 @@ class SettingsPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final localeNotifier = ref.read(localeProvider.notifier);
     final themeNotifier = ref.read(themeModeProvider.notifier);
-    
+
     return Scaffold(
       appBar: AppBar(
         title: Text(AppLocalizations.of(context)!.settings),
@@ -34,7 +34,7 @@ class SettingsPage extends ConsumerWidget {
             },
           ),
           const Divider(),
-          
+
           // قسم المظهر
           ListTile(
             leading: Icon(themeNotifier.getCurrentThemeModeIcon()),
@@ -47,28 +47,28 @@ class SettingsPage extends ConsumerWidget {
             },
           ),
           const Divider(),
-          
+
           // معلومات التطبيق
           const ListTile(
             leading: Icon(Icons.info_outline),
             title: Text('RivooSy Delivery'),
             subtitle: Text('v1.0.0'),
           ),
-          
+
           // واجهة اختبار اللغة
           const LanguageToggleWidget(),
-          
+
           // واجهة اختبار الوضع الليلي
           const ThemeToggleWidget(),
         ],
       ),
     );
   }
-  
+
   void _showThemeModeDialog(BuildContext context, WidgetRef ref) {
     final themeNotifier = ref.read(themeModeProvider.notifier);
     final currentThemeMode = ref.watch(themeModeProvider);
-    
+
     showDialog(
       context: context,
       builder: (context) {

@@ -15,7 +15,14 @@ class _OrderListPageState extends ConsumerState<OrderListPage> {
   String _searchText = '';
   final _searchController = TextEditingController();
 
-  final List<String> _statusOptions = ['All', 'pending', 'processing', 'shipped', 'delivered', 'cancelled'];
+  final List<String> _statusOptions = [
+    'All',
+    'pending',
+    'processing',
+    'shipped',
+    'delivered',
+    'cancelled'
+  ];
 
   @override
   void dispose() {
@@ -27,10 +34,13 @@ class _OrderListPageState extends ConsumerState<OrderListPage> {
   Widget build(BuildContext context) {
     final ordersState = ref.watch(sellerOrdersProvider);
 
-    ref.listen<AsyncValue<List<OrderModel>>>(sellerOrdersProvider, (previous, next) {
+    ref.listen<AsyncValue<List<OrderModel>>>(sellerOrdersProvider,
+        (previous, next) {
       if (next is AsyncError && next != previous) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: ${next.error}'), backgroundColor: Colors.red),
+          SnackBar(
+              content: Text('Error: ${next.error}'),
+              backgroundColor: Colors.red),
         );
       }
     });
@@ -45,7 +55,8 @@ class _OrderListPageState extends ConsumerState<OrderListPage> {
           Expanded(
             child: ordersState.when(
               data: (orders) => _buildOrderList(orders, ref),
-              error: (error, stackTrace) => Center(child: Text('Failed to load orders: $error')),
+              error: (error, stackTrace) =>
+                  Center(child: Text('Failed to load orders: $error')),
               loading: () => const Center(child: CircularProgressIndicator()),
             ),
           ),
@@ -77,7 +88,8 @@ class _OrderListPageState extends ConsumerState<OrderListPage> {
               decoration: InputDecoration(
                 hintText: 'Search by ID...',
                 prefixIcon: const Icon(Icons.search),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                border:
+                    OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
               ),
               onChanged: (value) {
                 setState(() {
@@ -93,8 +105,10 @@ class _OrderListPageState extends ConsumerState<OrderListPage> {
 
   Widget _buildOrderList(List<OrderModel> orders, WidgetRef ref) {
     final filteredOrders = orders.where((order) {
-      final statusMatch = _selectedStatusFilter == 'All' || order.status.toLowerCase() == _selectedStatusFilter;
-      final searchMatch = _searchText.isEmpty || order.id.toLowerCase().contains(_searchText);
+      final statusMatch = _selectedStatusFilter == 'All' ||
+          order.status.toLowerCase() == _selectedStatusFilter;
+      final searchMatch =
+          _searchText.isEmpty || order.id.toLowerCase().contains(_searchText);
       return statusMatch && searchMatch;
     }).toList();
 
@@ -112,11 +126,14 @@ class _OrderListPageState extends ConsumerState<OrderListPage> {
 
           return ListTile(
             title: Text('Order ID: ${order.id}'),
-            subtitle: Text('Status: ${order.status} | Total: \$${order.total.toStringAsFixed(2)}'),
+            subtitle: Text(
+                'Status: ${order.status} | Total: \$${order.total.toStringAsFixed(2)}'),
             trailing: availableStatuses.isNotEmpty
                 ? DropdownButton<String>(
                     hint: const Text('Update'),
-                    items: availableStatuses.map((s) => DropdownMenuItem(value: s, child: Text(s))).toList(),
+                    items: availableStatuses
+                        .map((s) => DropdownMenuItem(value: s, child: Text(s)))
+                        .toList(),
                     onChanged: (newStatus) {
                       if (newStatus != null) {
                         _showStatusUpdateDialog(order.id, newStatus);
@@ -148,11 +165,14 @@ class _OrderListPageState extends ConsumerState<OrderListPage> {
         title: const Text('Confirm'),
         content: Text('Change status to "$newStatus"?'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
+          TextButton(
+              onPressed: () => Navigator.pop(ctx), child: const Text('Cancel')),
           ElevatedButton(
             onPressed: () async {
               Navigator.pop(ctx);
-              await ref.read(sellerOrdersProvider.notifier).updateOrderStatus(orderId, newStatus);
+              await ref
+                  .read(sellerOrdersProvider.notifier)
+                  .updateOrderStatus(orderId, newStatus);
             },
             child: const Text('Confirm'),
           ),

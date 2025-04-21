@@ -53,7 +53,8 @@ final firestoreServiceProvider = Provider<FirestoreService>((ref) {
 });
 
 /// مزود حالة المنتجات
-final productsProvider = StateNotifierProvider<ProductsNotifier, ProductsState>((ref) {
+final productsProvider =
+    StateNotifierProvider<ProductsNotifier, ProductsState>((ref) {
   final firestoreService = ref.watch(firestoreServiceProvider);
   return ProductsNotifier(firestoreService);
 });
@@ -65,7 +66,8 @@ final productProvider = Provider.family<Product?, String>((ref, id) {
 });
 
 /// مزود منتجات حسب الفئة
-final productsByCategoryProvider = Provider.family<List<Product>, String>((ref, categoryId) {
+final productsByCategoryProvider =
+    Provider.family<List<Product>, String>((ref, categoryId) {
   final products = ref.watch(productsProvider).products;
   return products.where((product) => product.categoryId == categoryId).toList();
 });
@@ -81,7 +83,7 @@ class ProductsNotifier extends StateNotifier<ProductsState> {
   /// جلب المنتجات
   Future<void> fetchProducts() async {
     state = state.copyWithLoading();
-    
+
     try {
       final products = await _firestoreService.getProducts();
       state = state.copyWithProducts(products);
@@ -93,7 +95,7 @@ class ProductsNotifier extends StateNotifier<ProductsState> {
   /// البحث عن منتجات
   Future<void> searchProducts(String query) async {
     state = state.copyWithLoading();
-    
+
     try {
       final products = await _firestoreService.searchProducts(query);
       state = state.copyWithProducts(products);
@@ -105,9 +107,10 @@ class ProductsNotifier extends StateNotifier<ProductsState> {
   /// جلب منتجات حسب الفئة
   Future<void> fetchProductsByCategory(String categoryId) async {
     state = state.copyWithLoading();
-    
+
     try {
-      final products = await _firestoreService.getProductsByCategory(categoryId);
+      final products =
+          await _firestoreService.getProductsByCategory(categoryId);
       state = state.copyWithProducts(products);
     } catch (e) {
       state = state.copyWithError(e.toString());

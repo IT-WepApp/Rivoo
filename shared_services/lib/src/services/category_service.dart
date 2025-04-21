@@ -17,7 +17,8 @@ class CategoryService {
 
   Future<String> addCategory(Category category) async {
     // In a real implementation, add to a database and return the generated ID
-    final id = category.id; // Assuming the ID is generated before calling this method
+    final id =
+        category.id; // Assuming the ID is generated before calling this method
     _database[id] = category.toJson();
     return id;
   }

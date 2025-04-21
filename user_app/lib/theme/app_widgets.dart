@@ -90,18 +90,22 @@ class AppWidgets {
             foregroundColor: textColor ?? Colors.blue,
             backgroundColor: Colors.transparent,
             elevation: 0,
-            padding: padding ?? const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+            padding: padding ??
+                const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(borderRadius),
-              side: BorderSide(color: disabled ? Colors.grey : (textColor ?? Colors.blue)),
+              side: BorderSide(
+                  color: disabled ? Colors.grey : (textColor ?? Colors.blue)),
             ),
             minimumSize: Size(width, height),
           )
         : ElevatedButton.styleFrom(
             foregroundColor: textColor ?? Colors.white,
-            backgroundColor: disabled ? Colors.grey : (backgroundColor ?? Colors.blue),
+            backgroundColor:
+                disabled ? Colors.grey : (backgroundColor ?? Colors.blue),
             elevation: 2,
-            padding: padding ?? const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+            padding: padding ??
+                const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
             shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.circular(borderRadius),
             ),
@@ -131,7 +135,7 @@ class AppWidgets {
                       const SizedBox(width: 8),
                       Text(
                         text,
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
                         ),
@@ -140,7 +144,7 @@ class AppWidgets {
                   )
                 : Text(
                     text,
-                    style: TextStyle(
+                    style: const TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
                     ),
@@ -358,7 +362,8 @@ class AppWidgets {
                 )
               : null,
           border: InputBorder.none,
-          contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          contentPadding:
+              const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         ),
       ),
     );

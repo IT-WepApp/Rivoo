@@ -14,7 +14,7 @@ class _SplashPageState extends State<SplashPage> {
     super.initState();
     // إزالة شاشة السبلاش الأصلية
     FlutterNativeSplash.remove();
-    
+
     // التوجيه إلى الصفحة التالية بعد تأخير
     Future.delayed(const Duration(seconds: 2), () {
       // يمكن استبدال هذا بالتوجيه المناسب
@@ -33,8 +33,8 @@ class _SplashPageState extends State<SplashPage> {
               'assets/images/logo.png',
               width: 150,
               height: 150,
-              errorBuilder: (context, error, stackTrace) => 
-                const Icon(Icons.shopping_cart, size: 150),
+              errorBuilder: (context, error, stackTrace) =>
+                  const Icon(Icons.shopping_cart, size: 150),
             ),
             const SizedBox(height: 24),
             const CircularProgressIndicator(),

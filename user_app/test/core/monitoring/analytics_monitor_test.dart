@@ -28,10 +28,10 @@ void main() {
       // Arrange
       final route = MockRoute();
       when(route.settings).thenReturn(const RouteSettings(name: 'test_screen'));
-      
+
       // Act
       analyticsObserver.didPush(route, null);
-      
+
       // Assert
       verify(mockAnalyticsService.logScreenView(
         screenName: 'test_screen',
@@ -42,11 +42,12 @@ void main() {
     test('didReplace should log screen view for new route', () {
       // Arrange
       final newRoute = MockRoute();
-      when(newRoute.settings).thenReturn(const RouteSettings(name: 'new_screen'));
-      
+      when(newRoute.settings)
+          .thenReturn(const RouteSettings(name: 'new_screen'));
+
       // Act
       analyticsObserver.didReplace(newRoute: newRoute, oldRoute: null);
-      
+
       // Assert
       verify(mockAnalyticsService.logScreenView(
         screenName: 'new_screen',
@@ -58,11 +59,12 @@ void main() {
       // Arrange
       final route = MockRoute();
       final previousRoute = MockRoute();
-      when(previousRoute.settings).thenReturn(const RouteSettings(name: 'previous_screen'));
-      
+      when(previousRoute.settings)
+          .thenReturn(const RouteSettings(name: 'previous_screen'));
+
       // Act
       analyticsObserver.didPop(route, previousRoute);
-      
+
       // Assert
       verify(mockAnalyticsService.logScreenView(
         screenName: 'previous_screen',
@@ -78,17 +80,19 @@ void main() {
           .thenAnswer((_) async => null);
       when(mockPerformanceService.stopTrace('operation_test_operation'))
           .thenAnswer((_) async => null);
-      
+
       // Act
       final result = await performanceMonitor.monitorOperation(
         operationName: 'test_operation',
         operation: () async => 'result',
       );
-      
+
       // Assert
       expect(result, 'result');
-      verify(mockPerformanceService.startTrace('operation_test_operation')).called(1);
-      verify(mockPerformanceService.stopTrace('operation_test_operation')).called(1);
+      verify(mockPerformanceService.startTrace('operation_test_operation'))
+          .called(1);
+      verify(mockPerformanceService.stopTrace('operation_test_operation'))
+          .called(1);
     });
 
     test('monitorOperation should set attributes if provided', () async {
@@ -97,16 +101,18 @@ void main() {
           .thenAnswer((_) async => null);
       when(mockPerformanceService.stopTrace('operation_test_operation'))
           .thenAnswer((_) async => null);
-      
+
       // Act
       await performanceMonitor.monitorOperation(
         operationName: 'test_operation',
         operation: () async => 'result',
         attributes: {'key': 'value'},
       );
-      
+
       // Assert
-      verify(mockPerformanceService.setTraceAttribute('operation_test_operation', 'key', 'value')).called(1);
+      verify(mockPerformanceService.setTraceAttribute(
+              'operation_test_operation', 'key', 'value'))
+          .called(1);
     });
 
     test('monitorOperation should handle errors and rethrow', () async {
@@ -115,7 +121,7 @@ void main() {
           .thenAnswer((_) async => null);
       when(mockPerformanceService.stopTrace('operation_test_operation'))
           .thenAnswer((_) async => null);
-      
+
       // Act & Assert
       expect(
         () => performanceMonitor.monitorOperation(
@@ -124,9 +130,12 @@ void main() {
         ),
         throwsException,
       );
-      
-      verify(mockPerformanceService.setTraceAttribute('operation_test_operation', 'error', 'Exception: Test error')).called(1);
-      verify(mockPerformanceService.stopTrace('operation_test_operation')).called(1);
+
+      verify(mockPerformanceService.setTraceAttribute(
+              'operation_test_operation', 'error', 'Exception: Test error'))
+          .called(1);
+      verify(mockPerformanceService.stopTrace('operation_test_operation'))
+          .called(1);
     });
 
     test('monitorHttpRequest should start and stop HTTP metric', () async {
@@ -141,7 +150,7 @@ void main() {
         responsePayloadSize: 500,
         contentType: 'application/json',
       )).thenAnswer((_) async => null);
-      
+
       // Act
       final result = await performanceMonitor.monitorHttpRequest(
         url: 'https://example.com',
@@ -152,10 +161,12 @@ void main() {
         responseSize: 500,
         contentType: 'application/json',
       );
-      
+
       // Assert
       expect(result, 'response');
-      verify(mockPerformanceService.startHttpMetric('https://example.com', 'GET')).called(1);
+      verify(mockPerformanceService.startHttpMetric(
+              'https://example.com', 'GET'))
+          .called(1);
       verify(mockPerformanceService.stopHttpMetric(
         'https://example.com',
         'GET',

@@ -26,7 +26,8 @@ class DeliveryLocationModel {
     return DeliveryLocationModel(
       latitude: (map['latitude'] as num).toDouble(),
       longitude: (map['longitude'] as num).toDouble(),
-      heading: map['heading'] != null ? (map['heading'] as num).toDouble() : null,
+      heading:
+          map['heading'] != null ? (map['heading'] as num).toDouble() : null,
       speed: map['speed'] != null ? (map['speed'] as num).toDouble() : null,
       timestamp: (map['timestamp'] as Timestamp).toDate(),
     );
@@ -87,7 +88,8 @@ class OrderTrackingNotifier extends StateNotifier<OrderTrackingState> {
   final Location _location = Location();
   final List<LocationData> _locationHistoryList = [];
 
-  OrderTrackingNotifier(this._orderService, this._firestore, this._orderId) : super(OrderTrackingState()) {
+  OrderTrackingNotifier(this._orderService, this._firestore, this._orderId)
+      : super(OrderTrackingState()) {
     _fetchOrderDetails();
   }
 
@@ -95,11 +97,13 @@ class OrderTrackingNotifier extends StateNotifier<OrderTrackingState> {
     state = state.copyWith(isLoading: true, orderData: const AsyncLoading());
     try {
       _orderSubscription?.cancel();
-      _orderSubscription = _orderService.getOrderStream(_orderId).listen((order) {
+      _orderSubscription =
+          _orderService.getOrderStream(_orderId).listen((order) {
         state = state.copyWith(orderData: AsyncData(order), isLoading: false);
-        
-        if (order?.deliveryId != null && 
-            (order?.status == 'out_for_delivery' || order?.status == 'shipped')) {
+
+        if (order?.deliveryId != null &&
+            (order?.status == 'out_for_delivery' ||
+                order?.status == 'shipped')) {
           _trackDeliveryLocation(order!.deliveryId!);
         } else {
           // إيقاف تتبع المندوب إذا تم تسليم الطلب أو إلغاؤه
@@ -109,12 +113,18 @@ class OrderTrackingNotifier extends StateNotifier<OrderTrackingState> {
           );
         }
       }, onError: (error, stackTrace) {
-        log('Error fetching order stream', error: error, stackTrace: stackTrace, name: 'OrderTrackingNotifier');
-        state = state.copyWith(orderData: AsyncError(error, stackTrace), isLoading: false);
+        log('Error fetching order stream',
+            error: error,
+            stackTrace: stackTrace,
+            name: 'OrderTrackingNotifier');
+        state = state.copyWith(
+            orderData: AsyncError(error, stackTrace), isLoading: false);
       });
     } catch (e, stackTrace) {
-      log('Error setting up order stream', error: e, stackTrace: stackTrace, name: 'OrderTrackingNotifier');
-      state = state.copyWith(orderData: AsyncError(e, stackTrace), isLoading: false);
+      log('Error setting up order stream',
+          error: e, stackTrace: stackTrace, name: 'OrderTrackingNotifier');
+      state = state.copyWith(
+          orderData: AsyncError(e, stackTrace), isLoading: false);
     }
   }
 
@@ -125,7 +135,9 @@ class OrderTrackingNotifier extends StateNotifier<OrderTrackingState> {
     if (!serviceEnabled) {
       serviceEnabled = await _location.requestService();
       if (!serviceEnabled) {
-        state = state.copyWith(deliveryLocation: const AsyncError('Location service disabled', StackTrace.empty));
+        state = state.copyWith(
+            deliveryLocation: const AsyncError(
+                'Location service disabled', StackTrace.empty));
         return;
       }
     }
@@ -134,16 +146,18 @@ class OrderTrackingNotifier extends StateNotifier<OrderTrackingState> {
     if (permissionGranted == PermissionStatus.denied) {
       permissionGranted = await _location.requestPermission();
       if (permissionGranted != PermissionStatus.granted) {
-        state = state.copyWith(deliveryLocation: const AsyncError('Location permission denied', StackTrace.empty));
+        state = state.copyWith(
+            deliveryLocation: const AsyncError(
+                'Location permission denied', StackTrace.empty));
         return;
       }
     }
-    
+
     // إلغاء الاشتراك السابق إن وجد
     _locationSubscription?.cancel();
-    
+
     state = state.copyWith(deliveryLocation: const AsyncLoading());
-    
+
     // الاشتراك في تحديثات موقع المندوب من Firestore
     _locationSubscription = _firestore
         .collection('delivery_locations')
@@ -152,22 +166,25 @@ class OrderTrackingNotifier extends StateNotifier<OrderTrackingState> {
         .listen((snapshot) {
       if (snapshot.exists && snapshot.data() != null) {
         try {
-          final locationData = DeliveryLocationModel.fromMap(snapshot.data()!).toLocationData();
-          
+          final locationData =
+              DeliveryLocationModel.fromMap(snapshot.data()!).toLocationData();
+
           // إضافة الموقع الجديد إلى سجل المواقع
           _locationHistoryList.add(locationData);
           if (_locationHistoryList.length > 20) {
             _locationHistoryList.removeAt(0); // الاحتفاظ بآخر 20 موقع فقط
           }
-          
+
           state = state.copyWith(
             deliveryLocation: AsyncData(locationData),
             locationHistory: AsyncData(_locationHistoryList),
           );
         } catch (e, stackTrace) {
-          log('Error parsing location data', error: e, stackTrace: stackTrace, name: 'OrderTrackingNotifier');
+          log('Error parsing location data',
+              error: e, stackTrace: stackTrace, name: 'OrderTrackingNotifier');
           state = state.copyWith(
-            deliveryLocation: AsyncError('Failed to parse location data: $e', stackTrace),
+            deliveryLocation:
+                AsyncError('Failed to parse location data: $e', stackTrace),
           );
         }
       } else {
@@ -175,11 +192,13 @@ class OrderTrackingNotifier extends StateNotifier<OrderTrackingState> {
         _simulateLocationUpdates(deliveryPersonId);
       }
     }, onError: (error, stackTrace) {
-      log('Error in location stream', error: error, stackTrace: stackTrace, name: 'OrderTrackingNotifier');
+      log('Error in location stream',
+          error: error, stackTrace: stackTrace, name: 'OrderTrackingNotifier');
       state = state.copyWith(
-        deliveryLocation: AsyncError('Error tracking delivery location: $error', stackTrace),
+        deliveryLocation:
+            AsyncError('Error tracking delivery location: $error', stackTrace),
       );
-      
+
       // في حالة الخطأ، استخدم محاكاة للاختبار
       _simulateLocationUpdates(deliveryPersonId);
     });
@@ -187,22 +206,24 @@ class OrderTrackingNotifier extends StateNotifier<OrderTrackingState> {
 
   // محاكاة تحديثات الموقع للاختبار
   void _simulateLocationUpdates(String deliveryPersonId) {
-    log("Simulating location tracking for $deliveryPersonId", name: 'OrderTrackingNotifier');
-    
+    log("Simulating location tracking for $deliveryPersonId",
+        name: 'OrderTrackingNotifier');
+
     // إلغاء الاشتراك السابق إن وجد
     _locationSubscription?.cancel();
-    
+
     // محاكاة تحديثات الموقع كل 3 ثوانٍ
-    _locationSubscription = Stream.periodic(const Duration(seconds: 3)).listen((_) {
+    _locationSubscription =
+        Stream.periodic(const Duration(seconds: 3)).listen((_) {
       // إنشاء موقع عشوائي قريب من الموقع الحالي
       final LocationData locationData = _generateRandomLocation();
-      
+
       // إضافة الموقع الجديد إلى سجل المواقع
       _locationHistoryList.add(locationData);
       if (_locationHistoryList.length > 20) {
         _locationHistoryList.removeAt(0); // الاحتفاظ بآخر 20 موقع فقط
       }
-      
+
       state = state.copyWith(
         deliveryLocation: AsyncData(locationData),
         locationHistory: AsyncData(_locationHistoryList),
@@ -216,15 +237,17 @@ class OrderTrackingNotifier extends StateNotifier<OrderTrackingState> {
     final previousLocation = state.deliveryLocation.whenOrNull(
       data: (loc) => loc,
     );
-    
+
     // إنشاء موقع عشوائي قريب من الموقع السابق
     final latitude = previousLocation?.latitude ?? 24.7136;
     final longitude = previousLocation?.longitude ?? 46.6753;
-    
+
     // إضافة تغيير صغير للموقع لمحاكاة الحركة
-    final newLatitude = latitude + (DateTime.now().millisecondsSinceEpoch % 10 - 5) * 0.0001;
-    final newLongitude = longitude + (DateTime.now().millisecondsSinceEpoch % 10 - 5) * 0.0001;
-    
+    final newLatitude =
+        latitude + (DateTime.now().millisecondsSinceEpoch % 10 - 5) * 0.0001;
+    final newLongitude =
+        longitude + (DateTime.now().millisecondsSinceEpoch % 10 - 5) * 0.0001;
+
     return LocationData.fromMap({
       'latitude': newLatitude,
       'longitude': newLongitude,
@@ -235,26 +258,27 @@ class OrderTrackingNotifier extends StateNotifier<OrderTrackingState> {
   }
 
   // حساب المسافة المتبقية والوقت المتوقع للوصول
-  Map<String, dynamic> calculateETA(LocationData deliveryLocation, LocationData destinationLocation) {
+  Map<String, dynamic> calculateETA(
+      LocationData deliveryLocation, LocationData destinationLocation) {
     // حساب المسافة بين موقعين باستخدام صيغة هافرساين
     const double earthRadius = 6371; // نصف قطر الأرض بالكيلومتر
     final double lat1 = deliveryLocation.latitude! * (3.14159 / 180);
     final double lon1 = deliveryLocation.longitude! * (3.14159 / 180);
     final double lat2 = destinationLocation.latitude! * (3.14159 / 180);
     final double lon2 = destinationLocation.longitude! * (3.14159 / 180);
-    
+
     final double dlon = lon2 - lon1;
     final double dlat = lat2 - lat1;
     final double a = (dlat / 2).sin() * (dlat / 2).sin() +
         lat1.cos() * lat2.cos() * (dlon / 2).sin() * (dlon / 2).sin();
     final double c = 2 * a.sqrt().atan2((1 - a).sqrt());
     final double distance = earthRadius * c;
-    
+
     // حساب الوقت المتوقع بناءً على السرعة
     final double speed = deliveryLocation.speed ?? 30; // كم/ساعة
     final double timeInHours = distance / speed;
     final int timeInMinutes = (timeInHours * 60).round();
-    
+
     return {
       'distance': distance,
       'time': timeInMinutes,
@@ -270,10 +294,8 @@ class OrderTrackingNotifier extends StateNotifier<OrderTrackingState> {
 }
 
 // مزود لخدمة تتبع الطلب
-final orderTrackingProvider = StateNotifierProvider.autoDispose.family<
-    OrderTrackingNotifier,
-    OrderTrackingState,
-    String>((ref, orderId) {
+final orderTrackingProvider = StateNotifierProvider.autoDispose
+    .family<OrderTrackingNotifier, OrderTrackingState, String>((ref, orderId) {
   final orderService = ref.watch(orderServiceProvider);
   final firestore = FirebaseFirestore.instance;
   return OrderTrackingNotifier(orderService, firestore, orderId);

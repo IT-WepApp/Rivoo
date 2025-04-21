@@ -7,7 +7,9 @@ import 'package:shared_services/shared_services.dart'; // Assuming UserService i
 import '../../application/order_management_notifier.dart';
 
 // Provider to fetch user name using the correct UserService method
-final userNameProvider = FutureProvider.family<String?, String>((ref, userId) async { // Made async
+final userNameProvider =
+    FutureProvider.family<String?, String>((ref, userId) async {
+  // Made async
   // Assuming you have a userServiceProvider defined elsewhere
   final userService = ref.watch(userServiceProvider);
   // Use the correct method 'getUser' which returns UserModel?
@@ -50,7 +52,9 @@ class _OrderListPageState extends ConsumerState<OrderListPage> {
         (previous, next) {
       if (next is AsyncError && next != previous) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Error: ${next.error}'), backgroundColor: Colors.red),
+          SnackBar(
+              content: Text('Error: ${next.error}'),
+              backgroundColor: Colors.red),
         );
       }
     });
@@ -103,7 +107,8 @@ class _OrderListPageState extends ConsumerState<OrderListPage> {
               decoration: InputDecoration(
                 hintText: 'Search by ID, Customer ID...',
                 prefixIcon: const Icon(Icons.search),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+                border:
+                    OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                 isDense: true,
               ),
               onChanged: (value) {
@@ -120,8 +125,8 @@ class _OrderListPageState extends ConsumerState<OrderListPage> {
 
   Widget _buildOrderList(List<OrderModel> orders, WidgetRef ref) {
     final filteredOrders = orders.where((order) {
-      final statusMatch =
-          _filterStatus.isEmpty || order.status.toLowerCase() == _filterStatus.toLowerCase();
+      final statusMatch = _filterStatus.isEmpty ||
+          order.status.toLowerCase() == _filterStatus.toLowerCase();
       final searchMatch = _searchText.isEmpty ||
           (order.id.toLowerCase().contains(_searchText)) ||
           (order.userId.toLowerCase().contains(_searchText));
@@ -140,14 +145,15 @@ class _OrderListPageState extends ConsumerState<OrderListPage> {
           final order = filteredOrders[index];
           return OrderListItem(
             order: order,
-            availableStatuses: _orderStatuses.where((s) => s.isNotEmpty).toList(),
+            availableStatuses:
+                _orderStatuses.where((s) => s.isNotEmpty).toList(),
             onStatusChanged: (newStatus) async {
               bool confirm = await showDialog<bool>(
                     context: context,
                     builder: (context) => AlertDialog(
                       title: const Text('Confirm Status Change'),
-                      content:
-                          Text('Change order ${order.id} status to $newStatus?'),
+                      content: Text(
+                          'Change order ${order.id} status to $newStatus?'),
                       actions: [
                         TextButton(
                             onPressed: () => Navigator.pop(context, false),
@@ -210,7 +216,8 @@ class OrderListItem extends ConsumerWidget {
               // Use the fetched name, or fallback to user ID if name is null or fetch failed
               data: (name) => Text('Customer: ${name ?? order.userId}'),
               loading: () => const Text('Customer: Loading...'),
-              error: (err, stack) => Text('Customer: Error (${order.userId})'), // Show ID on error
+              error: (err, stack) =>
+                  Text('Customer: Error (${order.userId})'), // Show ID on error
             ),
             const SizedBox(height: 4),
             Text('Total: \$${order.total.toStringAsFixed(2)}'),

@@ -36,7 +36,7 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
   /// طريقة الدفع المختارة
   PaymentMethod? _selectedMethod;
   /// حالة معالجة الدفع
-  bool _isProcessing = false;
+  final bool _isProcessing = false;
   /// متحكمات نموذج بطاقة الائتمان
   final _cardNumberController = TextEditingController();
   final _expiryMonthController = TextEditingController();
@@ -212,3 +212,4 @@ class _PaymentScreenState extends ConsumerState<PaymentScreen> {
               controller: _expiryYearController,
               decoration: InputDecoration(labelText: l10n.expiryYear, border: const OutlineInputBorder()),
               keyboardType: TextInputType.number,
+            ),

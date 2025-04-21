@@ -24,24 +24,25 @@ void main() {
     mockCollectionReference = MockCollectionReference<Map<String, dynamic>>();
     mockQuery = MockQuery<Map<String, dynamic>>();
     mockQuerySnapshot = MockQuerySnapshot<Map<String, dynamic>>();
-    
+
     // استبدال الكائنات الحقيقية بالكائنات المزيفة للاختبار
     salesService = SalesService();
-    
+
     // تعيين الحقول الخاصة باستخدام التفكير (reflection)
     // هذا يتطلب تعديل الفئة SalesService لتسهيل الاختبار
     // أو استخدام مكتبة مثل mockito_extensions
   });
 
   group('SalesService Tests', () {
-    test('getTopSellingProducts يجب أن يعيد قائمة المنتجات الأكثر مبيعًا', () async {
+    test('getTopSellingProducts يجب أن يعيد قائمة المنتجات الأكثر مبيعًا',
+        () async {
       // الإعداد
-      final storeId = 'test-store-id';
+      const storeId = 'test-store-id';
       final dateRange = DateTimeRange(
         start: DateTime(2025, 1, 1),
         end: DateTime(2025, 12, 31),
       );
-      
+
       final mockDocs = [
         createMockDocumentSnapshot('order1', {
           'sellerId': storeId,
@@ -60,8 +61,9 @@ void main() {
           ],
         }),
       ];
-      
-      when(mockFirestore.collection('orders')).thenReturn(mockCollectionReference);
+
+      when(mockFirestore.collection('orders'))
+          .thenReturn(mockCollectionReference);
       when(mockCollectionReference.where('sellerId', isEqualTo: storeId))
           .thenReturn(mockQuery);
       when(mockQuery.where('status', isEqualTo: 'delivered'))
@@ -73,14 +75,14 @@ void main() {
       )).thenReturn(mockQuery);
       when(mockQuery.get()).thenAnswer((_) async => mockQuerySnapshot);
       when(mockQuerySnapshot.docs).thenReturn(mockDocs);
-      
+
       // التنفيذ
       final result = await salesService.getTopSellingProducts(
         storeId,
         dateRange: dateRange,
         limit: 3,
       );
-      
+
       // التحقق
       expect(result.length, 3);
       expect(result[0]['productId'], 'product1');
@@ -93,12 +95,12 @@ void main() {
 
     test('getSalesData يجب أن يعيد بيانات المبيعات اليومية', () async {
       // الإعداد
-      final storeId = 'test-store-id';
+      const storeId = 'test-store-id';
       final dateRange = DateTimeRange(
         start: DateTime(2025, 4, 1),
         end: DateTime(2025, 4, 30),
       );
-      
+
       final mockDocs = [
         createMockDocumentSnapshot('order1', {
           'sellerId': storeId,
@@ -119,8 +121,9 @@ void main() {
           'totalAmount': 200.0,
         }),
       ];
-      
-      when(mockFirestore.collection('orders')).thenReturn(mockCollectionReference);
+
+      when(mockFirestore.collection('orders'))
+          .thenReturn(mockCollectionReference);
       when(mockCollectionReference.where('sellerId', isEqualTo: storeId))
           .thenReturn(mockQuery);
       when(mockQuery.where('status', isEqualTo: 'delivered'))
@@ -132,14 +135,14 @@ void main() {
       )).thenReturn(mockQuery);
       when(mockQuery.get()).thenAnswer((_) async => mockQuerySnapshot);
       when(mockQuerySnapshot.docs).thenReturn(mockDocs);
-      
+
       // التنفيذ
       final result = await salesService.getSalesData(
         storeId,
         dateRange,
         'daily',
       );
-      
+
       // التحقق
       expect(result.length, 2);
       expect(result[0]['date'], '2025-04-10');
@@ -150,12 +153,12 @@ void main() {
 
     test('getSalesData يجب أن يعيد بيانات المبيعات الشهرية', () async {
       // الإعداد
-      final storeId = 'test-store-id';
+      const storeId = 'test-store-id';
       final dateRange = DateTimeRange(
         start: DateTime(2025, 1, 1),
         end: DateTime(2025, 12, 31),
       );
-      
+
       final mockDocs = [
         createMockDocumentSnapshot('order1', {
           'sellerId': storeId,
@@ -176,8 +179,9 @@ void main() {
           'totalAmount': 200.0,
         }),
       ];
-      
-      when(mockFirestore.collection('orders')).thenReturn(mockCollectionReference);
+
+      when(mockFirestore.collection('orders'))
+          .thenReturn(mockCollectionReference);
       when(mockCollectionReference.where('sellerId', isEqualTo: storeId))
           .thenReturn(mockQuery);
       when(mockQuery.where('status', isEqualTo: 'delivered'))
@@ -189,14 +193,14 @@ void main() {
       )).thenReturn(mockQuery);
       when(mockQuery.get()).thenAnswer((_) async => mockQuerySnapshot);
       when(mockQuerySnapshot.docs).thenReturn(mockDocs);
-      
+
       // التنفيذ
       final result = await salesService.getSalesData(
         storeId,
         dateRange,
         'monthly',
       );
-      
+
       // التحقق
       expect(result.length, 2);
       expect(result[0]['month'], '2025-03');

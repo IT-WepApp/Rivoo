@@ -111,7 +111,8 @@ class SalesService {
               key =
                   '${orderDate.year}-${orderDate.month.toString().padLeft(2, '0')}-${orderDate.day.toString().padLeft(2, '0')}';
             } else if (aggregationPeriod == 'monthly') {
-              key = '${orderDate.year}-${orderDate.month.toString().padLeft(2, '0')}';
+              key =
+                  '${orderDate.year}-${orderDate.month.toString().padLeft(2, '0')}';
             } else {
               log('Invalid aggregation period: $aggregationPeriod',
                   name: 'SalesService');
@@ -134,8 +135,8 @@ class SalesService {
         final keyName = aggregationPeriod == 'daily' ? 'date' : 'month';
         return {keyName: entry.key, 'sales': entry.value};
       }).toList()
-        ..sort((a, b) => (a.values.first as String)
-            .compareTo(b.values.first as String));
+        ..sort((a, b) =>
+            (a.values.first as String).compareTo(b.values.first as String));
     } catch (e, stacktrace) {
       log('Error fetching sales data',
           error: e, stackTrace: stacktrace, name: 'SalesService');

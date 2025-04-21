@@ -12,12 +12,14 @@ class AuthService {
 
   AuthService();
 
-  Stream<fb_auth.User?> get authStateChanges => _firebaseAuth.authStateChanges();
+  Stream<fb_auth.User?> get authStateChanges =>
+      _firebaseAuth.authStateChanges();
 
   fb_auth.User? get currentUser => _firebaseAuth.currentUser;
 
   Future<fb_auth.User?> signIn(String email, String password) async {
-    final credential = await _firebaseAuth.signInWithEmailAndPassword(email: email, password: password);
+    final credential = await _firebaseAuth.signInWithEmailAndPassword(
+        email: email, password: password);
     // Optionally store refresh token if applicable
     // final refreshToken = await credential.user?.getIdTokenResult(true);
     // await _secureStorageService.write('refreshToken', refreshToken?.token ?? '');
@@ -25,7 +27,8 @@ class AuthService {
   }
 
   Future<fb_auth.User?> signUp(String email, String password) async {
-    final credential = await _firebaseAuth.createUserWithEmailAndPassword(email: email, password: password);
+    final credential = await _firebaseAuth.createUserWithEmailAndPassword(
+        email: email, password: password);
     return credential.user;
   }
 
@@ -40,5 +43,5 @@ class AuthService {
 
 // Define secureStorageServiceProvider if it doesn't exist
 final secureStorageServiceProvider = Provider<SecureStorageService>((ref) {
-  return SecureStorageService(); 
+  return SecureStorageService();
 });

@@ -31,16 +31,16 @@ class HomePageWrapper extends StatelessWidget {
   void _onItemTapped(int index, BuildContext context) {
     switch (index) {
       case 0: // Home
-        context.go('/'); 
+        context.go('/');
         break;
       case 1: // Cart
-        context.go('/cart'); 
+        context.go('/cart');
         break;
       case 2: // Orders
-        context.go('/orders'); 
+        context.go('/orders');
         break;
       case 3: // Profile
-        context.go('/profile'); 
+        context.go('/profile');
         break;
     }
   }
@@ -52,42 +52,42 @@ class HomePageWrapper extends StatelessWidget {
 
     return Scaffold(
       // AppBar might be managed by individual pages now or kept here if consistent
-       appBar: AppBar(
-         // Example: Title could change based on the current page
-         title: Text(_getTitleForIndex(currentIndex)),
-          backgroundColor: theme.colorScheme.primaryContainer,
-          foregroundColor: theme.colorScheme.onPrimaryContainer,
-          // Actions can also be conditional or consistent
-          actions: [
-             if (currentIndex != 1) // Show cart icon unless already on cart page
-              IconButton(
-                icon: const Icon(Icons.shopping_cart_outlined),
-                tooltip: 'View Cart',
-                onPressed: () => context.go('/cart'),
-              ),
-          ],
-       ),
+      appBar: AppBar(
+        // Example: Title could change based on the current page
+        title: Text(_getTitleForIndex(currentIndex)),
+        backgroundColor: theme.colorScheme.primaryContainer,
+        foregroundColor: theme.colorScheme.onPrimaryContainer,
+        // Actions can also be conditional or consistent
+        actions: [
+          if (currentIndex != 1) // Show cart icon unless already on cart page
+            IconButton(
+              icon: const Icon(Icons.shopping_cart_outlined),
+              tooltip: 'View Cart',
+              onPressed: () => context.go('/cart'),
+            ),
+        ],
+      ),
       body: child, // Display the child widget provided by GoRouter
       bottomNavigationBar: BottomNavigationBar(
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(
             icon: Icon(Icons.home_outlined),
-             activeIcon: Icon(Icons.home),
+            activeIcon: Icon(Icons.home),
             label: 'Home',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.shopping_cart_outlined),
-             activeIcon: Icon(Icons.shopping_cart),
+            activeIcon: Icon(Icons.shopping_cart),
             label: 'Cart',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.list_alt_outlined),
-             activeIcon: Icon(Icons.list_alt),
+            activeIcon: Icon(Icons.list_alt),
             label: 'Orders',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.person_outline),
-             activeIcon: Icon(Icons.person),
+            activeIcon: Icon(Icons.person),
             label: 'Profile',
           ),
         ],
@@ -104,12 +104,16 @@ class HomePageWrapper extends StatelessWidget {
 
   // Helper to get AppBar title based on index
   String _getTitleForIndex(int index) {
-     switch (index) {
-       case 1: return 'Shopping Cart';
-       case 2: return 'My Orders';
-       case 3: return 'My Profile';
-       case 0:
-       default: return 'Browse Products';
-     }
+    switch (index) {
+      case 1:
+        return 'Shopping Cart';
+      case 2:
+        return 'My Orders';
+      case 3:
+        return 'My Profile';
+      case 0:
+      default:
+        return 'Browse Products';
+    }
   }
 }

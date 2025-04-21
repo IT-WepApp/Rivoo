@@ -2,29 +2,29 @@ import 'package:flutter/foundation.dart';
 
 /// حالة تذكرة الدعم
 enum TicketStatus {
-  open,      // مفتوحة
-  pending,   // قيد الانتظار
-  resolved,  // تم الحل
-  closed     // مغلقة
+  open, // مفتوحة
+  pending, // قيد الانتظار
+  resolved, // تم الحل
+  closed // مغلقة
 }
 
 /// أولوية تذكرة الدعم
 enum TicketPriority {
-  low,       // منخفضة
-  medium,    // متوسطة
-  high,      // عالية
-  urgent     // عاجلة
+  low, // منخفضة
+  medium, // متوسطة
+  high, // عالية
+  urgent // عاجلة
 }
 
 /// نوع تذكرة الدعم
 enum TicketType {
-  general,        // استفسار عام
-  orderIssue,     // مشكلة في الطلب
-  paymentIssue,   // مشكلة في الدفع
-  accountIssue,   // مشكلة في الحساب
-  appIssue,       // مشكلة في التطبيق
-  suggestion,     // اقتراح
-  other           // أخرى
+  general, // استفسار عام
+  orderIssue, // مشكلة في الطلب
+  paymentIssue, // مشكلة في الدفع
+  accountIssue, // مشكلة في الحساب
+  appIssue, // مشكلة في التطبيق
+  suggestion, // اقتراح
+  other // أخرى
 }
 
 /// نموذج رسالة الدعم
@@ -105,28 +105,28 @@ class SupportMessage {
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-  
+
     return other is SupportMessage &&
-      other.id == id &&
-      other.ticketId == ticketId &&
-      other.message == message &&
-      other.senderId == senderId &&
-      other.attachmentUrl == attachmentUrl &&
-      other.isFromSupport == isFromSupport &&
-      other.timestamp == timestamp &&
-      other.isRead == isRead;
+        other.id == id &&
+        other.ticketId == ticketId &&
+        other.message == message &&
+        other.senderId == senderId &&
+        other.attachmentUrl == attachmentUrl &&
+        other.isFromSupport == isFromSupport &&
+        other.timestamp == timestamp &&
+        other.isRead == isRead;
   }
 
   @override
   int get hashCode {
     return id.hashCode ^
-      ticketId.hashCode ^
-      message.hashCode ^
-      senderId.hashCode ^
-      attachmentUrl.hashCode ^
-      isFromSupport.hashCode ^
-      timestamp.hashCode ^
-      isRead.hashCode;
+        ticketId.hashCode ^
+        message.hashCode ^
+        senderId.hashCode ^
+        attachmentUrl.hashCode ^
+        isFromSupport.hashCode ^
+        timestamp.hashCode ^
+        isRead.hashCode;
   }
 }
 
@@ -227,10 +227,15 @@ class SupportTicket {
       priority: TicketPriority.values[map['priority'] ?? 0],
       type: TicketType.values[map['type'] ?? 0],
       createdAt: DateTime.fromMillisecondsSinceEpoch(map['createdAt']),
-      updatedAt: map['updatedAt'] != null ? DateTime.fromMillisecondsSinceEpoch(map['updatedAt']) : null,
-      closedAt: map['closedAt'] != null ? DateTime.fromMillisecondsSinceEpoch(map['closedAt']) : null,
+      updatedAt: map['updatedAt'] != null
+          ? DateTime.fromMillisecondsSinceEpoch(map['updatedAt'])
+          : null,
+      closedAt: map['closedAt'] != null
+          ? DateTime.fromMillisecondsSinceEpoch(map['closedAt'])
+          : null,
       orderId: map['orderId'],
-      messages: List<SupportMessage>.from(map['messages']?.map((x) => SupportMessage.fromMap(x)) ?? []),
+      messages: List<SupportMessage>.from(
+          map['messages']?.map((x) => SupportMessage.fromMap(x)) ?? []),
       unreadMessages: map['unreadMessages'] ?? 0,
       assignedToId: map['assignedToId'],
     );
@@ -244,39 +249,39 @@ class SupportTicket {
   @override
   bool operator ==(Object other) {
     if (identical(this, other)) return true;
-  
+
     return other is SupportTicket &&
-      other.id == id &&
-      other.userId == userId &&
-      other.subject == subject &&
-      other.description == description &&
-      other.status == status &&
-      other.priority == priority &&
-      other.type == type &&
-      other.createdAt == createdAt &&
-      other.updatedAt == updatedAt &&
-      other.closedAt == closedAt &&
-      other.orderId == orderId &&
-      listEquals(other.messages, messages) &&
-      other.unreadMessages == unreadMessages &&
-      other.assignedToId == assignedToId;
+        other.id == id &&
+        other.userId == userId &&
+        other.subject == subject &&
+        other.description == description &&
+        other.status == status &&
+        other.priority == priority &&
+        other.type == type &&
+        other.createdAt == createdAt &&
+        other.updatedAt == updatedAt &&
+        other.closedAt == closedAt &&
+        other.orderId == orderId &&
+        listEquals(other.messages, messages) &&
+        other.unreadMessages == unreadMessages &&
+        other.assignedToId == assignedToId;
   }
 
   @override
   int get hashCode {
     return id.hashCode ^
-      userId.hashCode ^
-      subject.hashCode ^
-      description.hashCode ^
-      status.hashCode ^
-      priority.hashCode ^
-      type.hashCode ^
-      createdAt.hashCode ^
-      updatedAt.hashCode ^
-      closedAt.hashCode ^
-      orderId.hashCode ^
-      messages.hashCode ^
-      unreadMessages.hashCode ^
-      assignedToId.hashCode;
+        userId.hashCode ^
+        subject.hashCode ^
+        description.hashCode ^
+        status.hashCode ^
+        priority.hashCode ^
+        type.hashCode ^
+        createdAt.hashCode ^
+        updatedAt.hashCode ^
+        closedAt.hashCode ^
+        orderId.hashCode ^
+        messages.hashCode ^
+        unreadMessages.hashCode ^
+        assignedToId.hashCode;
   }
 }

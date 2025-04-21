@@ -152,7 +152,8 @@ class RatingsNotifier extends StateNotifier<AsyncValue<List<RatingModel>>> {
       final ratingsCount = ratingsSnapshot.docs.length;
 
       // تحديث متوسط التقييم في المجموعة المناسبة
-      final collectionName = targetType == 'product' ? 'products' : 'delivery_persons';
+      final collectionName =
+          targetType == 'product' ? 'products' : 'delivery_persons';
       await _firestore.collection(collectionName).doc(targetId).update({
         'averageRating': averageRating,
         'ratingsCount': ratingsCount,
@@ -167,7 +168,8 @@ class RatingsNotifier extends StateNotifier<AsyncValue<List<RatingModel>>> {
 
     try {
       // الحصول على معلومات التقييم قبل حذفه
-      final ratingDoc = await _firestore.collection('ratings').doc(ratingId).get();
+      final ratingDoc =
+          await _firestore.collection('ratings').doc(ratingId).get();
       if (!ratingDoc.exists) return;
 
       final ratingData = ratingDoc.data();
@@ -193,34 +195,42 @@ class RatingsNotifier extends StateNotifier<AsyncValue<List<RatingModel>>> {
 }
 
 // مزود لتقييمات المستخدم
-final userRatingsProvider = StateNotifierProvider<RatingsNotifier, AsyncValue<List<RatingModel>>>((ref) {
+final userRatingsProvider =
+    StateNotifierProvider<RatingsNotifier, AsyncValue<List<RatingModel>>>(
+        (ref) {
   final userId = ref.watch(userIdProvider);
   final firestore = FirebaseFirestore.instance;
   return RatingsNotifier(userId, firestore);
 });
 
 // مزود لمتوسط تقييم منتج معين
-final productRatingProvider = FutureProvider.family<double, String>((ref, productId) async {
+final productRatingProvider =
+    FutureProvider.family<double, String>((ref, productId) async {
   final firestore = FirebaseFirestore.instance;
-  final productDoc = await firestore.collection('products').doc(productId).get();
-  
+  final productDoc =
+      await firestore.collection('products').doc(productId).get();
+
   if (!productDoc.exists) return 0.0;
-  
+
   final data = productDoc.data();
   if (data == null) return 0.0;
-  
+
   return (data['averageRating'] ?? 0.0).toDouble();
 });
 
 // مزود لمتوسط تقييم مندوب معين
-final deliveryPersonRatingProvider = FutureProvider.family<double, String>((ref, deliveryPersonId) async {
+final deliveryPersonRatingProvider =
+    FutureProvider.family<double, String>((ref, deliveryPersonId) async {
   final firestore = FirebaseFirestore.instance;
-  final deliveryPersonDoc = await firestore.collection('delivery_persons').doc(deliveryPersonId).get();
-  
+  final deliveryPersonDoc = await firestore
+      .collection('delivery_persons')
+      .doc(deliveryPersonId)
+      .get();
+
   if (!deliveryPersonDoc.exists) return 0.0;
-  
+
   final data = deliveryPersonDoc.data();
   if (data == null) return 0.0;
-  
+
   return (data['averageRating'] ?? 0.0).toDouble();
 });

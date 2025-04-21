@@ -1,6 +1,6 @@
 import 'dart:developer' as developer;
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:shared_models/shared_models.dart'; 
+import 'package:shared_models/shared_models.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 final orderServiceProvider = Provider<OrderService>((ref) => OrderService());
@@ -12,7 +12,8 @@ class OrderService {
     try {
       await _firestore.collection('orders').doc(order.id).set(order.toJson());
     } catch (e, st) {
-      developer.log('Error creating order', error: e, stackTrace: st, name: 'OrderService');
+      developer.log('Error creating order',
+          error: e, stackTrace: st, name: 'OrderService');
       rethrow;
     }
   }
@@ -21,29 +22,38 @@ class OrderService {
     try {
       final doc = await _firestore.collection('orders').doc(orderId).get();
       if (doc.exists) {
-        return OrderModel.fromJson(doc.data()!); 
+        return OrderModel.fromJson(doc.data()!);
       }
       return null;
     } catch (e, st) {
-      developer.log('Error getting order', error: e, stackTrace: st, name: 'OrderService');
+      developer.log('Error getting order',
+          error: e, stackTrace: st, name: 'OrderService');
       rethrow;
     }
   }
 
   Future<void> updateOrder(OrderModel order) async {
     try {
-      await _firestore.collection('orders').doc(order.id).update(order.toJson());
+      await _firestore
+          .collection('orders')
+          .doc(order.id)
+          .update(order.toJson());
     } catch (e, st) {
-      developer.log('Error updating order', error: e, stackTrace: st, name: 'OrderService');
+      developer.log('Error updating order',
+          error: e, stackTrace: st, name: 'OrderService');
       rethrow;
     }
   }
 
   Future<void> updateOrderStatus(String orderId, String status) async {
     try {
-      await _firestore.collection('orders').doc(orderId).update({'status': status});
+      await _firestore
+          .collection('orders')
+          .doc(orderId)
+          .update({'status': status});
     } catch (e, st) {
-      developer.log('Error updating order status', error: e, stackTrace: st, name: 'OrderService');
+      developer.log('Error updating order status',
+          error: e, stackTrace: st, name: 'OrderService');
       rethrow;
     }
   }
@@ -52,17 +62,24 @@ class OrderService {
     try {
       await _firestore.collection('orders').doc(orderId).delete();
     } catch (e, st) {
-      developer.log('Error deleting order', error: e, stackTrace: st, name: 'OrderService');
+      developer.log('Error deleting order',
+          error: e, stackTrace: st, name: 'OrderService');
       rethrow;
     }
   }
 
   Future<List<OrderModel>> getOrdersByUser(String userId) async {
     try {
-      final querySnapshot = await _firestore.collection('orders').where('userId', isEqualTo: userId).get();
-      return querySnapshot.docs.map((doc) => OrderModel.fromJson(doc.data())).toList();
+      final querySnapshot = await _firestore
+          .collection('orders')
+          .where('userId', isEqualTo: userId)
+          .get();
+      return querySnapshot.docs
+          .map((doc) => OrderModel.fromJson(doc.data()))
+          .toList();
     } catch (e, st) {
-      developer.log('Error getting orders by user', error: e, stackTrace: st, name: 'OrderService');
+      developer.log('Error getting orders by user',
+          error: e, stackTrace: st, name: 'OrderService');
       rethrow;
     }
   }
@@ -70,33 +87,45 @@ class OrderService {
   Future<List<OrderModel>> getAllOrders() async {
     try {
       final querySnapshot = await _firestore.collection('orders').get();
-      return querySnapshot.docs.map((doc) => OrderModel.fromJson(doc.data())).toList();
+      return querySnapshot.docs
+          .map((doc) => OrderModel.fromJson(doc.data()))
+          .toList();
     } catch (e, st) {
-      developer.log('Error getting all orders', error: e, stackTrace: st, name: 'OrderService');
+      developer.log('Error getting all orders',
+          error: e, stackTrace: st, name: 'OrderService');
       rethrow;
     }
   }
 
   Future<List<OrderModel>> getOrdersBySeller(String sellerId) async {
     try {
-      final querySnapshot = await _firestore.collection('orders').where('sellerId', isEqualTo: sellerId).get();
-      return querySnapshot.docs.map((doc) => OrderModel.fromJson(doc.data())).toList();
+      final querySnapshot = await _firestore
+          .collection('orders')
+          .where('sellerId', isEqualTo: sellerId)
+          .get();
+      return querySnapshot.docs
+          .map((doc) => OrderModel.fromJson(doc.data()))
+          .toList();
     } catch (e, st) {
-      developer.log('Error getting orders by seller', error: e, stackTrace: st, name: 'OrderService');
+      developer.log('Error getting orders by seller',
+          error: e, stackTrace: st, name: 'OrderService');
       rethrow;
     }
   }
 
-  Future<void> placeOrder(String userId, List<CartItemModel> cartItems, double totalPrice) async {
+  Future<void> placeOrder(
+      String userId, List<CartItemModel> cartItems, double totalPrice) async {
     final orderId = _firestore.collection('orders').doc().id;
     final now = Timestamp.now();
 
-    final orderProducts = cartItems.map((item) => OrderProductItem(
-      productId: item.productId,
-      name: item.name,
-      price: item.price,
-      quantity: item.quantity,
-    )).toList();
+    final orderProducts = cartItems
+        .map((item) => OrderProductItem(
+              productId: item.productId,
+              name: item.name,
+              price: item.price,
+              quantity: item.quantity,
+            ))
+        .toList();
 
     String sellerId = 'seller_from_product_1';
     String userAddress = 'default_address';
@@ -116,7 +145,11 @@ class OrderService {
   }
 
   Stream<OrderModel?> getOrderStream(String orderId) {
-    return _firestore.collection('orders').doc(orderId).snapshots().map((snapshot) {
+    return _firestore
+        .collection('orders')
+        .doc(orderId)
+        .snapshots()
+        .map((snapshot) {
       if (snapshot.exists && snapshot.data() != null) {
         return OrderModel.fromJson(snapshot.data()!);
       }
@@ -129,12 +162,19 @@ class OrderService {
         .collection('orders')
         .where('deliveryId', isEqualTo: deliveryPersonId)
         .snapshots()
-        .map((snapshot) => snapshot.docs.map((doc) => OrderModel.fromJson(doc.data())).toList());
+        .map((snapshot) => snapshot.docs
+            .map((doc) => OrderModel.fromJson(doc.data()))
+            .toList());
   }
 
   Future<List<OrderModel>> getAvailableOrders() async {
-    final querySnapshot = await _firestore.collection('orders').where('status', isEqualTo: 'processing').get();
-    return querySnapshot.docs.map((doc) => OrderModel.fromJson(doc.data())).toList();
+    final querySnapshot = await _firestore
+        .collection('orders')
+        .where('status', isEqualTo: 'processing')
+        .get();
+    return querySnapshot.docs
+        .map((doc) => OrderModel.fromJson(doc.data()))
+        .toList();
   }
 
   Future<void> acceptOrder(String orderId, String deliveryPersonId) async {
@@ -161,7 +201,8 @@ class OrderService {
     String? filterByStatus,
   }) async {
     try {
-      Query query = _firestore.collection('orders')
+      Query query = _firestore
+          .collection('orders')
           .where('deliveryId', isEqualTo: deliveryPersonnelId)
           .where('status', isEqualTo: filterByStatus ?? 'delivered');
 
@@ -170,9 +211,12 @@ class OrderService {
       }
 
       final querySnapshot = await query.get();
-      return querySnapshot.docs.map((doc) => OrderModel.fromJson(doc.data() as Map<String, dynamic>)).toList();
+      return querySnapshot.docs
+          .map((doc) => OrderModel.fromJson(doc.data() as Map<String, dynamic>))
+          .toList();
     } catch (e, st) {
-      developer.log('Error getting delivered orders for personnel', error: e, stackTrace: st, name: 'OrderService');
+      developer.log('Error getting delivered orders for personnel',
+          error: e, stackTrace: st, name: 'OrderService');
       rethrow;
     }
   }

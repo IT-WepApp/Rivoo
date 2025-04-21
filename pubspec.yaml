@@ -22,4 +22,4 @@ dev_dependencies:
   melos: ^6.3.2 # Replace with the latest version if needed
   build_runner: any
   json_serializable: any
-  flutter_lints: ^2.0.0
+  flutter_lints: ^2.0.0  cloud_firestore: any

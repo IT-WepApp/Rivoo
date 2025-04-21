@@ -38,7 +38,8 @@ void main() {
       expect(RouteConstants.ratings, '/ratings');
     });
 
-    testWidgets('يجب أن يعمل التنقل بين الصفحات بشكل صحيح', (WidgetTester tester) async {
+    testWidgets('يجب أن يعمل التنقل بين الصفحات بشكل صحيح',
+        (WidgetTester tester) async {
       // إنشاء نموذج بسيط للتنقل
       final router = GoRouter(
         initialLocation: '/test',
@@ -87,51 +88,60 @@ void main() {
   });
 
   group('اختبارات إعادة التوجيه', () {
-    testWidgets('يجب إعادة توجيه المستخدم غير المصادق إلى صفحة تسجيل الدخول', (WidgetTester tester) async {
+    testWidgets('يجب إعادة توجيه المستخدم غير المصادق إلى صفحة تسجيل الدخول',
+        (WidgetTester tester) async {
       // هذا اختبار وهمي لتوضيح منطق إعادة التوجيه
       bool isAuthenticated = false;
       String? redirectResult;
 
       // محاكاة منطق إعادة التوجيه
-      redirectResult = isAuthenticated || '/login' == '/login' ? null : '/login';
+      redirectResult =
+          isAuthenticated || '/login' == '/login' ? null : '/login';
 
       // التحقق من نتيجة إعادة التوجيه
       expect(redirectResult, null);
 
       // محاولة الوصول إلى صفحة محمية
       isAuthenticated = false;
-      redirectResult = isAuthenticated || '/profile' == '/login' ? null : '/login';
+      redirectResult =
+          isAuthenticated || '/profile' == '/login' ? null : '/login';
 
       // التحقق من إعادة التوجيه إلى صفحة تسجيل الدخول
       expect(redirectResult, '/login');
 
       // محاولة الوصول إلى صفحة محمية بعد تسجيل الدخول
       isAuthenticated = true;
-      redirectResult = isAuthenticated || '/profile' == '/login' ? null : '/login';
+      redirectResult =
+          isAuthenticated || '/profile' == '/login' ? null : '/login';
 
       // التحقق من عدم إعادة التوجيه
       expect(redirectResult, null);
     });
 
-    testWidgets('يجب إعادة توجيه المستخدم المصادق من صفحات المصادقة إلى الصفحة الرئيسية', (WidgetTester tester) async {
+    testWidgets(
+        'يجب إعادة توجيه المستخدم المصادق من صفحات المصادقة إلى الصفحة الرئيسية',
+        (WidgetTester tester) async {
       // هذا اختبار وهمي لتوضيح منطق إعادة التوجيه
       bool isAuthenticated = true;
       String? redirectResult;
 
       // محاولة الوصول إلى صفحة تسجيل الدخول بعد المصادقة
-      redirectResult = !isAuthenticated || '/login' == '/splash' ? null : '/home';
+      redirectResult =
+          !isAuthenticated || '/login' == '/splash' ? null : '/home';
 
       // التحقق من إعادة التوجيه إلى الصفحة الرئيسية
       expect(redirectResult, '/home');
 
       // محاولة الوصول إلى صفحة التسجيل بعد المصادقة
-      redirectResult = !isAuthenticated || '/register' == '/splash' ? null : '/home';
+      redirectResult =
+          !isAuthenticated || '/register' == '/splash' ? null : '/home';
 
       // التحقق من إعادة التوجيه إلى الصفحة الرئيسية
       expect(redirectResult, '/home');
 
       // محاولة الوصول إلى صفحة البداية
-      redirectResult = !isAuthenticated || '/splash' == '/splash' ? null : '/home';
+      redirectResult =
+          !isAuthenticated || '/splash' == '/splash' ? null : '/home';
 
       // التحقق من عدم إعادة التوجيه من صفحة البداية
       expect(redirectResult, null);

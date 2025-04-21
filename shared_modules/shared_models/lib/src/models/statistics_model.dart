@@ -1,6 +1,6 @@
 // Define your Statistics model here
 class StatisticsModel {
- // Add fields and methods
+  // Add fields and methods
 }
 
 class SalesData {

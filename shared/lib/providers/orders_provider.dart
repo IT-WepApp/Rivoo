@@ -48,7 +48,8 @@ class OrdersState {
 }
 
 /// مزود حالة الطلبات
-final ordersProvider = StateNotifierProvider<OrdersNotifier, OrdersState>((ref) {
+final ordersProvider =
+    StateNotifierProvider<OrdersNotifier, OrdersState>((ref) {
   final firestoreService = ref.watch(firestoreServiceProvider);
   return OrdersNotifier(firestoreService);
 });
@@ -68,7 +69,7 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
   /// جلب طلبات المستخدم
   Future<void> fetchUserOrders(String userId) async {
     state = state.copyWithLoading();
-    
+
     try {
       final orders = await _firestoreService.getUserOrders(userId);
       state = state.copyWithOrders(orders);
@@ -80,7 +81,7 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
   /// جلب طلبات المتجر
   Future<void> fetchStoreOrders(String storeId) async {
     state = state.copyWithLoading();
-    
+
     try {
       final orders = await _firestoreService.getStoreOrders(storeId);
       state = state.copyWithOrders(orders);
@@ -92,9 +93,10 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
   /// جلب طلبات التوصيل
   Future<void> fetchDeliveryOrders(String deliveryPersonId) async {
     state = state.copyWithLoading();
-    
+
     try {
-      final orders = await _firestoreService.getDeliveryOrders(deliveryPersonId);
+      final orders =
+          await _firestoreService.getDeliveryOrders(deliveryPersonId);
       state = state.copyWithOrders(orders);
     } catch (e) {
       state = state.copyWithError(e.toString());
@@ -105,14 +107,14 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
   Future<void> updateOrderStatus(String orderId, String status) async {
     try {
       await _firestoreService.updateOrderStatus(orderId, status);
-      
+
       final updatedOrders = state.orders.map((order) {
         if (order.id == orderId) {
           return order.copyWith(status: status);
         }
         return order;
       }).toList();
-      
+
       state = state.copyWithOrders(updatedOrders);
     } catch (e) {
       state = state.copyWithError(e.toString());
@@ -122,16 +124,16 @@ class OrdersNotifier extends StateNotifier<OrdersState> {
   /// إنشاء طلب جديد
   Future<String?> createOrder(Order order) async {
     state = state.copyWithLoading();
-    
+
     try {
       final orderId = await _firestoreService.createOrder(order);
-      
+
       if (orderId != null) {
         final newOrder = order.copyWith(id: orderId);
         final updatedOrders = [...state.orders, newOrder];
         state = state.copyWithOrders(updatedOrders);
       }
-      
+
       return orderId;
     } catch (e) {
       state = state.copyWithError(e.toString());

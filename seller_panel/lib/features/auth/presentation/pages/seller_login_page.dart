@@ -63,7 +63,8 @@ class _SellerLoginPageState extends ConsumerState<SellerLoginPage> {
         // التنقل إلى الصفحة الرئيسية بعد تسجيل الدخول بنجاح
         context.go(RouteConstants.sellerDashboard);
       } else {
-        _showErrorSnackBar('فشل تسجيل الدخول. يرجى التحقق من بيانات الاعتماد الخاصة بك.');
+        _showErrorSnackBar(
+            'فشل تسجيل الدخول. يرجى التحقق من بيانات الاعتماد الخاصة بك.');
       }
     } catch (e) {
       if (!mounted) return;
@@ -86,19 +87,21 @@ class _SellerLoginPageState extends ConsumerState<SellerLoginPage> {
     try {
       final authService = ref.read(authServiceProvider);
       await authService.sendPasswordResetEmail(_emailController.text.trim());
-      
+
       if (!mounted) return;
-      
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني'),
+          content: Text(
+              'تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني'),
           backgroundColor: AppColors.success,
           behavior: SnackBarBehavior.floating,
         ),
       );
     } catch (e) {
       if (!mounted) return;
-      _showErrorSnackBar('فشل إرسال رابط إعادة تعيين كلمة المرور: ${e.toString()}');
+      _showErrorSnackBar(
+          'فشل إرسال رابط إعادة تعيين كلمة المرور: ${e.toString()}');
     } finally {
       if (mounted) {
         setState(() => _isLoading = false);
@@ -132,25 +135,25 @@ class _SellerLoginPageState extends ConsumerState<SellerLoginPage> {
                   alignment: Alignment.center,
                   child: Image.asset(
                     'assets/images/seller_logo.png',
-                    errorBuilder: (context, error, stackTrace) => Icon(
+                    errorBuilder: (context, error, stackTrace) => const Icon(
                       Icons.store,
                       size: 80,
                       color: AppColors.primary,
                     ),
                   ),
                 ),
-                
+
                 const SizedBox(height: 24),
-                
+
                 // عنوان الصفحة
                 Text(
                   'مرحباً بك في لوحة تحكم البائع',
                   style: theme.textTheme.headlineSmall,
                   textAlign: TextAlign.center,
                 ),
-                
+
                 const SizedBox(height: 8),
-                
+
                 Text(
                   'يرجى تسجيل الدخول للوصول إلى حسابك',
                   style: theme.textTheme.bodyMedium?.copyWith(
@@ -158,9 +161,9 @@ class _SellerLoginPageState extends ConsumerState<SellerLoginPage> {
                   ),
                   textAlign: TextAlign.center,
                 ),
-                
+
                 const SizedBox(height: 32),
-                
+
                 // حقل البريد الإلكتروني
                 AppWidgets.appTextField(
                   controller: _emailController,
@@ -179,9 +182,9 @@ class _SellerLoginPageState extends ConsumerState<SellerLoginPage> {
                     return null;
                   },
                 ),
-                
+
                 const SizedBox(height: 16),
-                
+
                 // حقل كلمة المرور
                 AppWidgets.appTextField(
                   controller: _passwordController,
@@ -201,15 +204,17 @@ class _SellerLoginPageState extends ConsumerState<SellerLoginPage> {
                   },
                   suffixIcon: IconButton(
                     icon: Icon(
-                      _obscurePassword ? Icons.visibility : Icons.visibility_off,
+                      _obscurePassword
+                          ? Icons.visibility
+                          : Icons.visibility_off,
                     ),
                     onPressed: _togglePasswordVisibility,
                   ),
                   onSubmitted: (_) => _login(),
                 ),
-                
+
                 const SizedBox(height: 24),
-                
+
                 // زر نسيت كلمة المرور
                 Align(
                   alignment: Alignment.centerLeft,
@@ -218,9 +223,9 @@ class _SellerLoginPageState extends ConsumerState<SellerLoginPage> {
                     child: const Text('نسيت كلمة المرور؟'),
                   ),
                 ),
-                
+
                 const SizedBox(height: 32),
-                
+
                 // زر تسجيل الدخول
                 _isLoading
                     ? const Center(child: CircularProgressIndicator())
@@ -231,9 +236,9 @@ class _SellerLoginPageState extends ConsumerState<SellerLoginPage> {
                         backgroundColor: AppColors.primary,
                         textColor: AppColors.onPrimary,
                       ),
-                
+
                 const SizedBox(height: 24),
-                
+
                 // رابط التسجيل كبائع جديد
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,

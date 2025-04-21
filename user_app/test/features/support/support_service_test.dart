@@ -33,17 +33,19 @@ void main() {
     mockTicketsCollection = MockCollectionReference<Map<String, dynamic>>();
     mockMessagesCollection = MockCollectionReference<Map<String, dynamic>>();
     mockTicketDoc = MockDocumentReference<Map<String, dynamic>>();
-    
+
     supportService = SupportService(
       firestore: mockFirestore,
       auth: mockAuth,
       storage: mockStorage,
     );
-    
+
     when(mockAuth.currentUser).thenReturn(mockUser);
     when(mockUser.uid).thenReturn('test_user_id');
-    when(mockFirestore.collection('support_tickets')).thenReturn(mockTicketsCollection);
-    when(mockFirestore.collection('support_messages')).thenReturn(mockMessagesCollection);
+    when(mockFirestore.collection('support_tickets'))
+        .thenReturn(mockTicketsCollection);
+    when(mockFirestore.collection('support_messages'))
+        .thenReturn(mockMessagesCollection);
   });
 
   group('SupportService Tests', () {
@@ -54,11 +56,11 @@ void main() {
       const type = TicketType.orderIssue;
       const priority = TicketPriority.high;
       const orderId = 'order_123';
-      
+
       when(mockTicketsCollection.doc(any)).thenReturn(mockTicketDoc);
       when(mockTicketDoc.set(any)).thenAnswer((_) async => null);
       when(mockMessagesCollection.doc(any)).thenReturn(mockTicketDoc);
-      
+
       // تنفيذ
       final ticket = await supportService.createTicket(
         subject: subject,
@@ -77,21 +79,23 @@ void main() {
       expect(ticket.orderId, orderId);
       expect(ticket.status, TicketStatus.open);
       expect(ticket.userId, 'test_user_id');
-      verify(mockTicketDoc.set(any)).called(2); // مرة للتذكرة ومرة للرسالة الأولية
+      verify(mockTicketDoc.set(any))
+          .called(2); // مرة للتذكرة ومرة للرسالة الأولية
     });
 
     test('sendMessage should add a message to a ticket', () async {
       // ترتيب
       const ticketId = 'ticket_123';
       const message = 'هل يمكنكم مساعدتي في هذه المشكلة؟';
-      
+
       when(mockTicketsCollection.doc(ticketId)).thenReturn(mockTicketDoc);
-      when(mockTicketDoc.get()).thenAnswer((_) async => MockDocumentSnapshot<Map<String, dynamic>>());
+      when(mockTicketDoc.get()).thenAnswer(
+          (_) async => MockDocumentSnapshot<Map<String, dynamic>>());
       when(mockTicketDoc.exists).thenReturn(true);
       when(mockMessagesCollection.doc(any)).thenReturn(mockTicketDoc);
       when(mockTicketDoc.set(any)).thenAnswer((_) async => null);
       when(mockTicketDoc.update(any)).thenAnswer((_) async => null);
-      
+
       // تنفيذ
       final supportMessage = await supportService.sendMessage(
         ticketId: ticketId,
@@ -112,12 +116,13 @@ void main() {
       // ترتيب
       const ticketId = 'ticket_123';
       const status = TicketStatus.closed;
-      
+
       when(mockTicketsCollection.doc(ticketId)).thenReturn(mockTicketDoc);
-      when(mockTicketDoc.get()).thenAnswer((_) async => MockDocumentSnapshot<Map<String, dynamic>>());
+      when(mockTicketDoc.get()).thenAnswer(
+          (_) async => MockDocumentSnapshot<Map<String, dynamic>>());
       when(mockTicketDoc.exists).thenReturn(true);
       when(mockTicketDoc.update(any)).thenAnswer((_) async => null);
-      
+
       // تنفيذ
       await supportService.updateTicketStatus(
         ticketId: ticketId,
@@ -131,37 +136,37 @@ void main() {
     test('closeTicket should close a ticket', () async {
       // ترتيب
       const ticketId = 'ticket_123';
-      
+
       when(mockTicketsCollection.doc(ticketId)).thenReturn(mockTicketDoc);
-      when(mockTicketDoc.get()).thenAnswer((_) async => MockDocumentSnapshot<Map<String, dynamic>>());
+      when(mockTicketDoc.get()).thenAnswer(
+          (_) async => MockDocumentSnapshot<Map<String, dynamic>>());
       when(mockTicketDoc.exists).thenReturn(true);
       when(mockTicketDoc.update(any)).thenAnswer((_) async => null);
-      
+
       // تنفيذ
       await supportService.closeTicket(ticketId);
 
       // تحقق
-      verify(mockTicketDoc.update(argThat(
-        predicate<Map<String, dynamic>>((map) => map['status'] == TicketStatus.closed.index)
-      ))).called(1);
+      verify(mockTicketDoc.update(argThat(predicate<Map<String, dynamic>>(
+          (map) => map['status'] == TicketStatus.closed.index)))).called(1);
     });
 
     test('reopenTicket should reopen a closed ticket', () async {
       // ترتيب
       const ticketId = 'ticket_123';
-      
+
       when(mockTicketsCollection.doc(ticketId)).thenReturn(mockTicketDoc);
-      when(mockTicketDoc.get()).thenAnswer((_) async => MockDocumentSnapshot<Map<String, dynamic>>());
+      when(mockTicketDoc.get()).thenAnswer(
+          (_) async => MockDocumentSnapshot<Map<String, dynamic>>());
       when(mockTicketDoc.exists).thenReturn(true);
       when(mockTicketDoc.update(any)).thenAnswer((_) async => null);
-      
+
       // تنفيذ
       await supportService.reopenTicket(ticketId);
 
       // تحقق
-      verify(mockTicketDoc.update(argThat(
-        predicate<Map<String, dynamic>>((map) => map['status'] == TicketStatus.open.index)
-      ))).called(1);
+      verify(mockTicketDoc.update(argThat(predicate<Map<String, dynamic>>(
+          (map) => map['status'] == TicketStatus.open.index)))).called(1);
     });
   });
 }

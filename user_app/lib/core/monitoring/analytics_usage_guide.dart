@@ -1,7 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../services/analytics_service.dart';
-import '../monitoring/analytics_provider.dart';
 
 /// مكون لتوثيق كيفية استخدام خدمات التحليلات في التطبيق
 class AnalyticsUsageGuide extends StatelessWidget {
@@ -13,31 +10,31 @@ class AnalyticsUsageGuide extends StatelessWidget {
       appBar: AppBar(
         title: const Text('دليل استخدام التحليلات'),
       ),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16.0),
+      body: const SingleChildScrollView(
+        padding: EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
+            Text(
               'كيفية استخدام خدمات التحليلات في التطبيق',
               style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 16),
-            const Text(
+            SizedBox(height: 16),
+            Text(
               '1. تتبع مشاهدة الشاشات',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 8),
-            const Text(
+            SizedBox(height: 8),
+            Text(
               'يتم تتبع مشاهدة الشاشات تلقائياً باستخدام AnalyticsObserver المضاف إلى MaterialApp. يمكنك أيضاً استخدام AnalyticsWrapper لتتبع مشاهدة الشاشات يدوياً:',
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: 8),
             CodeSnippet(
               code: '''
 // استخدام AnalyticsWrapper
@@ -48,19 +45,19 @@ AnalyticsWrapper(
 )
 ''',
             ),
-            const SizedBox(height: 16),
-            const Text(
+            SizedBox(height: 16),
+            Text(
               '2. تتبع أحداث المستخدم',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 8),
-            const Text(
+            SizedBox(height: 8),
+            Text(
               'يمكنك استخدام AnalyticsProvider لتتبع أحداث المستخدم المختلفة:',
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: 8),
             CodeSnippet(
               code: '''
 // تتبع النقر على زر
@@ -91,19 +88,19 @@ analytics.logPurchase(
 );
 ''',
             ),
-            const SizedBox(height: 16),
-            const Text(
+            SizedBox(height: 16),
+            Text(
               '3. قياس أداء العمليات',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 8),
-            const Text(
+            SizedBox(height: 8),
+            Text(
               'يمكنك استخدام AnalyticsProvider لقياس أداء العمليات المختلفة:',
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: 8),
             CodeSnippet(
               code: '''
 // قياس أداء عملية معينة
@@ -121,19 +118,19 @@ final response = await analytics.measureHttpRequest(
 );
 ''',
             ),
-            const SizedBox(height: 16),
-            const Text(
+            SizedBox(height: 16),
+            Text(
               '4. تعيين خصائص المستخدم',
               style: TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.bold,
               ),
             ),
-            const SizedBox(height: 8),
-            const Text(
+            SizedBox(height: 8),
+            Text(
               'يمكنك استخدام AnalyticsService مباشرة لتعيين خصائص المستخدم:',
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: 8),
             CodeSnippet(
               code: '''
 // تعيين خصائص المستخدم

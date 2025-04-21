@@ -7,44 +7,47 @@ class NavigationHelper {
   NavigationHelper._();
 
   /// الانتقال إلى مسار محدد
-  static void navigateTo(BuildContext context, String path, {Map<String, String>? params, Map<String, String>? queryParams}) {
+  static void navigateTo(BuildContext context, String path,
+      {Map<String, String>? params, Map<String, String>? queryParams}) {
     String finalPath = path;
-    
+
     // إضافة المعلمات إلى المسار إذا وجدت
     if (params != null) {
       params.forEach((key, value) {
         finalPath = finalPath.replaceAll(':$key', value);
       });
     }
-    
+
     context.go(finalPath, queryParams: queryParams);
   }
 
   /// الانتقال إلى مسار محدد مع استبدال المسار الحالي
-  static void replaceTo(BuildContext context, String path, {Map<String, String>? params, Map<String, String>? queryParams}) {
+  static void replaceTo(BuildContext context, String path,
+      {Map<String, String>? params, Map<String, String>? queryParams}) {
     String finalPath = path;
-    
+
     // إضافة المعلمات إلى المسار إذا وجدت
     if (params != null) {
       params.forEach((key, value) {
         finalPath = finalPath.replaceAll(':$key', value);
       });
     }
-    
+
     context.replace(finalPath, queryParams: queryParams);
   }
 
   /// الانتقال إلى مسار محدد مع إمكانية العودة
-  static void pushTo(BuildContext context, String path, {Map<String, String>? params, Map<String, String>? queryParams}) {
+  static void pushTo(BuildContext context, String path,
+      {Map<String, String>? params, Map<String, String>? queryParams}) {
     String finalPath = path;
-    
+
     // إضافة المعلمات إلى المسار إذا وجدت
     if (params != null) {
       params.forEach((key, value) {
         finalPath = finalPath.replaceAll(':$key', value);
       });
     }
-    
+
     context.push(finalPath, queryParams: queryParams);
   }
 

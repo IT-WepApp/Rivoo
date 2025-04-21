@@ -9,7 +9,13 @@ import 'package:user_app/features/products/domain/product_model.dart';
 
 import 'products_provider_test.mocks.dart';
 
-@GenerateMocks([FirebaseFirestore, CollectionReference, QuerySnapshot, DocumentSnapshot, Query])
+@GenerateMocks([
+  FirebaseFirestore,
+  CollectionReference,
+  QuerySnapshot,
+  DocumentSnapshot,
+  Query
+])
 void main() {
   late MockFirebaseFirestore mockFirestore;
   late MockCollectionReference<Map<String, dynamic>> mockCollectionReference;
@@ -67,8 +73,10 @@ void main() {
 
       // محاكاة استجابة Firestore
       when(mockQuerySnapshot.docs).thenReturn(mockDocumentSnapshots);
-      when(mockCollectionReference.get()).thenAnswer((_) async => mockQuerySnapshot);
-      when(mockFirestore.collection('products')).thenReturn(mockCollectionReference);
+      when(mockCollectionReference.get())
+          .thenAnswer((_) async => mockQuerySnapshot);
+      when(mockFirestore.collection('products'))
+          .thenReturn(mockCollectionReference);
 
       // إعادة إنشاء المزود مع المحاكاة الجديدة
       container = ProviderContainer(
@@ -104,7 +112,7 @@ void main() {
 
       // محاكاة الحالة النهائية المتوقعة
       final expectedState = ProductsState.loaded(expectedProducts);
-      
+
       // التحقق من أن هيكل الحالة المتوقعة صحيح
       expect(expectedState.toString().contains('ProductsState.loaded'), true);
     });
@@ -122,16 +130,20 @@ void main() {
 
       // التحقق من الحالة النهائية (نقوم بمحاكاة النتيجة المتوقعة)
       // في تطبيق حقيقي، سنقوم بالتحقق من الحالة الفعلية بعد محاولة تحميل المنتجات
-      final expectedState = const ProductsState.error("لا يوجد اتصال بالإنترنت");
-      
+      final expectedState =
+          const ProductsState.error("لا يوجد اتصال بالإنترنت");
+
       // التحقق من أن هيكل الحالة المتوقعة صحيح
       expect(expectedState.toString().contains('ProductsState.error'), true);
     });
 
-    test('يجب أن تتغير الحالة إلى error عند حدوث خطأ في تحميل المنتجات', () async {
+    test('يجب أن تتغير الحالة إلى error عند حدوث خطأ في تحميل المنتجات',
+        () async {
       // محاكاة حدوث خطأ في Firestore
-      when(mockCollectionReference.get()).thenThrow(Exception('Database error'));
-      when(mockFirestore.collection('products')).thenReturn(mockCollectionReference);
+      when(mockCollectionReference.get())
+          .thenThrow(Exception('Database error'));
+      when(mockFirestore.collection('products'))
+          .thenReturn(mockCollectionReference);
 
       // إعادة إنشاء المزود مع المحاكاة الجديدة
       container = ProviderContainer(
@@ -146,8 +158,9 @@ void main() {
 
       // التحقق من الحالة النهائية (نقوم بمحاكاة النتيجة المتوقعة)
       // في تطبيق حقيقي، سنقوم بالتحقق من الحالة الفعلية بعد محاولة تحميل المنتجات
-      final expectedState = const ProductsState.error("Exception: Database error");
-      
+      final expectedState =
+          const ProductsState.error("Exception: Database error");
+
       // التحقق من أن هيكل الحالة المتوقعة صحيح
       expect(expectedState.toString().contains('ProductsState.error'), true);
     });
@@ -157,7 +170,7 @@ void main() {
     test('يجب أن يعيد منتجًا محددًا حسب المعرف', () async {
       // إعداد
       final mockDocumentSnapshot = MockDocumentSnapshot<Map<String, dynamic>>();
-      
+
       // محاكاة بيانات المنتج
       when(mockDocumentSnapshot.data()).thenReturn({
         'name': 'Product 1',
@@ -170,10 +183,14 @@ void main() {
       when(mockDocumentSnapshot.id).thenReturn('product-1');
 
       // محاكاة استجابة Firestore
-      final mockDocumentReference = MockDocumentReference<Map<String, dynamic>>();
-      when(mockDocumentReference.get()).thenAnswer((_) async => mockDocumentSnapshot);
-      when(mockCollectionReference.doc('product-1')).thenReturn(mockDocumentReference);
-      when(mockFirestore.collection('products')).thenReturn(mockCollectionReference);
+      final mockDocumentReference =
+          MockDocumentReference<Map<String, dynamic>>();
+      when(mockDocumentReference.get())
+          .thenAnswer((_) async => mockDocumentSnapshot);
+      when(mockCollectionReference.doc('product-1'))
+          .thenReturn(mockDocumentReference);
+      when(mockFirestore.collection('products'))
+          .thenReturn(mockCollectionReference);
 
       // إعادة إنشاء المزود مع المحاكاة الجديدة
       container = ProviderContainer(
@@ -194,7 +211,7 @@ void main() {
         category: 'Category 1',
         images: ['image1.jpg'],
       );
-      
+
       // التحقق من أن المنتج المتوقع صحيح
       expect(expectedProduct.id, 'product-1');
       expect(expectedProduct.name, 'Product 1');

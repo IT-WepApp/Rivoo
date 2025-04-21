@@ -10,18 +10,15 @@ import 'router.dart';
 // Remove or refactor NotificationService initialization if handled differently
 // import 'package:seller_panel/services/notification_service.dart';
 
-
-
 Future<void> main() async {
-    WidgetsFlutterBinding.ensureInitialized();
-     await Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform
-    );
-    
-    // Initialize services like Notifications *after* getting seller/store ID (e.g., after login)
-    // await NotificationService().initialize(storeId: 'YOUR_STORE_ID_AFTER_LOGIN'); 
-    
-    runApp(const ProviderScope(child: SellerPanelApp())); // Wrap with ProviderScope
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+
+  // Initialize services like Notifications *after* getting seller/store ID (e.g., after login)
+  // await NotificationService().initialize(storeId: 'YOUR_STORE_ID_AFTER_LOGIN');
+
+  runApp(
+      const ProviderScope(child: SellerPanelApp())); // Wrap with ProviderScope
 }
 
 class SellerPanelApp extends StatelessWidget {
@@ -34,7 +31,7 @@ class SellerPanelApp extends StatelessWidget {
       title: 'Seller Panel', // Changed title
       theme: AppTheme.lightTheme, // Use shared theme
       darkTheme: AppTheme.darkTheme, // Use shared theme
-      themeMode: ThemeMode.system, 
+      themeMode: ThemeMode.system,
       debugShowCheckedModeBanner: false,
     );
   }

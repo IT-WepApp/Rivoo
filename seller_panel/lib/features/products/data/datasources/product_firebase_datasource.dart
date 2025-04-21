@@ -30,7 +30,8 @@ class ProductFirebaseDataSource {
   // الحصول على منتج محدد بواسطة المعرف
   Future<Map<String, dynamic>?> getProductById(String productId) async {
     try {
-      final docSnapshot = await _firestore.collection('products').doc(productId).get();
+      final docSnapshot =
+          await _firestore.collection('products').doc(productId).get();
 
       if (!docSnapshot.exists) {
         return null;
@@ -57,9 +58,13 @@ class ProductFirebaseDataSource {
   }
 
   // تحديث منتج موجود
-  Future<bool> updateProduct(String productId, Map<String, dynamic> productData) async {
+  Future<bool> updateProduct(
+      String productId, Map<String, dynamic> productData) async {
     try {
-      await _firestore.collection('products').doc(productId).update(productData);
+      await _firestore
+          .collection('products')
+          .doc(productId)
+          .update(productData);
       return true;
     } catch (e, stackTrace) {
       log('Error updating product', error: e, stackTrace: stackTrace);
@@ -79,7 +84,8 @@ class ProductFirebaseDataSource {
   }
 
   // تغيير حالة توفر المنتج
-  Future<bool> toggleProductAvailability(String productId, bool isAvailable) async {
+  Future<bool> toggleProductAvailability(
+      String productId, bool isAvailable) async {
     try {
       await _firestore.collection('products').doc(productId).update({
         'isAvailable': isAvailable,
@@ -87,13 +93,15 @@ class ProductFirebaseDataSource {
       });
       return true;
     } catch (e, stackTrace) {
-      log('Error toggling product availability', error: e, stackTrace: stackTrace);
+      log('Error toggling product availability',
+          error: e, stackTrace: stackTrace);
       throw Exception('فشل في تغيير حالة توفر المنتج: $e');
     }
   }
 
   // رفع صور متعددة للمنتج
-  Future<List<String>> uploadProductImages(String productId, List<String> localImagePaths) async {
+  Future<List<String>> uploadProductImages(
+      String productId, List<String> localImagePaths) async {
     try {
       List<String> imageUrls = [];
 
@@ -101,12 +109,13 @@ class ProductFirebaseDataSource {
         final path = localImagePaths[i];
         final file = File(path);
         final fileName = '${DateTime.now().millisecondsSinceEpoch}_$i.jpg';
-        final storageRef = _storage.ref().child('products/$productId/$fileName');
-        
+        final storageRef =
+            _storage.ref().child('products/$productId/$fileName');
+
         final uploadTask = storageRef.putFile(file);
         final snapshot = await uploadTask;
         final url = await snapshot.ref.getDownloadURL();
-        
+
         imageUrls.add(url);
       }
 
@@ -123,12 +132,13 @@ class ProductFirebaseDataSource {
       // استخراج المسار من URL
       final uri = Uri.parse(imageUrl);
       final pathSegments = uri.pathSegments;
-      final imagePath = pathSegments.sublist(pathSegments.indexOf('o') + 1).join('/');
+      final imagePath =
+          pathSegments.sublist(pathSegments.indexOf('o') + 1).join('/');
       final decodedPath = Uri.decodeComponent(imagePath);
-      
+
       // حذف الصورة من التخزين
       await _storage.ref(decodedPath).delete();
-      
+
       return true;
     } catch (e, stackTrace) {
       log('Error deleting product image', error: e, stackTrace: stackTrace);

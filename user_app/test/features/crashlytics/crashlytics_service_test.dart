@@ -24,13 +24,14 @@ void main() {
       // محاكاة الاستدعاءات المتوقعة
       when(mockCrashlytics.setCrashlyticsCollectionEnabled(any))
           .thenAnswer((_) async => true);
-      
+
       // تنفيذ
       await crashlyticsService.initialize();
-      
+
       // التحقق
-      verify(mockCrashlytics.setCrashlyticsCollectionEnabled(!kDebugMode)).called(1);
-      
+      verify(mockCrashlytics.setCrashlyticsCollectionEnabled(!kDebugMode))
+          .called(1);
+
       // التحقق من تعيين معالجي الأخطاء
       expect(FlutterError.onError, isNotNull);
     });
@@ -39,14 +40,15 @@ void main() {
       // إعداد
       final exception = Exception('Test error');
       final stack = StackTrace.current;
-      
+
       // محاكاة الاستدعاء المتوقع
-      when(mockCrashlytics.recordError(any, any, fatal: anyNamed('fatal'), printDetails: anyNamed('printDetails')))
+      when(mockCrashlytics.recordError(any, any,
+              fatal: anyNamed('fatal'), printDetails: anyNamed('printDetails')))
           .thenAnswer((_) async {});
-      
+
       // تنفيذ
       await crashlyticsService.recordError(exception, stack, fatal: true);
-      
+
       // التحقق
       verify(mockCrashlytics.recordError(
         exception,
@@ -59,27 +61,28 @@ void main() {
     test('log يجب أن يسجل رسالة في Crashlytics', () async {
       // إعداد
       const message = 'Test log message';
-      
+
       // محاكاة الاستدعاء المتوقع
       when(mockCrashlytics.log(any)).thenAnswer((_) async {});
-      
+
       // تنفيذ
       await crashlyticsService.log(message);
-      
+
       // التحقق
       verify(mockCrashlytics.log(message)).called(1);
     });
 
-    test('setUserIdentifier يجب أن يعين معرف المستخدم في Crashlytics', () async {
+    test('setUserIdentifier يجب أن يعين معرف المستخدم في Crashlytics',
+        () async {
       // إعداد
       const userId = 'test-user-123';
-      
+
       // محاكاة الاستدعاء المتوقع
       when(mockCrashlytics.setUserIdentifier(any)).thenAnswer((_) async {});
-      
+
       // تنفيذ
       await crashlyticsService.setUserIdentifier(userId);
-      
+
       // التحقق
       verify(mockCrashlytics.setUserIdentifier(userId)).called(1);
     });
@@ -88,33 +91,35 @@ void main() {
       // إعداد
       const key = 'test-key';
       const value = 'test-value';
-      
+
       // محاكاة الاستدعاء المتوقع
       when(mockCrashlytics.setCustomKey(any, any)).thenAnswer((_) async {});
-      
+
       // تنفيذ
       await crashlyticsService.setCustomKey(key, value);
-      
+
       // التحقق
       verify(mockCrashlytics.setCustomKey(key, value)).called(1);
     });
 
-    test('recordErrorToCrashlytics يجب أن يسجل الخطأ مع معلومات إضافية', () async {
+    test('recordErrorToCrashlytics يجب أن يسجل الخطأ مع معلومات إضافية',
+        () async {
       // إعداد
       final exception = Exception('Test error');
       final stack = StackTrace.current;
       const reason = 'Test reason';
       final information = {'key1': 'value1', 'key2': 'value2'};
-      
+
       // محاكاة الاستدعاءات المتوقعة
       when(mockCrashlytics.log(any)).thenAnswer((_) async {});
       when(mockCrashlytics.setCustomKey(any, any)).thenAnswer((_) async {});
-      when(mockCrashlytics.recordError(any, any, fatal: anyNamed('fatal'), printDetails: anyNamed('printDetails')))
+      when(mockCrashlytics.recordError(any, any,
+              fatal: anyNamed('fatal'), printDetails: anyNamed('printDetails')))
           .thenAnswer((_) async {});
-      
+
       // تجاوز الدالة العامة باستخدام نسخة محلية للاختبار
       final crashlytics = mockCrashlytics;
-      
+
       // تنفيذ
       await recordErrorToCrashlytics(
         exception,
@@ -123,7 +128,7 @@ void main() {
         reason: reason,
         information: information,
       );
-      
+
       // التحقق
       verify(crashlytics.log(contains(reason))).called(1);
       verify(crashlytics.setCustomKey('key1', 'value1')).called(1);

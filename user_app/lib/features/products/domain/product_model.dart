@@ -24,5 +24,6 @@ class ProductModel with _$ProductModel {
   }) = _ProductModel;
 
   /// إنشاء نموذج من JSON
-  factory ProductModel.fromJson(Map<String, dynamic> json) => _$ProductModelFromJson(json);
+  factory ProductModel.fromJson(Map<String, dynamic> json) =>
+      _$ProductModelFromJson(json);
 }

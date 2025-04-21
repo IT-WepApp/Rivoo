@@ -12,29 +12,29 @@ class AppColors {
   static const Color primaryDark = Color(0xFF388E3C);
   static const Color primaryLight = Color(0xFFC8E6C9);
   static const Color accent = Color(0xFFFF9800);
-  
+
   // ألوان الخلفية
   static const Color background = Color(0xFFF5F5F5);
   static const Color surface = Color(0xFFFFFFFF);
   static const Color surfaceVariant = Color(0xFFF0F0F0);
-  
+
   // ألوان النص
   static const Color textPrimary = Color(0xFF212121);
   static const Color textSecondary = Color(0xFF757575);
   static const Color textHint = Color(0xFF9E9E9E);
   static const Color textOnPrimary = Color(0xFFFFFFFF);
   static const Color textOnAccent = Color(0xFF000000);
-  
+
   // ألوان الحالة
   static const Color success = Color(0xFF4CAF50);
   static const Color error = Color(0xFFF44336);
   static const Color warning = Color(0xFFFF9800);
   static const Color info = Color(0xFF2196F3);
-  
+
   // ألوان الحدود والفواصل
   static const Color divider = Color(0xFFE0E0E0);
   static const Color border = Color(0xFFBDBDBD);
-  
+
   // ألوان الوضع الداكن
   static const Color darkBackground = Color(0xFF121212);
   static const Color darkSurface = Color(0xFF1E1E1E);
@@ -55,7 +55,7 @@ class AppDimensions {
   static const double paddingL = 24.0;
   static const double paddingXL = 32.0;
   static const double paddingXXL = 48.0;
-  
+
   // نصف قطر الحواف
   static const double radiusXS = 4.0;
   static const double radiusS = 8.0;
@@ -63,14 +63,14 @@ class AppDimensions {
   static const double radiusL = 16.0;
   static const double radiusXL = 24.0;
   static const double radiusXXL = 32.0;
-  
+
   // ارتفاعات العناصر
   static const double buttonHeight = 48.0;
   static const double inputHeight = 56.0;
   static const double appBarHeight = 56.0;
   static const double tabBarHeight = 48.0;
   static const double bottomNavBarHeight = 56.0;
-  
+
   // أحجام الخط
   static const double fontSizeXS = 12.0;
   static const double fontSizeS = 14.0;
@@ -79,26 +79,26 @@ class AppDimensions {
   static const double fontSizeXL = 20.0;
   static const double fontSizeXXL = 24.0;
   static const double fontSizeXXXL = 32.0;
-  
+
   // أحجام الأيقونات
   static const double iconSizeXS = 16.0;
   static const double iconSizeS = 20.0;
   static const double iconSizeM = 24.0;
   static const double iconSizeL = 32.0;
   static const double iconSizeXL = 48.0;
-  
+
   // سماكة الحدود
   static const double borderWidthThin = 0.5;
   static const double borderWidthRegular = 1.0;
   static const double borderWidthThick = 2.0;
-  
+
   // ارتفاع الظل
   static const double elevationXS = 1.0;
   static const double elevationS = 2.0;
   static const double elevationM = 4.0;
   static const double elevationL = 8.0;
   static const double elevationXL = 16.0;
-  
+
   // مدة الحركات
   static const Duration animationDurationFast = Duration(milliseconds: 150);
   static const Duration animationDurationMedium = Duration(milliseconds: 300);
@@ -140,11 +140,9 @@ ThemeData getLightTheme() {
       onError: Colors.white,
       errorContainer: Color(0xFFFFCDD2),
       onErrorContainer: Color(0xFFB71C1C),
-      background: AppColors.background,
-      onBackground: AppColors.textPrimary,
       surface: AppColors.surface,
       onSurface: AppColors.textPrimary,
-      surfaceVariant: AppColors.surfaceVariant,
+      surfaceContainerHighest: AppColors.surfaceVariant,
       onSurfaceVariant: AppColors.textSecondary,
       outline: AppColors.border,
       outlineVariant: AppColors.divider,
@@ -154,7 +152,7 @@ ThemeData getLightTheme() {
       onInverseSurface: Colors.white,
       inversePrimary: Color(0xFFA5D6A7),
     ),
-    
+
     // الخطوط
     fontFamily: 'Cairo',
     textTheme: const TextTheme(
@@ -234,7 +232,7 @@ ThemeData getLightTheme() {
         color: AppColors.textSecondary,
       ),
     ),
-    
+
     // أنماط الأزرار
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
@@ -248,7 +246,7 @@ ThemeData getLightTheme() {
         elevation: AppDimensions.elevationS,
       ),
     ),
-    
+
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
         foregroundColor: AppColors.primary,
@@ -260,7 +258,7 @@ ThemeData getLightTheme() {
         side: const BorderSide(color: AppColors.primary),
       ),
     ),
-    
+
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
         foregroundColor: AppColors.primary,
@@ -271,7 +269,7 @@ ThemeData getLightTheme() {
         ),
       ),
     ),
-    
+
     // أنماط حقول الإدخال
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
@@ -304,7 +302,7 @@ ThemeData getLightTheme() {
       hintStyle: const TextStyle(color: AppColors.textHint),
       errorStyle: const TextStyle(color: AppColors.error),
     ),
-    
+
     // أنماط البطاقات
     cardTheme: CardTheme(
       color: AppColors.surface,
@@ -314,7 +312,7 @@ ThemeData getLightTheme() {
       ),
       margin: const EdgeInsets.all(AppDimensions.paddingS),
     ),
-    
+
     // أنماط شريط التطبيق
     appBarTheme: const AppBarTheme(
       backgroundColor: AppColors.surface,
@@ -328,7 +326,7 @@ ThemeData getLightTheme() {
       ),
       iconTheme: IconThemeData(color: AppColors.primary),
     ),
-    
+
     // أنماط شريط التنقل السفلي
     bottomNavigationBarTheme: const BottomNavigationBarThemeData(
       backgroundColor: AppColors.surface,
@@ -339,7 +337,7 @@ ThemeData getLightTheme() {
       showSelectedLabels: true,
       showUnselectedLabels: true,
     ),
-    
+
     // أنماط شريط التبويب
     tabBarTheme: const TabBarTheme(
       labelColor: AppColors.primary,
@@ -354,7 +352,7 @@ ThemeData getLightTheme() {
         fontWeight: FontWeight.normal,
       ),
     ),
-    
+
     // أنماط القوائم
     listTileTheme: const ListTileThemeData(
       contentPadding: EdgeInsets.symmetric(
@@ -364,21 +362,21 @@ ThemeData getLightTheme() {
       minLeadingWidth: 24,
       iconColor: AppColors.primary,
     ),
-    
+
     // أنماط الفواصل
     dividerTheme: const DividerThemeData(
       color: AppColors.divider,
       thickness: 1,
       space: AppDimensions.paddingM,
     ),
-    
+
     // أنماط مؤشر التقدم
     progressIndicatorTheme: const ProgressIndicatorThemeData(
       color: AppColors.primary,
       circularTrackColor: AppColors.surfaceVariant,
       linearTrackColor: AppColors.surfaceVariant,
     ),
-    
+
     // أنماط مربع الحوار
     dialogTheme: DialogTheme(
       backgroundColor: AppColors.surface,
@@ -387,47 +385,47 @@ ThemeData getLightTheme() {
         borderRadius: BorderRadius.circular(AppDimensions.radiusL),
       ),
     ),
-    
+
     // أنماط مؤشر التبديل
     switchTheme: SwitchThemeData(
-      thumbColor: MaterialStateProperty.resolveWith((states) {
-        if (states.contains(MaterialState.selected)) {
+      thumbColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
           return AppColors.primary;
         }
         return Colors.grey;
       }),
-      trackColor: MaterialStateProperty.resolveWith((states) {
-        if (states.contains(MaterialState.selected)) {
+      trackColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
           return AppColors.primaryLight;
         }
         return Colors.grey.shade300;
       }),
     ),
-    
+
     // أنماط مربع الاختيار
     checkboxTheme: CheckboxThemeData(
-      fillColor: MaterialStateProperty.resolveWith((states) {
-        if (states.contains(MaterialState.selected)) {
+      fillColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
           return AppColors.primary;
         }
         return null;
       }),
-      checkColor: MaterialStateProperty.all(AppColors.textOnPrimary),
+      checkColor: WidgetStateProperty.all(AppColors.textOnPrimary),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(AppDimensions.radiusXS),
       ),
     ),
-    
+
     // أنماط زر الراديو
     radioTheme: RadioThemeData(
-      fillColor: MaterialStateProperty.resolveWith((states) {
-        if (states.contains(MaterialState.selected)) {
+      fillColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
           return AppColors.primary;
         }
         return AppColors.textSecondary;
       }),
     ),
-    
+
     // أنماط مؤشر التمرير
     sliderTheme: const SliderThemeData(
       activeTrackColor: AppColors.primary,
@@ -437,7 +435,7 @@ ThemeData getLightTheme() {
       valueIndicatorColor: AppColors.primary,
       valueIndicatorTextStyle: TextStyle(color: AppColors.textOnPrimary),
     ),
-    
+
     // أنماط الرسوم المتحركة
     pageTransitionsTheme: const PageTransitionsTheme(
       builders: {
@@ -445,7 +443,7 @@ ThemeData getLightTheme() {
         TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
       },
     ),
-    
+
     // اتجاه النص
     textDirection: TextDirection.rtl,
   );
@@ -473,11 +471,9 @@ ThemeData getDarkTheme() {
       onError: Color(0xFF000000),
       errorContainer: Color(0xFFB71C1C),
       onErrorContainer: Color(0xFFFFCDD2),
-      background: AppColors.darkBackground,
-      onBackground: AppColors.darkTextPrimary,
       surface: AppColors.darkSurface,
       onSurface: AppColors.darkTextPrimary,
-      surfaceVariant: AppColors.darkSurfaceVariant,
+      surfaceContainerHighest: AppColors.darkSurfaceVariant,
       onSurfaceVariant: AppColors.darkTextSecondary,
       outline: AppColors.darkBorder,
       outlineVariant: AppColors.darkDivider,
@@ -487,7 +483,7 @@ ThemeData getDarkTheme() {
       onInverseSurface: Colors.black,
       inversePrimary: AppColors.primary,
     ),
-    
+
     // الخطوط
     fontFamily: 'Cairo',
     textTheme: const TextTheme(
@@ -567,7 +563,7 @@ ThemeData getDarkTheme() {
         color: AppColors.darkTextSecondary,
       ),
     ),
-    
+
     // أنماط الأزرار
     elevatedButtonTheme: ElevatedButtonThemeData(
       style: ElevatedButton.styleFrom(
@@ -581,7 +577,7 @@ ThemeData getDarkTheme() {
         elevation: AppDimensions.elevationS,
       ),
     ),
-    
+
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
         foregroundColor: const Color(0xFF81C784),
@@ -593,7 +589,7 @@ ThemeData getDarkTheme() {
         side: const BorderSide(color: Color(0xFF81C784)),
       ),
     ),
-    
+
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(
         foregroundColor: const Color(0xFF81C784),
@@ -604,7 +600,7 @@ ThemeData getDarkTheme() {
         ),
       ),
     ),
-    
+
     // أنماط حقول الإدخال
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
@@ -637,7 +633,7 @@ ThemeData getDarkTheme() {
       hintStyle: const TextStyle(color: AppColors.darkTextHint),
       errorStyle: const TextStyle(color: Color(0xFFEF5350)),
     ),
-    
+
     // أنماط البطاقات
     cardTheme: CardTheme(
       color: AppColors.darkSurface,
@@ -647,7 +643,7 @@ ThemeData getDarkTheme() {
       ),
       margin: const EdgeInsets.all(AppDimensions.paddingS),
     ),
-    
+
     // أنماط شريط التطبيق
     appBarTheme: const AppBarTheme(
       backgroundColor: AppColors.darkSurface,
@@ -661,7 +657,7 @@ ThemeData getDarkTheme() {
       ),
       iconTheme: IconThemeData(color: Color(0xFF81C784)),
     ),
-    
+
     // أنماط شريط التنقل السفلي
     bottomNavigationBarTheme: const BottomNavigationBarThemeData(
       backgroundColor: AppColors.darkSurface,
@@ -672,7 +668,7 @@ ThemeData getDarkTheme() {
       showSelectedLabels: true,
       showUnselectedLabels: true,
     ),
-    
+
     // أنماط شريط التبويب
     tabBarTheme: const TabBarTheme(
       labelColor: Color(0xFF81C784),
@@ -687,7 +683,7 @@ ThemeData getDarkTheme() {
         fontWeight: FontWeight.normal,
       ),
     ),
-    
+
     // أنماط القوائم
     listTileTheme: const ListTileThemeData(
       contentPadding: EdgeInsets.symmetric(
@@ -697,21 +693,21 @@ ThemeData getDarkTheme() {
       minLeadingWidth: 24,
       iconColor: Color(0xFF81C784),
     ),
-    
+
     // أنماط الفواصل
     dividerTheme: const DividerThemeData(
       color: AppColors.darkDivider,
       thickness: 1,
       space: AppDimensions.paddingM,
     ),
-    
+
     // أنماط مؤشر التقدم
     progressIndicatorTheme: const ProgressIndicatorThemeData(
       color: Color(0xFF81C784),
       circularTrackColor: AppColors.darkSurfaceVariant,
       linearTrackColor: AppColors.darkSurfaceVariant,
     ),
-    
+
     // أنماط مربع الحوار
     dialogTheme: DialogTheme(
       backgroundColor: AppColors.darkSurface,
@@ -720,47 +716,47 @@ ThemeData getDarkTheme() {
         borderRadius: BorderRadius.circular(AppDimensions.radiusL),
       ),
     ),
-    
+
     // أنماط مؤشر التبديل
     switchTheme: SwitchThemeData(
-      thumbColor: MaterialStateProperty.resolveWith((states) {
-        if (states.contains(MaterialState.selected)) {
+      thumbColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
           return const Color(0xFF81C784);
         }
         return Colors.grey;
       }),
-      trackColor: MaterialStateProperty.resolveWith((states) {
-        if (states.contains(MaterialState.selected)) {
+      trackColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
           return const Color(0xFF388E3C);
         }
         return Colors.grey.shade700;
       }),
     ),
-    
+
     // أنماط مربع الاختيار
     checkboxTheme: CheckboxThemeData(
-      fillColor: MaterialStateProperty.resolveWith((states) {
-        if (states.contains(MaterialState.selected)) {
+      fillColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
           return const Color(0xFF81C784);
         }
         return null;
       }),
-      checkColor: MaterialStateProperty.all(Colors.black),
+      checkColor: WidgetStateProperty.all(Colors.black),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(AppDimensions.radiusXS),
       ),
     ),
-    
+
     // أنماط زر الراديو
     radioTheme: RadioThemeData(
-      fillColor: MaterialStateProperty.resolveWith((states) {
-        if (states.contains(MaterialState.selected)) {
+      fillColor: WidgetStateProperty.resolveWith((states) {
+        if (states.contains(WidgetState.selected)) {
           return const Color(0xFF81C784);
         }
         return AppColors.darkTextSecondary;
       }),
     ),
-    
+
     // أنماط مؤشر التمرير
     sliderTheme: const SliderThemeData(
       activeTrackColor: Color(0xFF81C784),
@@ -770,7 +766,7 @@ ThemeData getDarkTheme() {
       valueIndicatorColor: Color(0xFF81C784),
       valueIndicatorTextStyle: TextStyle(color: Colors.black),
     ),
-    
+
     // أنماط الرسوم المتحركة
     pageTransitionsTheme: const PageTransitionsTheme(
       builders: {
@@ -778,7 +774,7 @@ ThemeData getDarkTheme() {
         TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
       },
     ),
-    
+
     // اتجاه النص
     textDirection: TextDirection.rtl,
   );

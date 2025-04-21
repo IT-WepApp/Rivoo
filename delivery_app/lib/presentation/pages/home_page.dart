@@ -9,7 +9,8 @@ class HomePage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Delivery App'),
       ),
-      drawer: Drawer( // Add a drawer for navigation
+      drawer: Drawer(
+        // Add a drawer for navigation
         child: ListView(
           padding: EdgeInsets.zero,
           children: <Widget>[
@@ -31,7 +32,9 @@ class HomePage extends StatelessWidget {
               onTap: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => Container()), // Navigate to OrderHistoryPage
+                  MaterialPageRoute(
+                      builder: (context) =>
+                          Container()), // Navigate to OrderHistoryPage
                 );
               },
             ),

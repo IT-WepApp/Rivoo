@@ -3,7 +3,8 @@ import 'package:json_annotation/json_annotation.dart';
 part 'cart_item_model.g.dart';
 
 @JsonSerializable()
-class CartItemModel { // Renamed from CartItem to CartItemModel for consistency
+class CartItemModel {
+  // Renamed from CartItem to CartItemModel for consistency
   final String id; // Added id (often same as productId for cart items)
   final String productId;
   final String name;

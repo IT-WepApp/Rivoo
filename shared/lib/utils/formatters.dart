@@ -18,7 +18,8 @@ class Formatters {
   }
 
   /// تنسيق المبلغ المالي مع رمز العملة
-  static String formatCurrency(double amount, {String currencySymbol = 'ر.س', String locale = 'ar'}) {
+  static String formatCurrency(double amount,
+      {String currencySymbol = 'ر.س', String locale = 'ar'}) {
     final formatter = NumberFormat.currency(
       locale: locale,
       symbol: currencySymbol,

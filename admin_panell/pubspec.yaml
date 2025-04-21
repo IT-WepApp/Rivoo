@@ -30,6 +30,9 @@ dependencies:
     path: ../shared
   shared_core:
     path: ../shared_core
+  flutter_secure_storage: any
+  cloud_firestore: any
+  equatable: any
 dev_dependencies:
   flutter_lints: ^2.0.0
   flutter_test:

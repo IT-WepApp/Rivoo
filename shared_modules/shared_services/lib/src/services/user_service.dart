@@ -13,7 +13,10 @@ class UserService {
   // Use UserModel from shared_models
   Future<void> createUser(UserModel user) async {
     try {
-      await _firestore.collection(_collectionPath).doc(user.id).set(user.toJson());
+      await _firestore
+          .collection(_collectionPath)
+          .doc(user.id)
+          .set(user.toJson());
     } catch (e) {
       log('Error creating user: $e');
       rethrow;
@@ -22,9 +25,10 @@ class UserService {
 
   Future<UserModel?> getUser(String userId) async {
     try {
-      final doc = await _firestore.collection(_collectionPath).doc(userId).get();
+      final doc =
+          await _firestore.collection(_collectionPath).doc(userId).get();
       if (doc.exists && doc.data() != null) {
-        return UserModel.fromJson(doc.data()!); 
+        return UserModel.fromJson(doc.data()!);
       }
       return null;
     } catch (e) {
@@ -35,7 +39,10 @@ class UserService {
 
   Future<void> updateUser(UserModel user) async {
     try {
-      await _firestore.collection(_collectionPath).doc(user.id).update(user.toJson());
+      await _firestore
+          .collection(_collectionPath)
+          .doc(user.id)
+          .update(user.toJson());
     } catch (e) {
       log('Error updating user: $e');
       rethrow;
@@ -55,7 +62,7 @@ class UserService {
     try {
       final querySnapshot = await _firestore.collection(_collectionPath).get();
       return querySnapshot.docs
-          .map((doc) => UserModel.fromJson(doc.data())) 
+          .map((doc) => UserModel.fromJson(doc.data()))
           .toList();
     } catch (e) {
       log('Error getting all users: $e');
@@ -65,26 +72,26 @@ class UserService {
 
   // Methods needed by user_app/profile_notifier.dart
   Future<UserModel?> getUserProfile() async {
-     // This likely needs the current user's ID from auth state
-     // String? userId = FirebaseAuth.instance.currentUser?.uid;
-     // if (userId == null) return null;
-     // return getUser(userId);
-     // Placeholder: Replace with actual logic using auth state
-     return null;
-   }
+    // This likely needs the current user's ID from auth state
+    // String? userId = FirebaseAuth.instance.currentUser?.uid;
+    // if (userId == null) return null;
+    // return getUser(userId);
+    // Placeholder: Replace with actual logic using auth state
+    return null;
+  }
 
-   Future<bool> updateUserProfile(UserModel updatedUser) async {
-     try {
-       await updateUser(updatedUser);
-       return true;
-     } catch (e) {
-       return false;
-     }
-   }
-    
-    // Method needed by admin_panell login
-   Future<String> getUserTypeFromDatabase(String userId) async {
-     final user = await getUser(userId);
-     return user?.role ?? 'unknown'; // Assuming UserModel has a 'role' field
-   }
+  Future<bool> updateUserProfile(UserModel updatedUser) async {
+    try {
+      await updateUser(updatedUser);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  // Method needed by admin_panell login
+  Future<String> getUserTypeFromDatabase(String userId) async {
+    final user = await getUser(userId);
+    return user?.role ?? 'unknown'; // Assuming UserModel has a 'role' field
+  }
 }

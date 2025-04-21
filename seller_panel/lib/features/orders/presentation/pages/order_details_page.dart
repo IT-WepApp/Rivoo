@@ -8,7 +8,7 @@ import '../../../../core/theme/app_colors.dart';
 /// صفحة تفاصيل الطلب للبائع
 class OrderDetailsPage extends ConsumerStatefulWidget {
   final String orderId;
-  
+
   const OrderDetailsPage({
     Key? key,
     required this.orderId,
@@ -22,9 +22,9 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
   bool _isLoading = true;
   bool _isSubmitting = false;
   String _errorMessage = '';
-  
+
   Map<String, dynamic>? _orderData;
-  
+
   @override
   void initState() {
     super.initState();
@@ -40,7 +40,7 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
     try {
       final orderService = ref.read(orderServiceProvider);
       final orderData = await orderService.getOrderDetails(widget.orderId);
-      
+
       setState(() {
         _orderData = orderData;
         _isLoading = false;
@@ -62,7 +62,7 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
     try {
       final orderService = ref.read(orderServiceProvider);
       await orderService.updateOrderStatus(widget.orderId, newStatus);
-      
+
       // تحديث البيانات المحلية
       setState(() {
         if (_orderData != null) {
@@ -70,7 +70,7 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
         }
         _isSubmitting = false;
       });
-      
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -93,19 +93,20 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
       final confirmed = await AppWidgets.showConfirmDialog(
         context: context,
         title: 'إلغاء الطلب',
-        message: 'هل أنت متأكد من رغبتك في إلغاء هذا الطلب؟ لا يمكن التراجع عن هذا الإجراء.',
+        message:
+            'هل أنت متأكد من رغبتك في إلغاء هذا الطلب؟ لا يمكن التراجع عن هذا الإجراء.',
         confirmText: 'إلغاء الطلب',
         cancelText: 'تراجع',
         isDangerous: true,
       );
-      
+
       if (!confirmed) {
         return;
       }
     } else {
       return;
     }
-    
+
     setState(() {
       _isSubmitting = true;
       _errorMessage = '';
@@ -114,7 +115,7 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
     try {
       final orderService = ref.read(orderServiceProvider);
       await orderService.updateOrderStatus(widget.orderId, 'ملغي');
-      
+
       // تحديث البيانات المحلية
       setState(() {
         if (_orderData != null) {
@@ -122,7 +123,7 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
         }
         _isSubmitting = false;
       });
-      
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -162,10 +163,11 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Scaffold(
       appBar: AppBar(
-        title: Text('تفاصيل الطلب ${_orderData != null ? '#${_orderData!['orderNumber']}' : ''}'),
+        title: Text(
+            'تفاصيل الطلب ${_orderData != null ? '#${_orderData!['orderNumber']}' : ''}'),
         backgroundColor: AppColors.primary,
         foregroundColor: AppColors.onPrimary,
         actions: [
@@ -203,9 +205,11 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
     final totalAmount = order['totalAmount'] as num? ?? 0;
     final status = order['status'] as String? ?? 'جديد';
     final items = order['items'] as List<dynamic>? ?? [];
-    final shippingAddress = order['shippingAddress'] as Map<String, dynamic>? ?? {};
-    final paymentMethod = order['paymentMethod'] as String? ?? 'الدفع عند الاستلام';
-    
+    final shippingAddress =
+        order['shippingAddress'] as Map<String, dynamic>? ?? {};
+    final paymentMethod =
+        order['paymentMethod'] as String? ?? 'الدفع عند الاستلام';
+
     return ListView(
       padding: const EdgeInsets.all(16),
       children: [
@@ -222,10 +226,11 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
                     'معلومات الطلب',
                     style: theme.textTheme.titleLarge,
                   ),
-                  
+
                   // حالة الطلب
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     decoration: BoxDecoration(
                       color: _getStatusColor(status).withOpacity(0.1),
                       borderRadius: BorderRadius.circular(4),
@@ -244,24 +249,22 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
                 ],
               ),
               const Divider(height: 24),
-              
+
               // معلومات الطلب
               _buildInfoRow(theme, 'رقم الطلب', '#$orderNumber'),
               const SizedBox(height: 8),
-              _buildInfoRow(
-                theme, 
-                'تاريخ الطلب', 
-                '${orderDate.day}/${orderDate.month}/${orderDate.year} - ${orderDate.hour}:${orderDate.minute.toString().padLeft(2, '0')}'
-              ),
+              _buildInfoRow(theme, 'تاريخ الطلب',
+                  '${orderDate.day}/${orderDate.month}/${orderDate.year} - ${orderDate.hour}:${orderDate.minute.toString().padLeft(2, '0')}'),
               const SizedBox(height: 8),
               _buildInfoRow(theme, 'طريقة الدفع', paymentMethod),
               const SizedBox(height: 8),
-              _buildInfoRow(theme, 'المبلغ الإجمالي', '${totalAmount.toStringAsFixed(2)} ر.س'),
+              _buildInfoRow(theme, 'المبلغ الإجمالي',
+                  '${totalAmount.toStringAsFixed(2)} ر.س'),
             ],
           ),
         ),
         const SizedBox(height: 16),
-        
+
         // بطاقة معلومات العميل
         AppWidgets.appCard(
           child: Column(
@@ -272,14 +275,14 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
                 style: theme.textTheme.titleLarge,
               ),
               const Divider(height: 24),
-              
+
               // معلومات العميل
               _buildInfoRow(theme, 'الاسم', customerName),
               if (customerPhone.isNotEmpty) ...[
                 const SizedBox(height: 8),
                 _buildInfoRow(theme, 'رقم الهاتف', customerPhone),
               ],
-              
+
               // عنوان الشحن
               if (shippingAddress.isNotEmpty) ...[
                 const SizedBox(height: 16),
@@ -294,7 +297,7 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
           ),
         ),
         const SizedBox(height: 16),
-        
+
         // بطاقة عناصر الطلب
         AppWidgets.appCard(
           child: Column(
@@ -305,7 +308,7 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
                 style: theme.textTheme.titleLarge,
               ),
               const Divider(height: 24),
-              
+
               // قائمة العناصر
               if (items.isEmpty)
                 const Center(
@@ -319,15 +322,17 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
                   shrinkWrap: true,
                   physics: const NeverScrollableScrollPhysics(),
                   itemCount: items.length,
-                  separatorBuilder: (context, index) => const Divider(height: 24),
+                  separatorBuilder: (context, index) =>
+                      const Divider(height: 24),
                   itemBuilder: (context, index) {
                     final item = items[index] as Map<String, dynamic>;
-                    final productName = item['productName'] as String? ?? 'منتج';
+                    final productName =
+                        item['productName'] as String? ?? 'منتج';
                     final quantity = item['quantity'] as int? ?? 1;
                     final price = item['price'] as num? ?? 0;
                     final totalPrice = item['totalPrice'] as num? ?? 0;
                     final imageUrl = item['imageUrl'] as String? ?? '';
-                    
+
                     return Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
@@ -345,7 +350,8 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
                                   width: 60,
                                   height: 60,
                                   color: AppColors.background,
-                                  child: Icon(Icons.image_not_supported, color: AppColors.textSecondary),
+                                  child: const Icon(Icons.image_not_supported,
+                                      color: AppColors.textSecondary),
                                 );
                               },
                             ),
@@ -358,10 +364,11 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
                               color: AppColors.background,
                               borderRadius: BorderRadius.circular(8),
                             ),
-                            child: Icon(Icons.image, color: AppColors.textSecondary),
+                            child: const Icon(Icons.image,
+                                color: AppColors.textSecondary),
                           ),
                         const SizedBox(width: 16),
-                        
+
                         // معلومات المنتج
                         Expanded(
                           child: Column(
@@ -384,7 +391,7 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
                             ],
                           ),
                         ),
-                        
+
                         // السعر الإجمالي
                         Text(
                           '${totalPrice.toStringAsFixed(2)} ر.س',
@@ -396,7 +403,7 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
                     );
                   },
                 ),
-              
+
               // ملخص الأسعار
               const Divider(height: 32),
               _buildPriceSummary(theme, order),
@@ -404,7 +411,7 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
           ),
         ),
         const SizedBox(height: 24),
-        
+
         // رسالة الخطأ
         if (_errorMessage.isNotEmpty)
           Container(
@@ -417,10 +424,10 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
             ),
             child: Text(
               _errorMessage,
-              style: TextStyle(color: AppColors.error),
+              style: const TextStyle(color: AppColors.error),
             ),
           ),
-        
+
         // أزرار التحكم
         _buildActionButtons(theme, status),
       ],
@@ -458,7 +465,7 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
     final state = address['state'] as String? ?? '';
     final postalCode = address['postalCode'] as String? ?? '';
     final country = address['country'] as String? ?? '';
-    
+
     return AppWidgets.appCard(
       padding: const EdgeInsets.all(12),
       elevation: 0,
@@ -490,14 +497,15 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
     final shippingFee = order['shippingFee'] as num? ?? 0;
     final discount = order['discount'] as num? ?? 0;
     final totalAmount = order['totalAmount'] as num? ?? 0;
-    
+
     return Column(
       children: [
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text('المجموع الفرعي', style: theme.textTheme.bodyMedium),
-            Text('${subtotal.toStringAsFixed(2)} ر.س', style: theme.textTheme.bodyMedium),
+            Text('${subtotal.toStringAsFixed(2)} ر.س',
+                style: theme.textTheme.bodyMedium),
           ],
         ),
         const SizedBox(height: 8),
@@ -505,7 +513,8 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text('الضريبة', style: theme.textTheme.bodyMedium),
-            Text('${tax.toStringAsFixed(2)} ر.س', style: theme.textTheme.bodyMedium),
+            Text('${tax.toStringAsFixed(2)} ر.س',
+                style: theme.textTheme.bodyMedium),
           ],
         ),
         const SizedBox(height: 8),
@@ -513,7 +522,8 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text('رسوم الشحن', style: theme.textTheme.bodyMedium),
-            Text('${shippingFee.toStringAsFixed(2)} ر.س', style: theme.textTheme.bodyMedium),
+            Text('${shippingFee.toStringAsFixed(2)} ر.س',
+                style: theme.textTheme.bodyMedium),
           ],
         ),
         if (discount > 0) ...[
@@ -522,7 +532,9 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text('الخصم', style: theme.textTheme.bodyMedium),
-              Text('-${discount.toStringAsFixed(2)} ر.س', style: theme.textTheme.bodyMedium?.copyWith(color: Colors.green)),
+              Text('-${discount.toStringAsFixed(2)} ر.س',
+                  style: theme.textTheme.bodyMedium
+                      ?.copyWith(color: Colors.green)),
             ],
           ),
         ],
@@ -550,11 +562,11 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
       // لا توجد إجراءات متاحة للطلبات الملغاة أو المسلمة
       return const SizedBox.shrink();
     }
-    
+
     // تحديد الحالة التالية
     String nextStatus;
     Color nextStatusColor;
-    
+
     switch (currentStatus) {
       case 'جديد':
         nextStatus = 'قيد التحضير';
@@ -576,7 +588,7 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
         nextStatus = 'قيد التحضير';
         nextStatusColor = Colors.orange;
     }
-    
+
     return Row(
       children: [
         // زر تحديث الحالة
@@ -591,7 +603,7 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
           ),
         ),
         const SizedBox(width: 16),
-        
+
         // زر إلغاء الطلب
         Expanded(
           child: AppWidgets.appButton(

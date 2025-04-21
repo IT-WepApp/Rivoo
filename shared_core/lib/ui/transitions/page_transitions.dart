@@ -32,7 +32,7 @@ class AppTransitions {
       pageBuilder: (context, animation, secondaryAnimation) => page,
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         Offset begin;
-        
+
         switch (direction) {
           case SlideDirection.fromRight:
             begin = const Offset(1.0, 0.0);
@@ -47,11 +47,11 @@ class AppTransitions {
             begin = const Offset(0.0, 1.0);
             break;
         }
-        
+
         const end = Offset.zero;
         final tween = Tween(begin: begin, end: end);
         final offsetAnimation = animation.drive(tween);
-        
+
         return SlideTransition(
           position: offsetAnimation,
           child: child,
@@ -113,7 +113,7 @@ class AppTransitions {
       pageBuilder: (context, animation, secondaryAnimation) => page,
       transitionsBuilder: (context, animation, secondaryAnimation, child) {
         Offset begin;
-        
+
         switch (direction) {
           case SlideDirection.fromRight:
             begin = const Offset(0.2, 0.0);
@@ -128,11 +128,11 @@ class AppTransitions {
             begin = const Offset(0.0, 0.2);
             break;
         }
-        
+
         const end = Offset.zero;
         final tween = Tween(begin: begin, end: end);
         final offsetAnimation = animation.drive(tween);
-        
+
         return FadeTransition(
           opacity: animation,
           child: SlideTransition(

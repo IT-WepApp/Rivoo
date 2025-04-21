@@ -22,10 +22,13 @@ void main() {
   });
 
   group('AuthGuard Tests', () {
-    test('canActivate should return true for authenticated user with correct role', () async {
+    test(
+        'canActivate should return true for authenticated user with correct role',
+        () async {
       // ترتيب
       when(mockAuthService.currentUser).thenReturn(MockUser());
-      when(mockAuthService.getUserRole(any)).thenAnswer((_) async => UserRole.admin);
+      when(mockAuthService.getUserRole(any))
+          .thenAnswer((_) async => UserRole.admin);
 
       // تنفيذ
       final result = await authGuard.canActivate(
@@ -38,10 +41,13 @@ void main() {
       verify(mockAuthService.getUserRole(any)).called(1);
     });
 
-    test('canActivate should return false for authenticated user with incorrect role', () async {
+    test(
+        'canActivate should return false for authenticated user with incorrect role',
+        () async {
       // ترتيب
       when(mockAuthService.currentUser).thenReturn(MockUser());
-      when(mockAuthService.getUserRole(any)).thenAnswer((_) async => UserRole.customer);
+      when(mockAuthService.getUserRole(any))
+          .thenAnswer((_) async => UserRole.customer);
 
       // تنفيذ
       final result = await authGuard.canActivate(
@@ -93,7 +99,8 @@ void main() {
       verify(mockRouter.go('/')).called(1);
     });
 
-    test('redirectToUnauthorized should redirect to unauthorized page', () async {
+    test('redirectToUnauthorized should redirect to unauthorized page',
+        () async {
       // ترتيب
       final mockRouter = MockGoRouter();
       when(mockRouter.go(any)).thenAnswer((_) async => null);
@@ -107,13 +114,15 @@ void main() {
   });
 
   group('AuthGuardWidget Tests', () {
-    testWidgets('AuthGuardWidget should show child when user is authorized', (WidgetTester tester) async {
+    testWidgets('AuthGuardWidget should show child when user is authorized',
+        (WidgetTester tester) async {
       // ترتيب
       when(mockAuthService.currentUser).thenReturn(MockUser());
-      when(mockAuthService.getUserRole(any)).thenAnswer((_) async => UserRole.admin);
+      when(mockAuthService.getUserRole(any))
+          .thenAnswer((_) async => UserRole.admin);
 
       final authNotifier = AuthNotifier(mockAuthService);
-      
+
       // تنفيذ
       await tester.pumpWidget(
         ProviderScope(
@@ -130,7 +139,7 @@ void main() {
           ),
         ),
       );
-      
+
       // انتظار تحميل البيانات
       await tester.pump();
 
@@ -139,13 +148,16 @@ void main() {
       expect(find.text('Unauthorized'), findsNothing);
     });
 
-    testWidgets('AuthGuardWidget should show unauthorized fallback when user is not authorized', (WidgetTester tester) async {
+    testWidgets(
+        'AuthGuardWidget should show unauthorized fallback when user is not authorized',
+        (WidgetTester tester) async {
       // ترتيب
       when(mockAuthService.currentUser).thenReturn(MockUser());
-      when(mockAuthService.getUserRole(any)).thenAnswer((_) async => UserRole.customer);
+      when(mockAuthService.getUserRole(any))
+          .thenAnswer((_) async => UserRole.customer);
 
       final authNotifier = AuthNotifier(mockAuthService);
-      
+
       // تنفيذ
       await tester.pumpWidget(
         ProviderScope(
@@ -162,7 +174,7 @@ void main() {
           ),
         ),
       );
-      
+
       // انتظار تحميل البيانات
       await tester.pump();
 

@@ -158,7 +158,7 @@ void main() {
   });
 
   group('RemoveFromCartUseCase', () {
-    final itemId = 'item1';
+    const itemId = 'item1';
 
     test('should remove item from cart through repository', () async {
       // Arrange

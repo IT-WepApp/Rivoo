@@ -15,43 +15,44 @@ class PaymentModel with _$PaymentModel implements Entity {
   const factory PaymentModel({
     /// المعرف الفريد
     required String id,
-    
+
     /// معرف المستخدم
     required String userId,
-    
+
     /// معرف الطلب
     required String orderId,
-    
+
     /// المبلغ
     required double amount,
-    
+
     /// العملة
     required String currency,
-    
+
     /// طريقة الدفع
     required PaymentMethod method,
-    
+
     /// حالة الدفع
     required PaymentStatus status,
-    
+
     /// معرف المعاملة من بوابة الدفع
     String? transactionId,
-    
+
     /// رسالة الخطأ (إن وجدت)
     String? errorMessage,
-    
+
     /// تاريخ الإنشاء
     required DateTime createdAt,
-    
+
     /// تاريخ التحديث
     required DateTime updatedAt,
-    
+
     /// معلومات إضافية
     Map<String, dynamic>? metadata,
   }) = _PaymentModel;
 
   /// إنشاء نموذج بيانات الدفع من JSON
-  factory PaymentModel.fromJson(Map<String, dynamic> json) => _$PaymentModelFromJson(json);
+  factory PaymentModel.fromJson(Map<String, dynamic> json) =>
+      _$PaymentModelFromJson(json);
 
   /// إنشاء نموذج بيانات الدفع من مستند Firestore
   factory PaymentModel.fromFirestore(DocumentSnapshot doc) {
@@ -119,16 +120,16 @@ class PaymentModel with _$PaymentModel implements Entity {
 enum PaymentMethod {
   /// بطاقة ائتمان
   creditCard,
-  
+
   /// PayPal
   paypal,
-  
+
   /// Apple Pay
   applePay,
-  
+
   /// Google Pay
   googlePay,
-  
+
   /// الدفع عند الاستلام
   cashOnDelivery,
 }
@@ -137,19 +138,19 @@ enum PaymentMethod {
 enum PaymentStatus {
   /// قيد الانتظار
   pending,
-  
+
   /// تمت المعالجة
   processing,
-  
+
   /// تم الدفع بنجاح
   completed,
-  
+
   /// فشل الدفع
   failed,
-  
+
   /// تم الإلغاء
   cancelled,
-  
+
   /// تم رد المبلغ
   refunded,
 }

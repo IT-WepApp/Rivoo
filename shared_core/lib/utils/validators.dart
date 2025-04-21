@@ -10,12 +10,12 @@ bool isValidEmail(String email) {
 /// يجب أن تكون كلمة المرور 8 أحرف على الأقل وتحتوي على حرف كبير وحرف صغير ورقم ورمز خاص
 bool isValidPassword(String password) {
   if (password.length < 8) return false;
-  
+
   final hasUppercase = RegExp(r'[A-Z]').hasMatch(password);
   final hasLowercase = RegExp(r'[a-z]').hasMatch(password);
   final hasDigit = RegExp(r'[0-9]').hasMatch(password);
   final hasSpecialChar = RegExp(r'[!@#$%^&*(),.?":{}|<>]').hasMatch(password);
-  
+
   return hasUppercase && hasLowercase && hasDigit && hasSpecialChar;
 }
 
@@ -65,12 +65,12 @@ bool isValidBirthDate(DateTime birthDate) {
 bool isValidCreditCardNumber(String cardNumber) {
   // إزالة المسافات والشرطات
   final cleanNumber = cardNumber.replaceAll(RegExp(r'[\s-]'), '');
-  
+
   // التحقق من أن الرقم يتكون من أرقام فقط
   if (!RegExp(r'^[0-9]{13,19}$').hasMatch(cleanNumber)) {
     return false;
   }
-  
+
   // تطبيق خوارزمية Luhn
   int sum = 0;
   bool alternate = false;
@@ -85,6 +85,6 @@ bool isValidCreditCardNumber(String cardNumber) {
     sum += n;
     alternate = !alternate;
   }
-  
+
   return sum % 10 == 0;
 }

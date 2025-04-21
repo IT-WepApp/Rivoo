@@ -47,7 +47,7 @@ class SecureStorageServiceImpl implements SecureStorageService {
 
   /// إنشاء نسخة من خدمة التخزين الآمن
   SecureStorageServiceImpl()
-      : _storage = FlutterSecureStorage(
+      : _storage = const FlutterSecureStorage(
           aOptions: _androidOptions,
           iOptions: _iosOptions,
         );

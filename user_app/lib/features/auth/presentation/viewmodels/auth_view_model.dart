@@ -138,7 +138,8 @@ class UpdateUserDataParams {
 }
 
 /// حالة استخدام تحديث بيانات المستخدم
-class UpdateUserDataUseCase implements UseCase<UserModel, UpdateUserDataParams> {
+class UpdateUserDataUseCase
+    implements UseCase<UserModel, UpdateUserDataParams> {
   final AuthRepository _authRepository;
 
   UpdateUserDataUseCase(this._authRepository);

@@ -7,10 +7,10 @@ import 'package:user_app/features/payment/data/payment_model.dart';
 class PaymentMethodCard extends StatelessWidget {
   /// طريقة الدفع
   final PaymentMethod method;
-  
+
   /// هل الطريقة مختارة
   final bool isSelected;
-  
+
   /// دالة تنفذ عند النقر على البطاقة
   final VoidCallback onTap;
 
@@ -73,7 +73,7 @@ class PaymentMethodCard extends StatelessWidget {
   /// بناء أيقونة طريقة الدفع
   Widget _buildIcon(BuildContext context) {
     final colorScheme = Theme.of(context).colorScheme;
-    
+
     // استخدام أيقونات مخصصة لكل طريقة دفع
     IconData iconData;
     switch (method) {
@@ -93,7 +93,7 @@ class PaymentMethodCard extends StatelessWidget {
         iconData = Icons.money;
         break;
     }
-    
+
     return Container(
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(

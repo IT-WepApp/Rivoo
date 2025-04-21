@@ -126,12 +126,18 @@ void main() {
       )).called(1);
     });
 
-    test('setUserProperties should call FirebaseAnalytics.setUserId and setUserProperty', () async {
+    test(
+        'setUserProperties should call FirebaseAnalytics.setUserId and setUserProperty',
+        () async {
       // Arrange
-      when(mockAnalytics.setUserId(id: 'user123')).thenAnswer((_) async => null);
-      when(mockAnalytics.setUserProperty(name: 'user_role', value: 'admin')).thenAnswer((_) async => null);
-      when(mockAnalytics.setUserProperty(name: 'user_language', value: 'ar')).thenAnswer((_) async => null);
-      when(mockAnalytics.setUserProperty(name: 'user_theme', value: 'dark')).thenAnswer((_) async => null);
+      when(mockAnalytics.setUserId(id: 'user123'))
+          .thenAnswer((_) async => null);
+      when(mockAnalytics.setUserProperty(name: 'user_role', value: 'admin'))
+          .thenAnswer((_) async => null);
+      when(mockAnalytics.setUserProperty(name: 'user_language', value: 'ar'))
+          .thenAnswer((_) async => null);
+      when(mockAnalytics.setUserProperty(name: 'user_theme', value: 'dark'))
+          .thenAnswer((_) async => null);
 
       // Act
       await analyticsService.setUserProperties(
@@ -143,9 +149,12 @@ void main() {
 
       // Assert
       verify(mockAnalytics.setUserId(id: 'user123')).called(1);
-      verify(mockAnalytics.setUserProperty(name: 'user_role', value: 'admin')).called(1);
-      verify(mockAnalytics.setUserProperty(name: 'user_language', value: 'ar')).called(1);
-      verify(mockAnalytics.setUserProperty(name: 'user_theme', value: 'dark')).called(1);
+      verify(mockAnalytics.setUserProperty(name: 'user_role', value: 'admin'))
+          .called(1);
+      verify(mockAnalytics.setUserProperty(name: 'user_language', value: 'ar'))
+          .called(1);
+      verify(mockAnalytics.setUserProperty(name: 'user_theme', value: 'dark'))
+          .called(1);
     });
   });
 }

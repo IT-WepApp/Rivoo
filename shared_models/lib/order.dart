@@ -6,7 +6,8 @@ class Order {
   final double totalAmount;
   final DateTime orderDate;
   final String status; // Added status field
-  final Location? deliveryPersonnelLocation; // Added deliveryPersonnelLocation field
+  final Location?
+      deliveryPersonnelLocation; // Added deliveryPersonnelLocation field
   final String? deliveryPersonnelId; // Add deliveryPersonnelId field
 
   Order({

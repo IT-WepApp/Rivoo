@@ -27,14 +27,14 @@ void main() {
     test('saveAuthToken يجب أن يقوم بتشفير وتخزين الرمز', () async {
       // إعداد
       const token = 'test-auth-token';
-      final expectedEncryptedData = 'encrypted-data';
-      
+      const expectedEncryptedData = 'encrypted-data';
+
       // محاكاة التشفير
       when(mockEncryptionUtils.encrypt(any)).thenReturn(expectedEncryptedData);
-      
+
       // تنفيذ
       await secureStorageService.saveAuthToken(token);
-      
+
       // التحقق
       verify(mockEncryptionUtils.encrypt(any)).called(1);
       verify(mockSecureStorage.write(
@@ -52,16 +52,16 @@ void main() {
         'token': 'test-auth-token',
         'expiry': future.toIso8601String(),
       };
-      
+
       // محاكاة القراءة والتشفير
       when(mockSecureStorage.read(key: anyNamed('key')))
           .thenAnswer((_) async => encryptedData);
       when(mockEncryptionUtils.decrypt(encryptedData))
           .thenReturn(jsonEncode(tokenData));
-      
+
       // تنفيذ
       final result = await secureStorageService.getAuthToken();
-      
+
       // التحقق
       expect(result, 'test-auth-token');
       verify(mockSecureStorage.read(key: anyNamed('key'))).called(1);
@@ -77,16 +77,16 @@ void main() {
         'token': 'test-auth-token',
         'expiry': past.toIso8601String(),
       };
-      
+
       // محاكاة القراءة والتشفير
       when(mockSecureStorage.read(key: anyNamed('key')))
           .thenAnswer((_) async => encryptedData);
       when(mockEncryptionUtils.decrypt(encryptedData))
           .thenReturn(jsonEncode(tokenData));
-      
+
       // تنفيذ
       final result = await secureStorageService.getAuthToken();
-      
+
       // التحقق
       expect(result, null);
       verify(mockSecureStorage.read(key: anyNamed('key'))).called(1);
@@ -94,19 +94,20 @@ void main() {
       verify(mockSecureStorage.delete(key: anyNamed('key'))).called(1);
     });
 
-    test('saveUserData يجب أن يقوم بتشفير وتخزين بيانات المستخدم مع توقيع', () async {
+    test('saveUserData يجب أن يقوم بتشفير وتخزين بيانات المستخدم مع توقيع',
+        () async {
       // إعداد
       final userData = {'id': 'user1', 'name': 'Test User'};
       const signature = 'data-signature';
       const encryptedData = 'encrypted-user-data';
-      
+
       // محاكاة التوقيع والتشفير
       when(mockEncryptionUtils.getSecretKey()).thenReturn('secret-key');
       when(mockEncryptionUtils.encrypt(any)).thenReturn(encryptedData);
-      
+
       // تنفيذ
       await secureStorageService.saveUserData(userData);
-      
+
       // التحقق
       verify(mockEncryptionUtils.encrypt(any)).called(1);
       verify(mockSecureStorage.write(
@@ -115,7 +116,9 @@ void main() {
       )).called(1);
     });
 
-    test('getUserData يجب أن يسترجع ويفك تشفير بيانات المستخدم مع التحقق من التوقيع', () async {
+    test(
+        'getUserData يجب أن يسترجع ويفك تشفير بيانات المستخدم مع التحقق من التوقيع',
+        () async {
       // إعداد
       const encryptedData = 'encrypted-data';
       final userData = {'id': 'user1', 'name': 'Test User'};
@@ -123,17 +126,17 @@ void main() {
         'data': jsonEncode(userData),
         'signature': 'valid-signature',
       };
-      
+
       // محاكاة القراءة والتشفير والتحقق
       when(mockSecureStorage.read(key: anyNamed('key')))
           .thenAnswer((_) async => encryptedData);
       when(mockEncryptionUtils.decrypt(encryptedData))
           .thenReturn(jsonEncode(dataWithSignature));
-      
+
       // تنفيذ (مع تجاوز التحقق من التوقيع)
       // نحتاج إلى تجاوز _verifySignature لأنها طريقة خاصة
       // في اختبار حقيقي، يمكننا استخدام التجاوز أو إعادة هيكلة الكود للاختبار
-      
+
       // التحقق
       // نتحقق فقط من استدعاء الطرق المتوقعة
       await secureStorageService.getUserData();
@@ -144,7 +147,7 @@ void main() {
     test('clearAll يجب أن يحذف جميع البيانات المخزنة', () async {
       // تنفيذ
       await secureStorageService.clearAll();
-      
+
       // التحقق
       verify(mockSecureStorage.deleteAll()).called(1);
     });

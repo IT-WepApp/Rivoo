@@ -17,7 +17,8 @@ class TicketDetailsScreen extends ConsumerStatefulWidget {
   }) : super(key: key);
 
   @override
-  ConsumerState<TicketDetailsScreen> createState() => _TicketDetailsScreenState();
+  ConsumerState<TicketDetailsScreen> createState() =>
+      _TicketDetailsScreenState();
 }
 
 class _TicketDetailsScreenState extends ConsumerState<TicketDetailsScreen> {
@@ -58,7 +59,7 @@ class _TicketDetailsScreenState extends ConsumerState<TicketDetailsScreen> {
           ticketAsync.when(
             data: (ticket) {
               if (ticket == null) return const SizedBox.shrink();
-              
+
               return PopupMenuButton<String>(
                 onSelected: (value) {
                   if (value == 'close') {
@@ -90,13 +91,16 @@ class _TicketDetailsScreenState extends ConsumerState<TicketDetailsScreen> {
       ),
       body: ResponsiveBuilder(
         // تنفيذ واجهة الهاتف
-        mobileBuilder: (context) => _buildMobileLayout(context, l10n, ticketAsync, messagesAsync),
-        
+        mobileBuilder: (context) =>
+            _buildMobileLayout(context, l10n, ticketAsync, messagesAsync),
+
         // تنفيذ واجهة الجهاز اللوحي
-        smallTabletBuilder: (context) => _buildTabletLayout(context, l10n, ticketAsync, messagesAsync),
-        
+        smallTabletBuilder: (context) =>
+            _buildTabletLayout(context, l10n, ticketAsync, messagesAsync),
+
         // تنفيذ واجهة سطح المكتب
-        desktopBuilder: (context) => _buildDesktopLayout(context, l10n, ticketAsync, messagesAsync),
+        desktopBuilder: (context) =>
+            _buildDesktopLayout(context, l10n, ticketAsync, messagesAsync),
       ),
     );
   }
@@ -116,7 +120,7 @@ class _TicketDetailsScreenState extends ConsumerState<TicketDetailsScreen> {
             if (ticket == null) {
               return const Center(child: Text('التذكرة غير موجودة'));
             }
-            
+
             return _buildTicketInfoCard(context, l10n, ticket);
           },
           loading: () => const Center(child: CircularProgressIndicator()),
@@ -127,7 +131,7 @@ class _TicketDetailsScreenState extends ConsumerState<TicketDetailsScreen> {
             ),
           ),
         ),
-        
+
         // رسائل المحادثة
         Expanded(
           child: messagesAsync.when(
@@ -140,7 +144,7 @@ class _TicketDetailsScreenState extends ConsumerState<TicketDetailsScreen> {
                   ),
                 );
               }
-              
+
               return _buildMessagesList(context, messages);
             },
             loading: () => const Center(child: CircularProgressIndicator()),
@@ -152,14 +156,14 @@ class _TicketDetailsScreenState extends ConsumerState<TicketDetailsScreen> {
             ),
           ),
         ),
-        
+
         // حقل إدخال الرسالة
         ticketAsync.when(
           data: (ticket) {
             if (ticket == null || ticket.status == TicketStatus.closed) {
               return const SizedBox.shrink();
             }
-            
+
             return _buildMessageInput(context, l10n);
           },
           loading: () => const SizedBox.shrink(),
@@ -186,7 +190,7 @@ class _TicketDetailsScreenState extends ConsumerState<TicketDetailsScreen> {
               if (ticket == null) {
                 return const Center(child: Text('التذكرة غير موجودة'));
               }
-              
+
               return _buildTicketInfoCard(context, l10n, ticket);
             },
             loading: () => const Center(child: CircularProgressIndicator()),
@@ -197,7 +201,7 @@ class _TicketDetailsScreenState extends ConsumerState<TicketDetailsScreen> {
               ),
             ),
           ),
-          
+
           // رسائل المحادثة
           Expanded(
             child: Card(
@@ -217,28 +221,30 @@ class _TicketDetailsScreenState extends ConsumerState<TicketDetailsScreen> {
                         ),
                       );
                     }
-                    
+
                     return _buildMessagesList(context, messages);
                   },
-                  loading: () => const Center(child: CircularProgressIndicator()),
+                  loading: () =>
+                      const Center(child: CircularProgressIndicator()),
                   error: (error, _) => Center(
                     child: Text(
                       'حدث خطأ: ${error.toString()}',
-                      style: TextStyle(color: Theme.of(context).colorScheme.error),
+                      style:
+                          TextStyle(color: Theme.of(context).colorScheme.error),
                     ),
                   ),
                 ),
               ),
             ),
           ),
-          
+
           // حقل إدخال الرسالة
           ticketAsync.when(
             data: (ticket) {
               if (ticket == null || ticket.status == TicketStatus.closed) {
                 return const SizedBox.shrink();
               }
-              
+
               return _buildMessageInput(context, l10n);
             },
             loading: () => const SizedBox.shrink(),
@@ -269,7 +275,7 @@ class _TicketDetailsScreenState extends ConsumerState<TicketDetailsScreen> {
                 if (ticket == null) {
                   return const Center(child: Text('التذكرة غير موجودة'));
                 }
-                
+
                 return _buildDetailedTicketInfo(context, l10n, ticket);
               },
               loading: () => const Center(child: CircularProgressIndicator()),
@@ -281,9 +287,9 @@ class _TicketDetailsScreenState extends ConsumerState<TicketDetailsScreen> {
               ),
             ),
           ),
-          
+
           const SizedBox(width: 24),
-          
+
           // رسائل المحادثة
           Expanded(
             flex: 7,
@@ -294,9 +300,10 @@ class _TicketDetailsScreenState extends ConsumerState<TicketDetailsScreen> {
                   children: [
                     Text(
                       l10n.conversation,
-                      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
+                      style:
+                          Theme.of(context).textTheme.headlineSmall?.copyWith(
+                                fontWeight: FontWeight.bold,
+                              ),
                     ),
                     const Spacer(),
                     ticketAsync.when(
@@ -304,7 +311,7 @@ class _TicketDetailsScreenState extends ConsumerState<TicketDetailsScreen> {
                         if (ticket == null) {
                           return const SizedBox.shrink();
                         }
-                        
+
                         return ticket.status == TicketStatus.closed
                             ? OutlinedButton.icon(
                                 onPressed: _reopenTicket,
@@ -323,7 +330,7 @@ class _TicketDetailsScreenState extends ConsumerState<TicketDetailsScreen> {
                   ],
                 ),
                 const SizedBox(height: 16),
-                
+
                 // رسائل المحادثة
                 Expanded(
                   child: Card(
@@ -343,28 +350,31 @@ class _TicketDetailsScreenState extends ConsumerState<TicketDetailsScreen> {
                               ),
                             );
                           }
-                          
+
                           return _buildMessagesList(context, messages);
                         },
-                        loading: () => const Center(child: CircularProgressIndicator()),
+                        loading: () =>
+                            const Center(child: CircularProgressIndicator()),
                         error: (error, _) => Center(
                           child: Text(
                             'حدث خطأ: ${error.toString()}',
-                            style: TextStyle(color: Theme.of(context).colorScheme.error),
+                            style: TextStyle(
+                                color: Theme.of(context).colorScheme.error),
                           ),
                         ),
                       ),
                     ),
                   ),
                 ),
-                
+
                 // حقل إدخال الرسالة
                 ticketAsync.when(
                   data: (ticket) {
-                    if (ticket == null || ticket.status == TicketStatus.closed) {
+                    if (ticket == null ||
+                        ticket.status == TicketStatus.closed) {
                       return const SizedBox.shrink();
                     }
-                    
+
                     return Padding(
                       padding: const EdgeInsets.only(top: 16.0),
                       child: _buildMessageInput(context, l10n),
@@ -404,7 +414,8 @@ class _TicketDetailsScreenState extends ConsumerState<TicketDetailsScreen> {
                 Container(
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
-                    color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                    color:
+                        Theme.of(context).colorScheme.primary.withOpacity(0.1),
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
@@ -413,7 +424,7 @@ class _TicketDetailsScreenState extends ConsumerState<TicketDetailsScreen> {
                   ),
                 ),
                 const SizedBox(width: 12),
-                
+
                 // معلومات التذكرة
                 Expanded(
                   child: Column(
@@ -421,9 +432,10 @@ class _TicketDetailsScreenState extends ConsumerState<TicketDetailsScreen> {
                     children: [
                       Text(
                         ticket.subject,
-                        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
+                        style:
+                            Theme.of(context).textTheme.titleMedium?.copyWith(
+                                  fontWeight: FontWeight.bold,
+                                ),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                       ),
@@ -431,18 +443,21 @@ class _TicketDetailsScreenState extends ConsumerState<TicketDetailsScreen> {
                       Text(
                         'تذكرة #${ticket.id.substring(0, 8)} • ${_formatDate(ticket.createdAt)}',
                         style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurface
+                                  .withOpacity(0.7),
                             ),
                       ),
                     ],
                   ),
                 ),
-                
+
                 // حالة التذكرة
                 _buildStatusChip(context, ticket.status),
               ],
             ),
-            
+
             // وصف التذكرة
             if (context.isPhone) ...[
               const Divider(height: 24),
@@ -490,7 +505,7 @@ class _TicketDetailsScreenState extends ConsumerState<TicketDetailsScreen> {
                   ),
             ),
             const SizedBox(height: 24),
-            
+
             // معرف التذكرة
             _buildInfoRow(
               context,
@@ -499,7 +514,7 @@ class _TicketDetailsScreenState extends ConsumerState<TicketDetailsScreen> {
               icon: Icons.tag,
             ),
             const Divider(height: 24),
-            
+
             // الموضوع
             _buildInfoRow(
               context,
@@ -508,7 +523,7 @@ class _TicketDetailsScreenState extends ConsumerState<TicketDetailsScreen> {
               icon: Icons.subject,
             ),
             const Divider(height: 24),
-            
+
             // النوع
             _buildInfoRow(
               context,
@@ -517,7 +532,7 @@ class _TicketDetailsScreenState extends ConsumerState<TicketDetailsScreen> {
               icon: _getTicketTypeIcon(ticket.type),
             ),
             const Divider(height: 24),
-            
+
             // الحالة
             _buildInfoRow(
               context,
@@ -527,7 +542,7 @@ class _TicketDetailsScreenState extends ConsumerState<TicketDetailsScreen> {
               valueWidget: _buildStatusChip(context, ticket.status),
             ),
             const Divider(height: 24),
-            
+
             // الأولوية
             _buildInfoRow(
               context,
@@ -537,7 +552,7 @@ class _TicketDetailsScreenState extends ConsumerState<TicketDetailsScreen> {
               valueWidget: _buildPriorityChip(context, ticket.priority),
             ),
             const Divider(height: 24),
-            
+
             // تاريخ الإنشاء
             _buildInfoRow(
               context,
@@ -545,10 +560,10 @@ class _TicketDetailsScreenState extends ConsumerState<TicketDetailsScreen> {
               value: _formatDate(ticket.createdAt),
               icon: Icons.calendar_today,
             ),
-            
+
             if (ticket.updatedAt != null) ...[
               const Divider(height: 24),
-              
+
               // تاريخ التحديث
               _buildInfoRow(
                 context,
@@ -557,10 +572,10 @@ class _TicketDetailsScreenState extends ConsumerState<TicketDetailsScreen> {
                 icon: Icons.update,
               ),
             ],
-            
+
             if (ticket.closedAt != null) ...[
               const Divider(height: 24),
-              
+
               // تاريخ الإغلاق
               _buildInfoRow(
                 context,
@@ -569,9 +584,9 @@ class _TicketDetailsScreenState extends ConsumerState<TicketDetailsScreen> {
                 icon: Icons.check_circle,
               ),
             ],
-            
+
             const Divider(height: 24),
-            
+
             // الوصف
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -618,7 +633,10 @@ class _TicketDetailsScreenState extends ConsumerState<TicketDetailsScreen> {
               Text(
                 label,
                 style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                      color: Theme.of(context)
+                          .colorScheme
+                          .onSurface
+                          .withOpacity(0.7),
                     ),
               ),
               const SizedBox(height: 4),
@@ -650,17 +668,18 @@ class _TicketDetailsScreenState extends ConsumerState<TicketDetailsScreen> {
         );
       }
     });
-    
+
     return ListView.builder(
       controller: _scrollController,
       padding: const EdgeInsets.symmetric(vertical: 8.0),
       itemCount: messages.length,
       itemBuilder: (context, index) {
         final message = messages[index];
-        
+
         return MessageBubble(
           message: message,
-          showAvatar: index == 0 || messages[index - 1].isFromSupport != message.isFromSupport,
+          showAvatar: index == 0 ||
+              messages[index - 1].isFromSupport != message.isFromSupport,
         );
       },
     );
@@ -685,7 +704,7 @@ class _TicketDetailsScreenState extends ConsumerState<TicketDetailsScreen> {
                 // تنفيذ وظيفة إضافة مرفقات
               },
             ),
-            
+
             // حقل إدخال الرسالة
             Expanded(
               child: TextField(
@@ -698,7 +717,7 @@ class _TicketDetailsScreenState extends ConsumerState<TicketDetailsScreen> {
                 textInputAction: TextInputAction.newline,
               ),
             ),
-            
+
             // زر الإرسال
             IconButton(
               icon: _isSending
@@ -720,7 +739,7 @@ class _TicketDetailsScreenState extends ConsumerState<TicketDetailsScreen> {
   Widget _buildStatusChip(BuildContext context, TicketStatus status) {
     String label;
     Color color;
-    
+
     switch (status) {
       case TicketStatus.open:
         label = 'مفتوحة';
@@ -739,7 +758,7 @@ class _TicketDetailsScreenState extends ConsumerState<TicketDetailsScreen> {
         color = Colors.grey;
         break;
     }
-    
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
@@ -762,7 +781,7 @@ class _TicketDetailsScreenState extends ConsumerState<TicketDetailsScreen> {
   Widget _buildPriorityChip(BuildContext context, TicketPriority priority) {
     String label;
     Color color;
-    
+
     switch (priority) {
       case TicketPriority.low:
         label = 'منخفضة';
@@ -781,7 +800,7 @@ class _TicketDetailsScreenState extends ConsumerState<TicketDetailsScreen> {
         color = Colors.red;
         break;
     }
-    
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
@@ -806,16 +825,16 @@ class _TicketDetailsScreenState extends ConsumerState<TicketDetailsScreen> {
     if (message.isEmpty) {
       return;
     }
-    
+
     setState(() {
       _isSending = true;
     });
-    
+
     try {
       await ref.read(supportNotifierProvider.notifier).sendMessage(
-        message: message,
-      );
-      
+            message: message,
+          );
+
       _messageController.clear();
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -835,7 +854,7 @@ class _TicketDetailsScreenState extends ConsumerState<TicketDetailsScreen> {
   Future<void> _closeTicket() async {
     try {
       await ref.read(supportNotifierProvider.notifier).closeTicket();
-      
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('تم إغلاق التذكرة بنجاح'),
@@ -856,7 +875,7 @@ class _TicketDetailsScreenState extends ConsumerState<TicketDetailsScreen> {
   Future<void> _reopenTicket() async {
     try {
       await ref.read(supportNotifierProvider.notifier).reopenTicket();
-      
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('تم إعادة فتح التذكرة بنجاح'),

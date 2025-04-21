@@ -3,7 +3,8 @@ import 'package:shared_models/shared_models.dart'; // Use main export
 import 'package:shared_services/shared_services.dart'; // Use main export
 
 // Updated to use AsyncValue
-class UserManagementNotifier extends StateNotifier<AsyncValue<List<UserModel>>> {
+class UserManagementNotifier
+    extends StateNotifier<AsyncValue<List<UserModel>>> {
   final UserService _userService;
 
   UserManagementNotifier(this._userService) : super(const AsyncLoading()) {
@@ -25,7 +26,8 @@ class UserManagementNotifier extends StateNotifier<AsyncValue<List<UserModel>>> 
 
   // Future<void> addUser(UserModel user) async { ... }
 
-  Future<bool> editUser(UserModel user) async { // Return bool for success indication
+  Future<bool> editUser(UserModel user) async {
+    // Return bool for success indication
     final previousState = state;
     state = const AsyncLoading();
     try {
@@ -39,16 +41,17 @@ class UserManagementNotifier extends StateNotifier<AsyncValue<List<UserModel>>> 
     }
   }
 
-  Future<bool> deleteUser(String userId) async { // Return bool for success indication
-     final previousState = state;
-     state = const AsyncLoading();
+  Future<bool> deleteUser(String userId) async {
+    // Return bool for success indication
+    final previousState = state;
+    state = const AsyncLoading();
     try {
       await _userService.deleteUser(userId);
       await fetchUsers(); // Refetch
       return true;
     } catch (e, stacktrace) {
       state = AsyncError('Failed to delete user: $e', stacktrace);
-       state = previousState;
+      state = previousState;
       return false;
     }
   }
@@ -59,7 +62,9 @@ final userServiceProvider = Provider<UserService>((ref) {
   return UserService(); // Or get from another provider
 });
 
-final userManagementProvider = StateNotifierProvider<UserManagementNotifier, AsyncValue<List<UserModel>>>((ref) {
+final userManagementProvider =
+    StateNotifierProvider<UserManagementNotifier, AsyncValue<List<UserModel>>>(
+        (ref) {
   final userService = ref.read(userServiceProvider);
   return UserManagementNotifier(userService);
 });

@@ -15,13 +15,14 @@ class AuthService {
   final SecureStorageService _secureStorage = SecureStorageService();
 
   // تسجيل الدخول باستخدام البريد الإلكتروني وكلمة المرور
-  Future<User?> signInWithEmailAndPassword(String email, String password) async {
+  Future<User?> signInWithEmailAndPassword(
+      String email, String password) async {
     try {
       final userCredential = await _auth.signInWithEmailAndPassword(
         email: email,
         password: password,
       );
-      
+
       // التحقق من أن المستخدم هو بائع
       final user = userCredential.user;
       if (user != null) {
@@ -30,10 +31,10 @@ class AuthService {
           // تخزين بيانات المصادقة بشكل آمن
           await _secureStorage.storeUserId(user.uid);
           await _secureStorage.storeAuthToken(await user.getIdToken() ?? '');
-          
+
           // تحديث آخر تسجيل دخول في Firestore
           await _updateLastLogin(user.uid);
-          
+
           return user;
         } else {
           // إذا لم يكن المستخدم بائعاً، قم بتسجيل الخروج
@@ -49,8 +50,8 @@ class AuthService {
 
   // تسجيل حساب جديد للبائع
   Future<User?> registerWithEmailAndPassword(
-    String email, 
-    String password, 
+    String email,
+    String password,
     String name,
     String storeName,
     String phoneNumber,
@@ -60,25 +61,25 @@ class AuthService {
         email: email,
         password: password,
       );
-      
+
       final user = userCredential.user;
       if (user != null) {
         // إنشاء وثيقة البائع في Firestore
         await _createSellerDocument(
-          user.uid, 
-          email, 
-          name, 
-          storeName, 
+          user.uid,
+          email,
+          name,
+          storeName,
           phoneNumber,
         );
-        
+
         // تخزين بيانات المصادقة بشكل آمن
         await _secureStorage.storeUserId(user.uid);
         await _secureStorage.storeAuthToken(await user.getIdToken() ?? '');
-        
+
         // إرسال بريد تأكيد الحساب
         await user.sendEmailVerification();
-        
+
         return user;
       }
       return null;
@@ -89,10 +90,10 @@ class AuthService {
 
   // إنشاء وثيقة البائع في Firestore
   Future<void> _createSellerDocument(
-    String uid, 
-    String email, 
-    String name, 
-    String storeName, 
+    String uid,
+    String email,
+    String name,
+    String storeName,
     String phoneNumber,
   ) async {
     await _firestore.collection(AppConstants.sellersCollection).doc(uid).set({
@@ -120,7 +121,10 @@ class AuthService {
 
   // تحديث آخر تسجيل دخول في Firestore
   Future<void> _updateLastLogin(String uid) async {
-    await _firestore.collection(AppConstants.sellersCollection).doc(uid).update({
+    await _firestore
+        .collection(AppConstants.sellersCollection)
+        .doc(uid)
+        .update({
       'lastLogin': FieldValue.serverTimestamp(),
     });
   }
@@ -128,7 +132,10 @@ class AuthService {
   // التحقق من أن المستخدم هو بائع
   Future<bool> _checkSellerRole(String uid) async {
     try {
-      final doc = await _firestore.collection(AppConstants.sellersCollection).doc(uid).get();
+      final doc = await _firestore
+          .collection(AppConstants.sellersCollection)
+          .doc(uid)
+          .get();
       return doc.exists && doc.data()?['role'] == AppConstants.sellerRole;
     } catch (e) {
       return false;
@@ -167,7 +174,7 @@ class AuthService {
     if (user != null) {
       return user.uid;
     }
-    
+
     // محاولة استرجاع المعرف من التخزين الآمن
     return await _secureStorage.getUserId();
   }
@@ -184,33 +191,38 @@ class AuthService {
     if (userId == null) {
       throw Exception('المستخدم غير مسجل الدخول');
     }
-    
+
     final updateData = <String, dynamic>{};
-    
+
     if (name != null) updateData['name'] = name;
     if (storeName != null) updateData['storeName'] = storeName;
     if (phoneNumber != null) updateData['phoneNumber'] = phoneNumber;
-    if (storeDescription != null) updateData['storeDescription'] = storeDescription;
+    if (storeDescription != null)
+      updateData['storeDescription'] = storeDescription;
     if (storeAddress != null) updateData['storeAddress'] = storeAddress;
-    
+
     if (updateData.isNotEmpty) {
-      await _firestore.collection(AppConstants.sellersCollection).doc(userId).update(updateData);
+      await _firestore
+          .collection(AppConstants.sellersCollection)
+          .doc(userId)
+          .update(updateData);
     }
   }
 
   // تحديث كلمة المرور
-  Future<void> updatePassword(String currentPassword, String newPassword) async {
+  Future<void> updatePassword(
+      String currentPassword, String newPassword) async {
     final user = _auth.currentUser;
     if (user == null) {
       throw Exception('المستخدم غير مسجل الدخول');
     }
-    
+
     // إعادة المصادقة قبل تغيير كلمة المرور
     final credential = EmailAuthProvider.credential(
       email: user.email!,
       password: currentPassword,
     );
-    
+
     await user.reauthenticateWithCredential(credential);
     await user.updatePassword(newPassword);
   }
@@ -221,12 +233,15 @@ class AuthService {
     if (userId == null) {
       return null;
     }
-    
-    final doc = await _firestore.collection(AppConstants.sellersCollection).doc(userId).get();
+
+    final doc = await _firestore
+        .collection(AppConstants.sellersCollection)
+        .doc(userId)
+        .get();
     if (doc.exists) {
       return doc.data();
     }
-    
+
     return null;
   }
 
@@ -236,8 +251,11 @@ class AuthService {
     if (userId == null) {
       return;
     }
-    
-    await _firestore.collection(AppConstants.sellersCollection).doc(userId).update({
+
+    await _firestore
+        .collection(AppConstants.sellersCollection)
+        .doc(userId)
+        .update({
       'fcmTokens': FieldValue.arrayUnion([token]),
     });
   }
@@ -248,8 +266,11 @@ class AuthService {
     if (userId == null) {
       return;
     }
-    
-    await _firestore.collection(AppConstants.sellersCollection).doc(userId).update({
+
+    await _firestore
+        .collection(AppConstants.sellersCollection)
+        .doc(userId)
+        .update({
       'fcmTokens': FieldValue.arrayRemove([token]),
     });
   }

@@ -6,7 +6,7 @@ import 'package:flutter/foundation.dart'; // إضافة لاستيراد kIsWeb 
 /// https://console.firebase.google.com/
 class DefaultFirebaseOptions {
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyBRivooSy_example_key_android', 
+    apiKey: 'AIzaSyBRivooSy_example_key_android',
     appId: '1:123456789012:android:a1b2c3d4e5f6g7h8',
     messagingSenderId: '123456789012',
     projectId: 'rivoosy-app',
@@ -19,7 +19,8 @@ class DefaultFirebaseOptions {
     messagingSenderId: '123456789012',
     projectId: 'rivoosy-app',
     storageBucket: 'rivoosy-app.appspot.com',
-    iosClientId: '123456789012-abcdefghijklmnopqrstuvwxyz.apps.googleusercontent.com',
+    iosClientId:
+        '123456789012-abcdefghijklmnopqrstuvwxyz.apps.googleusercontent.com',
     iosBundleId: 'com.rivoosy.sellerPanel',
   );
 
@@ -44,7 +45,7 @@ class DefaultFirebaseOptions {
       case TargetPlatform.iOS:
         return ios;
       default:
-        throw UnsupportedError('المنصة غير مدعومة: ${defaultTargetPlatform}');
+        throw UnsupportedError('المنصة غير مدعومة: $defaultTargetPlatform');
     }
   }
 }

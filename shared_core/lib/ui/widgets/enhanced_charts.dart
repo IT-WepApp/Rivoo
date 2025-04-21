@@ -160,7 +160,8 @@ class _EnhancedLineChart extends StatefulWidget {
   _EnhancedLineChartState createState() => _EnhancedLineChartState();
 }
 
-class _EnhancedLineChartState extends State<_EnhancedLineChart> with SingleTickerProviderStateMixin {
+class _EnhancedLineChartState extends State<_EnhancedLineChart>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
 
@@ -195,15 +196,18 @@ class _EnhancedLineChartState extends State<_EnhancedLineChart> with SingleTicke
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     final effectiveLineColor = widget.lineColor ?? theme.primaryColor;
     final effectivePointColor = widget.pointColor ?? theme.primaryColor;
-    final effectiveFillColor = widget.fillColor ?? theme.primaryColor.withOpacity(0.2);
-    final effectiveGridColor = widget.gridColor ?? 
-        (theme.brightness == Brightness.dark ? Colors.grey.shade700 : Colors.grey.shade300);
-    final effectiveLabelColor = widget.labelColor ?? 
+    final effectiveFillColor =
+        widget.fillColor ?? theme.primaryColor.withOpacity(0.2);
+    final effectiveGridColor = widget.gridColor ??
+        (theme.brightness == Brightness.dark
+            ? Colors.grey.shade700
+            : Colors.grey.shade300);
+    final effectiveLabelColor = widget.labelColor ??
         (theme.brightness == Brightness.dark ? Colors.white70 : Colors.black54);
-    final effectiveTitleColor = widget.titleColor ?? 
+    final effectiveTitleColor = widget.titleColor ??
         (theme.brightness == Brightness.dark ? Colors.white : Colors.black87);
 
     return Column(
@@ -287,19 +291,21 @@ class _LineChartPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final double padding = 40.0;
+    const double padding = 40.0;
     final double graphWidth = size.width - (padding * 2);
     final double graphHeight = size.height - (padding * 2);
     final double graphBottom = size.height - padding;
-    final double graphLeft = padding;
+    const double graphLeft = padding;
 
     // Find min and max values
-    double minValue = data.isNotEmpty ? data.reduce((a, b) => a < b ? a : b) : 0;
-    double maxValue = data.isNotEmpty ? data.reduce((a, b) => a > b ? a : b) : 0;
-    
+    double minValue =
+        data.isNotEmpty ? data.reduce((a, b) => a < b ? a : b) : 0;
+    double maxValue =
+        data.isNotEmpty ? data.reduce((a, b) => a > b ? a : b) : 0;
+
     // Ensure min value is 0 or less
     minValue = minValue > 0 ? 0 : minValue;
-    
+
     // Ensure max value is greater than min value
     if (maxValue <= minValue) {
       maxValue = minValue + 1;
@@ -315,7 +321,7 @@ class _LineChartPainter extends CustomPainter {
         ..strokeWidth = 0.5;
 
       // Horizontal grid lines
-      final horizontalLinesCount = 5;
+      const horizontalLinesCount = 5;
       for (int i = 0; i <= horizontalLinesCount; i++) {
         final y = graphBottom - (i / horizontalLinesCount) * graphHeight;
         canvas.drawLine(
@@ -347,7 +353,7 @@ class _LineChartPainter extends CustomPainter {
       // X-axis labels
       for (int i = 0; i < labels.length; i++) {
         final x = graphLeft + (i / (labels.length - 1)) * graphWidth;
-        
+
         labelPaint.text = TextSpan(
           text: labels[i],
           style: TextStyle(
@@ -355,9 +361,9 @@ class _LineChartPainter extends CustomPainter {
             fontSize: 10,
           ),
         );
-        
+
         labelPaint.layout();
-        
+
         labelPaint.paint(
           canvas,
           Offset(x - labelPaint.width / 2, graphBottom + 5),
@@ -365,11 +371,11 @@ class _LineChartPainter extends CustomPainter {
       }
 
       // Y-axis labels
-      final yLabelCount = 5;
+      const yLabelCount = 5;
       for (int i = 0; i <= yLabelCount; i++) {
         final y = graphBottom - (i / yLabelCount) * graphHeight;
         final value = minValue + (i / yLabelCount) * (maxValue - minValue);
-        
+
         labelPaint.text = TextSpan(
           text: value.toStringAsFixed(1),
           style: TextStyle(
@@ -377,9 +383,9 @@ class _LineChartPainter extends CustomPainter {
             fontSize: 10,
           ),
         );
-        
+
         labelPaint.layout();
-        
+
         labelPaint.paint(
           canvas,
           Offset(padding - labelPaint.width - 5, y - labelPaint.height / 2),
@@ -406,27 +412,28 @@ class _LineChartPainter extends CustomPainter {
       for (int i = 0; i < data.length; i++) {
         final animatedIndex = (i * animationValue).floor();
         final animatedProgress = (i * animationValue) - animatedIndex;
-        
+
         if (i > animatedIndex + 1) {
           break;
         }
-        
+
         final normalizedValue = (data[i] - minValue) / (maxValue - minValue);
         final x = graphLeft + (i / (data.length - 1)) * graphWidth;
         final y = graphBottom - normalizedValue * graphHeight;
-        
+
         if (i == 0) {
           path.moveTo(x, y);
           fillPath.moveTo(x, graphBottom);
           fillPath.lineTo(x, y);
         } else if (i == animatedIndex + 1) {
-          final prevNormalizedValue = (data[i - 1] - minValue) / (maxValue - minValue);
+          final prevNormalizedValue =
+              (data[i - 1] - minValue) / (maxValue - minValue);
           final prevX = graphLeft + ((i - 1) / (data.length - 1)) * graphWidth;
           final prevY = graphBottom - prevNormalizedValue * graphHeight;
-          
+
           final currentX = prevX + (x - prevX) * animatedProgress;
           final currentY = prevY + (y - prevY) * animatedProgress;
-          
+
           path.lineTo(currentX, currentY);
           fillPath.lineTo(currentX, currentY);
         } else {
@@ -440,22 +447,26 @@ class _LineChartPainter extends CustomPainter {
         final lastIndex = (data.length * animationValue).floor();
         if (lastIndex < data.length - 1) {
           final animatedProgress = (data.length * animationValue) - lastIndex;
-          
-          final normalizedValue = (data[lastIndex] - minValue) / (maxValue - minValue);
-          final nextNormalizedValue = (data[lastIndex + 1] - minValue) / (maxValue - minValue);
-          
+
+          final normalizedValue =
+              (data[lastIndex] - minValue) / (maxValue - minValue);
+          final nextNormalizedValue =
+              (data[lastIndex + 1] - minValue) / (maxValue - minValue);
+
           final x = graphLeft + (lastIndex / (data.length - 1)) * graphWidth;
-          final nextX = graphLeft + ((lastIndex + 1) / (data.length - 1)) * graphWidth;
-          
+          final nextX =
+              graphLeft + ((lastIndex + 1) / (data.length - 1)) * graphWidth;
+
           final y = graphBottom - normalizedValue * graphHeight;
           final nextY = graphBottom - nextNormalizedValue * graphHeight;
-          
+
           final currentX = x + (nextX - x) * animatedProgress;
-          
+
           fillPath.lineTo(currentX, graphBottom);
           fillPath.close();
         } else {
-          final lastX = graphLeft + ((data.length - 1) / (data.length - 1)) * graphWidth;
+          final lastX =
+              graphLeft + ((data.length - 1) / (data.length - 1)) * graphWidth;
           fillPath.lineTo(lastX, graphBottom);
           fillPath.close();
         }
@@ -479,11 +490,11 @@ class _LineChartPainter extends CustomPainter {
           if (i > (data.length * animationValue).floor()) {
             break;
           }
-          
+
           final normalizedValue = (data[i] - minValue) / (maxValue - minValue);
           final x = graphLeft + (i / (data.length - 1)) * graphWidth;
           final y = graphBottom - normalizedValue * graphHeight;
-          
+
           canvas.drawCircle(Offset(x, y), pointRadius, pointPaint);
         }
       }
@@ -533,7 +544,8 @@ class _EnhancedPieChart extends StatefulWidget {
   _EnhancedPieChartState createState() => _EnhancedPieChartState();
 }
 
-class _EnhancedPieChartState extends State<_EnhancedPieChart> with SingleTickerProviderStateMixin {
+class _EnhancedPieChartState extends State<_EnhancedPieChart>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
 
@@ -568,10 +580,10 @@ class _EnhancedPieChartState extends State<_EnhancedPieChart> with SingleTickerP
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
-    final effectiveLabelColor = widget.labelColor ?? 
+
+    final effectiveLabelColor = widget.labelColor ??
         (theme.brightness == Brightness.dark ? Colors.white70 : Colors.black54);
-    final effectiveTitleColor = widget.titleColor ?? 
+    final effectiveTitleColor = widget.titleColor ??
         (theme.brightness == Brightness.dark ? Colors.white : Colors.black87);
 
     // Calculate total for percentages
@@ -632,7 +644,8 @@ class _EnhancedPieChartState extends State<_EnhancedPieChart> with SingleTickerP
                                 width: 16,
                                 height: 16,
                                 decoration: BoxDecoration(
-                                  color: widget.colors[index % widget.colors.length],
+                                  color: widget
+                                      .colors[index % widget.colors.length],
                                   shape: BoxShape.circle,
                                 ),
                               ),
@@ -680,20 +693,20 @@ class _PieChartPainter extends CustomPainter {
   void paint(Canvas canvas, Size size) {
     final center = Offset(size.width / 2, size.height / 2);
     final radius = size.width < size.height ? size.width / 2 : size.height / 2;
-    
+
     // Calculate total
     final total = data.fold(0.0, (sum, value) => sum + value);
-    
+
     // Draw pie slices
     double startAngle = -90 * (3.14159 / 180); // Start from top (in radians)
-    
+
     for (int i = 0; i < data.length; i++) {
       final sweepAngle = (data[i] / total) * 2 * 3.14159 * animationValue;
-      
+
       final paint = Paint()
         ..color = colors[i % colors.length]
         ..style = PaintingStyle.fill;
-      
+
       canvas.drawArc(
         Rect.fromCircle(center: center, radius: radius * 0.8),
         startAngle,
@@ -701,15 +714,15 @@ class _PieChartPainter extends CustomPainter {
         true,
         paint,
       );
-      
+
       startAngle += sweepAngle;
     }
-    
+
     // Draw center circle for donut effect
     final centerPaint = Paint()
       ..color = Colors.white
       ..style = PaintingStyle.fill;
-    
+
     canvas.drawCircle(center, radius * 0.4, centerPaint);
   }
 
@@ -758,7 +771,8 @@ class _EnhancedBarChart extends StatefulWidget {
   _EnhancedBarChartState createState() => _EnhancedBarChartState();
 }
 
-class _EnhancedBarChartState extends State<_EnhancedBarChart> with SingleTickerProviderStateMixin {
+class _EnhancedBarChartState extends State<_EnhancedBarChart>
+    with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _animation;
 
@@ -793,13 +807,15 @@ class _EnhancedBarChartState extends State<_EnhancedBarChart> with SingleTickerP
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     final effectiveBarColor = widget.barColor ?? theme.primaryColor;
-    final effectiveGridColor = widget.gridColor ?? 
-        (theme.brightness == Brightness.dark ? Colors.grey.shade700 : Colors.grey.shade300);
-    final effectiveLabelColor = widget.labelColor ?? 
+    final effectiveGridColor = widget.gridColor ??
+        (theme.brightness == Brightness.dark
+            ? Colors.grey.shade700
+            : Colors.grey.shade300);
+    final effectiveLabelColor = widget.labelColor ??
         (theme.brightness == Brightness.dark ? Colors.white70 : Colors.black54);
-    final effectiveTitleColor = widget.titleColor ?? 
+    final effectiveTitleColor = widget.titleColor ??
         (theme.brightness == Brightness.dark ? Colors.white : Colors.black87);
 
     return Column(
@@ -871,15 +887,16 @@ class _BarChartPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
-    final double padding = 40.0;
+    const double padding = 40.0;
     final double graphWidth = size.width - (padding * 2);
     final double graphHeight = size.height - (padding * 2);
     final double graphBottom = size.height - padding;
-    final double graphLeft = padding;
+    const double graphLeft = padding;
 
     // Find max value
-    double maxValue = data.isNotEmpty ? data.reduce((a, b) => a > b ? a : b) : 0;
-    
+    double maxValue =
+        data.isNotEmpty ? data.reduce((a, b) => a > b ? a : b) : 0;
+
     // Ensure max value is greater than 0
     if (maxValue <= 0) {
       maxValue = 1;
@@ -895,7 +912,7 @@ class _BarChartPainter extends CustomPainter {
         ..strokeWidth = 0.5;
 
       // Horizontal grid lines
-      final horizontalLinesCount = 5;
+      const horizontalLinesCount = 5;
       for (int i = 0; i <= horizontalLinesCount; i++) {
         final y = graphBottom - (i / horizontalLinesCount) * graphHeight;
         canvas.drawLine(
@@ -916,7 +933,7 @@ class _BarChartPainter extends CustomPainter {
       // X-axis labels
       for (int i = 0; i < labels.length; i++) {
         final barCenterX = graphLeft + ((i + 0.5) / data.length) * graphWidth;
-        
+
         labelPaint.text = TextSpan(
           text: labels[i],
           style: TextStyle(
@@ -924,9 +941,9 @@ class _BarChartPainter extends CustomPainter {
             fontSize: 10,
           ),
         );
-        
+
         labelPaint.layout();
-        
+
         labelPaint.paint(
           canvas,
           Offset(barCenterX - labelPaint.width / 2, graphBottom + 5),
@@ -934,11 +951,11 @@ class _BarChartPainter extends CustomPainter {
       }
 
       // Y-axis labels
-      final yLabelCount = 5;
+      const yLabelCount = 5;
       for (int i = 0; i <= yLabelCount; i++) {
         final y = graphBottom - (i / yLabelCount) * graphHeight;
         final value = (i / yLabelCount) * maxValue;
-        
+
         labelPaint.text = TextSpan(
           text: value.toStringAsFixed(1),
           style: TextStyle(
@@ -946,9 +963,9 @@ class _BarChartPainter extends CustomPainter {
             fontSize: 10,
           ),
         );
-        
+
         labelPaint.layout();
-        
+
         labelPaint.paint(
           canvas,
           Offset(padding - labelPaint.width - 5, y - labelPaint.height / 2),
@@ -964,11 +981,11 @@ class _BarChartPainter extends CustomPainter {
     for (int i = 0; i < data.length; i++) {
       final normalizedValue = data[i] / maxValue;
       final barHeight = normalizedValue * graphHeight * animationValue;
-      
+
       final barLeft = graphLeft + (i / data.length) * graphWidth;
       final barRight = barLeft + (graphWidth / data.length) * barWidth;
       final barTop = graphBottom - barHeight;
-      
+
       final rect = RRect.fromRectAndCorners(
         Rect.fromLTRB(
           barLeft + (graphWidth / data.length) * (1 - barWidth) / 2,
@@ -979,7 +996,7 @@ class _BarChartPainter extends CustomPainter {
         topLeft: Radius.circular(cornerRadius),
         topRight: Radius.circular(cornerRadius),
       );
-      
+
       canvas.drawRRect(rect, barPaint);
     }
   }

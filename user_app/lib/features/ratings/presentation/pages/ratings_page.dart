@@ -48,7 +48,8 @@ class RatingsPage extends ConsumerWidget {
               const SizedBox(height: 16),
               AppButton(
                 text: 'إعادة المحاولة',
-                onPressed: () => ref.read(userRatingsProvider.notifier).loadUserRatings(),
+                onPressed: () =>
+                    ref.read(userRatingsProvider.notifier).loadUserRatings(),
               ),
             ],
           ),
@@ -58,22 +59,22 @@ class RatingsPage extends ConsumerWidget {
   }
 
   Widget _buildEmptyState(BuildContext context) {
-    return Center(
+    return const Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          const Icon(
+          Icon(
             Icons.star_border,
             size: 80,
             color: Colors.grey,
           ),
-          const SizedBox(height: 16),
-          const Text(
+          SizedBox(height: 16),
+          Text(
             'لم تقم بإضافة أي تقييمات بعد',
             style: TextStyle(fontSize: 18),
           ),
-          const SizedBox(height: 8),
-          const Text(
+          SizedBox(height: 8),
+          Text(
             'قم بتقييم المنتجات والمندوبين بعد استلام طلباتك',
             textAlign: TextAlign.center,
           ),
@@ -82,7 +83,8 @@ class RatingsPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildRatingCard(BuildContext context, WidgetRef ref, RatingModel rating) {
+  Widget _buildRatingCard(
+      BuildContext context, WidgetRef ref, RatingModel rating) {
     final theme = Theme.of(context);
     final formattedDate = DateFormat('yyyy-MM-dd').format(rating.createdAt);
     final isProduct = rating.targetType == 'product';
@@ -250,7 +252,9 @@ class RatingsPage extends ConsumerWidget {
                     targetId: targetId,
                     targetType: targetType,
                     rating: rating,
-                    comment: commentController.text.isEmpty ? null : commentController.text,
+                    comment: commentController.text.isEmpty
+                        ? null
+                        : commentController.text,
                   );
             },
             child: const Text('حفظ'),
@@ -260,7 +264,8 @@ class RatingsPage extends ConsumerWidget {
     );
   }
 
-  void _confirmDeleteRating(BuildContext context, WidgetRef ref, String ratingId) {
+  void _confirmDeleteRating(
+      BuildContext context, WidgetRef ref, String ratingId) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(

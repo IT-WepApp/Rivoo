@@ -122,7 +122,8 @@ class ErrorScreen extends StatelessWidget {
               ),
               const SizedBox(height: 8),
               Text(
-                message ?? 'عذراً، حدث خطأ غير متوقع. الرجاء المحاولة مرة أخرى.',
+                message ??
+                    'عذراً، حدث خطأ غير متوقع. الرجاء المحاولة مرة أخرى.',
                 textAlign: TextAlign.center,
               ),
               if (onRetry != null) ...[

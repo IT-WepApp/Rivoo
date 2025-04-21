@@ -49,7 +49,8 @@ void main() {
       await authNotifier.signIn(email: email, password: password);
 
       // تحقق
-      verify(mockSignInUseCase.execute(email: email, password: password)).called(1);
+      verify(mockSignInUseCase.execute(email: email, password: password))
+          .called(1);
       expect(authNotifier.state.user, user);
       expect(authNotifier.state.isAuthenticated, true);
       expect(authNotifier.state.isLoading, false);
@@ -66,7 +67,8 @@ void main() {
       await authNotifier.signIn(email: email, password: password);
 
       // تحقق
-      verify(mockSignInUseCase.execute(email: email, password: password)).called(1);
+      verify(mockSignInUseCase.execute(email: email, password: password))
+          .called(1);
       expect(authNotifier.state.user, null);
       expect(authNotifier.state.isAuthenticated, false);
       expect(authNotifier.state.isLoading, false);
@@ -77,8 +79,7 @@ void main() {
   group('تسجيل الخروج', () {
     test('يجب أن يقوم بتسجيل الخروج بنجاح', () async {
       // ترتيب
-      when(mockSignOutUseCase.execute())
-          .thenAnswer((_) async => true);
+      when(mockSignOutUseCase.execute()).thenAnswer((_) async => true);
 
       // تنفيذ
       await authNotifier.signOut();

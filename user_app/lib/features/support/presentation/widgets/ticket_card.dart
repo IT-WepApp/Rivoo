@@ -34,7 +34,10 @@ class TicketCard extends StatelessWidget {
                   Container(
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      color: Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                      color: Theme.of(context)
+                          .colorScheme
+                          .primary
+                          .withOpacity(0.1),
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
@@ -44,7 +47,7 @@ class TicketCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(width: 12),
-                  
+
                   // معلومات التذكرة
                   Expanded(
                     child: Column(
@@ -52,30 +55,35 @@ class TicketCard extends StatelessWidget {
                       children: [
                         Text(
                           ticket.subject,
-                          style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
+                          style:
+                              Theme.of(context).textTheme.titleMedium?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
                         const SizedBox(height: 4),
                         Text(
                           'تذكرة #${ticket.id.substring(0, 8)} • ${_formatDate(ticket.createdAt)}',
-                          style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                                color: Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
-                              ),
+                          style:
+                              Theme.of(context).textTheme.bodySmall?.copyWith(
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .onSurface
+                                        .withOpacity(0.7),
+                                  ),
                         ),
                       ],
                     ),
                   ),
-                  
+
                   // حالة التذكرة
                   _buildStatusChip(context, ticket.status),
                 ],
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // وصف التذكرة
               Text(
                 ticket.description,
@@ -83,23 +91,27 @@ class TicketCard extends StatelessWidget {
                 maxLines: 2,
                 overflow: TextOverflow.ellipsis,
               ),
-              
+
               const SizedBox(height: 16),
-              
+
               // معلومات إضافية
               Row(
                 children: [
                   // الأولوية
                   _buildPriorityChip(context, ticket.priority),
-                  
+
                   const Spacer(),
-                  
+
                   // عدد الرسائل غير المقروءة
                   if (ticket.unreadMessages > 0)
                     Container(
-                      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.error.withOpacity(0.1),
+                        color: Theme.of(context)
+                            .colorScheme
+                            .error
+                            .withOpacity(0.1),
                         borderRadius: BorderRadius.circular(12),
                       ),
                       child: Row(
@@ -113,7 +125,10 @@ class TicketCard extends StatelessWidget {
                           const SizedBox(width: 4),
                           Text(
                             '${ticket.unreadMessages}',
-                            style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                            style: Theme.of(context)
+                                .textTheme
+                                .bodySmall
+                                ?.copyWith(
                                   color: Theme.of(context).colorScheme.error,
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -121,9 +136,9 @@ class TicketCard extends StatelessWidget {
                         ],
                       ),
                     ),
-                  
+
                   const SizedBox(width: 8),
-                  
+
                   // زر الإجراءات
                   Icon(
                     Icons.arrow_forward_ios,
@@ -143,7 +158,7 @@ class TicketCard extends StatelessWidget {
   Widget _buildStatusChip(BuildContext context, TicketStatus status) {
     String label;
     Color color;
-    
+
     switch (status) {
       case TicketStatus.open:
         label = 'مفتوحة';
@@ -162,7 +177,7 @@ class TicketCard extends StatelessWidget {
         color = Colors.grey;
         break;
     }
-    
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
@@ -185,7 +200,7 @@ class TicketCard extends StatelessWidget {
   Widget _buildPriorityChip(BuildContext context, TicketPriority priority) {
     String label;
     Color color;
-    
+
     switch (priority) {
       case TicketPriority.low:
         label = 'منخفضة';
@@ -204,7 +219,7 @@ class TicketCard extends StatelessWidget {
         color = Colors.red;
         break;
     }
-    
+
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(

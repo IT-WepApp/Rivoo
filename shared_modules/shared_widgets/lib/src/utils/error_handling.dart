@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:stack_trace/stack_trace.dart';
 
-void showErrorSnackBar(BuildContext context, String message, {Color color = Colors.red}) {
+void showErrorSnackBar(BuildContext context, String message,
+    {Color color = Colors.red}) {
   ScaffoldMessenger.of(context).showSnackBar(
     SnackBar(
       content: Text(message),
@@ -11,7 +12,8 @@ void showErrorSnackBar(BuildContext context, String message, {Color color = Colo
   );
 }
 
-Future<void> logError(String message, {dynamic error, StackTrace? stackTrace}) async {
+Future<void> logError(String message,
+    {dynamic error, StackTrace? stackTrace}) async {
   try {
     // استخدم مجلد مؤقت بدل path_provider
     final directory = Directory.systemTemp;
@@ -22,7 +24,8 @@ Future<void> logError(String message, {dynamic error, StackTrace? stackTrace}) a
 
     if (error != null) {
       logMessage += '\nError: $error';
-      final trace = stackTrace ?? (error is Error ? error.stackTrace : StackTrace.current);
+      final trace = stackTrace ??
+          (error is Error ? error.stackTrace : StackTrace.current);
       if (trace != null) {
         final formattedStackTrace = Chain.forTrace(trace).toString();
         logMessage += '\nStack Trace:\n$formattedStackTrace';

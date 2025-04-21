@@ -8,17 +8,19 @@ import 'package:user_app/features/profile/presentation/pages/shipping_address_fo
 
 class ShippingAddressListPage extends ConsumerStatefulWidget {
   final bool selectMode;
-  
+
   const ShippingAddressListPage({
     super.key,
     this.selectMode = false,
   });
 
   @override
-  ConsumerState<ShippingAddressListPage> createState() => _ShippingAddressListPageState();
+  ConsumerState<ShippingAddressListPage> createState() =>
+      _ShippingAddressListPageState();
 }
 
-class _ShippingAddressListPageState extends ConsumerState<ShippingAddressListPage> {
+class _ShippingAddressListPageState
+    extends ConsumerState<ShippingAddressListPage> {
   bool _isLoading = false;
 
   @override
@@ -113,8 +115,10 @@ class _ShippingAddressListPageState extends ConsumerState<ShippingAddressListPag
       });
 
       try {
-        await ref.read(shippingAddressProvider.notifier).deleteAddress(address.id);
-        
+        await ref
+            .read(shippingAddressProvider.notifier)
+            .deleteAddress(address.id);
+
         if (mounted) {
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(
@@ -150,8 +154,10 @@ class _ShippingAddressListPageState extends ConsumerState<ShippingAddressListPag
     });
 
     try {
-      await ref.read(shippingAddressProvider.notifier).setDefaultAddress(address.id);
-      
+      await ref
+          .read(shippingAddressProvider.notifier)
+          .setDefaultAddress(address.id);
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -164,7 +170,8 @@ class _ShippingAddressListPageState extends ConsumerState<ShippingAddressListPag
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('حدث خطأ أثناء تعيين العنوان الافتراضي: ${e.toString()}'),
+            content:
+                Text('حدث خطأ أثناء تعيين العنوان الافتراضي: ${e.toString()}'),
             backgroundColor: Colors.red,
           ),
         );
@@ -223,7 +230,8 @@ class _ShippingAddressListPageState extends ConsumerState<ShippingAddressListPag
                   child: ListView.separated(
                     padding: const EdgeInsets.all(16),
                     itemCount: addresses.length,
-                    separatorBuilder: (context, index) => const SizedBox(height: 12),
+                    separatorBuilder: (context, index) =>
+                        const SizedBox(height: 12),
                     itemBuilder: (context, index) {
                       final address = addresses[index];
                       return _AddressCard(
@@ -231,7 +239,9 @@ class _ShippingAddressListPageState extends ConsumerState<ShippingAddressListPag
                         onEdit: () => _editAddress(address),
                         onDelete: () => _deleteAddress(address),
                         onSetDefault: () => _setDefaultAddress(address),
-                        onSelect: widget.selectMode ? () => _selectAddress(address) : null,
+                        onSelect: widget.selectMode
+                            ? () => _selectAddress(address)
+                            : null,
                       );
                     },
                   ),
@@ -328,11 +338,13 @@ class _AddressCard extends StatelessWidget {
                 'هاتف: ${address.phoneNumber}',
                 style: const TextStyle(fontSize: 14),
               ),
-              if (address.additionalInfo != null && address.additionalInfo!.isNotEmpty) ...[
+              if (address.additionalInfo != null &&
+                  address.additionalInfo!.isNotEmpty) ...[
                 const SizedBox(height: 8),
                 Text(
                   'معلومات إضافية: ${address.additionalInfo}',
-                  style: const TextStyle(fontSize: 14, fontStyle: FontStyle.italic),
+                  style: const TextStyle(
+                      fontSize: 14, fontStyle: FontStyle.italic),
                 ),
               ],
               const SizedBox(height: 16),

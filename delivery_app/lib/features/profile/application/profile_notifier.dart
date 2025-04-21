@@ -63,8 +63,8 @@ class ProfileNotifier extends StateNotifier<AsyncValue<DeliveryPersonModel?>> {
 }
 
 // مزود الـ Notifier للبروفايل
-final profileProvider =
-    StateNotifierProvider.autoDispose<ProfileNotifier, AsyncValue<DeliveryPersonModel?>>((ref) {
+final profileProvider = StateNotifierProvider.autoDispose<ProfileNotifier,
+    AsyncValue<DeliveryPersonModel?>>((ref) {
   final deliveryPersonId = ref.watch(currentDeliveryPersonIdProvider);
   return ProfileNotifier(deliveryPersonId);
 });

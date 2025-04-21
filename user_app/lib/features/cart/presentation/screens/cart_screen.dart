@@ -12,7 +12,7 @@ class CartScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
-    
+
     // قائمة مؤقتة لعناصر السلة للعرض
     final cartItems = [
       CartItem(
@@ -56,25 +56,30 @@ class CartScreen extends ConsumerWidget {
       ),
       body: ResponsiveBuilder(
         // تنفيذ واجهة الهاتف
-        mobileBuilder: (context) => _buildMobileLayout(context, l10n, cartItems),
-        
+        mobileBuilder: (context) =>
+            _buildMobileLayout(context, l10n, cartItems),
+
         // تنفيذ واجهة الجهاز اللوحي
-        smallTabletBuilder: (context) => _buildTabletLayout(context, l10n, cartItems),
-        
+        smallTabletBuilder: (context) =>
+            _buildTabletLayout(context, l10n, cartItems),
+
         // تنفيذ واجهة سطح المكتب
-        desktopBuilder: (context) => _buildDesktopLayout(context, l10n, cartItems),
+        desktopBuilder: (context) =>
+            _buildDesktopLayout(context, l10n, cartItems),
       ),
       bottomNavigationBar: ResponsiveBuilder(
         mobileBuilder: (context) => _buildBottomBar(context, l10n, cartItems),
-        smallTabletBuilder: (context) => _buildBottomBar(context, l10n, cartItems),
-        desktopBuilder: (context) => const SizedBox.shrink(), // لا نعرض شريط التنقل السفلي في وضع سطح المكتب
+        smallTabletBuilder: (context) =>
+            _buildBottomBar(context, l10n, cartItems),
+        desktopBuilder: (context) => const SizedBox
+            .shrink(), // لا نعرض شريط التنقل السفلي في وضع سطح المكتب
       ),
     );
   }
 
   // بناء تخطيط الهاتف
   Widget _buildMobileLayout(
-    BuildContext context, 
+    BuildContext context,
     AppLocalizations l10n,
     List<CartItem> cartItems,
   ) {
@@ -85,14 +90,14 @@ class CartScreen extends ConsumerWidget {
 
   // بناء تخطيط الجهاز اللوحي
   Widget _buildTabletLayout(
-    BuildContext context, 
+    BuildContext context,
     AppLocalizations l10n,
     List<CartItem> cartItems,
   ) {
     if (cartItems.isEmpty) {
       return _buildEmptyCart(context, l10n);
     }
-    
+
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: Row(
@@ -103,9 +108,9 @@ class CartScreen extends ConsumerWidget {
             flex: 3,
             child: _buildCartItemsList(context, l10n, cartItems),
           ),
-          
+
           const SizedBox(width: 16),
-          
+
           // ملخص السلة
           Expanded(
             flex: 2,
@@ -118,14 +123,14 @@ class CartScreen extends ConsumerWidget {
 
   // بناء تخطيط سطح المكتب
   Widget _buildDesktopLayout(
-    BuildContext context, 
+    BuildContext context,
     AppLocalizations l10n,
     List<CartItem> cartItems,
   ) {
     if (cartItems.isEmpty) {
       return _buildEmptyCart(context, l10n);
     }
-    
+
     return Padding(
       padding: const EdgeInsets.all(24.0),
       child: Row(
@@ -149,9 +154,10 @@ class CartScreen extends ConsumerWidget {
                       children: [
                         Text(
                           l10n.itemsInOrder,
-                          style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
+                          style:
+                              Theme.of(context).textTheme.titleLarge?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
                         ),
                         Text(
                           '${cartItems.length} ${l10n.items}',
@@ -162,16 +168,17 @@ class CartScreen extends ConsumerWidget {
                     const SizedBox(height: 16),
                     const Divider(),
                     Expanded(
-                      child: _buildCartItemsList(context, l10n, cartItems, isScrollable: true),
+                      child: _buildCartItemsList(context, l10n, cartItems,
+                          isScrollable: true),
                     ),
                   ],
                 ),
               ),
             ),
           ),
-          
+
           const SizedBox(width: 24),
-          
+
           // ملخص السلة
           Expanded(
             flex: 3,
@@ -184,7 +191,7 @@ class CartScreen extends ConsumerWidget {
 
   // بناء قائمة عناصر السلة
   Widget _buildCartItemsList(
-    BuildContext context, 
+    BuildContext context,
     AppLocalizations l10n,
     List<CartItem> cartItems, {
     bool isScrollable = false,
@@ -193,7 +200,9 @@ class CartScreen extends ConsumerWidget {
       padding: const EdgeInsets.all(16.0),
       itemCount: cartItems.length,
       shrinkWrap: !isScrollable,
-      physics: isScrollable ? const AlwaysScrollableScrollPhysics() : const NeverScrollableScrollPhysics(),
+      physics: isScrollable
+          ? const AlwaysScrollableScrollPhysics()
+          : const NeverScrollableScrollPhysics(),
       separatorBuilder: (context, index) => const SizedBox(height: 16),
       itemBuilder: (context, index) {
         final item = cartItems[index];
@@ -208,15 +217,13 @@ class CartScreen extends ConsumerWidget {
         );
       },
     );
-    
-    return isScrollable
-        ? listView
-        : SingleChildScrollView(child: listView);
+
+    return isScrollable ? listView : SingleChildScrollView(child: listView);
   }
 
   // بناء ملخص السلة
   Widget _buildCartSummary(
-    BuildContext context, 
+    BuildContext context,
     AppLocalizations l10n,
     List<CartItem> cartItems,
   ) {
@@ -225,13 +232,13 @@ class CartScreen extends ConsumerWidget {
       0,
       (sum, item) => sum + (item.price * item.quantity),
     );
-    
+
     // حساب الضريبة (15%)
     final tax = subtotal * 0.15;
-    
+
     // حساب رسوم الشحن
     const shipping = 30.0;
-    
+
     // حساب المجموع الكلي
     final total = subtotal + tax + shipping;
 
@@ -252,7 +259,7 @@ class CartScreen extends ConsumerWidget {
                   ),
             ),
             const SizedBox(height: 24),
-            
+
             // المجموع الفرعي
             _buildSummaryRow(
               context,
@@ -260,7 +267,7 @@ class CartScreen extends ConsumerWidget {
               value: '${l10n.currencySymbol} ${subtotal.toStringAsFixed(2)}',
             ),
             const SizedBox(height: 12),
-            
+
             // الضريبة
             _buildSummaryRow(
               context,
@@ -268,19 +275,19 @@ class CartScreen extends ConsumerWidget {
               value: '${l10n.currencySymbol} ${tax.toStringAsFixed(2)}',
             ),
             const SizedBox(height: 12),
-            
+
             // الشحن
             _buildSummaryRow(
               context,
               label: l10n.shipping,
               value: '${l10n.currencySymbol} ${shipping.toStringAsFixed(2)}',
             ),
-            
+
             const Padding(
               padding: EdgeInsets.symmetric(vertical: 16.0),
               child: Divider(),
             ),
-            
+
             // المجموع الكلي
             _buildSummaryRow(
               context,
@@ -288,9 +295,9 @@ class CartScreen extends ConsumerWidget {
               value: '${l10n.currencySymbol} ${total.toStringAsFixed(2)}',
               isTotal: true,
             ),
-            
+
             const SizedBox(height: 24),
-            
+
             // حقل الكوبون
             TextField(
               decoration: InputDecoration(
@@ -304,9 +311,9 @@ class CartScreen extends ConsumerWidget {
                 ),
               ),
             ),
-            
+
             const SizedBox(height: 24),
-            
+
             // زر الدفع
             SizedBox(
               width: double.infinity,
@@ -359,14 +366,14 @@ class CartScreen extends ConsumerWidget {
 
   // بناء شريط التنقل السفلي
   Widget _buildBottomBar(
-    BuildContext context, 
+    BuildContext context,
     AppLocalizations l10n,
     List<CartItem> cartItems,
   ) {
     if (cartItems.isEmpty) {
       return const SizedBox.shrink();
     }
-    
+
     // حساب المجموع الكلي
     final subtotal = cartItems.fold<double>(
       0,
@@ -410,7 +417,7 @@ class CartScreen extends ConsumerWidget {
               ],
             ),
           ),
-          
+
           // زر الدفع
           Expanded(
             child: ElevatedButton.icon(
@@ -480,7 +487,8 @@ class CartScreen extends ConsumerWidget {
       context: context,
       builder: (context) => AlertDialog(
         title: Text(l10n.clearAll),
-        content: Text('هل أنت متأكد من رغبتك في حذف جميع العناصر من سلة التسوق؟'),
+        content: const Text(
+            'هل أنت متأكد من رغبتك في حذف جميع العناصر من سلة التسوق؟'),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
@@ -563,7 +571,7 @@ class CartItemCard extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 12),
-            
+
             // معلومات المنتج
             Expanded(
               child: Column(
@@ -620,7 +628,8 @@ class CartItemCard extends StatelessWidget {
                               ),
                             ),
                             Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 8),
+                              padding:
+                                  const EdgeInsets.symmetric(horizontal: 8),
                               child: Text(
                                 '${item.quantity}',
                                 style: Theme.of(context).textTheme.bodyMedium,

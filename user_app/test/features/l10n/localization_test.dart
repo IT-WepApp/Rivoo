@@ -129,19 +129,19 @@ void main() {
       // هذا اختبار وحدة للتحقق من تطابق مفاتيح الترجمة بين جميع اللغات
       // في التطبيق الحقيقي، يمكننا قراءة ملفات .arb وتحليلها للتحقق من تطابق المفاتيح
       // هنا نقوم بمحاكاة هذا الاختبار
-      
+
       // مثال على كيفية التحقق من تطابق المفاتيح في ملفات الترجمة
       final arKeys = ['appTitle', 'home', 'settings', 'profile'];
       final enKeys = ['appTitle', 'home', 'settings', 'profile'];
       final frKeys = ['appTitle', 'home', 'settings', 'profile'];
       final trKeys = ['appTitle', 'home', 'settings', 'profile'];
       final urKeys = ['appTitle', 'home', 'settings', 'profile'];
-      
+
       expect(arKeys.length, enKeys.length);
       expect(arKeys.length, frKeys.length);
       expect(arKeys.length, trKeys.length);
       expect(arKeys.length, urKeys.length);
-      
+
       for (final key in arKeys) {
         expect(enKeys.contains(key), true);
         expect(frKeys.contains(key), true);

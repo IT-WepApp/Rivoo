@@ -11,21 +11,23 @@ class InventoryManagementPage extends ConsumerStatefulWidget {
   const InventoryManagementPage({Key? key}) : super(key: key);
 
   @override
-  ConsumerState<InventoryManagementPage> createState() => _InventoryManagementPageState();
+  ConsumerState<InventoryManagementPage> createState() =>
+      _InventoryManagementPageState();
 }
 
-class _InventoryManagementPageState extends ConsumerState<InventoryManagementPage> {
+class _InventoryManagementPageState
+    extends ConsumerState<InventoryManagementPage> {
   bool _isLoading = true;
   bool _isSubmitting = false;
   String _errorMessage = '';
-  
+
   List<Map<String, dynamic>> _products = [];
   List<Map<String, dynamic>> _filteredProducts = [];
-  
+
   String _searchQuery = '';
   String _selectedCategory = 'الكل';
   List<String> _categories = ['الكل'];
-  
+
   String _sortBy = 'name';
   bool _sortAscending = true;
 
@@ -44,14 +46,14 @@ class _InventoryManagementPageState extends ConsumerState<InventoryManagementPag
     try {
       final productService = ref.read(productServiceProvider);
       final products = await productService.getSellerProducts();
-      
+
       // استخراج الفئات الفريدة
       final uniqueCategories = <String>{'الكل'};
       for (final product in products) {
         final category = product['category'] as String? ?? 'أخرى';
         uniqueCategories.add(category);
       }
-      
+
       setState(() {
         _products = products;
         _categories = uniqueCategories.toList()..sort();
@@ -68,19 +70,19 @@ class _InventoryManagementPageState extends ConsumerState<InventoryManagementPag
 
   void _applyFilters() {
     List<Map<String, dynamic>> filtered = List.from(_products);
-    
+
     // تطبيق فلتر البحث
     if (_searchQuery.isNotEmpty) {
       filtered = filtered.where((product) {
         final name = product['name'] as String? ?? '';
         final description = product['description'] as String? ?? '';
         final searchLower = _searchQuery.toLowerCase();
-        
-        return name.toLowerCase().contains(searchLower) || 
-               description.toLowerCase().contains(searchLower);
+
+        return name.toLowerCase().contains(searchLower) ||
+            description.toLowerCase().contains(searchLower);
       }).toList();
     }
-    
+
     // تطبيق فلتر الفئة
     if (_selectedCategory != 'الكل') {
       filtered = filtered.where((product) {
@@ -88,12 +90,12 @@ class _InventoryManagementPageState extends ConsumerState<InventoryManagementPag
         return category == _selectedCategory;
       }).toList();
     }
-    
+
     // تطبيق الترتيب
     filtered.sort((a, b) {
       dynamic valueA;
       dynamic valueB;
-      
+
       switch (_sortBy) {
         case 'name':
           valueA = a['name'] as String? ?? '';
@@ -111,16 +113,20 @@ class _InventoryManagementPageState extends ConsumerState<InventoryManagementPag
           valueA = a['name'] as String? ?? '';
           valueB = b['name'] as String? ?? '';
       }
-      
+
       if (valueA is String && valueB is String) {
-        return _sortAscending ? valueA.compareTo(valueB) : valueB.compareTo(valueA);
+        return _sortAscending
+            ? valueA.compareTo(valueB)
+            : valueB.compareTo(valueA);
       } else if (valueA is num && valueB is num) {
-        return _sortAscending ? valueA.compareTo(valueB) : valueB.compareTo(valueA);
+        return _sortAscending
+            ? valueA.compareTo(valueB)
+            : valueB.compareTo(valueA);
       }
-      
+
       return 0;
     });
-    
+
     setState(() {
       _filteredProducts = filtered;
     });
@@ -138,18 +144,18 @@ class _InventoryManagementPageState extends ConsumerState<InventoryManagementPag
         productId,
         {'stockQuantity': newStock},
       );
-      
+
       // تحديث القائمة المحلية
       setState(() {
         final productIndex = _products.indexWhere((p) => p['id'] == productId);
         if (productIndex != -1) {
           _products[productIndex]['stockQuantity'] = newStock;
         }
-        
+
         _applyFilters();
         _isSubmitting = false;
       });
-      
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -175,40 +181,43 @@ class _InventoryManagementPageState extends ConsumerState<InventoryManagementPag
 
     try {
       final productService = ref.read(productServiceProvider);
-      
+
       // الحصول على بيانات المنتج الحالية
       final productIndex = _products.indexWhere((p) => p['id'] == productId);
       if (productIndex == -1) {
         throw Exception('المنتج غير موجود');
       }
-      
+
       final product = _products[productIndex];
       final hasDiscount = product['hasDiscount'] as bool? ?? false;
-      
+
       // تحديث السعر والسعر بعد الخصم إذا كان هناك خصم
       final updateData = {'price': newPrice};
-      
+
       if (hasDiscount) {
-        final discountPercentage = product['discountPercentage'] as double? ?? 0;
+        final discountPercentage =
+            product['discountPercentage'] as double? ?? 0;
         final discountedPrice = newPrice * (1 - discountPercentage / 100);
         updateData['discountedPrice'] = discountedPrice;
       }
-      
+
       await productService.updateProduct(productId, updateData);
-      
+
       // تحديث القائمة المحلية
       setState(() {
         _products[productIndex]['price'] = newPrice;
-        
+
         if (hasDiscount) {
-          final discountPercentage = product['discountPercentage'] as double? ?? 0;
-          _products[productIndex]['discountedPrice'] = newPrice * (1 - discountPercentage / 100);
+          final discountPercentage =
+              product['discountPercentage'] as double? ?? 0;
+          _products[productIndex]['discountedPrice'] =
+              newPrice * (1 - discountPercentage / 100);
         }
-        
+
         _applyFilters();
         _isSubmitting = false;
       });
-      
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
@@ -226,7 +235,8 @@ class _InventoryManagementPageState extends ConsumerState<InventoryManagementPag
     }
   }
 
-  Future<void> _updateProductAvailability(String productId, bool isAvailable) async {
+  Future<void> _updateProductAvailability(
+      String productId, bool isAvailable) async {
     setState(() {
       _isSubmitting = true;
       _errorMessage = '';
@@ -238,22 +248,24 @@ class _InventoryManagementPageState extends ConsumerState<InventoryManagementPag
         productId,
         {'isAvailable': isAvailable},
       );
-      
+
       // تحديث القائمة المحلية
       setState(() {
         final productIndex = _products.indexWhere((p) => p['id'] == productId);
         if (productIndex != -1) {
           _products[productIndex]['isAvailable'] = isAvailable;
         }
-        
+
         _applyFilters();
         _isSubmitting = false;
       });
-      
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text(isAvailable ? 'تم تفعيل المنتج بنجاح' : 'تم تعطيل المنتج بنجاح'),
+            content: Text(isAvailable
+                ? 'تم تفعيل المنتج بنجاح'
+                : 'تم تعطيل المنتج بنجاح'),
             backgroundColor: AppColors.success,
             behavior: SnackBarBehavior.floating,
           ),
@@ -270,7 +282,7 @@ class _InventoryManagementPageState extends ConsumerState<InventoryManagementPag
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('إدارة المخزون والأسعار'),
@@ -297,12 +309,13 @@ class _InventoryManagementPageState extends ConsumerState<InventoryManagementPag
                       children: [
                         // أدوات البحث والفلترة
                         _buildFilterBar(theme),
-                        
+
                         // رسالة الخطأ
                         if (_errorMessage.isNotEmpty)
                           Container(
                             padding: const EdgeInsets.all(8),
-                            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                            margin: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 8),
                             decoration: BoxDecoration(
                               color: AppColors.error.withOpacity(0.1),
                               borderRadius: BorderRadius.circular(8),
@@ -310,10 +323,10 @@ class _InventoryManagementPageState extends ConsumerState<InventoryManagementPag
                             ),
                             child: Text(
                               _errorMessage,
-                              style: TextStyle(color: AppColors.error),
+                              style: const TextStyle(color: AppColors.error),
                             ),
                           ),
-                        
+
                         // قائمة المنتجات
                         Expanded(
                           child: _buildProductsList(theme),
@@ -338,7 +351,8 @@ class _InventoryManagementPageState extends ConsumerState<InventoryManagementPag
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(8),
               ),
-              contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+              contentPadding:
+                  const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
             ),
             onChanged: (value) {
               setState(() {
@@ -348,7 +362,7 @@ class _InventoryManagementPageState extends ConsumerState<InventoryManagementPag
             },
           ),
           const SizedBox(height: 16),
-          
+
           // فلاتر إضافية
           Row(
             children: [
@@ -359,7 +373,8 @@ class _InventoryManagementPageState extends ConsumerState<InventoryManagementPag
                   decoration: const InputDecoration(
                     labelText: 'الفئة',
                     border: OutlineInputBorder(),
-                    contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    contentPadding:
+                        EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   ),
                   items: _categories.map((category) {
                     return DropdownMenuItem<String>(
@@ -378,7 +393,7 @@ class _InventoryManagementPageState extends ConsumerState<InventoryManagementPag
                 ),
               ),
               const SizedBox(width: 16),
-              
+
               // فلتر الترتيب
               Expanded(
                 child: DropdownButtonFormField<String>(
@@ -386,7 +401,8 @@ class _InventoryManagementPageState extends ConsumerState<InventoryManagementPag
                   decoration: const InputDecoration(
                     labelText: 'ترتيب حسب',
                     border: OutlineInputBorder(),
-                    contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                    contentPadding:
+                        EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                   ),
                   items: const [
                     DropdownMenuItem<String>(
@@ -413,10 +429,11 @@ class _InventoryManagementPageState extends ConsumerState<InventoryManagementPag
                 ),
               ),
               const SizedBox(width: 8),
-              
+
               // زر تبديل اتجاه الترتيب
               IconButton(
-                icon: Icon(_sortAscending ? Icons.arrow_upward : Icons.arrow_downward),
+                icon: Icon(
+                    _sortAscending ? Icons.arrow_upward : Icons.arrow_downward),
                 onPressed: () {
                   setState(() {
                     _sortAscending = !_sortAscending;
@@ -464,7 +481,7 @@ class _InventoryManagementPageState extends ConsumerState<InventoryManagementPag
         ),
       );
     }
-    
+
     return ListView.builder(
       padding: const EdgeInsets.all(16),
       itemCount: _filteredProducts.length,
@@ -478,7 +495,7 @@ class _InventoryManagementPageState extends ConsumerState<InventoryManagementPag
         final isAvailable = product['isAvailable'] as bool? ?? true;
         final hasDiscount = product['hasDiscount'] as bool? ?? false;
         final discountedPrice = product['discountedPrice'] as num? ?? price;
-        
+
         return Card(
           margin: const EdgeInsets.only(bottom: 16),
           child: Padding(
@@ -504,7 +521,8 @@ class _InventoryManagementPageState extends ConsumerState<InventoryManagementPag
                               width: 80,
                               height: 80,
                               color: Colors.grey.shade200,
-                              child: const Icon(Icons.image_not_supported, color: Colors.grey),
+                              child: const Icon(Icons.image_not_supported,
+                                  color: Colors.grey),
                             );
                           },
                         ),
@@ -520,7 +538,7 @@ class _InventoryManagementPageState extends ConsumerState<InventoryManagementPag
                         child: const Icon(Icons.image, color: Colors.grey),
                       ),
                     const SizedBox(width: 16),
-                    
+
                     // معلومات المنتج
                     Expanded(
                       child: Column(
@@ -533,7 +551,7 @@ class _InventoryManagementPageState extends ConsumerState<InventoryManagementPag
                             ),
                           ),
                           const SizedBox(height: 4),
-                          
+
                           // السعر
                           Row(
                             children: [
@@ -546,7 +564,8 @@ class _InventoryManagementPageState extends ConsumerState<InventoryManagementPag
                                   children: [
                                     Text(
                                       '${price.toStringAsFixed(2)} ر.س',
-                                      style: theme.textTheme.bodyMedium?.copyWith(
+                                      style:
+                                          theme.textTheme.bodyMedium?.copyWith(
                                         decoration: TextDecoration.lineThrough,
                                         color: Colors.grey,
                                       ),
@@ -554,7 +573,8 @@ class _InventoryManagementPageState extends ConsumerState<InventoryManagementPag
                                     const SizedBox(width: 4),
                                     Text(
                                       '${discountedPrice.toStringAsFixed(2)} ر.س',
-                                      style: theme.textTheme.bodyMedium?.copyWith(
+                                      style:
+                                          theme.textTheme.bodyMedium?.copyWith(
                                         color: Colors.green,
                                         fontWeight: FontWeight.bold,
                                       ),
@@ -569,7 +589,7 @@ class _InventoryManagementPageState extends ConsumerState<InventoryManagementPag
                             ],
                           ),
                           const SizedBox(height: 4),
-                          
+
                           // المخزون
                           Row(
                             children: [
@@ -580,14 +600,16 @@ class _InventoryManagementPageState extends ConsumerState<InventoryManagementPag
                               Text(
                                 '$stockQuantity',
                                 style: theme.textTheme.bodyMedium?.copyWith(
-                                  color: stockQuantity > 0 ? Colors.green : Colors.red,
+                                  color: stockQuantity > 0
+                                      ? Colors.green
+                                      : Colors.red,
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
                             ],
                           ),
                           const SizedBox(height: 4),
-                          
+
                           // حالة المنتج
                           Row(
                             children: [
@@ -596,18 +618,23 @@ class _InventoryManagementPageState extends ConsumerState<InventoryManagementPag
                                 style: theme.textTheme.bodyMedium,
                               ),
                               Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 8, vertical: 2),
                                 decoration: BoxDecoration(
-                                  color: isAvailable ? Colors.green.withOpacity(0.1) : Colors.red.withOpacity(0.1),
+                                  color: isAvailable
+                                      ? Colors.green.withOpacity(0.1)
+                                      : Colors.red.withOpacity(0.1),
                                   borderRadius: BorderRadius.circular(4),
                                   border: Border.all(
-                                    color: isAvailable ? Colors.green : Colors.red,
+                                    color:
+                                        isAvailable ? Colors.green : Colors.red,
                                   ),
                                 ),
                                 child: Text(
                                   isAvailable ? 'متاح' : 'غير متاح',
                                   style: theme.textTheme.bodySmall?.copyWith(
-                                    color: isAvailable ? Colors.green : Colors.red,
+                                    color:
+                                        isAvailable ? Colors.green : Colors.red,
                                   ),
                                 ),
                               ),
@@ -618,31 +645,32 @@ class _InventoryManagementPageState extends ConsumerState<InventoryManagementPag
                     ),
                   ],
                 ),
-                
+
                 const Divider(height: 32),
-                
+
                 // أزرار التحكم
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
                     // تعديل المخزون
                     _buildStockControl(theme, productId, stockQuantity),
-                    
+
                     // تعديل السعر
                     _buildPriceControl(theme, productId, price.toDouble()),
-                    
+
                     // تفعيل/تعطيل المنتج
                     _buildAvailabilityControl(theme, productId, isAvailable),
                   ],
                 ),
-                
+
                 const SizedBox(height: 16),
-                
+
                 // زر تعديل المنتج
                 SizedBox(
                   width: double.infinity,
                   child: OutlinedButton.icon(
-                    onPressed: () => context.push('${RouteConstants.editProduct}/$productId'),
+                    onPressed: () => context
+                        .push('${RouteConstants.editProduct}/$productId'),
                     icon: const Icon(Icons.edit),
                     label: const Text('تعديل المنتج'),
                     style: OutlinedButton.styleFrom(
@@ -660,7 +688,8 @@ class _InventoryManagementPageState extends ConsumerState<InventoryManagementPag
     );
   }
 
-  Widget _buildStockControl(ThemeData theme, String productId, int currentStock) {
+  Widget _buildStockControl(
+      ThemeData theme, String productId, int currentStock) {
     return Column(
       children: [
         Text(
@@ -679,7 +708,7 @@ class _InventoryManagementPageState extends ConsumerState<InventoryManagementPag
               icon: const Icon(Icons.remove_circle_outline),
               color: Colors.red,
             ),
-            
+
             // عرض المخزون الحالي
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -692,7 +721,7 @@ class _InventoryManagementPageState extends ConsumerState<InventoryManagementPag
                 style: theme.textTheme.titleMedium,
               ),
             ),
-            
+
             // زر زيادة المخزون
             IconButton(
               onPressed: () => _updateProductStock(productId, currentStock + 1),
@@ -705,9 +734,11 @@ class _InventoryManagementPageState extends ConsumerState<InventoryManagementPag
     );
   }
 
-  Widget _buildPriceControl(ThemeData theme, String productId, double currentPrice) {
-    final priceController = TextEditingController(text: currentPrice.toStringAsFixed(2));
-    
+  Widget _buildPriceControl(
+      ThemeData theme, String productId, double currentPrice) {
+    final priceController =
+        TextEditingController(text: currentPrice.toStringAsFixed(2));
+
     return Column(
       children: [
         Text(
@@ -722,7 +753,8 @@ class _InventoryManagementPageState extends ConsumerState<InventoryManagementPag
             keyboardType: TextInputType.number,
             textAlign: TextAlign.center,
             decoration: InputDecoration(
-              contentPadding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(4),
               ),
@@ -740,7 +772,8 @@ class _InventoryManagementPageState extends ConsumerState<InventoryManagementPag
     );
   }
 
-  Widget _buildAvailabilityControl(ThemeData theme, String productId, bool isAvailable) {
+  Widget _buildAvailabilityControl(
+      ThemeData theme, String productId, bool isAvailable) {
     return Column(
       children: [
         Text(

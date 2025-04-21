@@ -8,7 +8,8 @@ import 'package:user_app/features/cart/application/cart_notifier.dart';
 import 'package:go_router/go_router.dart';
 
 // مزود يجلب تفاصيل طلب محدد
-final orderDetailsProvider = FutureProvider.autoDispose.family<OrderModel?, String>((ref, orderId) {
+final orderDetailsProvider =
+    FutureProvider.autoDispose.family<OrderModel?, String>((ref, orderId) {
   final orderService = ref.watch(orderServiceProvider);
   return orderService.getOrderDetails(orderId);
 });
@@ -36,13 +37,15 @@ class OrderDetailsPage extends ConsumerWidget {
 
           // تنسيق التاريخ
           final DateTime orderDate = order.createdAt.toDate();
-          final formattedDate = DateFormat('yyyy-MM-dd HH:mm').format(orderDate);
+          final formattedDate =
+              DateFormat('yyyy-MM-dd HH:mm').format(orderDate);
           final products = order.products;
           final totalPrice = order.total;
           final status = order.status;
           final isDelivered = status.toLowerCase() == 'delivered';
           final isCancelled = status.toLowerCase() == 'cancelled';
-          final isOutForDelivery = status.toLowerCase() == 'out_for_delivery' || status.toLowerCase() == 'out for delivery';
+          final isOutForDelivery = status.toLowerCase() == 'out_for_delivery' ||
+              status.toLowerCase() == 'out for delivery';
 
           return ListView(
             padding: const EdgeInsets.all(16.0),
@@ -57,10 +60,11 @@ class OrderDetailsPage extends ConsumerWidget {
                       Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('رقم الطلب: ${order.id.substring(0, 8)}', 
+                          Text('رقم الطلب: ${order.id.substring(0, 8)}',
                               style: theme.textTheme.titleMedium),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 8, vertical: 4),
                             decoration: BoxDecoration(
                               color: _getStatusColor(status),
                               borderRadius: BorderRadius.circular(12),
@@ -118,7 +122,8 @@ class OrderDetailsPage extends ConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text('المنتجات المطلوبة', style: theme.textTheme.titleLarge),
+                      Text('المنتجات المطلوبة',
+                          style: theme.textTheme.titleLarge),
                       const SizedBox(height: 16),
                       // التحقق من وجود منتجات
                       if (products.isEmpty)
@@ -140,19 +145,22 @@ class OrderDetailsPage extends ConsumerWidget {
                                   color: Colors.grey.shade200,
                                   borderRadius: BorderRadius.circular(8),
                                 ),
-                                child: product.imageUrl != null && product.imageUrl!.isNotEmpty
+                                child: product.imageUrl != null &&
+                                        product.imageUrl!.isNotEmpty
                                     ? ClipRRect(
                                         borderRadius: BorderRadius.circular(8),
                                         child: Image.network(
                                           product.imageUrl!,
                                           fit: BoxFit.cover,
-                                          errorBuilder: (ctx, err, st) => const Icon(
+                                          errorBuilder: (ctx, err, st) =>
+                                              const Icon(
                                             Icons.image_not_supported,
                                             color: Colors.grey,
                                           ),
                                         ),
                                       )
-                                    : const Icon(Icons.fastfood, color: Colors.grey),
+                                    : const Icon(Icons.fastfood,
+                                        color: Colors.grey),
                               ),
                               title: Text(product.name),
                               subtitle: Text('الكمية: ${product.quantity}'),
@@ -181,15 +189,16 @@ class OrderDetailsPage extends ConsumerWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           const Text('المجموع الفرعي:'),
-                          Text('${(totalPrice - 15.0 - (totalPrice * 0.15)).toStringAsFixed(2)} ريال'),
+                          Text(
+                              '${(totalPrice - 15.0 - (totalPrice * 0.15)).toStringAsFixed(2)} ريال'),
                         ],
                       ),
                       const SizedBox(height: 8),
-                      Row(
+                      const Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          const Text('رسوم التوصيل:'),
-                          const Text('15.00 ريال'),
+                          Text('رسوم التوصيل:'),
+                          Text('15.00 ريال'),
                         ],
                       ),
                       const SizedBox(height: 8),
@@ -197,7 +206,8 @@ class OrderDetailsPage extends ConsumerWidget {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           const Text('الضريبة (15%):'),
-                          Text('${(totalPrice * 0.15).toStringAsFixed(2)} ريال'),
+                          Text(
+                              '${(totalPrice * 0.15).toStringAsFixed(2)} ريال'),
                         ],
                       ),
                       const Divider(height: 24),
@@ -231,7 +241,8 @@ class OrderDetailsPage extends ConsumerWidget {
                         text: 'تتبع الطلب',
                         icon: Icons.location_on,
                         onPressed: () {
-                          context.goNamed('order-tracking', pathParameters: {'orderId': order.id});
+                          context.goNamed('order-tracking',
+                              pathParameters: {'orderId': order.id});
                         },
                       ),
                     ),
@@ -294,10 +305,10 @@ class OrderDetailsPage extends ConsumerWidget {
   void _reorderItems(BuildContext context, WidgetRef ref, OrderModel order) {
     // إضافة منتجات الطلب إلى سلة التسوق
     final cartNotifier = ref.read(cartProvider.notifier);
-    
+
     // مسح السلة الحالية قبل إضافة المنتجات الجديدة
     cartNotifier.clearCart();
-    
+
     // إضافة كل منتج من الطلب السابق إلى السلة
     for (final product in order.products) {
       // تحويل OrderProductItem إلى Product
@@ -310,11 +321,11 @@ class OrderDetailsPage extends ConsumerWidget {
         categoryId: '',
         storeId: '',
       );
-      
+
       // إضافة المنتج إلى السلة بنفس الكمية
       cartNotifier.addItem(productToAdd, quantity: product.quantity);
     }
-    
+
     // عرض رسالة تأكيد
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(
@@ -322,7 +333,7 @@ class OrderDetailsPage extends ConsumerWidget {
         duration: Duration(seconds: 2),
       ),
     );
-    
+
     // الانتقال إلى صفحة السلة
     context.go('/cart');
   }
@@ -348,7 +359,8 @@ class OrderDetailsPage extends ConsumerWidget {
                 ),
               );
             },
-            child: const Text('تأكيد الإلغاء', style: TextStyle(color: Colors.red)),
+            child: const Text('تأكيد الإلغاء',
+                style: TextStyle(color: Colors.red)),
           ),
         ],
       ),
@@ -391,18 +403,26 @@ class OrderDetailsPage extends ConsumerWidget {
         return Colors.grey;
     }
   }
-  
+
   String _getStatusText(String status) {
     switch (status.toLowerCase()) {
-      case 'pending': return 'قيد الانتظار';
-      case 'processing': return 'قيد المعالجة';
-      case 'accepted': return 'تم قبول الطلب';
-      case 'shipped': return 'تم الشحن';
-      case 'out_for_delivery': 
-      case 'out for delivery': return 'قيد التوصيل';
-      case 'delivered': return 'تم التوصيل';
-      case 'cancelled': return 'ملغي';
-      default: return status;
+      case 'pending':
+        return 'قيد الانتظار';
+      case 'processing':
+        return 'قيد المعالجة';
+      case 'accepted':
+        return 'تم قبول الطلب';
+      case 'shipped':
+        return 'تم الشحن';
+      case 'out_for_delivery':
+      case 'out for delivery':
+        return 'قيد التوصيل';
+      case 'delivered':
+        return 'تم التوصيل';
+      case 'cancelled':
+        return 'ملغي';
+      default:
+        return status;
     }
   }
 }

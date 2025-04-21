@@ -11,21 +11,30 @@ class OrdersManagementPage extends ConsumerStatefulWidget {
   const OrdersManagementPage({Key? key}) : super(key: key);
 
   @override
-  ConsumerState<OrdersManagementPage> createState() => _OrdersManagementPageState();
+  ConsumerState<OrdersManagementPage> createState() =>
+      _OrdersManagementPageState();
 }
 
 class _OrdersManagementPageState extends ConsumerState<OrdersManagementPage> {
   bool _isLoading = true;
   bool _isSubmitting = false;
   String _errorMessage = '';
-  
+
   List<Map<String, dynamic>> _orders = [];
   List<Map<String, dynamic>> _filteredOrders = [];
-  
+
   final _searchController = TextEditingController();
   String _selectedStatus = 'الكل';
-  List<String> _statusOptions = ['الكل', 'جديد', 'قيد التحضير', 'جاهز للتسليم', 'قيد التوصيل', 'تم التسليم', 'ملغي'];
-  
+  final List<String> _statusOptions = [
+    'الكل',
+    'جديد',
+    'قيد التحضير',
+    'جاهز للتسليم',
+    'قيد التوصيل',
+    'تم التسليم',
+    'ملغي'
+  ];
+
   String _sortBy = 'date';
   bool _sortAscending = false;
 
@@ -50,7 +59,7 @@ class _OrdersManagementPageState extends ConsumerState<OrdersManagementPage> {
     try {
       final orderService = ref.read(orderServiceProvider);
       final orders = await orderService.getSellerOrders();
-      
+
       setState(() {
         _orders = orders;
         _applyFilters();
@@ -66,19 +75,19 @@ class _OrdersManagementPageState extends ConsumerState<OrdersManagementPage> {
 
   void _applyFilters() {
     List<Map<String, dynamic>> filtered = List.from(_orders);
-    
+
     // تطبيق فلتر البحث
     if (_searchController.text.isNotEmpty) {
       filtered = filtered.where((order) {
         final orderNumber = order['orderNumber'] as String? ?? '';
         final customerName = order['customerName'] as String? ?? '';
         final searchLower = _searchController.text.toLowerCase();
-        
-        return orderNumber.toLowerCase().contains(searchLower) || 
-               customerName.toLowerCase().contains(searchLower);
+
+        return orderNumber.toLowerCase().contains(searchLower) ||
+            customerName.toLowerCase().contains(searchLower);
       }).toList();
     }
-    
+
     // تطبيق فلتر الحالة
     if (_selectedStatus != 'الكل') {
       filtered = filtered.where((order) {
@@ -86,12 +95,12 @@ class _OrdersManagementPageState extends ConsumerState<OrdersManagementPage> {
         return status == _selectedStatus;
       }).toList();
     }
-    
+
     // تطبيق الترتيب
     filtered.sort((a, b) {
       dynamic valueA;
       dynamic valueB;
-      
+
       switch (_sortBy) {
         case 'date':
           valueA = a['orderDate'] as DateTime? ?? DateTime.now();
@@ -105,16 +114,20 @@ class _OrdersManagementPageState extends ConsumerState<OrdersManagementPage> {
           valueA = a['orderDate'] as DateTime? ?? DateTime.now();
           valueB = b['orderDate'] as DateTime? ?? DateTime.now();
       }
-      
+
       if (valueA is DateTime && valueB is DateTime) {
-        return _sortAscending ? valueA.compareTo(valueB) : valueB.compareTo(valueA);
+        return _sortAscending
+            ? valueA.compareTo(valueB)
+            : valueB.compareTo(valueA);
       } else if (valueA is num && valueB is num) {
-        return _sortAscending ? valueA.compareTo(valueB) : valueB.compareTo(valueA);
+        return _sortAscending
+            ? valueA.compareTo(valueB)
+            : valueB.compareTo(valueA);
       }
-      
+
       return 0;
     });
-    
+
     setState(() {
       _filteredOrders = filtered;
     });
@@ -129,18 +142,18 @@ class _OrdersManagementPageState extends ConsumerState<OrdersManagementPage> {
     try {
       final orderService = ref.read(orderServiceProvider);
       await orderService.updateOrderStatus(orderId, newStatus);
-      
+
       // تحديث القائمة المحلية
       setState(() {
         final orderIndex = _orders.indexWhere((o) => o['id'] == orderId);
         if (orderIndex != -1) {
           _orders[orderIndex]['status'] = newStatus;
         }
-        
+
         _applyFilters();
         _isSubmitting = false;
       });
-      
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -180,7 +193,7 @@ class _OrdersManagementPageState extends ConsumerState<OrdersManagementPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('إدارة الطلبات'),
@@ -207,12 +220,13 @@ class _OrdersManagementPageState extends ConsumerState<OrdersManagementPage> {
                       children: [
                         // أدوات البحث والفلترة
                         _buildFilterBar(theme),
-                        
+
                         // رسالة الخطأ
                         if (_errorMessage.isNotEmpty)
                           Container(
                             padding: const EdgeInsets.all(8),
-                            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                            margin: const EdgeInsets.symmetric(
+                                horizontal: 16, vertical: 8),
                             decoration: BoxDecoration(
                               color: AppColors.error.withOpacity(0.1),
                               borderRadius: BorderRadius.circular(8),
@@ -220,10 +234,10 @@ class _OrdersManagementPageState extends ConsumerState<OrdersManagementPage> {
                             ),
                             child: Text(
                               _errorMessage,
-                              style: TextStyle(color: AppColors.error),
+                              style: const TextStyle(color: AppColors.error),
                             ),
                           ),
-                        
+
                         // قائمة الطلبات
                         Expanded(
                           child: _buildOrdersList(theme),
@@ -251,21 +265,23 @@ class _OrdersManagementPageState extends ConsumerState<OrdersManagementPage> {
             hintText: 'البحث برقم الطلب أو اسم العميل...',
           ),
           const SizedBox(height: 16),
-          
+
           // فلاتر إضافية
           Row(
             children: [
               // فلتر الحالة
               Expanded(
                 child: AppWidgets.appCard(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
                   elevation: 0,
                   child: DropdownButtonFormField<String>(
                     value: _selectedStatus,
                     decoration: const InputDecoration(
                       labelText: 'حالة الطلب',
                       border: OutlineInputBorder(),
-                      contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      contentPadding:
+                          EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     ),
                     items: _statusOptions.map((status) {
                       return DropdownMenuItem<String>(
@@ -285,18 +301,20 @@ class _OrdersManagementPageState extends ConsumerState<OrdersManagementPage> {
                 ),
               ),
               const SizedBox(width: 16),
-              
+
               // فلتر الترتيب
               Expanded(
                 child: AppWidgets.appCard(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 0),
                   elevation: 0,
                   child: DropdownButtonFormField<String>(
                     value: _sortBy,
                     decoration: const InputDecoration(
                       labelText: 'ترتيب حسب',
                       border: OutlineInputBorder(),
-                      contentPadding: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                      contentPadding:
+                          EdgeInsets.symmetric(horizontal: 16, vertical: 8),
                     ),
                     items: const [
                       DropdownMenuItem<String>(
@@ -320,13 +338,14 @@ class _OrdersManagementPageState extends ConsumerState<OrdersManagementPage> {
                 ),
               ),
               const SizedBox(width: 8),
-              
+
               // زر تبديل اتجاه الترتيب
               AppWidgets.appButton(
                 text: '',
                 width: 48,
                 height: 48,
-                icon: _sortAscending ? Icons.arrow_upward : Icons.arrow_downward,
+                icon:
+                    _sortAscending ? Icons.arrow_upward : Icons.arrow_downward,
                 onPressed: () {
                   setState(() {
                     _sortAscending = !_sortAscending;
@@ -363,7 +382,7 @@ class _OrdersManagementPageState extends ConsumerState<OrdersManagementPage> {
         ),
       );
     }
-    
+
     return ListView.builder(
       padding: const EdgeInsets.all(16),
       itemCount: _filteredOrders.length,
@@ -375,7 +394,7 @@ class _OrdersManagementPageState extends ConsumerState<OrdersManagementPage> {
         final orderDate = order['orderDate'] as DateTime? ?? DateTime.now();
         final totalAmount = order['totalAmount'] as num? ?? 0;
         final status = order['status'] as String? ?? 'جديد';
-        
+
         return AppWidgets.orderListItem(
           orderId: orderNumber,
           status: status,

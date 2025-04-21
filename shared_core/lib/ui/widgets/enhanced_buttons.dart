@@ -206,9 +206,8 @@ class _EnhancedButtonState extends State<_EnhancedButton> {
                 ? widget.backgroundColor.withOpacity(0.9)
                 : widget.backgroundColor;
 
-    final effectiveTextColor = isDisabled
-        ? widget.textColor.withOpacity(0.6)
-        : widget.textColor;
+    final effectiveTextColor =
+        isDisabled ? widget.textColor.withOpacity(0.6) : widget.textColor;
 
     final effectiveBorderColor = widget.borderColor != null
         ? isDisabled
@@ -351,9 +350,8 @@ class _EnhancedIconButtonState extends State<_EnhancedIconButton> {
                 ? widget.backgroundColor.withOpacity(0.9)
                 : widget.backgroundColor;
 
-    final effectiveIconColor = isDisabled
-        ? widget.iconColor.withOpacity(0.6)
-        : widget.iconColor;
+    final effectiveIconColor =
+        isDisabled ? widget.iconColor.withOpacity(0.6) : widget.iconColor;
 
     final effectiveElevation = isDisabled
         ? 0.0

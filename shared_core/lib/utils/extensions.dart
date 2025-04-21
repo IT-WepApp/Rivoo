@@ -11,12 +11,12 @@ extension StringExtensions on String {
         .replaceAll(RegExp(r'[^\w\s-]'), '')
         .replaceAll(RegExp(r'\s+'), '-');
   }
-  
+
   /// تحويل النص إلى Base64
   String toBase64() {
     return base64Encode(utf8.encode(this));
   }
-  
+
   /// فك تشفير النص من Base64
   String fromBase64() {
     try {
@@ -25,7 +25,7 @@ extension StringExtensions on String {
       return this;
     }
   }
-  
+
   /// اقتطاع النص إلى طول محدد مع إضافة علامة القطع
   String truncate(int length, {String ellipsis = '...'}) {
     if (this.length <= length) {
@@ -33,12 +33,12 @@ extension StringExtensions on String {
     }
     return '${substring(0, length)}$ellipsis';
   }
-  
+
   /// التحقق من أن النص يحتوي على نص آخر بغض النظر عن حالة الأحرف
   bool containsIgnoreCase(String other) {
     return toLowerCase().contains(other.toLowerCase());
   }
-  
+
   /// تحويل النص إلى لون
   Color toColor() {
     try {
@@ -62,7 +62,7 @@ extension ListExtensions<T> on List<T> {
     if (isEmpty) return null;
     return this[DateTime.now().millisecondsSinceEpoch % length];
   }
-  
+
   /// تقسيم القائمة إلى مجموعات بحجم محدد
   List<List<T>> chunked(int size) {
     final result = <List<T>>[];
@@ -72,12 +72,12 @@ extension ListExtensions<T> on List<T> {
     }
     return result;
   }
-  
+
   /// إزالة العناصر المكررة من القائمة
   List<T> distinct() {
     return toSet().toList();
   }
-  
+
   /// تطبيق دالة على كل عنصر في القائمة وإعادة قائمة جديدة
   List<R> mapIndexed<R>(R Function(int index, T item) transform) {
     final result = <R>[];
@@ -95,51 +95,56 @@ extension DateTimeExtensions on DateTime {
     final now = DateTime.now();
     return year == now.year && month == now.month && day == now.day;
   }
-  
+
   /// التحقق من أن التاريخ هو الأمس
   bool get isYesterday {
-    final yesterday = DateTime.now().subtract(Duration(days: 1));
-    return year == yesterday.year && month == yesterday.month && day == yesterday.day;
+    final yesterday = DateTime.now().subtract(const Duration(days: 1));
+    return year == yesterday.year &&
+        month == yesterday.month &&
+        day == yesterday.day;
   }
-  
+
   /// التحقق من أن التاريخ هو الغد
   bool get isTomorrow {
-    final tomorrow = DateTime.now().add(Duration(days: 1));
-    return year == tomorrow.year && month == tomorrow.month && day == tomorrow.day;
+    final tomorrow = DateTime.now().add(const Duration(days: 1));
+    return year == tomorrow.year &&
+        month == tomorrow.month &&
+        day == tomorrow.day;
   }
-  
+
   /// الحصول على التاريخ بدون الوقت
   DateTime get dateOnly {
     return DateTime(year, month, day);
   }
-  
+
   /// إضافة أيام إلى التاريخ
   DateTime addDays(int days) {
     return add(Duration(days: days));
   }
-  
+
   /// إضافة أشهر إلى التاريخ
   DateTime addMonths(int months) {
     var newMonth = month + months;
     var newYear = year;
-    
+
     while (newMonth > 12) {
       newMonth -= 12;
       newYear++;
     }
-    
+
     while (newMonth < 1) {
       newMonth += 12;
       newYear--;
     }
-    
+
     var newDay = day;
     final daysInMonth = DateTime(newYear, newMonth + 1, 0).day;
     if (newDay > daysInMonth) {
       newDay = daysInMonth;
     }
-    
-    return DateTime(newYear, newMonth, newDay, hour, minute, second, millisecond, microsecond);
+
+    return DateTime(newYear, newMonth, newDay, hour, minute, second,
+        millisecond, microsecond);
   }
 }
 
@@ -150,17 +155,17 @@ extension NumExtensions on num {
     final mod = pow(10.0, places);
     return (this * mod).round() / mod;
   }
-  
+
   /// تحويل الرقم إلى نسبة مئوية
   String toPercentage({int decimalPlaces = 0}) {
     return '${(this * 100).roundTo(decimalPlaces)}%';
   }
-  
+
   /// تحويل الرقم إلى مدة زمنية
   Duration toDuration() {
     return Duration(milliseconds: (this * 1000).round());
   }
-  
+
   /// التحقق من أن الرقم بين قيمتين
   bool isBetween(num min, num max) {
     return this >= min && this <= max;
@@ -173,7 +178,7 @@ extension WidgetExtensions on Widget {
   Widget withPadding(EdgeInsetsGeometry padding) {
     return Padding(padding: padding, child: this);
   }
-  
+
   /// إضافة حدود حول العنصر
   Widget withBorder({
     Color color = Colors.grey,
@@ -188,7 +193,7 @@ extension WidgetExtensions on Widget {
       child: this,
     );
   }
-  
+
   /// جعل العنصر قابل للنقر
   Widget onTap(VoidCallback onTap) {
     return GestureDetector(
@@ -196,7 +201,7 @@ extension WidgetExtensions on Widget {
       child: this,
     );
   }
-  
+
   /// إضافة ظل حول العنصر
   Widget withShadow({
     Color color = Colors.black26,

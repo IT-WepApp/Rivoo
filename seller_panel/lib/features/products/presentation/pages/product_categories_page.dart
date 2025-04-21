@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../core/constants/app_constants.dart';
 import '../../../../core/services/product_service.dart';
 import '../../../../core/widgets/app_widgets.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -162,7 +161,7 @@ class _ProductCategoriesPageState extends ConsumerState<ProductCategoriesPage> {
         
         // تحديث المنتجات في القائمة المحلية
         for (final product in _products) {
-          if (product['category'] as String? == oldCategoryName) {
+          if ((product['category'] as String?) == oldCategoryName) {
             product['category'] = newCategoryName;
           }
         }
@@ -193,7 +192,7 @@ class _ProductCategoriesPageState extends ConsumerState<ProductCategoriesPage> {
   Future<void> _deleteCategory(String category) async {
     // التحقق من عدم وجود منتجات تستخدم هذه الفئة
     final productsUsingCategory = _products.where((product) => 
-      product['category'] as String? == category
+      ((product['category'] as String?) == category)
     ).toList();
     
     if (productsUsingCategory.isNotEmpty) {
@@ -254,7 +253,7 @@ class _ProductCategoriesPageState extends ConsumerState<ProductCategoriesPage> {
         
         // تحديث المنتجات في القائمة المحلية
         for (final product in _products) {
-          if (product['category'] as String? == category) {
+          if ((product['category'] as String?) == category) {
             product['category'] = 'أخرى';
           }
         }
@@ -386,7 +385,7 @@ class _ProductCategoriesPageState extends ConsumerState<ProductCategoriesPage> {
                 padding: const EdgeInsets.only(top: 8),
                 child: Text(
                   _errorMessage,
-                  style: TextStyle(color: AppColors.error),
+                  style: const TextStyle(color: AppColors.error),
                 ),
               ),
             
@@ -479,7 +478,7 @@ class _ProductCategoriesPageState extends ConsumerState<ProductCategoriesPage> {
                               tooltip: 'تعديل',
                             ),
                             IconButton(
-                              icon: Icon(Icons.delete, color: AppColors.error),
+                              icon: const Icon(Icons.delete, color: AppColors.error),
                               onPressed: () => _deleteCategory(category),
                               tooltip: 'حذف',
                             ),

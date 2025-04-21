@@ -40,12 +40,14 @@ class ProductRepositoryImpl implements ProductRepository {
   }
 
   @override
-  Future<bool> toggleProductAvailability(String productId, bool isAvailable) async {
+  Future<bool> toggleProductAvailability(
+      String productId, bool isAvailable) async {
     return await dataSource.toggleProductAvailability(productId, isAvailable);
   }
 
   @override
-  Future<List<String>> uploadProductImages(String productId, List<String> localImagePaths) async {
+  Future<List<String>> uploadProductImages(
+      String productId, List<String> localImagePaths) async {
     return await dataSource.uploadProductImages(productId, localImagePaths);
   }
 
@@ -65,11 +67,11 @@ class ProductRepositoryImpl implements ProductRepository {
       category: data['category'] ?? '',
       isAvailable: data['isAvailable'] ?? true,
       sellerId: data['sellerId'] ?? '',
-      createdAt: data['createdAt'] != null 
-          ? (data['createdAt'] as Timestamp).toDate() 
+      createdAt: data['createdAt'] != null
+          ? (data['createdAt'] as Timestamp).toDate()
           : DateTime.now(),
-      updatedAt: data['updatedAt'] != null 
-          ? (data['updatedAt'] as Timestamp).toDate() 
+      updatedAt: data['updatedAt'] != null
+          ? (data['updatedAt'] as Timestamp).toDate()
           : DateTime.now(),
       attributes: data['attributes'],
       stockQuantity: data['stockQuantity'] ?? 0,
@@ -86,7 +88,8 @@ class ProductRepositoryImpl implements ProductRepository {
       'category': entity.category,
       'isAvailable': entity.isAvailable,
       'sellerId': entity.sellerId,
-      'createdAt': entity.id.isEmpty ? FieldValue.serverTimestamp() : entity.createdAt,
+      'createdAt':
+          entity.id.isEmpty ? FieldValue.serverTimestamp() : entity.createdAt,
       'updatedAt': FieldValue.serverTimestamp(),
       'attributes': entity.attributes,
       'stockQuantity': entity.stockQuantity,

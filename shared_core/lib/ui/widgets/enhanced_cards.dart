@@ -16,7 +16,6 @@ class EnhancedCards {
     BorderSide? border,
   }) {
     return _EnhancedCard(
-      child: child,
       padding: padding,
       borderRadius: borderRadius,
       backgroundColor: backgroundColor,
@@ -24,6 +23,7 @@ class EnhancedCards {
       elevation: elevation,
       onTap: onTap,
       border: border,
+      child: child,
     );
   }
 
@@ -159,11 +159,13 @@ class _EnhancedCardState extends State<_EnhancedCard> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
-    final effectiveBackgroundColor = widget.backgroundColor ?? 
-        (theme.brightness == Brightness.dark ? Colors.grey.shade800 : Colors.white);
-    
-    final effectiveShadowColor = widget.shadowColor ?? 
+
+    final effectiveBackgroundColor = widget.backgroundColor ??
+        (theme.brightness == Brightness.dark
+            ? Colors.grey.shade800
+            : Colors.white);
+
+    final effectiveShadowColor = widget.shadowColor ??
         (theme.brightness == Brightness.dark ? Colors.black54 : Colors.black26);
 
     final effectiveElevation = _isPressed
@@ -261,14 +263,16 @@ class _EnhancedInfoCardState extends State<_EnhancedInfoCard> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
-    final effectiveBackgroundColor = widget.backgroundColor ?? 
-        (theme.brightness == Brightness.dark ? Colors.grey.shade800 : Colors.white);
-    
-    final effectiveShadowColor = widget.shadowColor ?? 
+
+    final effectiveBackgroundColor = widget.backgroundColor ??
+        (theme.brightness == Brightness.dark
+            ? Colors.grey.shade800
+            : Colors.white);
+
+    final effectiveShadowColor = widget.shadowColor ??
         (theme.brightness == Brightness.dark ? Colors.black54 : Colors.black26);
-    
-    final effectiveTitleColor = widget.titleColor ?? 
+
+    final effectiveTitleColor = widget.titleColor ??
         (theme.brightness == Brightness.dark ? Colors.white : Colors.black87);
 
     final effectiveElevation = _isPressed
@@ -392,14 +396,16 @@ class _EnhancedActionCardState extends State<_EnhancedActionCard> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
-    final effectiveBackgroundColor = widget.backgroundColor ?? 
-        (theme.brightness == Brightness.dark ? Colors.grey.shade800 : Colors.white);
-    
-    final effectiveShadowColor = widget.shadowColor ?? 
+
+    final effectiveBackgroundColor = widget.backgroundColor ??
+        (theme.brightness == Brightness.dark
+            ? Colors.grey.shade800
+            : Colors.white);
+
+    final effectiveShadowColor = widget.shadowColor ??
         (theme.brightness == Brightness.dark ? Colors.black54 : Colors.black26);
-    
-    final effectiveTitleColor = widget.titleColor ?? 
+
+    final effectiveTitleColor = widget.titleColor ??
         (theme.brightness == Brightness.dark ? Colors.white : Colors.black87);
 
     final effectiveElevation = _isPressed
@@ -534,14 +540,16 @@ class _EnhancedImageCardState extends State<_EnhancedImageCard> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    
-    final effectiveBackgroundColor = widget.backgroundColor ?? 
-        (theme.brightness == Brightness.dark ? Colors.grey.shade800 : Colors.white);
-    
-    final effectiveShadowColor = widget.shadowColor ?? 
+
+    final effectiveBackgroundColor = widget.backgroundColor ??
+        (theme.brightness == Brightness.dark
+            ? Colors.grey.shade800
+            : Colors.white);
+
+    final effectiveShadowColor = widget.shadowColor ??
         (theme.brightness == Brightness.dark ? Colors.black54 : Colors.black26);
-    
-    final effectiveTitleColor = widget.titleColor ?? 
+
+    final effectiveTitleColor = widget.titleColor ??
         (theme.brightness == Brightness.dark ? Colors.white : Colors.black87);
 
     final effectiveElevation = _isPressed

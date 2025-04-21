@@ -17,7 +17,7 @@ void main() {
     repository = ProductRepositoryImpl(mockDataSource);
   });
 
-  final testSellerId = 'seller1';
+  const testSellerId = 'seller1';
   final testProductsData = [
     {
       'id': '1',
@@ -47,7 +47,8 @@ void main() {
     },
   ];
 
-  test('يجب أن يستدعي المستودع مصدر البيانات ويحول البيانات إلى كيانات', () async {
+  test('يجب أن يستدعي المستودع مصدر البيانات ويحول البيانات إلى كيانات',
+      () async {
     // الإعداد
     when(mockDataSource.getProducts(testSellerId))
         .thenAnswer((_) async => testProductsData);
@@ -69,19 +70,24 @@ void main() {
 
   test('يجب أن يستدعي المستودع مصدر البيانات لرفع صور المنتج', () async {
     // الإعداد
-    final testProductId = 'product1';
+    const testProductId = 'product1';
     final testLocalImagePaths = ['/path/to/image1.jpg', '/path/to/image2.jpg'];
-    final testImageUrls = ['https://example.com/image1.jpg', 'https://example.com/image2.jpg'];
-    
+    final testImageUrls = [
+      'https://example.com/image1.jpg',
+      'https://example.com/image2.jpg'
+    ];
+
     when(mockDataSource.uploadProductImages(testProductId, testLocalImagePaths))
         .thenAnswer((_) async => testImageUrls);
 
     // التنفيذ
-    final result = await repository.uploadProductImages(testProductId, testLocalImagePaths);
+    final result = await repository.uploadProductImages(
+        testProductId, testLocalImagePaths);
 
     // التحقق
     expect(result, testImageUrls);
-    verify(mockDataSource.uploadProductImages(testProductId, testLocalImagePaths));
+    verify(
+        mockDataSource.uploadProductImages(testProductId, testLocalImagePaths));
     verifyNoMoreInteractions(mockDataSource);
   });
 }

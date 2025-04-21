@@ -46,17 +46,21 @@ class CategoryManagementPage extends ConsumerWidget {
                 ),
               ),
               Expanded(
-                child: categoryState.categories.isEmpty && !categoryState.isLoading
+                child: categoryState.categories.isEmpty &&
+                        !categoryState.isLoading
                     ? const Center(child: Text('No categories found.'))
                     : ListView.builder(
                         itemCount: categoryState.categories.length,
                         itemBuilder: (context, index) {
                           final category = categoryState.categories[index];
                           return Card(
-                            margin: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                            margin: const EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 5),
                             child: ListTile(
                               title: Text(category.name),
-                              subtitle: category.description != null ? Text(category.description!) : null,
+                              subtitle: category.description != null
+                                  ? Text(category.description!)
+                                  : null,
                               trailing: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
@@ -72,7 +76,8 @@ class CategoryManagementPage extends ConsumerWidget {
                                     icon: const Icon(Icons.delete),
                                     color: Colors.red,
                                     onPressed: () {
-                                      _showDeleteConfirmationDialog(context, ref, category.id);
+                                      _showDeleteConfirmationDialog(
+                                          context, ref, category.id);
                                     },
                                   ),
                                 ],
@@ -91,7 +96,8 @@ class CategoryManagementPage extends ConsumerWidget {
     );
   }
 
-  void _showDeleteConfirmationDialog(BuildContext context, WidgetRef ref, String categoryId) {
+  void _showDeleteConfirmationDialog(
+      BuildContext context, WidgetRef ref, String categoryId) {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
@@ -105,7 +111,9 @@ class CategoryManagementPage extends ConsumerWidget {
           ElevatedButton(
             style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
             onPressed: () {
-              ref.read(categoryNotifierProvider.notifier).deleteCategory(categoryId);
+              ref
+                  .read(categoryNotifierProvider.notifier)
+                  .deleteCategory(categoryId);
               Navigator.pop(context);
             },
             child: const Text('Delete', style: TextStyle(color: Colors.white)),
@@ -119,10 +127,12 @@ class CategoryManagementPage extends ConsumerWidget {
       {Category? category, required WidgetRef ref}) {
     final isEditing = category != null;
     final nameController = TextEditingController(text: category?.name ?? '');
-    final descriptionController = TextEditingController(text: category?.description ?? '');
+    final descriptionController =
+        TextEditingController(text: category?.description ?? '');
     final formKey = GlobalKey<FormState>();
 
-    Future.microtask(() => ref.read(categoryNotifierProvider.notifier).clearError());
+    Future.microtask(
+        () => ref.read(categoryNotifierProvider.notifier).clearError());
 
     showDialog(
       context: context,
@@ -167,7 +177,8 @@ class CategoryManagementPage extends ConsumerWidget {
                         padding: const EdgeInsets.only(top: 8.0),
                         child: Text(
                           state.error!,
-                          style: TextStyle(color: Theme.of(context).colorScheme.error),
+                          style: TextStyle(
+                              color: Theme.of(context).colorScheme.error),
                         ),
                       ),
                   ],
@@ -175,7 +186,8 @@ class CategoryManagementPage extends ConsumerWidget {
               ),
               actions: [
                 TextButton(
-                  onPressed: state.isLoading ? null : () => Navigator.pop(context),
+                  onPressed:
+                      state.isLoading ? null : () => Navigator.pop(context),
                   child: const Text('Cancel'),
                 ),
                 ElevatedButton(
@@ -191,7 +203,9 @@ class CategoryManagementPage extends ConsumerWidget {
                               success = await notifier.updateCategory(
                                 category.copyWith(
                                   name: name,
-                                  description: description.isNotEmpty ? description : null,
+                                  description: description.isNotEmpty
+                                      ? description
+                                      : null,
                                 ),
                               );
                             } else {
@@ -199,7 +213,9 @@ class CategoryManagementPage extends ConsumerWidget {
                                 Category(
                                   id: '', // ✅ تمرير ID مؤقت لتجنب الخطأ
                                   name: name,
-                                  description: description.isNotEmpty ? description : null,
+                                  description: description.isNotEmpty
+                                      ? description
+                                      : null,
                                 ),
                               );
                             }
@@ -210,7 +226,10 @@ class CategoryManagementPage extends ConsumerWidget {
                           }
                         },
                   child: state.isLoading
-                      ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2))
+                      ? const SizedBox(
+                          height: 20,
+                          width: 20,
+                          child: CircularProgressIndicator(strokeWidth: 2))
                       : Text(isEditing ? 'Update' : 'Add'),
                 ),
               ],

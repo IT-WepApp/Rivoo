@@ -58,5 +58,6 @@ class OrderItem extends Equatable {
   });
 
   @override
-  List<Object?> get props => [id, productId, productName, price, quantity, imageUrl];
+  List<Object?> get props =>
+      [id, productId, productName, price, quantity, imageUrl];
 }

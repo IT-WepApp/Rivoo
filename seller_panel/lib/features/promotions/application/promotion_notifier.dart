@@ -30,7 +30,9 @@ class PromotionState {
       promotion: promotion is Promotion? ? promotion : this.promotion,
       isLoading: isLoading ?? this.isLoading,
       error: clearError ? null : error ?? this.error,
-      validationErrors: clearValidationErrors ? {} : validationErrors ?? this.validationErrors,
+      validationErrors: clearValidationErrors
+          ? {}
+          : validationErrors ?? this.validationErrors,
     );
   }
 }
@@ -39,17 +41,21 @@ class PromotionNotifier extends StateNotifier<PromotionState> {
   final ProductService _productService;
   final String productId;
 
-  PromotionNotifier(this._productService, this.productId) : super(PromotionState()) {
+  PromotionNotifier(this._productService, this.productId)
+      : super(PromotionState()) {
     loadPromotion();
   }
 
   Future<void> loadPromotion() async {
-    state = state.copyWith(isLoading: true, clearError: true, clearValidationErrors: true);
+    state = state.copyWith(
+        isLoading: true, clearError: true, clearValidationErrors: true);
     try {
       final product = await _productService.getProduct(productId);
       Promotion? loadedPromotion;
-      if (product != null && product.promotionType != null && product.promotionValue != null) {
-        loadedPromotion =  Promotion(
+      if (product != null &&
+          product.promotionType != null &&
+          product.promotionValue != null) {
+        loadedPromotion = Promotion(
           type: product.promotionType!,
           value: product.promotionValue!,
           startDate: product.promotionStartDate,
@@ -58,16 +64,20 @@ class PromotionNotifier extends StateNotifier<PromotionState> {
       }
       state = state.copyWith(promotion: loadedPromotion, isLoading: false);
     } catch (e, stacktrace) {
-      log('Error loading promotion', error: e, stackTrace: stacktrace, name: 'PromotionNotifier');
-      state = state.copyWith(isLoading: false, error: 'Failed to load promotion: $e');
+      log('Error loading promotion',
+          error: e, stackTrace: stacktrace, name: 'PromotionNotifier');
+      state = state.copyWith(
+          isLoading: false, error: 'Failed to load promotion: $e');
     }
   }
 
   Future<bool> savePromotion(Promotion promotion) async {
-    state = state.copyWith(isLoading: true, clearError: true, clearValidationErrors: true);
+    state = state.copyWith(
+        isLoading: true, clearError: true, clearValidationErrors: true);
     final validationErrors = promotion.validate();
     if (validationErrors.isNotEmpty) {
-      state = state.copyWith(isLoading: false, validationErrors: validationErrors);
+      state =
+          state.copyWith(isLoading: false, validationErrors: validationErrors);
       return false;
     }
     try {
@@ -75,27 +85,33 @@ class PromotionNotifier extends StateNotifier<PromotionState> {
       state = state.copyWith(promotion: promotion, isLoading: false);
       return true;
     } catch (e, stacktrace) {
-      log('Error saving promotion', error: e, stackTrace: stacktrace, name: 'PromotionNotifier');
-      state = state.copyWith(isLoading: false, error: 'Failed to save promotion: $e');
+      log('Error saving promotion',
+          error: e, stackTrace: stacktrace, name: 'PromotionNotifier');
+      state = state.copyWith(
+          isLoading: false, error: 'Failed to save promotion: $e');
       return false;
     }
   }
 
   Future<bool> deletePromotion() async {
-    state = state.copyWith(isLoading: true, clearError: true, clearValidationErrors: true);
+    state = state.copyWith(
+        isLoading: true, clearError: true, clearValidationErrors: true);
     try {
       await _productService.removePromotion(productId);
       state = state.copyWith(promotion: null, isLoading: false);
       return true;
     } catch (e, stacktrace) {
-      log('Error deleting promotion', error: e, stackTrace: stacktrace, name: 'PromotionNotifier');
-      state = state.copyWith(isLoading: false, error: 'Failed to delete promotion: $e');
+      log('Error deleting promotion',
+          error: e, stackTrace: stacktrace, name: 'PromotionNotifier');
+      state = state.copyWith(
+          isLoading: false, error: 'Failed to delete promotion: $e');
       return false;
     }
   }
 }
 
-final promotionProvider = StateNotifierProvider.autoDispose.family<PromotionNotifier, PromotionState, String>((ref, productId) {
+final promotionProvider = StateNotifierProvider.autoDispose
+    .family<PromotionNotifier, PromotionState, String>((ref, productId) {
   final productService = ref.watch(productServiceProvider);
   return PromotionNotifier(productService, productId);
 });

@@ -23,6 +23,7 @@ class Language {
     };
   }
 }
+
 /// قائمة اللغات المدعومة في التطبيق
 class SupportedLanguages {
   static const List<Language> languages = [

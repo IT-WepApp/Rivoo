@@ -49,7 +49,8 @@ void main() {
       verify(mockTrace.putAttribute('key', 'value')).called(1);
     });
 
-    test('incrementTraceMetric should increment metric on active trace', () async {
+    test('incrementTraceMetric should increment metric on active trace',
+        () async {
       // Arrange
       when(mockPerformance.newTrace('test_trace')).thenReturn(mockTrace);
       when(mockTrace.start()).thenAnswer((_) async => null);
@@ -90,11 +91,14 @@ void main() {
       );
 
       // Assert
-      verify(mockPerformance.newHttpMetric('https://example.com', HttpMethod.Get)).called(1);
+      verify(mockPerformance.newHttpMetric(
+              'https://example.com', HttpMethod.Get))
+          .called(1);
       verify(mockHttpMetric.start()).called(1);
     });
 
-    test('stopHttpMetric should set attributes and stop active HTTP metric', () async {
+    test('stopHttpMetric should set attributes and stop active HTTP metric',
+        () async {
       // Arrange
       when(mockPerformance.newHttpMetric('https://example.com', HttpMethod.Get))
           .thenReturn(mockHttpMetric);
@@ -119,7 +123,8 @@ void main() {
       verify(mockHttpMetric.httpResponseCode = 200).called(1);
       verify(mockHttpMetric.requestPayloadSize = 100).called(1);
       verify(mockHttpMetric.responsePayloadSize = 500).called(1);
-      verify(mockHttpMetric.putAttribute('content_type', 'application/json')).called(1);
+      verify(mockHttpMetric.putAttribute('content_type', 'application/json'))
+          .called(1);
       verify(mockHttpMetric.stop()).called(1);
     });
   });

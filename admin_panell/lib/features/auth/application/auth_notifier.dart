@@ -102,7 +102,8 @@ class AuthNotifier extends StateNotifier<AuthState> {
   Future<void> signIn({required String email, required String password}) async {
     state = state.copyWith(isLoading: true, error: null);
     try {
-      final user = await _signInUseCase.execute(email: email, password: password);
+      final user =
+          await _signInUseCase.execute(email: email, password: password);
       await _crashlytics.setUserIdentifier(userId: user.id);
       state = state.copyWith(
         user: user,
