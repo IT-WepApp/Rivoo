@@ -98,8 +98,8 @@ class PaymentMethodCard extends StatelessWidget {
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: isSelected
-            ? colorScheme.primary.withOpacity(0.1)
-            : Theme.of(context).dividerColor.withOpacity(0.1),
+            ? colorScheme.primary.withValues(alpha: 26) // 0.1 * 255 = 26
+            : Theme.of(context).dividerColor.withValues(alpha: 26), // 0.1 * 255 = 26
         borderRadius: BorderRadius.circular(8),
       ),
       child: Icon(

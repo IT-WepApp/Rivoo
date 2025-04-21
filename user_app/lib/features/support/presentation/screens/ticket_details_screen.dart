@@ -415,7 +415,7 @@ class _TicketDetailsScreenState extends ConsumerState<TicketDetailsScreen> {
                   padding: const EdgeInsets.all(8),
                   decoration: BoxDecoration(
                     color:
-                        Theme.of(context).colorScheme.primary.withOpacity(0.1),
+                        Theme.of(context).colorScheme.primary.withValues(alpha: 26), // 0.1 * 255 = 26
                     shape: BoxShape.circle,
                   ),
                   child: Icon(
@@ -446,7 +446,7 @@ class _TicketDetailsScreenState extends ConsumerState<TicketDetailsScreen> {
                               color: Theme.of(context)
                                   .colorScheme
                                   .onSurface
-                                  .withOpacity(0.7),
+                                  .withValues(alpha: 179), // 0.7 * 255 = 179
                             ),
                       ),
                     ],
@@ -474,6 +474,77 @@ class _TicketDetailsScreenState extends ConsumerState<TicketDetailsScreen> {
                 maxLines: 3,
                 overflow: TextOverflow.ellipsis,
               ),
+              if (ticket.description.length > 150) ...[
+                const SizedBox(height: 4),
+                TextButton(
+                  onPressed: () {
+                    // عرض الوصف كاملاً
+                    showDialog(
+                      context: context,
+                      builder: (context) => AlertDialog(
+                        title: Text(l10n.description),
+                        content: SingleChildScrollView(
+                          child: Text(ticket.description),
+                        ),
+                        actions: [
+                          TextButton(
+                            onPressed: () => Navigator.pop(context),
+                            child: Text(l10n.close),
+                          ),
+                        ],
+                      ),
+                    );
+                  },
+                  child: Text(l10n.readMore),
+                ),
+              ],
+            ],
+
+            // معلومات إضافية
+            if (context.isPhone) ...[
+              const Divider(height: 24),
+              Row(
+                children: [
+                  // الأولوية
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          l10n.priority,
+                          style:
+                              Theme.of(context).textTheme.titleSmall?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                        ),
+                        const SizedBox(height: 4),
+                        _buildPriorityChip(context, ticket.priority),
+                      ],
+                    ),
+                  ),
+
+                  // النوع
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          l10n.type,
+                          style:
+                              Theme.of(context).textTheme.titleSmall?.copyWith(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          _getTicketTypeName(ticket.type),
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
             ],
           ],
         ),
@@ -481,7 +552,7 @@ class _TicketDetailsScreenState extends ConsumerState<TicketDetailsScreen> {
     );
   }
 
-  // بناء معلومات التذكرة المفصلة (لسطح المكتب)
+  // بناء معلومات التذكرة المفصلة
   Widget _buildDetailedTicketInfo(
     BuildContext context,
     AppLocalizations l10n,
@@ -506,103 +577,141 @@ class _TicketDetailsScreenState extends ConsumerState<TicketDetailsScreen> {
             ),
             const SizedBox(height: 24),
 
-            // معرف التذكرة
+            // رمز نوع التذكرة
+            Center(
+              child: Container(
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.primary.withValues(alpha: 26), // 0.1 * 255 = 26
+                  shape: BoxShape.circle,
+                ),
+                child: Icon(
+                  _getTicketTypeIcon(ticket.type),
+                  color: Theme.of(context).colorScheme.primary,
+                  size: 48,
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // موضوع التذكرة
+            Center(
+              child: Text(
+                ticket.subject,
+                style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            const SizedBox(height: 8),
+
+            // معرف التذكرة والتاريخ
+            Center(
+              child: Text(
+                'تذكرة #${ticket.id.substring(0, 8)} • ${_formatDate(ticket.createdAt)}',
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                      color: Theme.of(context)
+                          .colorScheme
+                          .onSurface
+                          .withValues(alpha: 179), // 0.7 * 255 = 179
+                    ),
+                textAlign: TextAlign.center,
+              ),
+            ),
+            const SizedBox(height: 24),
+
+            // حالة التذكرة
             _buildInfoRow(
               context,
-              label: l10n.ticketId,
-              value: '#${ticket.id.substring(0, 8)}',
-              icon: Icons.tag,
+              l10n.status,
+              _buildStatusChip(context, ticket.status),
             ),
-            const Divider(height: 24),
+            const SizedBox(height: 16),
 
-            // الموضوع
+            // أولوية التذكرة
             _buildInfoRow(
               context,
-              label: l10n.subject,
-              value: ticket.subject,
-              icon: Icons.subject,
+              l10n.priority,
+              _buildPriorityChip(context, ticket.priority),
             ),
-            const Divider(height: 24),
+            const SizedBox(height: 16),
 
-            // النوع
+            // نوع التذكرة
             _buildInfoRow(
               context,
-              label: l10n.type,
-              value: _getTicketTypeText(ticket.type, l10n),
-              icon: _getTicketTypeIcon(ticket.type),
+              l10n.type,
+              Text(
+                _getTicketTypeName(ticket.type),
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
             ),
-            const Divider(height: 24),
+            const SizedBox(height: 16),
 
-            // الحالة
-            _buildInfoRow(
-              context,
-              label: l10n.status,
-              value: _getStatusText(ticket.status, l10n),
-              icon: Icons.info,
-              valueWidget: _buildStatusChip(context, ticket.status),
-            ),
-            const Divider(height: 24),
-
-            // الأولوية
-            _buildInfoRow(
-              context,
-              label: l10n.priority,
-              value: _getPriorityText(ticket.priority, l10n),
-              icon: Icons.priority_high,
-              valueWidget: _buildPriorityChip(context, ticket.priority),
-            ),
-            const Divider(height: 24),
-
-            // تاريخ الإنشاء
-            _buildInfoRow(
-              context,
-              label: l10n.createdAt,
-              value: _formatDate(ticket.createdAt),
-              icon: Icons.calendar_today,
-            ),
-
-            if (ticket.updatedAt != null) ...[
-              const Divider(height: 24),
-
-              // تاريخ التحديث
+            // رقم الطلب إذا كان موجوداً
+            if (ticket.orderId != null) ...[
               _buildInfoRow(
                 context,
-                label: l10n.updatedAt,
-                value: _formatDate(ticket.updatedAt!),
-                icon: Icons.update,
+                l10n.orderNumber,
+                TextButton(
+                  onPressed: () {
+                    // الانتقال إلى صفحة تفاصيل الطلب
+                  },
+                  child: Text('#${ticket.orderId}'),
+                ),
               ),
+              const SizedBox(height: 16),
             ],
 
-            if (ticket.closedAt != null) ...[
-              const Divider(height: 24),
-
-              // تاريخ الإغلاق
-              _buildInfoRow(
-                context,
-                label: l10n.closedAt,
-                value: _formatDate(ticket.closedAt!),
-                icon: Icons.check_circle,
+            // وصف التذكرة
+            Text(
+              l10n.description,
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+            ),
+            const SizedBox(height: 8),
+            Container(
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: Theme.of(context).colorScheme.surface,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(
+                  color: Theme.of(context).dividerColor,
+                ),
               ),
-            ],
+              child: Text(
+                ticket.description,
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            ),
+            const SizedBox(height: 24),
 
-            const Divider(height: 24),
-
-            // الوصف
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  l10n.description,
-                  style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
+            // زر إغلاق/إعادة فتح التذكرة
+            Center(
+              child: ticket.status == TicketStatus.closed
+                  ? ElevatedButton.icon(
+                      onPressed: _reopenTicket,
+                      icon: const Icon(Icons.refresh),
+                      label: Text(l10n.reopenTicket),
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 24,
+                          vertical: 12,
+                        ),
                       ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  ticket.description,
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-              ],
+                    )
+                  : OutlinedButton.icon(
+                      onPressed: _closeTicket,
+                      icon: const Icon(Icons.check_circle),
+                      label: Text(l10n.closeTicket),
+                      style: OutlinedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 24,
+                          vertical: 12,
+                        ),
+                      ),
+                    ),
             ),
           ],
         ),
@@ -611,45 +720,17 @@ class _TicketDetailsScreenState extends ConsumerState<TicketDetailsScreen> {
   }
 
   // بناء صف معلومات
-  Widget _buildInfoRow(
-    BuildContext context, {
-    required String label,
-    required String value,
-    required IconData icon,
-    Widget? valueWidget,
-  }) {
+  Widget _buildInfoRow(BuildContext context, String label, Widget value) {
     return Row(
       children: [
-        Icon(
-          icon,
-          color: Theme.of(context).colorScheme.primary,
-          size: 20,
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                label,
-                style: Theme.of(context).textTheme.bodySmall?.copyWith(
-                      color: Theme.of(context)
-                          .colorScheme
-                          .onSurface
-                          .withOpacity(0.7),
-                    ),
+        Text(
+          '$label:',
+          style: Theme.of(context).textTheme.titleSmall?.copyWith(
+                fontWeight: FontWeight.bold,
               ),
-              const SizedBox(height: 4),
-              valueWidget ??
-                  Text(
-                    value,
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                  ),
-            ],
-          ),
         ),
+        const SizedBox(width: 8),
+        value,
       ],
     );
   }
@@ -659,27 +740,22 @@ class _TicketDetailsScreenState extends ConsumerState<TicketDetailsScreen> {
     BuildContext context,
     List<SupportMessage> messages,
   ) {
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (_scrollController.hasClients) {
-        _scrollController.animateTo(
-          _scrollController.position.maxScrollExtent,
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeOut,
-        );
-      }
-    });
+    // ترتيب الرسائل حسب التاريخ
+    final sortedMessages = List<SupportMessage>.from(messages)
+      ..sort((a, b) => a.timestamp.compareTo(b.timestamp));
 
     return ListView.builder(
       controller: _scrollController,
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      itemCount: messages.length,
+      padding: const EdgeInsets.symmetric(vertical: 16),
+      itemCount: sortedMessages.length,
       itemBuilder: (context, index) {
-        final message = messages[index];
+        final message = sortedMessages[index];
+        final showAvatar = index == 0 ||
+            sortedMessages[index - 1].isFromSupport != message.isFromSupport;
 
         return MessageBubble(
           message: message,
-          showAvatar: index == 0 ||
-              messages[index - 1].isFromSupport != message.isFromSupport,
+          showAvatar: showAvatar,
         );
       },
     );
@@ -687,52 +763,168 @@ class _TicketDetailsScreenState extends ConsumerState<TicketDetailsScreen> {
 
   // بناء حقل إدخال الرسالة
   Widget _buildMessageInput(BuildContext context, AppLocalizations l10n) {
-    return Card(
-      elevation: 2,
-      margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 4.0),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Theme.of(context).cardColor,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 13), // 0.05 * 255 = 13
+            blurRadius: 5,
+            offset: const Offset(0, -2),
+          ),
+        ],
       ),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-        child: Row(
-          children: [
-            // زر المرفقات
-            IconButton(
-              icon: const Icon(Icons.attach_file),
-              onPressed: () {
-                // تنفيذ وظيفة إضافة مرفقات
-              },
-            ),
+      child: Row(
+        children: [
+          // زر إرفاق ملف
+          IconButton(
+            icon: const Icon(Icons.attach_file),
+            onPressed: () {
+              // إضافة مرفق
+            },
+          ),
 
-            // حقل إدخال الرسالة
-            Expanded(
-              child: TextField(
-                controller: _messageController,
-                decoration: InputDecoration(
-                  hintText: l10n.typeYourMessage,
-                  border: InputBorder.none,
+          // حقل إدخال النص
+          Expanded(
+            child: TextField(
+              controller: _messageController,
+              decoration: InputDecoration(
+                hintText: l10n.typeYourMessage,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(24),
+                  borderSide: BorderSide.none,
                 ),
-                maxLines: null,
-                textInputAction: TextInputAction.newline,
+                filled: true,
+                fillColor: Theme.of(context).colorScheme.surface,
+                contentPadding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
               ),
+              maxLines: 3,
+              minLines: 1,
+              textInputAction: TextInputAction.send,
+              onSubmitted: (_) => _sendMessage(),
             ),
+          ),
 
-            // زر الإرسال
-            IconButton(
-              icon: _isSending
-                  ? const SizedBox(
-                      width: 24,
-                      height: 24,
-                      child: CircularProgressIndicator(strokeWidth: 2),
-                    )
-                  : const Icon(Icons.send),
-              onPressed: _isSending ? null : _sendMessage,
-            ),
-          ],
-        ),
+          const SizedBox(width: 8),
+
+          // زر الإرسال
+          IconButton(
+            icon: _isSending
+                ? const SizedBox(
+                    width: 24,
+                    height: 24,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : const Icon(Icons.send),
+            onPressed: _isSending ? null : _sendMessage,
+            color: Theme.of(context).colorScheme.primary,
+          ),
+        ],
       ),
     );
+  }
+
+  // إرسال رسالة
+  Future<void> _sendMessage() async {
+    final message = _messageController.text.trim();
+    if (message.isEmpty || _isSending) return;
+
+    setState(() {
+      _isSending = true;
+    });
+
+    try {
+      await ref.read(supportNotifierProvider.notifier).sendMessage(
+            ticketId: widget.ticketId,
+            message: message,
+          );
+
+      _messageController.clear();
+
+      // التمرير إلى أسفل القائمة
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (_scrollController.hasClients) {
+          _scrollController.animateTo(
+            _scrollController.position.maxScrollExtent,
+            duration: const Duration(milliseconds: 300),
+            curve: Curves.easeOut,
+          );
+        }
+      });
+    } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('حدث خطأ: ${e.toString()}'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isSending = false;
+        });
+      }
+    }
+  }
+
+  // إغلاق التذكرة
+  Future<void> _closeTicket() async {
+    try {
+      await ref
+          .read(supportNotifierProvider.notifier)
+          .updateTicketStatus(widget.ticketId, TicketStatus.closed);
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('تم إغلاق التذكرة بنجاح'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('حدث خطأ: ${e.toString()}'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  // إعادة فتح التذكرة
+  Future<void> _reopenTicket() async {
+    try {
+      await ref
+          .read(supportNotifierProvider.notifier)
+          .updateTicketStatus(widget.ticketId, TicketStatus.open);
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('تم إعادة فتح التذكرة بنجاح'),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (e) {
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('حدث خطأ: ${e.toString()}'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 
   // بناء شريحة الحالة
@@ -762,16 +954,16 @@ class _TicketDetailsScreenState extends ConsumerState<TicketDetailsScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 26), // 0.1 * 255 = 26
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.5)),
       ),
       child: Text(
         label,
-        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: color,
-              fontWeight: FontWeight.bold,
-            ),
+        style: TextStyle(
+          color: color,
+          fontWeight: FontWeight.bold,
+          fontSize: 12,
+        ),
         textAlign: TextAlign.center,
       ),
     );
@@ -804,112 +996,19 @@ class _TicketDetailsScreenState extends ConsumerState<TicketDetailsScreen> {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 26), // 0.1 * 255 = 26
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.5)),
       ),
       child: Text(
         label,
-        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: color,
-              fontWeight: FontWeight.bold,
-            ),
+        style: TextStyle(
+          color: color,
+          fontWeight: FontWeight.bold,
+          fontSize: 12,
+        ),
         textAlign: TextAlign.center,
       ),
     );
-  }
-
-  // إرسال رسالة
-  Future<void> _sendMessage() async {
-    final message = _messageController.text.trim();
-    if (message.isEmpty) {
-      return;
-    }
-
-    setState(() {
-      _isSending = true;
-    });
-
-    try {
-      await ref.read(supportNotifierProvider.notifier).sendMessage(
-            message: message,
-          );
-
-      _messageController.clear();
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('حدث خطأ: ${e.toString()}'),
-          backgroundColor: Colors.red,
-        ),
-      );
-    } finally {
-      setState(() {
-        _isSending = false;
-      });
-    }
-  }
-
-  // إغلاق التذكرة
-  Future<void> _closeTicket() async {
-    try {
-      await ref.read(supportNotifierProvider.notifier).closeTicket();
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('تم إغلاق التذكرة بنجاح'),
-          backgroundColor: Colors.green,
-        ),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('حدث خطأ: ${e.toString()}'),
-          backgroundColor: Colors.red,
-        ),
-      );
-    }
-  }
-
-  // إعادة فتح التذكرة
-  Future<void> _reopenTicket() async {
-    try {
-      await ref.read(supportNotifierProvider.notifier).reopenTicket();
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('تم إعادة فتح التذكرة بنجاح'),
-          backgroundColor: Colors.green,
-        ),
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('حدث خطأ: ${e.toString()}'),
-          backgroundColor: Colors.red,
-        ),
-      );
-    }
-  }
-
-  // الحصول على نص نوع التذكرة
-  String _getTicketTypeText(TicketType type, AppLocalizations l10n) {
-    switch (type) {
-      case TicketType.general:
-        return 'استفسار عام';
-      case TicketType.orderIssue:
-        return 'مشكلة في الطلب';
-      case TicketType.paymentIssue:
-        return 'مشكلة في الدفع';
-      case TicketType.accountIssue:
-        return 'مشكلة في الحساب';
-      case TicketType.appIssue:
-        return 'مشكلة في التطبيق';
-      case TicketType.suggestion:
-        return 'اقتراح';
-      case TicketType.other:
-        return 'أخرى';
-    }
   }
 
   // الحصول على أيقونة نوع التذكرة
@@ -932,31 +1031,23 @@ class _TicketDetailsScreenState extends ConsumerState<TicketDetailsScreen> {
     }
   }
 
-  // الحصول على نص حالة التذكرة
-  String _getStatusText(TicketStatus status, AppLocalizations l10n) {
-    switch (status) {
-      case TicketStatus.open:
-        return 'مفتوحة';
-      case TicketStatus.pending:
-        return 'قيد الانتظار';
-      case TicketStatus.resolved:
-        return 'تم الحل';
-      case TicketStatus.closed:
-        return 'مغلقة';
-    }
-  }
-
-  // الحصول على نص أولوية التذكرة
-  String _getPriorityText(TicketPriority priority, AppLocalizations l10n) {
-    switch (priority) {
-      case TicketPriority.low:
-        return 'منخفضة';
-      case TicketPriority.medium:
-        return 'متوسطة';
-      case TicketPriority.high:
-        return 'عالية';
-      case TicketPriority.urgent:
-        return 'عاجلة';
+  // الحصول على اسم نوع التذكرة
+  String _getTicketTypeName(TicketType type) {
+    switch (type) {
+      case TicketType.general:
+        return 'استفسار عام';
+      case TicketType.orderIssue:
+        return 'مشكلة في الطلب';
+      case TicketType.paymentIssue:
+        return 'مشكلة في الدفع';
+      case TicketType.accountIssue:
+        return 'مشكلة في الحساب';
+      case TicketType.appIssue:
+        return 'مشكلة في التطبيق';
+      case TicketType.suggestion:
+        return 'اقتراح';
+      case TicketType.other:
+        return 'أخرى';
     }
   }
 

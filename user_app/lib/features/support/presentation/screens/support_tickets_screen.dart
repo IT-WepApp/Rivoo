@@ -400,7 +400,7 @@ class SupportTicketsScreen extends ConsumerWidget {
             Icon(
               Icons.support_agent,
               size: context.responsiveIconSize(100),
-              color: Theme.of(context).colorScheme.primary.withOpacity(0.5),
+              color: Theme.of(context).colorScheme.primary.withValues(alpha: 128), // 0.5 * 255 = 128
             ),
             const SizedBox(height: 24),
             Text(
@@ -462,16 +462,16 @@ class SupportTicketsScreen extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 26), // 0.1 * 255 = 26
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.5)),
       ),
       child: Text(
         label,
-        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: color,
-              fontWeight: FontWeight.bold,
-            ),
+        style: TextStyle(
+          color: color,
+          fontWeight: FontWeight.bold,
+          fontSize: 12,
+        ),
         textAlign: TextAlign.center,
       ),
     );
@@ -504,16 +504,16 @@ class SupportTicketsScreen extends ConsumerWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: color.withOpacity(0.1),
+        color: color.withValues(alpha: 26), // 0.1 * 255 = 26
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: color.withOpacity(0.5)),
       ),
       child: Text(
         label,
-        style: Theme.of(context).textTheme.bodySmall?.copyWith(
-              color: color,
-              fontWeight: FontWeight.bold,
-            ),
+        style: TextStyle(
+          color: color,
+          fontWeight: FontWeight.bold,
+          fontSize: 12,
+        ),
         textAlign: TextAlign.center,
       ),
     );
@@ -521,6 +521,6 @@ class SupportTicketsScreen extends ConsumerWidget {
 
   // تنسيق التاريخ
   String _formatDate(DateTime date) {
-    return '${date.year}/${date.month}/${date.day} ${date.hour}:${date.minute.toString().padLeft(2, '0')}';
+    return '${date.day}/${date.month}/${date.year}';
   }
 }

@@ -107,7 +107,7 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
             'يرجى تقديم تفاصيل كافية حتى نتمكن من مساعدتك بشكل أفضل.',
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(
                   color:
-                      Theme.of(context).colorScheme.onSurface.withOpacity(0.7),
+                      Theme.of(context).colorScheme.onSurface.withValues(alpha: 179), // 0.7 * 255 = 179
                 ),
           ),
           const SizedBox(height: 24),
@@ -230,7 +230,7 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
         }
       },
       backgroundColor: Theme.of(context).colorScheme.surface,
-      selectedColor: Theme.of(context).colorScheme.primary.withOpacity(0.2),
+      selectedColor: Theme.of(context).colorScheme.primary.withValues(alpha: 51), // 0.2 * 255 = 51
       labelStyle: TextStyle(
         color: isSelected
             ? Theme.of(context).colorScheme.primary
@@ -276,7 +276,7 @@ class _CreateTicketScreenState extends ConsumerState<CreateTicketScreen> {
         }
       },
       backgroundColor: Theme.of(context).colorScheme.surface,
-      selectedColor: color.withOpacity(0.2),
+      selectedColor: color.withValues(alpha: 51), // 0.2 * 255 = 51
       labelStyle: TextStyle(
         color: isSelected ? color : Theme.of(context).colorScheme.onSurface,
         fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,

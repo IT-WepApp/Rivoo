@@ -24,7 +24,7 @@ class RatingSummary extends StatelessWidget {
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 13), // 0.05 * 255 = 13
             blurRadius: 10,
             offset: const Offset(0, 5),
           ),

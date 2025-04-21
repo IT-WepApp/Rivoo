@@ -117,7 +117,7 @@ class _AddReviewScreenState extends ConsumerState<AddReviewScreen> {
                   borderRadius: BorderRadius.circular(12),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
+                      color: Colors.black.withValues(alpha: 13), // 0.05 * 255 = 13
                       blurRadius: 10,
                       offset: const Offset(0, 5),
                     ),
@@ -127,8 +127,8 @@ class _AddReviewScreenState extends ConsumerState<AddReviewScreen> {
                   children: [
                     CircleAvatar(
                       backgroundColor: widget.targetType == 'product'
-                          ? Colors.blue.withOpacity(0.1)
-                          : Colors.green.withOpacity(0.1),
+                          ? Colors.blue.withValues(alpha: 26) // 0.1 * 255 = 26
+                          : Colors.green.withValues(alpha: 26), // 0.1 * 255 = 26
                       radius: 24,
                       child: Icon(
                         widget.targetType == 'product'
