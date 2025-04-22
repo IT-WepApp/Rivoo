@@ -4,13 +4,15 @@ import '../theme/app_theme.dart';
 /// زر تطبيق مخصص يدعم أنماط مختلفة
 class AppButton extends StatelessWidget {
   final String text;
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
   final bool isLoading;
   final bool isPrimary;
   final bool isFullWidth;
   final IconData? icon;
   final double? width;
   final double? height;
+  final Widget? prefixIcon;
+  final Widget? suffixIcon;
 
   const AppButton({
     Key? key,
@@ -22,6 +24,8 @@ class AppButton extends StatelessWidget {
     this.icon,
     this.width,
     this.height,
+    this.prefixIcon,
+    this.suffixIcon,
   }) : super(key: key);
 
   @override
@@ -65,7 +69,23 @@ class AppButton extends StatelessWidget {
   }
 
   Widget _buildButtonContent() {
-    if (icon != null) {
+    if (prefixIcon != null || suffixIcon != null) {
+      return Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          if (prefixIcon != null) ...[
+            prefixIcon!,
+            const SizedBox(width: 8),
+          ],
+          Text(text),
+          if (suffixIcon != null) ...[
+            const SizedBox(width: 8),
+            suffixIcon!,
+          ],
+        ],
+      );
+    } else if (icon != null) {
       return Row(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.center,

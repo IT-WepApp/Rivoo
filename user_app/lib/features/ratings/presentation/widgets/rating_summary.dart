@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:user_app/features/ratings/data/datasources/rating_datasource.dart';
+import 'package:user_app/features/ratings/domain/entities/rating.dart';
 
-/// مكون ملخص التقييمات
+/// مكون عرض ملخص التقييمات
 class RatingSummaryWidget extends StatelessWidget {
   /// متوسط التقييم
   final double averageRating;
@@ -9,103 +9,81 @@ class RatingSummaryWidget extends StatelessWidget {
   /// إجمالي عدد التقييمات
   final int totalRatings;
   
-  /// توزيع التقييمات (عدد التقييمات لكل نجمة)
+  /// توزيع التقييمات (مفتاح: عدد النجوم، قيمة: عدد التقييمات)
   final Map<int, int> ratingDistribution;
-  
-  /// الحجم
-  final double size;
-  
+
   /// إنشاء مكون ملخص التقييمات
   const RatingSummaryWidget({
     Key? key,
     required this.averageRating,
     required this.totalRatings,
     required this.ratingDistribution,
-    this.size = 16,
   }) : super(key: key);
-  
+
   @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // متوسط التقييم والنجوم
         Row(
+          crossAxisAlignment: CrossAxisAlignment.end,
           children: [
             Text(
               averageRating.toStringAsFixed(1),
-              style: TextStyle(
-                fontSize: size * 2,
+              style: const TextStyle(
+                fontSize: 48,
                 fontWeight: FontWeight.bold,
               ),
             ),
             const SizedBox(width: 8),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: List.generate(5, (index) {
-                    if (index < averageRating.floor()) {
-                      return Icon(Icons.star, size: size, color: Colors.amber);
-                    } else if (index == averageRating.floor() && averageRating % 1 > 0) {
-                      return Icon(Icons.star_half, size: size, color: Colors.amber);
-                    } else {
-                      return Icon(Icons.star_border, size: size, color: Colors.amber);
-                    }
-                  }),
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Text(
+                '$totalRatings ${_getRatingsText()}',
+                style: const TextStyle(
+                  fontSize: 16,
+                  color: Colors.grey,
                 ),
-                Text(
-                  '$totalRatings تقييمات',
-                  style: TextStyle(
-                    fontSize: size * 0.8,
-                    color: Colors.grey,
-                  ),
-                ),
-              ],
+              ),
             ),
           ],
         ),
-        
         const SizedBox(height: 16),
-        
-        // توزيع التقييمات
         ...List.generate(5, (index) {
-          final starNumber = 5 - index;
-          final count = ratingDistribution[starNumber] ?? 0;
-          final percentage = totalRatings > 0
-              ? (count / totalRatings) * 100
+          final starCount = 5 - index;
+          final count = ratingDistribution[starCount] ?? 0;
+          final percentage = totalRatings > 0 
+              ? count / totalRatings 
               : 0.0;
           
           return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 2),
+            padding: const EdgeInsets.only(bottom: 8),
             child: Row(
               children: [
                 Text(
-                  '$starNumber',
-                  style: TextStyle(
-                    fontSize: size * 0.9,
+                  '$starCount',
+                  style: const TextStyle(
+                    fontSize: 14,
                     fontWeight: FontWeight.bold,
                   ),
                 ),
                 const SizedBox(width: 4),
-                Icon(Icons.star, size: size * 0.9, color: Colors.amber),
+                const Icon(Icons.star, size: 16),
                 const SizedBox(width: 8),
                 Expanded(
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(4),
-                    child: LinearProgressIndicator(
-                      value: percentage / 100,
-                      backgroundColor: Colors.grey[200],
-                      valueColor: AlwaysStoppedAnimation<Color>(Colors.amber),
-                      minHeight: size * 0.6,
+                  child: LinearProgressIndicator(
+                    value: percentage,
+                    backgroundColor: Colors.grey[300],
+                    valueColor: AlwaysStoppedAnimation<Color>(
+                      _getColorForRating(starCount),
                     ),
                   ),
                 ),
                 const SizedBox(width: 8),
                 Text(
                   '$count',
-                  style: TextStyle(
-                    fontSize: size * 0.9,
+                  style: const TextStyle(
+                    fontSize: 14,
                     color: Colors.grey,
                   ),
                 ),
@@ -115,5 +93,38 @@ class RatingSummaryWidget extends StatelessWidget {
         }),
       ],
     );
+  }
+
+  /// الحصول على نص التقييمات المناسب
+  String _getRatingsText() {
+    if (totalRatings == 0) {
+      return 'تقييمات';
+    } else if (totalRatings == 1) {
+      return 'تقييم';
+    } else if (totalRatings == 2) {
+      return 'تقييمان';
+    } else if (totalRatings >= 3 && totalRatings <= 10) {
+      return 'تقييمات';
+    } else {
+      return 'تقييم';
+    }
+  }
+
+  /// الحصول على لون مناسب لعدد النجوم
+  Color _getColorForRating(int starCount) {
+    switch (starCount) {
+      case 5:
+        return Colors.green;
+      case 4:
+        return Colors.lightGreen;
+      case 3:
+        return Colors.amber;
+      case 2:
+        return Colors.orange;
+      case 1:
+        return Colors.red;
+      default:
+        return Colors.grey;
+    }
   }
 }

@@ -1,11 +1,11 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
-import 'package:mockito/annotations.dart';
 import 'package:user_app/features/ratings/application/ratings_notifier.dart';
+import 'package:user_app/features/ratings/domain/entities/rating.dart';
 
-import 'ratings_notifier_test.mocks.dart';
+// تعريف فئة وهمية يدوياً بدلاً من استخدام @GenerateMocks
+class MockRatingsNotifier extends Mock implements RatingsNotifier {}
 
-@GenerateMocks([RatingsNotifier])
 void main() {
   late MockRatingsNotifier mockRatingsNotifier;
 

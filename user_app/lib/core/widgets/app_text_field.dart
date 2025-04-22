@@ -4,8 +4,8 @@ import '../theme/app_theme.dart';
 
 /// حقل نص مخصص للتطبيق مع دعم للتحقق والتنسيق
 class AppTextField extends StatelessWidget {
-  final String label;
-  final String? hint;
+  final String labelText;
+  final String? hintText;
   final String? errorText;
   final bool obscureText;
   final TextEditingController? controller;
@@ -25,8 +25,8 @@ class AppTextField extends StatelessWidget {
 
   const AppTextField({
     Key? key,
-    required this.label,
-    this.hint,
+    required this.labelText,
+    this.hintText,
     this.errorText,
     this.obscureText = false,
     this.controller,
@@ -62,19 +62,19 @@ class AppTextField extends StatelessWidget {
       inputFormatters: inputFormatters,
       style: AppTheme.bodyStyle,
       decoration: InputDecoration(
-        labelText: label,
-        hintText: hint,
+        labelText: labelText,
+        hintText: hintText,
         errorText: errorText,
         prefixIcon: prefix,
         suffixIcon: suffix,
         contentPadding: contentPadding ?? const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(color: AppTheme.dividerColor),
+          borderSide: BorderSide(color: AppTheme.dividerColor),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),
-          borderSide: const BorderSide(color: AppTheme.dividerColor),
+          borderSide: BorderSide(color: AppTheme.dividerColor),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(8),

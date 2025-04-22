@@ -16,8 +16,13 @@ final secureStorageServiceProvider = Provider<SecureStorageService>((ref) {
 /// مزود خدمة المصادقة
 final authServiceProvider = Provider<AuthService>((ref) {
   final secureStorage = ref.watch(secureStorageServiceProvider);
+  final encryptionUtils = EncryptionUtils();
   return AuthService(
-      secureStorage, FirebaseAuth.instance, FirebaseFirestore.instance);
+    secureStorage: secureStorage,
+    encryptionUtils: encryptionUtils,
+    auth: FirebaseAuth.instance,
+    firestore: FirebaseFirestore.instance,
+  );
 });
 
 /// حالة المصادقة
@@ -213,6 +218,34 @@ class AuthNotifier extends StateNotifier<AuthState> {
     }
   }
 
+  /// تحديث الملف الشخصي للمستخدم
+  Future<void> updateProfile({
+    required String userId,
+    String? name,
+    String? email,
+    String? phone,
+    String? address,
+    String? photoUrl,
+  }) async {
+    try {
+      state = state.copyWith(status: AuthStatus.loading);
+      await _authService.updateProfile(
+        userId: userId,
+        name: name,
+        email: email,
+        phone: phone,
+        address: address,
+        photoUrl: photoUrl,
+      );
+      state = state.copyWith(status: AuthStatus.authenticated);
+    } catch (e) {
+      state = state.copyWith(
+        status: AuthStatus.error,
+        errorMessage: e.toString(),
+      );
+    }
+  }
+
   /// التحقق من صلاحيات المستخدم
   bool hasPermission(List<UserRole> allowedRoles) {
     if (state.user == null) return false;
@@ -221,14 +254,33 @@ class AuthNotifier extends StateNotifier<AuthState> {
   }
 }
 
+/// أداة التشفير
+class EncryptionUtils {
+  /// تشفير النص
+  String encrypt(String text) {
+    final bytes = utf8.encode(text);
+    final digest = sha256.convert(bytes);
+    return digest.toString();
+  }
+}
+
 /// خدمة المصادقة
 class AuthService {
   final SecureStorageService _secureStorage;
   final FirebaseAuth _auth;
   final FirebaseFirestore _firestore;
+  final EncryptionUtils _encryptionUtils;
   final AppLogger _logger = AppLogger();
 
-  AuthService(this._secureStorage, this._auth, this._firestore);
+  AuthService({
+    required SecureStorageService secureStorage,
+    required EncryptionUtils encryptionUtils,
+    FirebaseAuth? auth,
+    FirebaseFirestore? firestore,
+  }) : _secureStorage = secureStorage,
+       _encryptionUtils = encryptionUtils,
+       _auth = auth ?? FirebaseAuth.instance,
+       _firestore = firestore ?? FirebaseFirestore.instance;
 
   /// الحصول على مستمع لتغييرات حالة المصادقة
   Stream<User?> get authStateChanges => _auth.authStateChanges();
@@ -386,8 +438,8 @@ class AuthService {
         switch (roleString) {
           case 'admin':
             return UserRole.admin;
-          case 'driver':
-            return UserRole.driver;
+          case 'seller':
+            return UserRole.seller;
           case 'customer':
             return UserRole.customer;
           default:
@@ -409,8 +461,8 @@ class AuthService {
           switch (roleString) {
             case 'admin':
               return UserRole.admin;
-            case 'driver':
-              return UserRole.driver;
+            case 'seller':
+              return UserRole.seller;
             case 'customer':
               return UserRole.customer;
             default:
@@ -433,8 +485,8 @@ class AuthService {
         case UserRole.admin:
           roleString = 'admin';
           break;
-        case UserRole.driver:
-          roleString = 'driver';
+        case UserRole.seller:
+          roleString = 'seller';
           break;
         case UserRole.customer:
           roleString = 'customer';
@@ -460,6 +512,45 @@ class AuthService {
     }
   }
 
+  /// تحديث الملف الشخصي للمستخدم
+  Future<void> updateProfile({
+    required String userId,
+    String? name,
+    String? email,
+    String? phone,
+    String? address,
+    String? photoUrl,
+  }) async {
+    try {
+      // تحديث وثيقة المستخدم في Firestore
+      final updateData = <String, dynamic>{
+        'updatedAt': FieldValue.serverTimestamp(),
+      };
+      
+      if (name != null) updateData['displayName'] = name;
+      if (email != null) updateData['email'] = email;
+      if (phone != null) updateData['phone'] = phone;
+      if (address != null) updateData['address'] = address;
+      if (photoUrl != null) updateData['photoURL'] = photoUrl;
+      
+      await _firestore.collection('users').doc(userId).update(updateData);
+
+      // تحديث بيانات المستخدم في التخزين الآمن
+      final userData = await _secureStorage.getUserData();
+      if (userData != null && userData['uid'] == userId) {
+        if (name != null) userData['displayName'] = name;
+        if (email != null) userData['email'] = email;
+        if (phone != null) userData['phone'] = phone;
+        if (address != null) userData['address'] = address;
+        if (photoUrl != null) userData['photoURL'] = photoUrl;
+        
+        await _secureStorage.saveUserData(userData);
+      }
+    } catch (e) {
+      throw Exception('فشل تحديث الملف الشخصي: $e');
+    }
+  }
+
   // طرق مساعدة خاصة
 
   /// إنشاء وثيقة المستخدم في Firestore
@@ -471,8 +562,8 @@ class AuthService {
         case UserRole.admin:
           roleString = 'admin';
           break;
-        case UserRole.driver:
-          roleString = 'driver';
+        case UserRole.seller:
+          roleString = 'seller';
           break;
         case UserRole.customer:
           roleString = 'customer';
@@ -556,7 +647,7 @@ class AuthService {
       return false;
     }
 
-    // التحقق من وجود رمز
+    // التحقق من وجود رمز خاص
     if (!password.contains(RegExp(r'[!@#$%^&*(),.?":{}|<>]'))) {
       return false;
     }

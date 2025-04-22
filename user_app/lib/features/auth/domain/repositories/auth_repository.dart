@@ -1,5 +1,6 @@
 import '../entities/user.dart';
 import '../../../../core/architecture/domain/failure.dart';
+import '../../../../core/architecture/domain/either.dart';
 
 /// واجهة مستودع المصادقة
 abstract class AuthRepository {
@@ -41,25 +42,4 @@ abstract class AuthRepository {
     required String oldPassword,
     required String newPassword,
   });
-}
-
-/// نوع Either للتعامل مع النجاح والفشل
-class Either<L, R> {
-  final L? _left;
-  final R? _right;
-  final bool isRight;
-
-  const Either._(this._left, this._right, this.isRight);
-
-  factory Either.left(L value) => Either._(value, null, false);
-  factory Either.right(R value) => Either._(null, value, true);
-
-  L get left => _left as L;
-  R get right => _right as R;
-
-  bool get isLeft => !isRight;
-
-  T fold<T>(T Function(L) onLeft, T Function(R) onRight) {
-    return isRight ? onRight(right) : onLeft(left);
-  }
 }
