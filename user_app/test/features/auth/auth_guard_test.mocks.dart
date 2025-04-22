@@ -6,16 +6,17 @@
 import 'dart:async' as _i9;
 
 import 'package:firebase_auth/firebase_auth.dart' as _i2;
-import 'package:flutter/material.dart' as _i4;
+import 'package:flutter/widgets.dart' as _i4;
 import 'package:go_router/src/configuration.dart' as _i3;
 import 'package:go_router/src/delegate.dart' as _i5;
 import 'package:go_router/src/information_provider.dart' as _i6;
-import 'package:go_router/src/match.dart' as _i12;
+import 'package:go_router/src/match.dart' as _i13;
 import 'package:go_router/src/parser.dart' as _i7;
-import 'package:go_router/src/router.dart' as _i10;
+import 'package:go_router/src/router.dart' as _i11;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i11;
+import 'package:mockito/src/dummies.dart' as _i12;
 import 'package:user_app/features/auth/application/auth_service.dart' as _i8;
+import 'package:user_app/features/auth/domain/entities/user_role.dart' as _i10;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -140,7 +141,7 @@ class MockAuthService extends _i1.Mock implements _i8.AuthService {
   _i9.Future<_i2.UserCredential> signUp(
     String? email,
     String? password, {
-    _i8.UserRole? role = _i8.UserRole.customer,
+    _i10.UserRole? role = _i10.UserRole.customer,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -204,91 +205,18 @@ class MockAuthService extends _i1.Mock implements _i8.AuthService {
       ) as _i9.Future<bool>);
 
   @override
-  _i9.Future<void> updateProfile({
-    String? displayName,
-    String? photoURL,
-  }) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #updateProfile,
-          [],
-          {
-            #displayName: displayName,
-            #photoURL: photoURL,
-          },
-        ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
-
-  @override
-  _i9.Future<void> updateEmail(String? newEmail) => (super.noSuchMethod(
-        Invocation.method(
-          #updateEmail,
-          [newEmail],
-        ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
-
-  @override
-  _i9.Future<void> updatePassword(String? newPassword) => (super.noSuchMethod(
-        Invocation.method(
-          #updatePassword,
-          [newPassword],
-        ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
-
-  @override
-  _i9.Future<_i2.UserCredential> reauthenticate(
-    String? email,
-    String? password,
-  ) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #reauthenticate,
-          [
-            email,
-            password,
-          ],
-        ),
-        returnValue: _i9.Future<_i2.UserCredential>.value(_FakeUserCredential_0(
-          this,
-          Invocation.method(
-            #reauthenticate,
-            [
-              email,
-              password,
-            ],
-          ),
-        )),
-      ) as _i9.Future<_i2.UserCredential>);
-
-  @override
-  _i9.Future<void> deleteAccount() => (super.noSuchMethod(
-        Invocation.method(
-          #deleteAccount,
-          [],
-        ),
-        returnValue: _i9.Future<void>.value(),
-        returnValueForMissingStub: _i9.Future<void>.value(),
-      ) as _i9.Future<void>);
-
-  @override
-  _i9.Future<_i8.UserRole> getUserRole(String? userId) => (super.noSuchMethod(
+  _i9.Future<_i10.UserRole> getUserRole(String? userId) => (super.noSuchMethod(
         Invocation.method(
           #getUserRole,
           [userId],
         ),
-        returnValue: _i9.Future<_i8.UserRole>.value(_i8.UserRole.customer),
-      ) as _i9.Future<_i8.UserRole>);
+        returnValue: _i9.Future<_i10.UserRole>.value(_i10.UserRole.customer),
+      ) as _i9.Future<_i10.UserRole>);
 
   @override
   _i9.Future<void> updateUserRole(
     String? userId,
-    _i8.UserRole? role,
+    _i10.UserRole? role,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -306,7 +234,7 @@ class MockAuthService extends _i1.Mock implements _i8.AuthService {
 /// A class which mocks [GoRouter].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockGoRouter extends _i1.Mock implements _i10.GoRouter {
+class MockGoRouter extends _i1.Mock implements _i11.GoRouter {
   MockGoRouter() {
     _i1.throwOnMissingStub(this);
   }
@@ -430,7 +358,7 @@ class MockGoRouter extends _i1.Mock implements _i10.GoRouter {
             #queryParameters: queryParameters,
           },
         ),
-        returnValue: _i11.dummyValue<String>(
+        returnValue: _i12.dummyValue<String>(
           this,
           Invocation.method(
             #namedLocation,
@@ -458,7 +386,7 @@ class MockGoRouter extends _i1.Mock implements _i10.GoRouter {
       );
 
   @override
-  void restore(_i12.RouteMatchList? matchList) => super.noSuchMethod(
+  void restore(_i13.RouteMatchList? matchList) => super.noSuchMethod(
         Invocation.method(
           #restore,
           [matchList],

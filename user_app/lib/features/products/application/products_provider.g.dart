@@ -168,7 +168,7 @@ class _ProductProviderElement
   String get productId => (origin as ProductProvider).productId;
 }
 
-String _$productsNotifierHash() => r'bf7ef1bb33352b03167c2e5b4c86da11057b07dd';
+String _$productsNotifierHash() => r'e85515785623af354f6fb7ab0204645d2254a143';
 
 /// مزود حالة المنتجات باستخدام Riverpod المُولّد
 ///

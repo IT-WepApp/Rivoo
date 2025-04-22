@@ -5,11 +5,11 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i4;
 
-import 'package:flutter_riverpod/flutter_riverpod.dart' as _i2;
+import 'package:flutter_riverpod/flutter_riverpod.dart' as _i3;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:state_notifier/state_notifier.dart' as _i5;
 import 'package:user_app/features/ratings/application/ratings_notifier.dart'
-    as _i3;
+    as _i2;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -25,8 +25,8 @@ import 'package:user_app/features/ratings/application/ratings_notifier.dart'
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
-class _FakeAsyncValue_0<T> extends _i1.SmartFake implements _i2.AsyncValue<T> {
-  _FakeAsyncValue_0(
+class _FakeRatingsState_0 extends _i1.SmartFake implements _i2.RatingsState {
+  _FakeRatingsState_0(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -38,13 +38,13 @@ class _FakeAsyncValue_0<T> extends _i1.SmartFake implements _i2.AsyncValue<T> {
 /// A class which mocks [RatingsNotifier].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockRatingsNotifier extends _i1.Mock implements _i3.RatingsNotifier {
+class MockRatingsNotifier extends _i1.Mock implements _i2.RatingsNotifier {
   MockRatingsNotifier() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  set onError(_i2.ErrorListener? _onError) => super.noSuchMethod(
+  set onError(_i3.ErrorListener? _onError) => super.noSuchMethod(
         Invocation.setter(
           #onError,
           _onError,
@@ -59,23 +59,22 @@ class MockRatingsNotifier extends _i1.Mock implements _i3.RatingsNotifier {
       ) as bool);
 
   @override
-  _i4.Stream<_i2.AsyncValue<List<_i3.RatingModel>>> get stream =>
-      (super.noSuchMethod(
+  _i4.Stream<_i2.RatingsState> get stream => (super.noSuchMethod(
         Invocation.getter(#stream),
-        returnValue: _i4.Stream<_i2.AsyncValue<List<_i3.RatingModel>>>.empty(),
-      ) as _i4.Stream<_i2.AsyncValue<List<_i3.RatingModel>>>);
+        returnValue: _i4.Stream<_i2.RatingsState>.empty(),
+      ) as _i4.Stream<_i2.RatingsState>);
 
   @override
-  _i2.AsyncValue<List<_i3.RatingModel>> get state => (super.noSuchMethod(
+  _i2.RatingsState get state => (super.noSuchMethod(
         Invocation.getter(#state),
-        returnValue: _FakeAsyncValue_0<List<_i3.RatingModel>>(
+        returnValue: _FakeRatingsState_0(
           this,
           Invocation.getter(#state),
         ),
-      ) as _i2.AsyncValue<List<_i3.RatingModel>>);
+      ) as _i2.RatingsState);
 
   @override
-  set state(_i2.AsyncValue<List<_i3.RatingModel>>? value) => super.noSuchMethod(
+  set state(_i2.RatingsState? value) => super.noSuchMethod(
         Invocation.setter(
           #state,
           value,
@@ -84,13 +83,13 @@ class MockRatingsNotifier extends _i1.Mock implements _i3.RatingsNotifier {
       );
 
   @override
-  _i2.AsyncValue<List<_i3.RatingModel>> get debugState => (super.noSuchMethod(
+  _i2.RatingsState get debugState => (super.noSuchMethod(
         Invocation.getter(#debugState),
-        returnValue: _FakeAsyncValue_0<List<_i3.RatingModel>>(
+        returnValue: _FakeRatingsState_0(
           this,
           Invocation.getter(#debugState),
         ),
-      ) as _i2.AsyncValue<List<_i3.RatingModel>>);
+      ) as _i2.RatingsState);
 
   @override
   bool get hasListeners => (super.noSuchMethod(
@@ -99,32 +98,30 @@ class MockRatingsNotifier extends _i1.Mock implements _i3.RatingsNotifier {
       ) as bool);
 
   @override
-  _i4.Future<void> loadUserRatings() => (super.noSuchMethod(
+  _i4.Future<void> loadRatings(String? productId) => (super.noSuchMethod(
         Invocation.method(
-          #loadUserRatings,
-          [],
+          #loadRatings,
+          [productId],
         ),
         returnValue: _i4.Future<void>.value(),
         returnValueForMissingStub: _i4.Future<void>.value(),
       ) as _i4.Future<void>);
 
   @override
-  _i4.Future<void> addRating({
-    required String? targetId,
-    required String? targetType,
-    required double? rating,
-    String? comment,
-  }) =>
-      (super.noSuchMethod(
+  _i4.Future<void> addRating(dynamic rating) => (super.noSuchMethod(
         Invocation.method(
           #addRating,
-          [],
-          {
-            #targetId: targetId,
-            #targetType: targetType,
-            #rating: rating,
-            #comment: comment,
-          },
+          [rating],
+        ),
+        returnValue: _i4.Future<void>.value(),
+        returnValueForMissingStub: _i4.Future<void>.value(),
+      ) as _i4.Future<void>);
+
+  @override
+  _i4.Future<void> updateRating(dynamic rating) => (super.noSuchMethod(
+        Invocation.method(
+          #updateRating,
+          [rating],
         ),
         returnValue: _i4.Future<void>.value(),
         returnValueForMissingStub: _i4.Future<void>.value(),
@@ -142,8 +139,8 @@ class MockRatingsNotifier extends _i1.Mock implements _i3.RatingsNotifier {
 
   @override
   bool updateShouldNotify(
-    _i2.AsyncValue<List<_i3.RatingModel>>? old,
-    _i2.AsyncValue<List<_i3.RatingModel>>? current,
+    _i2.RatingsState? old,
+    _i2.RatingsState? current,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -157,8 +154,8 @@ class MockRatingsNotifier extends _i1.Mock implements _i3.RatingsNotifier {
       ) as bool);
 
   @override
-  _i2.RemoveListener addListener(
-    _i5.Listener<_i2.AsyncValue<List<_i3.RatingModel>>>? listener, {
+  _i3.RemoveListener addListener(
+    _i5.Listener<_i2.RatingsState>? listener, {
     bool? fireImmediately = true,
   }) =>
       (super.noSuchMethod(
@@ -168,7 +165,7 @@ class MockRatingsNotifier extends _i1.Mock implements _i3.RatingsNotifier {
           {#fireImmediately: fireImmediately},
         ),
         returnValue: () {},
-      ) as _i2.RemoveListener);
+      ) as _i3.RemoveListener);
 
   @override
   void dispose() => super.noSuchMethod(

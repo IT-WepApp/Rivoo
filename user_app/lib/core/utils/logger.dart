@@ -31,7 +31,7 @@ class AppLogger {
   void error(String message, [dynamic error, StackTrace? stackTrace]) {
     // استخدام الطريقة الصحيحة لتسجيل الأخطاء مع تمرير الخطأ وتتبع المكدس بشكل صحيح
     if (error != null || stackTrace != null) {
-      _logger.e(message, error: error, stackTrace: stackTrace);
+      _logger.e(message, error, stackTrace);
     } else {
       _logger.e(message);
     }

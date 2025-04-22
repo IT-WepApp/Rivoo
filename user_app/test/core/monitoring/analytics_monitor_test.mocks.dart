@@ -5,6 +5,7 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i3;
 
+import 'package:firebase_analytics/firebase_analytics.dart' as _i4;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:user_app/core/services/analytics_service.dart' as _i2;
 
@@ -74,7 +75,7 @@ class MockAnalyticsService extends _i1.Mock implements _i2.AnalyticsService {
   _i3.Future<void> logBeginCheckout({
     double? value,
     String? currency,
-    List<dynamic>? items,
+    List<_i4.AnalyticsEventItem>? items,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -95,7 +96,7 @@ class MockAnalyticsService extends _i1.Mock implements _i2.AnalyticsService {
     required double? value,
     required String? currency,
     String? transactionId,
-    List<dynamic>? items,
+    List<_i4.AnalyticsEventItem>? items,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -116,7 +117,7 @@ class MockAnalyticsService extends _i1.Mock implements _i2.AnalyticsService {
   _i3.Future<void> logAddToCart({
     required double? value,
     required String? currency,
-    required List<dynamic>? items,
+    required List<_i4.AnalyticsEventItem>? items,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -136,7 +137,7 @@ class MockAnalyticsService extends _i1.Mock implements _i2.AnalyticsService {
   _i3.Future<void> logRemoveFromCart({
     required double? value,
     required String? currency,
-    required List<dynamic>? items,
+    required List<_i4.AnalyticsEventItem>? items,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -156,7 +157,7 @@ class MockAnalyticsService extends _i1.Mock implements _i2.AnalyticsService {
   _i3.Future<void> logViewItem({
     required double? value,
     required String? currency,
-    required List<dynamic>? items,
+    required List<_i4.AnalyticsEventItem>? items,
   }) =>
       (super.noSuchMethod(
         Invocation.method(

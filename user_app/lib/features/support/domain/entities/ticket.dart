@@ -1,12 +1,45 @@
 import 'package:user_app/core/architecture/domain/entity.dart';
 
-/// كيان التذكرة
+/// حالات تذكرة الدعم
+enum TicketStatus {
+  /// مفتوحة
+  open,
+  
+  /// قيد المعالجة
+  inProgress,
+  
+  /// مغلقة
+  closed,
+  
+  /// ملغية
+  cancelled
+}
+
+/// فئات تذكرة الدعم
+enum TicketCategory {
+  /// طلب
+  order,
+  
+  /// منتج
+  product,
+  
+  /// دفع
+  payment,
+  
+  /// حساب
+  account,
+  
+  /// أخرى
+  other
+}
+
+/// كيان تذكرة الدعم
 class Ticket extends Entity {
-  /// معرف المستخدم الذي أنشأ التذكرة
+  /// معرف المستخدم
   final String userId;
   
   /// عنوان التذكرة
-  final String title;
+  final String subject;
   
   /// وصف المشكلة
   final String description;
@@ -14,99 +47,89 @@ class Ticket extends Entity {
   /// حالة التذكرة
   final TicketStatus status;
   
-  /// أولوية التذكرة
-  final TicketPriority priority;
-  
-  /// تاريخ إنشاء التذكرة
+  /// تاريخ الإنشاء
   final DateTime createdAt;
   
-  /// تاريخ آخر تحديث للتذكرة
+  /// تاريخ آخر تحديث
   final DateTime updatedAt;
   
-  /// تاريخ إغلاق التذكرة
-  final DateTime? closedAt;
+  /// فئة التذكرة
+  final TicketCategory category;
+  
+  /// المرفقات (اختياري)
+  final List<String>? attachments;
 
-  /// إنشاء كيان التذكرة
+  /// إنشاء تذكرة دعم
   const Ticket({
     required String id,
     required this.userId,
-    required this.title,
+    required this.subject,
     required this.description,
     required this.status,
-    required this.priority,
     required this.createdAt,
     required this.updatedAt,
-    this.closedAt,
+    required this.category,
+    this.attachments,
   }) : super(id: id);
-
-  /// نسخة جديدة من الكيان مع تحديث بعض الحقول
-  Ticket copyWith({
-    String? id,
-    String? userId,
-    String? title,
-    String? description,
-    TicketStatus? status,
-    TicketPriority? priority,
-    DateTime? createdAt,
-    DateTime? updatedAt,
-    DateTime? closedAt,
-  }) {
-    return Ticket(
-      id: id ?? this.id,
-      userId: userId ?? this.userId,
-      title: title ?? this.title,
-      description: description ?? this.description,
-      status: status ?? this.status,
-      priority: priority ?? this.priority,
-      createdAt: createdAt ?? this.createdAt,
-      updatedAt: updatedAt ?? this.updatedAt,
-      closedAt: closedAt ?? this.closedAt,
-    );
-  }
 
   @override
   List<Object?> get props => [
         id,
         userId,
-        title,
+        subject,
         description,
         status,
-        priority,
         createdAt,
         updatedAt,
-        closedAt,
+        category,
+        attachments,
       ];
 }
 
-/// حالة التذكرة
-enum TicketStatus {
-  /// جديدة
-  new_,
+/// كيان رسالة في تذكرة الدعم
+class TicketMessage extends Entity {
+  /// معرف التذكرة
+  final String ticketId;
   
-  /// قيد المعالجة
-  inProgress,
+  /// معرف المرسل
+  final String senderId;
   
-  /// بانتظار رد المستخدم
-  waitingForUserResponse,
+  /// اسم المرسل
+  final String senderName;
   
-  /// مغلقة
-  closed,
+  /// هل المرسل هو فريق الدعم
+  final bool isSupport;
   
-  /// ملغاة
-  cancelled,
-}
+  /// محتوى الرسالة
+  final String content;
+  
+  /// تاريخ الإرسال
+  final DateTime sentAt;
+  
+  /// المرفقات (اختياري)
+  final List<String>? attachments;
 
-/// أولوية التذكرة
-enum TicketPriority {
-  /// منخفضة
-  low,
-  
-  /// متوسطة
-  medium,
-  
-  /// عالية
-  high,
-  
-  /// حرجة
-  critical,
+  /// إنشاء رسالة تذكرة دعم
+  const TicketMessage({
+    required String id,
+    required this.ticketId,
+    required this.senderId,
+    required this.senderName,
+    required this.isSupport,
+    required this.content,
+    required this.sentAt,
+    this.attachments,
+  }) : super(id: id);
+
+  @override
+  List<Object?> get props => [
+        id,
+        ticketId,
+        senderId,
+        senderName,
+        isSupport,
+        content,
+        sentAt,
+        attachments,
+      ];
 }

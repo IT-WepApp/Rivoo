@@ -2,6 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
 import 'package:user_app/core/architecture/domain/failure.dart';
+import 'package:user_app/features/ratings/data/datasources/rating_datasource.dart';
 import 'package:user_app/features/ratings/data/repositories/rating_repository_impl.dart';
 import 'package:user_app/features/ratings/domain/entities/rating.dart';
 import 'package:user_app/features/ratings/domain/repositories/rating_repository.dart';

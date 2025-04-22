@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:user_app/core/theme/app_theme.dart';
 import 'package:user_app/features/product_details/domain/entities/rating.dart';
 
 /// نجوم التقييم
@@ -27,7 +26,7 @@ class RatingStars extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final starColor = color ?? AppTheme.primaryColor;
+    final starColor = color ?? Colors.amber;
     
     return Row(
       mainAxisSize: MainAxisSize.min,
@@ -69,7 +68,7 @@ class RatingStars extends StatelessWidget {
             style: TextStyle(
               fontSize: size * 0.8,
               fontWeight: FontWeight.bold,
-              color: AppTheme.textPrimaryColor,
+              color: Colors.black87,
             ),
           ),
         ],

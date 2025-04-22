@@ -1,236 +1,215 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:user_app/features/auth/application/auth_notifier.dart';
+import 'package:user_app/features/ratings/data/datasources/rating_datasource.dart';
 
-class RatingModel {
-  final String id;
-  final String userId;
-  final String targetId; // معرف المنتج أو المندوب
-  final String targetType; // نوع الهدف (منتج أو مندوب)
-  final double rating; // التقييم من 1 إلى 5
-  final String? comment; // تعليق اختياري
-  final DateTime createdAt;
+/// مزود حالة التقييمات
+final ratingsNotifierProvider = StateNotifierProvider<RatingsNotifier, RatingsState>((ref) {
+  return RatingsNotifier();
+});
 
-  RatingModel({
-    required this.id,
-    required this.userId,
-    required this.targetId,
-    required this.targetType,
-    required this.rating,
-    this.comment,
-    required this.createdAt,
+/// حالة التقييمات
+class RatingsState {
+  /// هل جاري التحميل
+  final bool isLoading;
+  
+  /// هل حدث خطأ
+  final bool hasError;
+  
+  /// رسالة الخطأ
+  final String? errorMessage;
+  
+  /// ملخص التقييمات
+  final RatingSummary? summary;
+  
+  /// قائمة التقييمات
+  final List<Rating> ratings;
+  
+  /// التقييم الحالي للمستخدم
+  final Rating? userRating;
+
+  /// إنشاء حالة التقييمات
+  const RatingsState({
+    this.isLoading = false,
+    this.hasError = false,
+    this.errorMessage,
+    this.summary,
+    this.ratings = const [],
+    this.userRating,
   });
 
-  Map<String, dynamic> toMap() {
-    return {
-      'userId': userId,
-      'targetId': targetId,
-      'targetType': targetType,
-      'rating': rating,
-      'comment': comment,
-      'createdAt': createdAt,
-    };
-  }
-
-  factory RatingModel.fromMap(String id, Map<String, dynamic> map) {
-    return RatingModel(
-      id: id,
-      userId: map['userId'] ?? '',
-      targetId: map['targetId'] ?? '',
-      targetType: map['targetType'] ?? '',
-      rating: (map['rating'] ?? 0.0).toDouble(),
-      comment: map['comment'],
-      createdAt: (map['createdAt'] as Timestamp).toDate(),
+  /// نسخة جديدة من الحالة مع تحديث بعض الحقول
+  RatingsState copyWith({
+    bool? isLoading,
+    bool? hasError,
+    String? errorMessage,
+    RatingSummary? summary,
+    List<Rating>? ratings,
+    Rating? userRating,
+    bool clearError = false,
+  }) {
+    return RatingsState(
+      isLoading: isLoading ?? this.isLoading,
+      hasError: clearError ? false : (hasError ?? this.hasError),
+      errorMessage: clearError ? null : (errorMessage ?? this.errorMessage),
+      summary: summary ?? this.summary,
+      ratings: ratings ?? this.ratings,
+      userRating: userRating ?? this.userRating,
     );
   }
 }
 
-class RatingsNotifier extends StateNotifier<AsyncValue<List<RatingModel>>> {
-  final String? userId;
-  final FirebaseFirestore _firestore;
+/// مدير حالة التقييمات
+class RatingsNotifier extends StateNotifier<RatingsState> {
+  /// إنشاء مدير حالة التقييمات
+  RatingsNotifier() : super(const RatingsState());
 
-  RatingsNotifier(this.userId, this._firestore) : super(const AsyncLoading()) {
-    if (userId != null) {
-      loadUserRatings();
-    } else {
-      state = const AsyncData([]);
-    }
-  }
-
-  Future<void> loadUserRatings() async {
-    if (userId == null) {
-      state = const AsyncData([]);
-      return;
-    }
-
-    state = const AsyncLoading();
-
+  /// تحميل التقييمات لمنتج معين
+  Future<void> loadRatings(String productId) async {
+    state = state.copyWith(isLoading: true, clearError: true);
+    
     try {
-      final snapshot = await _firestore
-          .collection('ratings')
-          .where('userId', isEqualTo: userId)
-          .orderBy('createdAt', descending: true)
-          .get();
-
-      final ratings = snapshot.docs
-          .map((doc) => RatingModel.fromMap(doc.id, doc.data()))
-          .toList();
-
-      state = AsyncData(ratings);
-    } catch (e, stackTrace) {
-      state = AsyncError(e, stackTrace);
-    }
-  }
-
-  Future<void> addRating({
-    required String targetId,
-    required String targetType,
-    required double rating,
-    String? comment,
-  }) async {
-    if (userId == null) return;
-
-    try {
-      // التحقق مما إذا كان المستخدم قد قام بتقييم هذا الهدف من قبل
-      final existingRatingQuery = await _firestore
-          .collection('ratings')
-          .where('userId', isEqualTo: userId)
-          .where('targetId', isEqualTo: targetId)
-          .where('targetType', isEqualTo: targetType)
-          .limit(1)
-          .get();
-
-      final ratingData = RatingModel(
-        id: '', // سيتم تعيينه من Firestore
-        userId: userId!,
-        targetId: targetId,
-        targetType: targetType,
-        rating: rating,
-        comment: comment,
-        createdAt: DateTime.now(),
-      ).toMap();
-
-      if (existingRatingQuery.docs.isNotEmpty) {
-        // تحديث التقييم الموجود
-        final existingRatingDoc = existingRatingQuery.docs.first;
-        await _firestore
-            .collection('ratings')
-            .doc(existingRatingDoc.id)
-            .update(ratingData);
-      } else {
-        // إضافة تقييم جديد
-        await _firestore.collection('ratings').add(ratingData);
-      }
-
-      // تحديث متوسط التقييم للهدف
-      await _updateAverageRating(targetId, targetType);
-
-      // إعادة تحميل تقييمات المستخدم
-      loadUserRatings();
-    } catch (e, stackTrace) {
-      state = AsyncError(e, stackTrace);
-    }
-  }
-
-  Future<void> _updateAverageRating(String targetId, String targetType) async {
-    try {
-      // الحصول على جميع التقييمات للهدف
-      final ratingsSnapshot = await _firestore
-          .collection('ratings')
-          .where('targetId', isEqualTo: targetId)
-          .where('targetType', isEqualTo: targetType)
-          .get();
-
-      if (ratingsSnapshot.docs.isEmpty) return;
-
-      // حساب متوسط التقييم
-      double totalRating = 0;
-      for (final doc in ratingsSnapshot.docs) {
-        totalRating += (doc.data()['rating'] ?? 0.0).toDouble();
-      }
-      final averageRating = totalRating / ratingsSnapshot.docs.length;
-      final ratingsCount = ratingsSnapshot.docs.length;
-
-      // تحديث متوسط التقييم في المجموعة المناسبة
-      final collectionName =
-          targetType == 'product' ? 'products' : 'delivery_persons';
-      await _firestore.collection(collectionName).doc(targetId).update({
-        'averageRating': averageRating,
-        'ratingsCount': ratingsCount,
-      });
+      // هنا يتم استدعاء مستودع التقييمات لجلب البيانات
+      // await _repository.getRatings(productId)
+      
+      // لأغراض الاختبار، نستخدم بيانات وهمية
+      await Future.delayed(const Duration(seconds: 1));
+      
+      final ratings = [
+        Rating(
+          id: '1',
+          userId: 'user1',
+          productId: productId,
+          rating: 4.5,
+          review: 'منتج رائع!',
+          createdAt: DateTime.now(),
+          userDisplayName: 'أحمد محمد',
+          isVerifiedPurchase: true,
+        ),
+        Rating(
+          id: '2',
+          userId: 'user2',
+          productId: productId,
+          rating: 3.0,
+          review: 'منتج جيد ولكن يمكن تحسينه',
+          createdAt: DateTime.now().subtract(const Duration(days: 5)),
+          userDisplayName: 'سارة أحمد',
+          isVerifiedPurchase: true,
+        ),
+      ];
+      
+      final summary = RatingSummary(
+        productId: productId,
+        averageRating: 3.8,
+        totalRatings: 10,
+        ratingDistribution: {
+          5: 5,
+          4: 2,
+          3: 1,
+          2: 1,
+          1: 1,
+        },
+      );
+      
+      state = state.copyWith(
+        isLoading: false,
+        ratings: ratings,
+        summary: summary,
+      );
     } catch (e) {
-      print('خطأ في تحديث متوسط التقييم: $e');
+      state = state.copyWith(
+        isLoading: false,
+        hasError: true,
+        errorMessage: e.toString(),
+      );
     }
   }
 
-  Future<void> deleteRating(String ratingId) async {
-    if (userId == null) return;
-
+  /// إضافة تقييم جديد
+  Future<void> addRating(Rating rating) async {
+    state = state.copyWith(isLoading: true, clearError: true);
+    
     try {
-      // الحصول على معلومات التقييم قبل حذفه
-      final ratingDoc =
-          await _firestore.collection('ratings').doc(ratingId).get();
-      if (!ratingDoc.exists) return;
+      // هنا يتم استدعاء مستودع التقييمات لإضافة التقييم
+      // await _repository.addRating(rating)
+      
+      // لأغراض الاختبار، نستخدم تأخير وهمي
+      await Future.delayed(const Duration(seconds: 1));
+      
+      // تحديث قائمة التقييمات وملخص التقييمات
+      final updatedRatings = [...state.ratings, rating];
+      
+      state = state.copyWith(
+        isLoading: false,
+        ratings: updatedRatings,
+        userRating: rating,
+      );
+    } catch (e) {
+      state = state.copyWith(
+        isLoading: false,
+        hasError: true,
+        errorMessage: e.toString(),
+      );
+    }
+  }
 
-      final ratingData = ratingDoc.data();
-      if (ratingData == null) return;
+  /// تحديث تقييم موجود
+  Future<void> updateRating(Rating rating) async {
+    state = state.copyWith(isLoading: true, clearError: true);
+    
+    try {
+      // هنا يتم استدعاء مستودع التقييمات لتحديث التقييم
+      // await _repository.updateRating(rating)
+      
+      // لأغراض الاختبار، نستخدم تأخير وهمي
+      await Future.delayed(const Duration(seconds: 1));
+      
+      // تحديث قائمة التقييمات
+      final updatedRatings = state.ratings.map((r) {
+        if (r.id == rating.id) {
+          return rating;
+        }
+        return r;
+      }).toList();
+      
+      state = state.copyWith(
+        isLoading: false,
+        ratings: updatedRatings,
+        userRating: rating,
+      );
+    } catch (e) {
+      state = state.copyWith(
+        isLoading: false,
+        hasError: true,
+        errorMessage: e.toString(),
+      );
+    }
+  }
 
-      final targetId = ratingData['targetId'] as String?;
-      final targetType = ratingData['targetType'] as String?;
-
-      if (targetId == null || targetType == null) return;
-
-      // حذف التقييم
-      await _firestore.collection('ratings').doc(ratingId).delete();
-
-      // تحديث متوسط التقييم للهدف
-      await _updateAverageRating(targetId, targetType);
-
-      // إعادة تحميل تقييمات المستخدم
-      loadUserRatings();
-    } catch (e, stackTrace) {
-      state = AsyncError(e, stackTrace);
+  /// حذف تقييم
+  Future<void> deleteRating(String ratingId) async {
+    state = state.copyWith(isLoading: true, clearError: true);
+    
+    try {
+      // هنا يتم استدعاء مستودع التقييمات لحذف التقييم
+      // await _repository.deleteRating(ratingId)
+      
+      // لأغراض الاختبار، نستخدم تأخير وهمي
+      await Future.delayed(const Duration(seconds: 1));
+      
+      // تحديث قائمة التقييمات
+      final updatedRatings = state.ratings.where((r) => r.id != ratingId).toList();
+      
+      state = state.copyWith(
+        isLoading: false,
+        ratings: updatedRatings,
+        userRating: state.userRating?.id == ratingId ? null : state.userRating,
+      );
+    } catch (e) {
+      state = state.copyWith(
+        isLoading: false,
+        hasError: true,
+        errorMessage: e.toString(),
+      );
     }
   }
 }
-
-// مزود لتقييمات المستخدم
-final userRatingsProvider =
-    StateNotifierProvider<RatingsNotifier, AsyncValue<List<RatingModel>>>(
-        (ref) {
-  final userId = ref.watch(userIdProvider);
-  final firestore = FirebaseFirestore.instance;
-  return RatingsNotifier(userId, firestore);
-});
-
-// مزود لمتوسط تقييم منتج معين
-final productRatingProvider =
-    FutureProvider.family<double, String>((ref, productId) async {
-  final firestore = FirebaseFirestore.instance;
-  final productDoc =
-      await firestore.collection('products').doc(productId).get();
-
-  if (!productDoc.exists) return 0.0;
-
-  final data = productDoc.data();
-  if (data == null) return 0.0;
-
-  return (data['averageRating'] ?? 0.0).toDouble();
-});
-
-// مزود لمتوسط تقييم مندوب معين
-final deliveryPersonRatingProvider =
-    FutureProvider.family<double, String>((ref, deliveryPersonId) async {
-  final firestore = FirebaseFirestore.instance;
-  final deliveryPersonDoc = await firestore
-      .collection('delivery_persons')
-      .doc(deliveryPersonId)
-      .get();
-
-  if (!deliveryPersonDoc.exists) return 0.0;
-
-  final data = deliveryPersonDoc.data();
-  if (data == null) return 0.0;
-
-  return (data['averageRating'] ?? 0.0).toDouble();
-});

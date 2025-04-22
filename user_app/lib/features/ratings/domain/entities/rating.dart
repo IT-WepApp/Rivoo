@@ -1,23 +1,38 @@
-import 'package:flutter/material.dart';
 import 'package:user_app/core/architecture/domain/entity.dart';
-import 'package:user_app/core/architecture/domain/failure.dart';
-import 'package:dartz/dartz.dart';
 
 /// كيان التقييم
 class Rating extends Entity {
+  /// معرف المستخدم الذي قام بالتقييم
   final String userId;
+  
+  /// معرف المنتج الذي تم تقييمه
   final String productId;
+  
+  /// قيمة التقييم (من 1 إلى 5)
   final double rating;
-  final String comment;
+  
+  /// نص المراجعة
+  final String? review;
+  
+  /// تاريخ إنشاء التقييم
   final DateTime createdAt;
+  
+  /// اسم المستخدم الظاهر
+  final String userDisplayName;
+  
+  /// هل التقييم من مشتري مؤكد
+  final bool isVerifiedPurchase;
 
-  Rating({
+  /// إنشاء كيان التقييم
+  const Rating({
     required String id,
     required this.userId,
     required this.productId,
     required this.rating,
-    required this.comment,
+    this.review,
     required this.createdAt,
+    required this.userDisplayName,
+    this.isVerifiedPurchase = false,
   }) : super(id: id);
 
   @override
@@ -26,29 +41,9 @@ class Rating extends Entity {
         userId,
         productId,
         rating,
-        comment,
+        review,
         createdAt,
-      ];
-}
-
-/// ملخص التقييمات
-class RatingSummary {
-  final String productId;
-  final double averageRating;
-  final int totalRatings;
-  final Map<int, int> ratingDistribution;
-
-  RatingSummary({
-    required this.productId,
-    required this.averageRating,
-    required this.totalRatings,
-    required this.ratingDistribution,
-  });
-
-  List<Object?> get props => [
-        productId,
-        averageRating,
-        totalRatings,
-        ratingDistribution,
+        userDisplayName,
+        isVerifiedPurchase,
       ];
 }

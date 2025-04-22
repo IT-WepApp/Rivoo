@@ -1,4 +1,5 @@
 import 'package:user_app/core/architecture/domain/entity.dart';
+import 'package:user_app/features/products/domain/product_status.dart';
 
 /// كيان المنتج
 class Product extends Entity {
@@ -26,6 +27,9 @@ class Product extends Entity {
   /// عدد التقييمات
   final int reviewsCount;
   
+  /// عدد المراجعات (لإصلاح خطأ reviewCount)
+  final int reviewCount;
+  
   /// هل المنتج متوفر في المخزون
   final bool inStock;
   
@@ -47,6 +51,9 @@ class Product extends Entity {
   /// هل المنتج مخفض
   final bool isOnSale;
   
+  /// حالة المنتج
+  final ProductStatus status;
+  
   /// تاريخ إضافة المنتج
   final DateTime createdAt;
   
@@ -64,6 +71,7 @@ class Product extends Entity {
     this.additionalImages = const [],
     this.rating = 0.0,
     this.reviewsCount = 0,
+    int? reviewCount,
     this.inStock = true,
     this.quantity = 0,
     required this.categoryId,
@@ -71,9 +79,12 @@ class Product extends Entity {
     this.isFeatured = false,
     this.isNew = false,
     this.isOnSale = false,
+    this.status = ProductStatus.available,
     required this.createdAt,
     required this.updatedAt,
-  }) : super(id: id);
+  }) : 
+    this.reviewCount = reviewCount ?? reviewsCount,
+    super(id: id);
 
   /// نسخة جديدة من الكيان مع تحديث بعض الحقول
   Product copyWith({
@@ -86,6 +97,7 @@ class Product extends Entity {
     List<String>? additionalImages,
     double? rating,
     int? reviewsCount,
+    int? reviewCount,
     bool? inStock,
     int? quantity,
     String? categoryId,
@@ -93,6 +105,7 @@ class Product extends Entity {
     bool? isFeatured,
     bool? isNew,
     bool? isOnSale,
+    ProductStatus? status,
     DateTime? createdAt,
     DateTime? updatedAt,
   }) {
@@ -106,6 +119,7 @@ class Product extends Entity {
       additionalImages: additionalImages ?? this.additionalImages,
       rating: rating ?? this.rating,
       reviewsCount: reviewsCount ?? this.reviewsCount,
+      reviewCount: reviewCount ?? this.reviewCount,
       inStock: inStock ?? this.inStock,
       quantity: quantity ?? this.quantity,
       categoryId: categoryId ?? this.categoryId,
@@ -113,10 +127,14 @@ class Product extends Entity {
       isFeatured: isFeatured ?? this.isFeatured,
       isNew: isNew ?? this.isNew,
       isOnSale: isOnSale ?? this.isOnSale,
+      status: status ?? this.status,
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
     );
   }
+
+  /// هل المنتج متاح للشراء
+  bool get isAvailable => status == ProductStatus.available && inStock;
 
   @override
   List<Object?> get props => [
@@ -129,6 +147,7 @@ class Product extends Entity {
         additionalImages,
         rating,
         reviewsCount,
+        reviewCount,
         inStock,
         quantity,
         categoryId,
@@ -136,6 +155,7 @@ class Product extends Entity {
         isFeatured,
         isNew,
         isOnSale,
+        status,
         createdAt,
         updatedAt,
       ];

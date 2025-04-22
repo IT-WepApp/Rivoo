@@ -1,8 +1,9 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mockito/annotations.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:user_app/features/ratings/application/ratings_notifier.dart';
+
+import 'ratings_notifier_test.mocks.dart';
 
 @GenerateMocks([RatingsNotifier])
 void main() {
@@ -13,124 +14,72 @@ void main() {
   });
 
   group('RatingsNotifier Tests', () {
-    test('addRating should add a new rating successfully', () async {
+    test('loadRatings should update state with ratings and summary', () async {
       // ترتيب
-      const productId = 'product_123';
-      const rating = 4;
-      const comment = 'منتج رائع، أنصح به';
-
-      when(mockRatingsNotifier.addRating(
-        productId: productId,
-        rating: rating,
-        comment: comment,
-      )).thenAnswer((_) async => true);
+      const productId = 'product-1';
+      when(mockRatingsNotifier.loadRatings(productId)).thenAnswer((_) async {});
 
       // تنفيذ
-      final result = await mockRatingsNotifier.addRating(
-        productId: productId,
-        rating: rating,
-        comment: comment,
+      await mockRatingsNotifier.loadRatings(productId);
+
+      // تحقق
+      verify(mockRatingsNotifier.loadRatings(productId)).called(1);
+    });
+
+    test('addRating should update state with new rating', () async {
+      // ترتيب
+      final testDate = DateTime.now();
+      final rating = Rating(
+        id: 'rating-1',
+        userId: 'user-1',
+        productId: 'product-1',
+        rating: 4.5,
+        review: 'منتج رائع!',
+        createdAt: testDate,
+        userDisplayName: 'أحمد محمد',
+        isVerifiedPurchase: true,
       );
-
-      // تحقق
-      expect(result, true);
-      verify(mockRatingsNotifier.addRating(
-        productId: productId,
-        rating: rating,
-        comment: comment,
-      )).called(1);
-    });
-
-    test('updateRating should update an existing rating', () async {
-      // ترتيب
-      const ratingId = 'rating_123';
-      const productId = 'product_123';
-      const newRating = 5;
-      const newComment = 'تحديث: المنتج ممتاز جداً';
-
-      when(mockRatingsNotifier.updateRating(
-        ratingId: ratingId,
-        productId: productId,
-        rating: newRating,
-        comment: newComment,
-      )).thenAnswer((_) async => true);
+      when(mockRatingsNotifier.addRating(rating)).thenAnswer((_) async {});
 
       // تنفيذ
-      final result = await mockRatingsNotifier.updateRating(
-        ratingId: ratingId,
-        productId: productId,
-        rating: newRating,
-        comment: newComment,
+      await mockRatingsNotifier.addRating(rating);
+
+      // تحقق
+      verify(mockRatingsNotifier.addRating(rating)).called(1);
+    });
+
+    test('updateRating should update state with modified rating', () async {
+      // ترتيب
+      final testDate = DateTime.now();
+      final rating = Rating(
+        id: 'rating-1',
+        userId: 'user-1',
+        productId: 'product-1',
+        rating: 3.5,
+        review: 'تم تعديل التقييم',
+        createdAt: testDate,
+        userDisplayName: 'أحمد محمد',
+        isVerifiedPurchase: true,
       );
-
-      // تحقق
-      expect(result, true);
-      verify(mockRatingsNotifier.updateRating(
-        ratingId: ratingId,
-        productId: productId,
-        rating: newRating,
-        comment: newComment,
-      )).called(1);
-    });
-
-    test('deleteRating should delete a rating', () async {
-      // ترتيب
-      const ratingId = 'rating_123';
-      const productId = 'product_123';
-
-      when(mockRatingsNotifier.deleteRating(
-        ratingId: ratingId,
-        productId: productId,
-      )).thenAnswer((_) async => true);
+      when(mockRatingsNotifier.updateRating(rating)).thenAnswer((_) async {});
 
       // تنفيذ
-      final result = await mockRatingsNotifier.deleteRating(
-        ratingId: ratingId,
-        productId: productId,
-      );
+      await mockRatingsNotifier.updateRating(rating);
 
       // تحقق
-      expect(result, true);
-      verify(mockRatingsNotifier.deleteRating(
-        ratingId: ratingId,
-        productId: productId,
-      )).called(1);
+      verify(mockRatingsNotifier.updateRating(rating)).called(1);
     });
 
-    test('getProductRatings should return product ratings', () async {
+    test('deleteRating should remove rating from state', () async {
       // ترتيب
-      const productId = 'product_123';
-      final expectedRatings = [
-        {'id': 'rating_1', 'rating': 5, 'comment': 'ممتاز'},
-        {'id': 'rating_2', 'rating': 4, 'comment': 'جيد جدا'},
-      ];
-
-      when(mockRatingsNotifier.getProductRatings(productId))
-          .thenAnswer((_) async => expectedRatings);
+      const ratingId = 'rating-1';
+      when(mockRatingsNotifier.deleteRating(ratingId)).thenAnswer((_) async {});
 
       // تنفيذ
-      final result = await mockRatingsNotifier.getProductRatings(productId);
+      await mockRatingsNotifier.deleteRating(ratingId);
 
       // تحقق
-      expect(result, expectedRatings);
-      expect(result.length, 2);
-      verify(mockRatingsNotifier.getProductRatings(productId)).called(1);
-    });
-
-    test('getAverageRating should calculate correct average', () async {
-      // ترتيب
-      const productId = 'product_123';
-      const expectedAverage = 4.5;
-
-      when(mockRatingsNotifier.getAverageRating(productId))
-          .thenAnswer((_) async => expectedAverage);
-
-      // تنفيذ
-      final result = await mockRatingsNotifier.getAverageRating(productId);
-
-      // تحقق
-      expect(result, expectedAverage);
-      verify(mockRatingsNotifier.getAverageRating(productId)).called(1);
+      verify(mockRatingsNotifier.deleteRating(ratingId)).called(1);
     });
   });
 }

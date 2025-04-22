@@ -8,7 +8,8 @@ import 'dart:async' as _i4;
 import 'package:dartz/dartz.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:user_app/core/architecture/domain/failure.dart' as _i5;
-import 'package:user_app/features/ratings/domain/entities/rating.dart' as _i6;
+import 'package:user_app/features/ratings/data/datasources/rating_datasource.dart'
+    as _i6;
 import 'package:user_app/features/ratings/domain/repositories/rating_repository.dart'
     as _i3;
 
@@ -45,173 +46,90 @@ class MockRatingRepository extends _i1.Mock implements _i3.RatingRepository {
   }
 
   @override
-  _i4.Future<_i2.Either<_i5.Failure, List<_i6.Rating>>> getProductRatings(
+  _i4.Future<_i2.Either<_i5.Failure, List<dynamic>>> getRatings(
           String? productId) =>
       (super.noSuchMethod(
         Invocation.method(
-          #getProductRatings,
+          #getRatings,
           [productId],
         ),
-        returnValue:
-            _i4.Future<_i2.Either<_i5.Failure, List<_i6.Rating>>>.value(
-                _FakeEither_0<_i5.Failure, List<_i6.Rating>>(
+        returnValue: _i4.Future<_i2.Either<_i5.Failure, List<dynamic>>>.value(
+            _FakeEither_0<_i5.Failure, List<dynamic>>(
           this,
           Invocation.method(
-            #getProductRatings,
+            #getRatings,
             [productId],
           ),
         )),
-      ) as _i4.Future<_i2.Either<_i5.Failure, List<_i6.Rating>>>);
+      ) as _i4.Future<_i2.Either<_i5.Failure, List<dynamic>>>);
 
   @override
-  _i4.Future<_i2.Either<_i5.Failure, _i6.RatingSummary>>
-      getProductRatingSummary(String? productId) => (super.noSuchMethod(
-            Invocation.method(
-              #getProductRatingSummary,
-              [productId],
-            ),
-            returnValue:
-                _i4.Future<_i2.Either<_i5.Failure, _i6.RatingSummary>>.value(
-                    _FakeEither_0<_i5.Failure, _i6.RatingSummary>(
-              this,
-              Invocation.method(
-                #getProductRatingSummary,
-                [productId],
-              ),
-            )),
-          ) as _i4.Future<_i2.Either<_i5.Failure, _i6.RatingSummary>>);
+  _i4.Future<_i2.Either<_i5.Failure, _i6.RatingSummary>> getRatingSummary(
+          String? productId) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #getRatingSummary,
+          [productId],
+        ),
+        returnValue:
+            _i4.Future<_i2.Either<_i5.Failure, _i6.RatingSummary>>.value(
+                _FakeEither_0<_i5.Failure, _i6.RatingSummary>(
+          this,
+          Invocation.method(
+            #getRatingSummary,
+            [productId],
+          ),
+        )),
+      ) as _i4.Future<_i2.Either<_i5.Failure, _i6.RatingSummary>>);
 
   @override
-  _i4.Future<_i2.Either<_i5.Failure, _i6.Rating>> addRating({
-    required String? productId,
-    required double? rating,
-    String? review,
-  }) =>
+  _i4.Future<_i2.Either<_i5.Failure, dynamic>> addRating(dynamic rating) =>
       (super.noSuchMethod(
         Invocation.method(
           #addRating,
-          [],
-          {
-            #productId: productId,
-            #rating: rating,
-            #review: review,
-          },
+          [rating],
         ),
-        returnValue: _i4.Future<_i2.Either<_i5.Failure, _i6.Rating>>.value(
-            _FakeEither_0<_i5.Failure, _i6.Rating>(
+        returnValue: _i4.Future<_i2.Either<_i5.Failure, dynamic>>.value(
+            _FakeEither_0<_i5.Failure, dynamic>(
           this,
           Invocation.method(
             #addRating,
-            [],
-            {
-              #productId: productId,
-              #rating: rating,
-              #review: review,
-            },
+            [rating],
           ),
         )),
-      ) as _i4.Future<_i2.Either<_i5.Failure, _i6.Rating>>);
+      ) as _i4.Future<_i2.Either<_i5.Failure, dynamic>>);
 
   @override
-  _i4.Future<_i2.Either<_i5.Failure, _i6.Rating>> updateRating({
-    required String? ratingId,
-    required double? rating,
-    String? review,
-  }) =>
+  _i4.Future<_i2.Either<_i5.Failure, dynamic>> updateRating(dynamic rating) =>
       (super.noSuchMethod(
         Invocation.method(
           #updateRating,
-          [],
-          {
-            #ratingId: ratingId,
-            #rating: rating,
-            #review: review,
-          },
+          [rating],
         ),
-        returnValue: _i4.Future<_i2.Either<_i5.Failure, _i6.Rating>>.value(
-            _FakeEither_0<_i5.Failure, _i6.Rating>(
+        returnValue: _i4.Future<_i2.Either<_i5.Failure, dynamic>>.value(
+            _FakeEither_0<_i5.Failure, dynamic>(
           this,
           Invocation.method(
             #updateRating,
-            [],
-            {
-              #ratingId: ratingId,
-              #rating: rating,
-              #review: review,
-            },
+            [rating],
           ),
         )),
-      ) as _i4.Future<_i2.Either<_i5.Failure, _i6.Rating>>);
+      ) as _i4.Future<_i2.Either<_i5.Failure, dynamic>>);
 
   @override
-  _i4.Future<_i2.Either<_i5.Failure, _i2.Unit>> deleteRating(
-          String? ratingId) =>
+  _i4.Future<_i2.Either<_i5.Failure, bool>> deleteRating(String? ratingId) =>
       (super.noSuchMethod(
         Invocation.method(
           #deleteRating,
           [ratingId],
         ),
-        returnValue: _i4.Future<_i2.Either<_i5.Failure, _i2.Unit>>.value(
-            _FakeEither_0<_i5.Failure, _i2.Unit>(
+        returnValue: _i4.Future<_i2.Either<_i5.Failure, bool>>.value(
+            _FakeEither_0<_i5.Failure, bool>(
           this,
           Invocation.method(
             #deleteRating,
             [ratingId],
           ),
         )),
-      ) as _i4.Future<_i2.Either<_i5.Failure, _i2.Unit>>);
-
-  @override
-  _i4.Future<_i2.Either<_i5.Failure, List<_i6.Rating>>> getUserRatings() =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #getUserRatings,
-          [],
-        ),
-        returnValue:
-            _i4.Future<_i2.Either<_i5.Failure, List<_i6.Rating>>>.value(
-                _FakeEither_0<_i5.Failure, List<_i6.Rating>>(
-          this,
-          Invocation.method(
-            #getUserRatings,
-            [],
-          ),
-        )),
-      ) as _i4.Future<_i2.Either<_i5.Failure, List<_i6.Rating>>>);
-
-  @override
-  _i4.Future<_i2.Either<_i5.Failure, bool>> hasUserRatedProduct(
-          String? productId) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #hasUserRatedProduct,
-          [productId],
-        ),
-        returnValue: _i4.Future<_i2.Either<_i5.Failure, bool>>.value(
-            _FakeEither_0<_i5.Failure, bool>(
-          this,
-          Invocation.method(
-            #hasUserRatedProduct,
-            [productId],
-          ),
-        )),
       ) as _i4.Future<_i2.Either<_i5.Failure, bool>>);
-
-  @override
-  _i4.Future<_i2.Either<_i5.Failure, _i6.Rating?>> getUserRatingForProduct(
-          String? productId) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #getUserRatingForProduct,
-          [productId],
-        ),
-        returnValue: _i4.Future<_i2.Either<_i5.Failure, _i6.Rating?>>.value(
-            _FakeEither_0<_i5.Failure, _i6.Rating?>(
-          this,
-          Invocation.method(
-            #getUserRatingForProduct,
-            [productId],
-          ),
-        )),
-      ) as _i4.Future<_i2.Either<_i5.Failure, _i6.Rating?>>);
 }

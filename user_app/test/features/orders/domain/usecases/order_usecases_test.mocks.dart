@@ -8,7 +8,6 @@ import 'dart:async' as _i4;
 import 'package:dartz/dartz.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:user_app/core/architecture/domain/failure.dart' as _i5;
-import 'package:user_app/features/orders/domain/entities/order.dart' as _i6;
 import 'package:user_app/features/orders/domain/repositories/order_repository.dart'
     as _i3;
 
@@ -45,18 +44,19 @@ class MockOrderRepository extends _i1.Mock implements _i3.OrderRepository {
   }
 
   @override
-  _i4.Future<_i2.Either<_i5.Failure, List<dynamic>>> getUserOrders() =>
+  _i4.Future<_i2.Either<_i5.Failure, List<dynamic>>> getUserOrders(
+          String? userId) =>
       (super.noSuchMethod(
         Invocation.method(
           #getUserOrders,
-          [],
+          [userId],
         ),
         returnValue: _i4.Future<_i2.Either<_i5.Failure, List<dynamic>>>.value(
             _FakeEither_0<_i5.Failure, List<dynamic>>(
           this,
           Invocation.method(
             #getUserOrders,
-            [],
+            [userId],
           ),
         )),
       ) as _i4.Future<_i2.Either<_i5.Failure, List<dynamic>>>);
@@ -81,8 +81,8 @@ class MockOrderRepository extends _i1.Mock implements _i3.OrderRepository {
 
   @override
   _i4.Future<_i2.Either<_i5.Failure, dynamic>> createOrder({
-    required List<_i6.OrderItem>? items,
-    required double? totalAmount,
+    required String? userId,
+    required List<Map<String, dynamic>>? items,
     required String? shippingAddress,
     required String? paymentMethod,
   }) =>
@@ -91,8 +91,8 @@ class MockOrderRepository extends _i1.Mock implements _i3.OrderRepository {
           #createOrder,
           [],
           {
+            #userId: userId,
             #items: items,
-            #totalAmount: totalAmount,
             #shippingAddress: shippingAddress,
             #paymentMethod: paymentMethod,
           },
@@ -104,8 +104,8 @@ class MockOrderRepository extends _i1.Mock implements _i3.OrderRepository {
             #createOrder,
             [],
             {
+              #userId: userId,
               #items: items,
-              #totalAmount: totalAmount,
               #shippingAddress: shippingAddress,
               #paymentMethod: paymentMethod,
             },
@@ -131,45 +131,21 @@ class MockOrderRepository extends _i1.Mock implements _i3.OrderRepository {
       ) as _i4.Future<_i2.Either<_i5.Failure, _i2.Unit>>);
 
   @override
-  _i4.Future<_i2.Either<_i5.Failure, String>> trackOrder(String? orderId) =>
+  _i4.Future<_i2.Either<_i5.Failure, Map<String, dynamic>>> trackOrder(
+          String? orderId) =>
       (super.noSuchMethod(
         Invocation.method(
           #trackOrder,
           [orderId],
         ),
-        returnValue: _i4.Future<_i2.Either<_i5.Failure, String>>.value(
-            _FakeEither_0<_i5.Failure, String>(
+        returnValue:
+            _i4.Future<_i2.Either<_i5.Failure, Map<String, dynamic>>>.value(
+                _FakeEither_0<_i5.Failure, Map<String, dynamic>>(
           this,
           Invocation.method(
             #trackOrder,
             [orderId],
           ),
         )),
-      ) as _i4.Future<_i2.Either<_i5.Failure, String>>);
-
-  @override
-  _i4.Future<_i2.Either<_i5.Failure, _i2.Unit>> updateShippingAddress(
-    String? orderId,
-    String? newAddress,
-  ) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #updateShippingAddress,
-          [
-            orderId,
-            newAddress,
-          ],
-        ),
-        returnValue: _i4.Future<_i2.Either<_i5.Failure, _i2.Unit>>.value(
-            _FakeEither_0<_i5.Failure, _i2.Unit>(
-          this,
-          Invocation.method(
-            #updateShippingAddress,
-            [
-              orderId,
-              newAddress,
-            ],
-          ),
-        )),
-      ) as _i4.Future<_i2.Either<_i5.Failure, _i2.Unit>>);
+      ) as _i4.Future<_i2.Either<_i5.Failure, Map<String, dynamic>>>);
 }

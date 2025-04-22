@@ -7,7 +7,7 @@ part of 'secure_storage_service.dart';
 // **************************************************************************
 
 String _$secureStorageServiceHash() =>
-    r'be21dbcc88921f3dd1fb7a2e8f4b0e235943e0bb';
+    r'0f0888e83d31f1aec030dba613963dc8cd383996';
 
 /// مزود خدمة التخزين الآمن
 ///

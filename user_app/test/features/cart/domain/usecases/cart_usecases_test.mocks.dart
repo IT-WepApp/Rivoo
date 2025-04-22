@@ -7,7 +7,6 @@ import 'dart:async' as _i4;
 
 import 'package:dartz/dartz.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:user_app/core/architecture/domain/entity.dart' as _i7;
 import 'package:user_app/core/architecture/domain/failure.dart' as _i5;
 import 'package:user_app/features/cart/domain/entities/cart_item.dart' as _i6;
 import 'package:user_app/features/cart/domain/repositories/cart_repository.dart'
@@ -64,153 +63,104 @@ class MockCartRepository extends _i1.Mock implements _i3.CartRepository {
       ) as _i4.Future<_i2.Either<_i5.Failure, List<_i6.CartItem>>>);
 
   @override
-  _i4.Future<_i2.Either<_i5.Failure, _i2.Unit>> addItem(
-    _i7.Entity? product, {
-    int? quantity = 1,
-  }) =>
+  _i4.Future<_i2.Either<_i5.Failure, _i6.CartItem>> addCartItem(
+          _i6.CartItem? cartItem) =>
       (super.noSuchMethod(
         Invocation.method(
-          #addItem,
-          [product],
-          {#quantity: quantity},
+          #addCartItem,
+          [cartItem],
         ),
-        returnValue: _i4.Future<_i2.Either<_i5.Failure, _i2.Unit>>.value(
-            _FakeEither_0<_i5.Failure, _i2.Unit>(
+        returnValue: _i4.Future<_i2.Either<_i5.Failure, _i6.CartItem>>.value(
+            _FakeEither_0<_i5.Failure, _i6.CartItem>(
           this,
           Invocation.method(
-            #addItem,
-            [product],
-            {#quantity: quantity},
+            #addCartItem,
+            [cartItem],
           ),
         )),
-      ) as _i4.Future<_i2.Either<_i5.Failure, _i2.Unit>>);
+      ) as _i4.Future<_i2.Either<_i5.Failure, _i6.CartItem>>);
 
   @override
-  _i4.Future<_i2.Either<_i5.Failure, _i2.Unit>> removeItem(
+  _i4.Future<_i2.Either<_i5.Failure, _i6.CartItem>> updateCartItem(
+          _i6.CartItem? cartItem) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #updateCartItem,
+          [cartItem],
+        ),
+        returnValue: _i4.Future<_i2.Either<_i5.Failure, _i6.CartItem>>.value(
+            _FakeEither_0<_i5.Failure, _i6.CartItem>(
+          this,
+          Invocation.method(
+            #updateCartItem,
+            [cartItem],
+          ),
+        )),
+      ) as _i4.Future<_i2.Either<_i5.Failure, _i6.CartItem>>);
+
+  @override
+  _i4.Future<_i2.Either<_i5.Failure, void>> removeCartItem(
           String? cartItemId) =>
       (super.noSuchMethod(
         Invocation.method(
-          #removeItem,
+          #removeCartItem,
           [cartItemId],
         ),
-        returnValue: _i4.Future<_i2.Either<_i5.Failure, _i2.Unit>>.value(
-            _FakeEither_0<_i5.Failure, _i2.Unit>(
+        returnValue: _i4.Future<_i2.Either<_i5.Failure, void>>.value(
+            _FakeEither_0<_i5.Failure, void>(
           this,
           Invocation.method(
-            #removeItem,
+            #removeCartItem,
             [cartItemId],
           ),
         )),
-      ) as _i4.Future<_i2.Either<_i5.Failure, _i2.Unit>>);
+      ) as _i4.Future<_i2.Either<_i5.Failure, void>>);
 
   @override
-  _i4.Future<_i2.Either<_i5.Failure, _i2.Unit>> updateQuantity(
-    String? cartItemId,
-    int? newQuantity,
-  ) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #updateQuantity,
-          [
-            cartItemId,
-            newQuantity,
-          ],
-        ),
-        returnValue: _i4.Future<_i2.Either<_i5.Failure, _i2.Unit>>.value(
-            _FakeEither_0<_i5.Failure, _i2.Unit>(
-          this,
-          Invocation.method(
-            #updateQuantity,
-            [
-              cartItemId,
-              newQuantity,
-            ],
-          ),
-        )),
-      ) as _i4.Future<_i2.Either<_i5.Failure, _i2.Unit>>);
-
-  @override
-  _i4.Future<_i2.Either<_i5.Failure, _i2.Unit>> incrementQuantity(
-          String? cartItemId) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #incrementQuantity,
-          [cartItemId],
-        ),
-        returnValue: _i4.Future<_i2.Either<_i5.Failure, _i2.Unit>>.value(
-            _FakeEither_0<_i5.Failure, _i2.Unit>(
-          this,
-          Invocation.method(
-            #incrementQuantity,
-            [cartItemId],
-          ),
-        )),
-      ) as _i4.Future<_i2.Either<_i5.Failure, _i2.Unit>>);
-
-  @override
-  _i4.Future<_i2.Either<_i5.Failure, _i2.Unit>> decrementQuantity(
-          String? cartItemId) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #decrementQuantity,
-          [cartItemId],
-        ),
-        returnValue: _i4.Future<_i2.Either<_i5.Failure, _i2.Unit>>.value(
-            _FakeEither_0<_i5.Failure, _i2.Unit>(
-          this,
-          Invocation.method(
-            #decrementQuantity,
-            [cartItemId],
-          ),
-        )),
-      ) as _i4.Future<_i2.Either<_i5.Failure, _i2.Unit>>);
-
-  @override
-  _i4.Future<_i2.Either<_i5.Failure, _i2.Unit>> clearCart() =>
-      (super.noSuchMethod(
+  _i4.Future<_i2.Either<_i5.Failure, void>> clearCart() => (super.noSuchMethod(
         Invocation.method(
           #clearCart,
           [],
         ),
-        returnValue: _i4.Future<_i2.Either<_i5.Failure, _i2.Unit>>.value(
-            _FakeEither_0<_i5.Failure, _i2.Unit>(
+        returnValue: _i4.Future<_i2.Either<_i5.Failure, void>>.value(
+            _FakeEither_0<_i5.Failure, void>(
           this,
           Invocation.method(
             #clearCart,
             [],
           ),
         )),
-      ) as _i4.Future<_i2.Either<_i5.Failure, _i2.Unit>>);
+      ) as _i4.Future<_i2.Either<_i5.Failure, void>>);
 
   @override
-  _i4.Future<_i2.Either<_i5.Failure, int>> getTotalItems() =>
+  _i4.Future<_i2.Either<_i5.Failure, int>> getCartItemsCount() =>
       (super.noSuchMethod(
         Invocation.method(
-          #getTotalItems,
+          #getCartItemsCount,
           [],
         ),
         returnValue: _i4.Future<_i2.Either<_i5.Failure, int>>.value(
             _FakeEither_0<_i5.Failure, int>(
           this,
           Invocation.method(
-            #getTotalItems,
+            #getCartItemsCount,
             [],
           ),
         )),
       ) as _i4.Future<_i2.Either<_i5.Failure, int>>);
 
   @override
-  _i4.Future<_i2.Either<_i5.Failure, double>> getTotalPrice() =>
+  _i4.Future<_i2.Either<_i5.Failure, double>> getCartTotal() =>
       (super.noSuchMethod(
         Invocation.method(
-          #getTotalPrice,
+          #getCartTotal,
           [],
         ),
         returnValue: _i4.Future<_i2.Either<_i5.Failure, double>>.value(
             _FakeEither_0<_i5.Failure, double>(
           this,
           Invocation.method(
-            #getTotalPrice,
+            #getCartTotal,
             [],
           ),
         )),

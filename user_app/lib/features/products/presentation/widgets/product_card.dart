@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:user_app/core/theme/app_theme.dart';
 import 'package:user_app/features/product_details/presentation/widgets/rating_stars.dart';
 import 'package:user_app/features/product_details/domain/entities/product.dart';
+import 'package:user_app/features/products/domain/product_status.dart';
 
 /// بطاقة عرض المنتج
 class ProductCard extends StatelessWidget {
@@ -89,11 +90,11 @@ class ProductCard extends StatelessWidget {
                         vertical: 4,
                       ),
                       decoration: BoxDecoration(
-                        color: AppTheme.secondaryColor,
+                        color: Colors.orange,
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
-                        '-${product.discountPercentage!.toStringAsFixed(0)}%',
+                        '-${_calculateDiscountPercentage(product.price, product.discountPrice!).toStringAsFixed(0)}%',
                         style: const TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
@@ -117,7 +118,7 @@ class ProductCard extends StatelessWidget {
                       child: IconButton(
                         icon: Icon(
                           isFavorite ? Icons.favorite : Icons.favorite_border,
-                          color: isFavorite ? AppTheme.errorColor : Colors.grey,
+                          color: isFavorite ? Colors.red : Colors.grey,
                         ),
                         onPressed: onFavoriteToggle,
                         constraints: const BoxConstraints(
@@ -143,8 +144,8 @@ class ProductCard extends StatelessWidget {
                       ),
                       decoration: BoxDecoration(
                         color: product.status == ProductStatus.comingSoon
-                            ? AppTheme.infoColor
-                            : AppTheme.errorColor,
+                            ? Colors.blue
+                            : Colors.red,
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
@@ -192,9 +193,9 @@ class ProductCard extends StatelessWidget {
                       const SizedBox(width: 4),
                       Text(
                         '(${product.reviewCount})',
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 12,
-                          color: AppTheme.textSecondaryColor,
+                          color: Colors.grey,
                         ),
                       ),
                     ],
@@ -208,28 +209,28 @@ class ProductCard extends StatelessWidget {
                       if (product.discountPrice != null) ...[
                         Text(
                           '\$${product.discountPrice!.toStringAsFixed(2)}',
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
-                            color: AppTheme.primaryColor,
+                            color: Colors.green,
                           ),
                         ),
                         const SizedBox(width: 4),
                         Text(
                           '\$${product.price.toStringAsFixed(2)}',
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 12,
                             decoration: TextDecoration.lineThrough,
-                            color: AppTheme.textSecondaryColor,
+                            color: Colors.grey,
                           ),
                         ),
                       ] else ...[
                         Text(
                           '\$${product.price.toStringAsFixed(2)}',
-                          style: TextStyle(
+                          style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
-                            color: AppTheme.primaryColor,
+                            color: Colors.green,
                           ),
                         ),
                       ],
@@ -260,5 +261,11 @@ class ProductCard extends StatelessWidget {
         ),
       ),
     );
+  }
+  
+  /// حساب نسبة الخصم
+  double _calculateDiscountPercentage(double originalPrice, double discountPrice) {
+    if (originalPrice <= 0) return 0;
+    return ((originalPrice - discountPrice) / originalPrice) * 100;
   }
 }

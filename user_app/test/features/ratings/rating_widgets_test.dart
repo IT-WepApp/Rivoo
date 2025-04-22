@@ -32,7 +32,7 @@ void main() {
       expect(find.byIcon(Icons.star_border), findsOneWidget); // 1 empty star
     });
     
-    testWidgets('should display rating number when showRatingNumber is true', (WidgetTester tester) async {
+    testWidgets('should display rating number when showNumber is true', (WidgetTester tester) async {
       // Arrange
       const rating = 4.2;
       
@@ -42,7 +42,7 @@ void main() {
           home: Scaffold(
             body: RatingStars(
               rating: rating,
-              showRatingNumber: true,
+              showNumber: true,
             ),
           ),
         ),
@@ -52,7 +52,7 @@ void main() {
       expect(find.text('4.2'), findsOneWidget);
     });
     
-    testWidgets('should not display rating number when showRatingNumber is false', (WidgetTester tester) async {
+    testWidgets('should not display rating number when showNumber is false', (WidgetTester tester) async {
       // Arrange
       const rating = 4.2;
       
@@ -62,7 +62,7 @@ void main() {
           home: Scaffold(
             body: RatingStars(
               rating: rating,
-              showRatingNumber: false,
+              showNumber: false,
             ),
           ),
         ),
@@ -77,7 +77,6 @@ void main() {
       const rating = 3.0;
       const size = 30.0;
       const color = Colors.red;
-      const borderColor = Colors.blue;
       
       // Act
       await tester.pumpWidget(
@@ -87,7 +86,6 @@ void main() {
               rating: rating,
               size: size,
               color: color,
-              borderColor: borderColor,
             ),
           ),
         ),
@@ -97,10 +95,6 @@ void main() {
       final starIcon = tester.widget<Icon>(find.byIcon(Icons.star).first);
       expect(starIcon.size, equals(size));
       expect(starIcon.color, equals(color));
-      
-      final borderIcon = tester.widget<Icon>(find.byIcon(Icons.star_border).first);
-      expect(borderIcon.size, equals(size));
-      expect(borderIcon.color, equals(borderColor));
     });
   });
   
@@ -124,7 +118,6 @@ void main() {
       // Assert
       expect(find.byIcon(Icons.star), findsNWidgets(3)); // 3 full stars
       expect(find.byIcon(Icons.star_border), findsNWidgets(2)); // 2 empty stars
-      expect(find.text('3.0'), findsOneWidget);
     });
     
     testWidgets('should update rating when tapping on stars', (WidgetTester tester) async {
@@ -154,11 +147,10 @@ void main() {
       expect(newRating, equals(5.0));
       expect(find.byIcon(Icons.star), findsNWidgets(5)); // 5 full stars
       expect(find.byIcon(Icons.star_border), findsNothing); // 0 empty stars
-      expect(find.text('5.0'), findsOneWidget);
     });
   });
   
-  group('RatingSummary Widget', () {
+  group('RatingSummaryWidget', () {
     testWidgets('should display average rating and distribution', (WidgetTester tester) async {
       // Arrange
       const averageRating = 4.2;

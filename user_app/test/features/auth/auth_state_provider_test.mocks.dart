@@ -12,6 +12,7 @@ import 'package:firebase_core/firebase_core.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i6;
 import 'package:user_app/features/auth/application/auth_service.dart' as _i7;
+import 'package:user_app/features/auth/domain/entities/user_role.dart' as _i8;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -146,19 +147,20 @@ class MockFirebaseAuth extends _i1.Mock implements _i4.FirebaseAuth {
       );
 
   @override
-  set customAuthDomain(String? customAuthDomain) => super.noSuchMethod(
-        Invocation.setter(
-          #customAuthDomain,
-          customAuthDomain,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
   Map<dynamic, dynamic> get pluginConstants => (super.noSuchMethod(
         Invocation.getter(#pluginConstants),
         returnValue: <dynamic, dynamic>{},
       ) as Map<dynamic, dynamic>);
+
+  @override
+  _i5.Future<void> useEmulator(String? origin) => (super.noSuchMethod(
+        Invocation.method(
+          #useEmulator,
+          [origin],
+        ),
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
   _i5.Future<void> useAuthEmulator(
@@ -491,6 +493,23 @@ class MockFirebaseAuth extends _i1.Mock implements _i4.FirebaseAuth {
               #email: email,
               #emailLink: emailLink,
             },
+          ),
+        )),
+      ) as _i5.Future<_i4.UserCredential>);
+
+  @override
+  _i5.Future<_i4.UserCredential> signInWithAuthProvider(
+          _i3.AuthProvider? provider) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #signInWithAuthProvider,
+          [provider],
+        ),
+        returnValue: _i5.Future<_i4.UserCredential>.value(_FakeUserCredential_2(
+          this,
+          Invocation.method(
+            #signInWithAuthProvider,
+            [provider],
           ),
         )),
       ) as _i5.Future<_i4.UserCredential>);
@@ -1045,7 +1064,7 @@ class MockAuthService extends _i1.Mock implements _i7.AuthService {
   _i5.Future<_i4.UserCredential> signUp(
     String? email,
     String? password, {
-    _i7.UserRole? role = _i7.UserRole.customer,
+    _i8.UserRole? role = _i8.UserRole.customer,
   }) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -1109,91 +1128,18 @@ class MockAuthService extends _i1.Mock implements _i7.AuthService {
       ) as _i5.Future<bool>);
 
   @override
-  _i5.Future<void> updateProfile({
-    String? displayName,
-    String? photoURL,
-  }) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #updateProfile,
-          [],
-          {
-            #displayName: displayName,
-            #photoURL: photoURL,
-          },
-        ),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
-
-  @override
-  _i5.Future<void> updateEmail(String? newEmail) => (super.noSuchMethod(
-        Invocation.method(
-          #updateEmail,
-          [newEmail],
-        ),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
-
-  @override
-  _i5.Future<void> updatePassword(String? newPassword) => (super.noSuchMethod(
-        Invocation.method(
-          #updatePassword,
-          [newPassword],
-        ),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
-
-  @override
-  _i5.Future<_i4.UserCredential> reauthenticate(
-    String? email,
-    String? password,
-  ) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #reauthenticate,
-          [
-            email,
-            password,
-          ],
-        ),
-        returnValue: _i5.Future<_i4.UserCredential>.value(_FakeUserCredential_2(
-          this,
-          Invocation.method(
-            #reauthenticate,
-            [
-              email,
-              password,
-            ],
-          ),
-        )),
-      ) as _i5.Future<_i4.UserCredential>);
-
-  @override
-  _i5.Future<void> deleteAccount() => (super.noSuchMethod(
-        Invocation.method(
-          #deleteAccount,
-          [],
-        ),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
-
-  @override
-  _i5.Future<_i7.UserRole> getUserRole(String? userId) => (super.noSuchMethod(
+  _i5.Future<_i8.UserRole> getUserRole(String? userId) => (super.noSuchMethod(
         Invocation.method(
           #getUserRole,
           [userId],
         ),
-        returnValue: _i5.Future<_i7.UserRole>.value(_i7.UserRole.customer),
-      ) as _i5.Future<_i7.UserRole>);
+        returnValue: _i5.Future<_i8.UserRole>.value(_i8.UserRole.customer),
+      ) as _i5.Future<_i8.UserRole>);
 
   @override
   _i5.Future<void> updateUserRole(
     String? userId,
-    _i7.UserRole? role,
+    _i8.UserRole? role,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
