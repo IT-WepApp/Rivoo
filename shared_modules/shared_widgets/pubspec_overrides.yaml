@@ -1,6 +1,0 @@
-# melos_managed_dependency_overrides: shared_models,shared_services
-dependency_overrides:
-  shared_models:
-    path: ../shared_models
-  shared_services:
-    path: ../shared_services
