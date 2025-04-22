@@ -57,10 +57,6 @@ dependencies:
   logger: ^1.4.0
   uuid: ^3.0.7
   json_annotation: ^4.8.1
-  
-  # المكتبات المشتركة (الآن مدمجة مباشرة في المشروع الرئيسي)
-  shared_libs:
-    path: shared_libs
 
 dev_dependencies:
   flutter_test:

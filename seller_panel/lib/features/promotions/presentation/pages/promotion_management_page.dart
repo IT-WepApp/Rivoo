@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_libs/lib/models/src/models/promotion.dart';
-import 'package:shared_widgets/shared_widgets.dart';
+import 'package:shared_libs/lib/widgets/shared_widgets.dart';
 import '../../application/promotion_notifier.dart';
 
 class PromotionManagementPage extends ConsumerStatefulWidget {

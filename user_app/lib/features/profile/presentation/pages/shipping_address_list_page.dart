@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_widgets/shared_widgets.dart';
+import 'package:shared_libs/lib/widgets/shared_widgets.dart';
 import 'package:user_app/features/profile/domain/models/shipping_address.dart';
 import 'package:user_app/features/profile/application/shipping_address_notifier.dart';
 import 'package:user_app/features/profile/presentation/pages/shipping_address_form_page.dart';

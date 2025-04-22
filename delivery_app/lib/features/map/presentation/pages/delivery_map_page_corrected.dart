@@ -6,7 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:shared_libs/lib/models/shared_models.dart'; // Import OrderModel
 import 'package:shared_libs/lib/services/shared_services.dart'; // Import orderServiceProvider
-import 'package:shared_widgets/shared_widgets.dart';
+import 'package:shared_libs/lib/widgets/shared_widgets.dart';
 import '../../../location/application/location_notifier.dart';
 
 /// Fetch a single [OrderModel] by its ID.

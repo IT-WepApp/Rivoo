@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:shared_widgets/shared_widgets.dart';
+import 'package:shared_libs/lib/widgets/shared_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart'; // Import Riverpod
 import 'package:shared_libs/lib/services/shared_services.dart'; // Import shared services
 import 'package:go_router/go_router.dart'; // Import GoRouter
