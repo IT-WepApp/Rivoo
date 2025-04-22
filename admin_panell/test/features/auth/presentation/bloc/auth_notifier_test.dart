@@ -1,3 +1,4 @@
+import 'package:admin_panell/features/auth/application/auth_notifier.dart' show crashlyticsManagerProvider, secureStorageServiceProvider;
 import 'package:admin_panell/features/auth/domain/usecases/sign_in_usecase.dart';
 import 'package:admin_panell/features/auth/domain/usecases/sign_out_usecase.dart';
 import 'package:admin_panell/features/auth/domain/usecases/get_current_user_usecase.dart';
@@ -8,18 +9,14 @@ import 'package:admin_panell/core/services/crashlytics_manager.dart';
 import 'package:admin_panell/core/storage/secure_storage_service.dart';
 import 'package:mockito/mockito.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-// إنشاء فئات وهمية يدوياً للاختبارات
+
 class MockSignInUseCase extends Mock implements SignInUseCase {}
-
 class MockSignOutUseCase extends Mock implements SignOutUseCase {}
-
 class MockGetCurrentUserUseCase extends Mock implements GetCurrentUserUseCase {}
-
 class MockIsSignedInUseCase extends Mock implements IsSignedInUseCase {}
-
 class MockSecureStorageService extends Mock implements SecureStorageService {}
-
 class MockCrashlyticsManager extends Mock implements CrashlyticsManager {}
 
 void main() {
@@ -30,6 +27,7 @@ void main() {
   late MockSecureStorageService mockSecureStorageService;
   late MockCrashlyticsManager mockCrashlyticsManager;
   late AuthNotifier authNotifier;
+  late ProviderContainer container;
 
   setUp(() {
     mockSignInUseCase = MockSignInUseCase();
@@ -39,14 +37,16 @@ void main() {
     mockSecureStorageService = MockSecureStorageService();
     mockCrashlyticsManager = MockCrashlyticsManager();
 
-    authNotifier = AuthNotifier(
-      signInUseCase: mockSignInUseCase,
-      signOutUseCase: mockSignOutUseCase,
-      getCurrentUserUseCase: mockGetCurrentUserUseCase,
-      isSignedInUseCase: mockIsSignedInUseCase,
-      secureStorage: mockSecureStorageService,
-      crashlytics: mockCrashlyticsManager,
-    );
+    container = ProviderContainer(overrides: [
+      signInUseCaseProvider.overrideWithValue(mockSignInUseCase),
+      signOutUseCaseProvider.overrideWithValue(mockSignOutUseCase),
+      getCurrentUserUseCaseProvider.overrideWithValue(mockGetCurrentUserUseCase),
+      isSignedInUseCaseProvider.overrideWithValue(mockIsSignedInUseCase),
+      secureStorageServiceProvider.overrideWithValue(mockSecureStorageService),
+      crashlyticsManagerProvider.overrideWithValue(mockCrashlyticsManager),
+    ]);
+
+    authNotifier = container.read(authNotifierProvider.notifier);
   });
 
   group('تسجيل الدخول', () {
@@ -60,16 +60,14 @@ void main() {
     );
 
     test('يجب أن يقوم بتسجيل الدخول بنجاح', () async {
-      // ترتيب
       when(mockSignInUseCase.execute(email: email, password: password))
           .thenAnswer((_) async => user);
+  
       when(mockCrashlyticsManager.setUserIdentifier(userId: any))
           .thenAnswer((_) async => {});
 
-      // تنفيذ
       await authNotifier.signIn(email: email, password: password);
 
-      // تحقق
       verify(mockSignInUseCase.execute(email: email, password: password))
           .called(1);
       expect(authNotifier.state.user, user);
@@ -79,17 +77,14 @@ void main() {
     });
 
     test('يجب أن يعالج خطأ تسجيل الدخول', () async {
-      // ترتيب
       final exception = Exception('فشل تسجيل الدخول');
       when(mockSignInUseCase.execute(email: email, password: password))
           .thenThrow(exception);
       when(mockCrashlyticsManager.recordError(any, StackTrace.current))
           .thenAnswer((_) async => {});
 
-      // تنفيذ
       await authNotifier.signIn(email: email, password: password);
 
-      // تحقق
       verify(mockSignInUseCase.execute(email: email, password: password))
           .called(1);
       expect(authNotifier.state.user, null);
@@ -101,15 +96,12 @@ void main() {
 
   group('تسجيل الخروج', () {
     test('يجب أن يقوم بتسجيل الخروج بنجاح', () async {
-      // ترتيب
       when(mockSignOutUseCase.execute()).thenAnswer((_) async => true);
       when(mockCrashlyticsManager.setUserIdentifier(userId: any))
           .thenAnswer((_) async => {});
 
-      // تنفيذ
       await authNotifier.signOut();
 
-      // تحقق
       verify(mockSignOutUseCase.execute()).called(1);
       expect(authNotifier.state.user, null);
       expect(authNotifier.state.isAuthenticated, false);

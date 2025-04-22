@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared/services/notification_service.dart';
+import 'package:shared/models/notification_model.dart'; // ✅ تم نقل الكلاس هنا
 
 /// نموذج حالة الإشعارات
 class NotificationState {
@@ -52,27 +53,6 @@ class NotificationState {
       unreadCount: unread,
     );
   }
-}
-
-/// نموذج الإشعار
-class NotificationModel {
-  final String id;
-  final String title;
-  final String body;
-  final DateTime timestamp;
-  final bool isRead;
-  final String? imageUrl;
-  final Map<String, dynamic>? data;
-
-  NotificationModel({
-    required this.id,
-    required this.title,
-    required this.body,
-    required this.timestamp,
-    this.isRead = false,
-    this.imageUrl,
-    this.data,
-  });
 }
 
 /// مزود خدمة الإشعارات

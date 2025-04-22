@@ -2,34 +2,44 @@ name: shared_services
 description: الخدمات المشتركة بين التطبيقات.
 publish_to: "none"
 version: 1.0.0
+
 environment:
   sdk: ">=3.2.0 <4.0.0"
+
 dependencies:
   flutter:
     sdk: flutter
+
   # Firebase حزم
   firebase_auth: ^4.15.3
   firebase_core: ^2.24.2
   cloud_firestore: ^4.13.6
-  
+
   # إدارة الحالة
   flutter_riverpod: ^2.4.9
-  
+
   # التخزين المحلي
   flutter_secure_storage: ^9.0.0
-  
-  # إضافة تبعيات مفقودة
+
+  # إضافات أساسية
   equatable: ^2.0.5
   dartz: ^0.10.1
   connectivity_plus: ^5.0.2
-  # إضافة shared_models كموديول محلي
+
+  # موديلات مشتركة (shared_models)
   shared_models:
     path: ../shared_models
+
+  # إضافة shared كموديول محلي (جديد)
+  shared:
+    path: ../../shared
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^2.0.0
   build_runner: ^2.4.6
   mockito: ^5.4.2
+
 flutter:
   uses-material-design: true

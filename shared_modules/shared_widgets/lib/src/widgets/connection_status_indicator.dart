@@ -13,14 +13,14 @@ class ConnectionStatusIndicator extends StatefulWidget {
 class _ConnectionStatusIndicatorState extends State<ConnectionStatusIndicator> {
   ConnectivityResult _connectionStatus = ConnectivityResult.none;
   final Connectivity _connectivity = Connectivity();
-  late StreamSubscription<List<ConnectivityResult>> _connectivitySubscription;
+  late StreamSubscription<ConnectivityResult> _connectivitySubscription; // تعديل هنا
 
   @override
   void initState() {
     super.initState();
     _initConnectivity();
     _connectivitySubscription =
-        _connectivity.onConnectivityChanged.listen(_updateConnectionStatus);
+        _connectivity.onConnectivityChanged.listen(_updateConnectionStatus); // تعديل هنا
   }
 
   @override
@@ -30,9 +30,9 @@ class _ConnectionStatusIndicatorState extends State<ConnectionStatusIndicator> {
   }
 
   Future<void> _initConnectivity() async {
-    late List<ConnectivityResult> result;
+    ConnectivityResult result; // تعديل هنا
     try {
-      result = await _connectivity.checkConnectivity();
+      result = await _connectivity.checkConnectivity(); // تعديل هنا
     } catch (e) {
       // Handle error, e.g., log it
       return;
@@ -43,18 +43,12 @@ class _ConnectionStatusIndicatorState extends State<ConnectionStatusIndicator> {
       return;
     }
 
-    return _updateConnectionStatus(result);
+    return _updateConnectionStatus(result); // تعديل هنا
   }
 
-  void _updateConnectionStatus(List<ConnectivityResult> result) {
-    // Use the first result or determine status based on the list
-    ConnectivityResult currentStatus =
-        result.isNotEmpty ? result[0] : ConnectivityResult.none;
-    if (result.contains(ConnectivityResult.none)) {
-      currentStatus = ConnectivityResult.none;
-    }
+  void _updateConnectionStatus(ConnectivityResult result) { // تعديل هنا
     setState(() {
-      _connectionStatus = currentStatus;
+      _connectionStatus = result;
     });
   }
 

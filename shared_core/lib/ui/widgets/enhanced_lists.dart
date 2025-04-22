@@ -407,7 +407,7 @@ class _EnhancedDraggableList<T> extends StatelessWidget {
 
     return ReorderableListView.builder(
       buildDefaultDragHandles: true,
-      padding: padding,
+      padding: padding as EdgeInsets?,
       physics: physics,
       shrinkWrap: shrinkWrap,
       scrollController: controller,

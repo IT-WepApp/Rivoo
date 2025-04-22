@@ -34,7 +34,7 @@ class SecureStorageService {
 
       // تحديد خيارات التخزين الآمن
       final options = withBiometrics
-          ? const AndroidOptions(useStrongBox: true, resetOnError: true)
+          ? const AndroidOptions(resetOnError: true)
           : null;
 
       // تخزين البيانات بشكل آمن
@@ -57,7 +57,7 @@ class SecureStorageService {
     try {
       // تحديد خيارات التخزين الآمن
       final options = withBiometrics
-          ? const AndroidOptions(useStrongBox: true, resetOnError: true)
+          ? const AndroidOptions(resetOnError: true)
           : null;
 
       // قراءة البيانات المخزنة

@@ -157,6 +157,8 @@ class EnhancedAuthService {
 
       // إنشاء معرف فريد للجهاز إذا لم يكن موجوداً
       final deviceId = await _getOrCreateDeviceId();
+      await _secureStorage.write(key: _deviceIdKey, value: deviceId);
+
 
       // تخزين رموز المصادقة بشكل آمن
       await _secureStorage.write(key: _accessTokenKey, value: idToken);

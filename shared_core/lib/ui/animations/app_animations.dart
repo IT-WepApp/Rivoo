@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'dart:math';
 /// مدير الرسوم المتحركة للتطبيق
 /// يوفر رسوم متحركة متناسقة للعناصر المختلفة
 class AppAnimations {
@@ -504,8 +504,7 @@ class _LoadingPainter extends CustomPainter {
       final rotatedAngle = angle + animation.value * 2 * 3.14159;
       final opacity = (1.0 - ((i / 8) + animation.value) % 1.0).clamp(0.1, 1.0);
 
-      paint.color = color.withOpacity(opacity);
-
+      paint.color = color.withValues(alpha: (opacity * 255).toDouble());
       final x = center.dx + radius * cos(rotatedAngle);
       final y = center.dy + radius * sin(rotatedAngle);
 

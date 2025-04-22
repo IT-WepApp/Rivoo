@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-
+import 'dart:math';
 /// مكونات الرسوم البيانية المحسنة للتطبيق
 /// توفر رسوم بيانية بتصميم موحد وتجربة مستخدم محسنة
 class EnhancedCharts {
@@ -683,7 +683,7 @@ class _PieChartPainter extends CustomPainter {
             textAlign: TextAlign.center,
           );
 
-          final percentage = (data[i] / total * 100).toStringAsFixed(1) + '%';
+          final percentage = '${(data[i] / total * 100).toStringAsFixed(1)}%';
           final label = showPercentages
               ? '${labels[i]}: $percentage'
               : labels[i];

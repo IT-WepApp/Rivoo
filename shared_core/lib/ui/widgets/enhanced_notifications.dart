@@ -57,7 +57,6 @@ class EnhancedNotifications {
         effectiveIcon = icon ?? Icons.warning;
         break;
       case NotificationType.info:
-      default:
         effectiveBackgroundColor = backgroundColor ??
             (theme.brightness == Brightness.dark
                 ? Colors.blue.shade800
@@ -158,7 +157,6 @@ class EnhancedNotifications {
         effectiveIcon = icon ?? Icons.warning;
         break;
       case NotificationType.info:
-      default:
         effectiveIconColor = iconColor ??
             (theme.brightness == Brightness.dark
                 ? Colors.blue.shade400
@@ -323,7 +321,7 @@ class EnhancedNotifications {
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.2),
+                color: Colors.black.withAlpha((0.2 * 255).toInt()),
                 blurRadius: 10,
                 offset: const Offset(0, -2),
               ),
@@ -383,33 +381,32 @@ class EnhancedNotifications {
       case NotificationType.success:
         effectiveBackgroundColor = backgroundColor ??
             (theme.brightness == Brightness.dark
-                ? Colors.green.shade800.withOpacity(0.9)
-                : Colors.green.shade600.withOpacity(0.9));
+                ? Colors.green.shade800.withAlpha((0.9 * 255).toInt())
+                : Colors.green.shade600.withAlpha((0.9 * 255).toInt()));
         effectiveIconColor = iconColor ?? Colors.white;
         effectiveIcon = icon ?? Icons.check_circle;
         break;
       case NotificationType.error:
         effectiveBackgroundColor = backgroundColor ??
             (theme.brightness == Brightness.dark
-                ? Colors.red.shade800.withOpacity(0.9)
-                : Colors.red.shade600.withOpacity(0.9));
+                ? Colors.red.shade800.withAlpha((0.9 * 255).toInt())
+                : Colors.red.shade600.withAlpha((0.9 * 255).toInt()));
         effectiveIconColor = iconColor ?? Colors.white;
         effectiveIcon = icon ?? Icons.error;
         break;
       case NotificationType.warning:
         effectiveBackgroundColor = backgroundColor ??
             (theme.brightness == Brightness.dark
-                ? Colors.amber.shade800.withOpacity(0.9)
-                : Colors.amber.shade600.withOpacity(0.9));
+                ? Colors.amber.shade800.withAlpha((0.9 * 255).toInt())
+                : Colors.amber.shade600.withAlpha((0.9 * 255).toInt()));
         effectiveIconColor = iconColor ?? Colors.white;
         effectiveIcon = icon ?? Icons.warning;
         break;
       case NotificationType.info:
-      default:
         effectiveBackgroundColor = backgroundColor ??
             (theme.brightness == Brightness.dark
-                ? Colors.blue.shade800.withOpacity(0.9)
-                : Colors.blue.shade600.withOpacity(0.9));
+                ? Colors.blue.shade800.withAlpha((0.9 * 255).toInt())
+                : Colors.blue.shade600.withAlpha((0.9 * 255).toInt()));
         effectiveIconColor = iconColor ?? Colors.white;
         effectiveIcon = icon ?? Icons.info;
         break;
@@ -418,7 +415,8 @@ class EnhancedNotifications {
     final effectiveTextColor = textColor ?? Colors.white;
 
     final overlay = Overlay.of(context);
-    final overlayEntry = OverlayEntry(
+     late OverlayEntry overlayEntry;
+     overlayEntry = OverlayEntry(
       builder: (context) {
         return Positioned(
           left: margin.horizontal / 2,
@@ -546,7 +544,7 @@ class _ToastWidgetState extends State<_ToastWidget>
                 borderRadius: BorderRadius.circular(widget.borderRadius),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.black.withOpacity(0.2),
+                    color: Colors.black.withAlpha((0.2 * 255).toInt()),
                     blurRadius: 8,
                     offset: const Offset(0, 2),
                   ),

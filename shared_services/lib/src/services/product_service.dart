@@ -1,6 +1,6 @@
 import 'package:shared_models/src/models/product.dart';
 import 'package:shared_models/src/models/promotion.dart';
-import 'package:shared_core/utils/logger.dart';
+import '../../../../shared/lib/utils/logger.dart';
 
 class ProductService {
   // Assuming you have a way to interact with your database (e.g., Firestore, a REST API)
