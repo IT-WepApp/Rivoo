@@ -28,8 +28,8 @@ class AppLogger {
   }
 
   /// تسجيل خطأ
-  void error(String message, [dynamic error, StackTrace? stackTrace]) {
-    _logger.e(message, error: error, stackTrace: stackTrace);
+  void error(String message, [dynamic errorObj, StackTrace? stackTraceObj]) {
+    _logger.e(message, error: errorObj, stackTrace: stackTraceObj);
   }
 
   /// تسجيل معلومات تصحيح

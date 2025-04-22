@@ -1,6 +1,7 @@
 /// ثوابت المسارات المستخدمة في التطبيق
 class RouteConstants {
   // المسارات الرئيسية
+  static const String home = '/';
   static const String dashboard = '/dashboard';
   static const String products = '/products';
   static const String orders = '/orders';
@@ -9,6 +10,8 @@ class RouteConstants {
   static const String performance = '/performance';
   static const String settings = '/settings';
   static const String profile = '/profile';
+  static const String notifications = '/notifications';
+  static const String promotions = '/promotions';
   
   // مسارات المنتجات
   static const String productDetails = '/products/:id';

@@ -6,6 +6,11 @@ class AppColors {
   static const Color primary = Color(0xFF2E7D32);
   static const Color primaryLight = Color(0xFF60AD5E);
   static const Color primaryDark = Color(0xFF005005);
+  static const Color onPrimary = Color(0xFFFFFFFF);
+  static const Color secondary = Color(0xFFFF6F00);
+  static const Color secondaryLight = Color(0xFFFFA040);
+  static const Color secondaryDark = Color(0xFFC43E00);
+  static const Color onSecondary = Color(0xFF000000);
   static const Color accent = Color(0xFFFF6F00);
   static const Color accentLight = Color(0xFFFFA040);
   static const Color accentDark = Color(0xFFC43E00);
@@ -13,7 +18,11 @@ class AppColors {
   // ألوان الخلفية
   static const Color background = Color(0xFFF5F5F5);
   static const Color surface = Color(0xFFFFFFFF);
+  static const Color onSurface = Color(0xFF212121);
+  static const Color darkSurface = Color(0xFF121212);
+  static const Color onDarkSurface = Color(0xFFFFFFFF);
   static const Color card = Color(0xFFFFFFFF);
+  static const Color shadow = Color(0x40000000);
   
   // ألوان النص
   static const Color textPrimary = Color(0xFF212121);
@@ -27,6 +36,9 @@ class AppColors {
   static const Color info = Color(0xFF2196F3);
   static const Color warning = Color(0xFFFFC107);
   static const Color error = Color(0xFFF44336);
+  static const Color onError = Color(0xFFFFFFFF);
+  static const Color disabled = Color(0xFFBDBDBD);
+  static const Color orderDelivering = Color(0xFF2196F3);
   
   // ألوان الحدود
   static const Color border = Color(0xFFE0E0E0);
