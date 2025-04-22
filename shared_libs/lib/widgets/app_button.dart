@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shared_libs/lib/widgets/src/theme/colors.dart'; // تأكد إنه موجود
+import 'package:seller_panel/core/theme/app_colors.dart';
 
 class AppButton extends StatelessWidget {
   final String text;
