@@ -83,8 +83,14 @@ class AuthNotifier extends StateNotifier<AuthStateModel> {
     try {
       final token = await _secureStorage.read(key: 'auth_token');
       if (token != null) {
-        final user = await _authService.getCurrentUser();
-        if (user != null) {
+        final firebaseUser = _authService.currentUser;
+        if (firebaseUser != null) {
+          final user = UserModel(
+            id: firebaseUser.uid,
+            email: firebaseUser.email ?? '',
+            name: firebaseUser.displayName ?? '',
+            role: 'seller', // عدل هذا حسب ما يناسب مشروعك
+          );
           state = state.authenticated(user);
         } else {
           await _secureStorage.delete(key: 'auth_token');
@@ -102,11 +108,20 @@ class AuthNotifier extends StateNotifier<AuthStateModel> {
   Future<void> signInWithEmailAndPassword(String email, String password) async {
     state = state.loading();
     try {
-      final result =
-          await _authService.signInWithEmailAndPassword(email, password);
-      await _secureStorage.write(key: 'auth_token', value: result.token);
-      await _secureStorage.write(key: 'user_id', value: result.user.id);
-      state = state.authenticated(result.user);
+      final firebaseUser = await _authService.signIn(email, password);
+      if (firebaseUser != null) {
+        final user = UserModel(
+          id: firebaseUser.uid,
+          email: firebaseUser.email ?? '',
+          name: firebaseUser.displayName ?? '',
+          role: 'seller', // عدل هذا حسب ما يناسب مشروعك
+        );
+        await _secureStorage.write(key: 'auth_token', value: await firebaseUser.getIdToken());
+        await _secureStorage.write(key: 'user_id', value: user.id);
+        state = state.authenticated(user);
+      } else {
+        state = state.unauthenticated();
+      }
     } catch (e) {
       state = state.error(e.toString());
     }

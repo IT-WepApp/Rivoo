@@ -17,29 +17,24 @@ class AdminLoginPage extends ConsumerWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Example: Display user name if logged in
-            if (authState != null)
-              Text('Welcome, ${authState.name}!')
-            else
-              const Text('Please log in.'),
+            // عرض اسم المستخدم إذا كان مسجل الدخول
+            Text(
+              authState.user != null
+                  ? 'Welcome, ${authState.user!.name}!'
+                  : 'Please log in.',
+            ),
             const SizedBox(height: 20),
             ElevatedButton(
-              onPressed: authState == null
+              onPressed: authState.user == null
                   ? () async {
-                      // Example: Call signIn with dummy credentials
-                      await authNotifier.signIn(
-                          'admin@example.com', 'password');
-                      // إضافة فحص mounted قبل استخدام context بعد await
+                      await authNotifier.signIn(email: 'admin@example.com', password: 'password');
                       if (!context.mounted) return;
-                      // يمكن استخدام context هنا بأمان
                     }
                   : () async {
                       await authNotifier.signOut();
-                      // إضافة فحص mounted قبل استخدام context بعد await
                       if (!context.mounted) return;
-                      // يمكن استخدام context هنا بأمان
                     },
-              child: Text(authState == null ? 'Sign In' : 'Sign Out'),
+              child: Text(authState.user == null ? 'Sign In' : 'Sign Out'),
             ),
           ],
         ),

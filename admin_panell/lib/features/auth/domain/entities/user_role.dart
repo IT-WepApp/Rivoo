@@ -18,7 +18,7 @@ enum UserRole {
   inventoryManager,
 
   /// مدير دعم - يمكنه إدارة طلبات الدعم الفني
-  supportManager,
+  deliverManager,
 
   /// مستخدم عادي - لديه صلاحيات محدودة جداً
   user;
@@ -36,7 +36,7 @@ enum UserRole {
         return 'مدير مبيعات';
       case UserRole.inventoryManager:
         return 'مدير مخزون';
-      case UserRole.supportManager:
+      case UserRole.deliverManager:
         return 'مدير دعم';
       case UserRole.user:
         return 'مستخدم عادي';
@@ -79,5 +79,5 @@ enum UserRole {
   bool get canManageSupport =>
       this == UserRole.admin ||
       this == UserRole.supervisor ||
-      this == UserRole.supportManager;
+      this == UserRole.deliverManager;
 }

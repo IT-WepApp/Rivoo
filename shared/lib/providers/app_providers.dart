@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../utils/logger.dart';
+import 'package:shared/utils/logger.dart';
 
 /// مزود لتجميع كل مزودي الحالة في التطبيق
 class AppProviders {
@@ -24,9 +24,9 @@ class LoggerProviderObserver extends ProviderObserver {
     ProviderContainer container,
   ) {
     // يمكن تنفيذ تسجيل التغييرات هنا
-    // _logger.debug('Provider: ${provider.name ?? provider.runtimeType}');
-    // _logger.debug('Previous value: $previousValue');
-    // _logger.debug('New value: $newValue');
+     _logger.debug('Provider: ${provider.name ?? provider.runtimeType}');
+     _logger.debug('Previous value: $previousValue');
+     _logger.debug('New value: $newValue');
   }
 
   @override
@@ -36,8 +36,8 @@ class LoggerProviderObserver extends ProviderObserver {
     ProviderContainer container,
   ) {
     // يمكن تسجيل إضافة مزود جديد هنا
-    // _logger.debug('Provider added: ${provider.name ?? provider.runtimeType}');
-    // _logger.debug('Value: $value');
+     _logger.debug('Provider added: ${provider.name ?? provider.runtimeType}');
+     _logger.debug('Value: $value');
   }
 
   @override
@@ -46,6 +46,6 @@ class LoggerProviderObserver extends ProviderObserver {
     ProviderContainer container,
   ) {
     // يمكن تسجيل إزالة مزود هنا
-    // _logger.debug('Provider disposed: ${provider.name ?? provider.runtimeType}');
+     _logger.debug('Provider disposed: ${provider.name ?? provider.runtimeType}');
   }
 }

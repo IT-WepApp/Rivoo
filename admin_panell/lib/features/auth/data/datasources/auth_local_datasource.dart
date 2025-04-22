@@ -27,7 +27,7 @@ class AuthLocalDataSource {
   Future<void> saveUserData(UserEntity user) async {
     await _secureStorageService.write('user_id', user.id);
     await _secureStorageService.write('user_name', user.name);
-    await _secureStorageService.write('user_email', user.email);
+    await _secureStorageService.write('user_email', user.email?? '');
     await _secureStorageService.write('user_role', user.role.toString());
   }
 
@@ -48,10 +48,10 @@ class AuthLocalDataSource {
         role = UserRole.admin;
         break;
       case 'UserRole.seller':
-        role = UserRole.seller;
+        role = UserRole.salesManager;
         break;
       case 'UserRole.delivery':
-        role = UserRole.delivery;
+        role = UserRole.deliverManager;
         break;
       default:
         role = UserRole.user;
@@ -61,7 +61,7 @@ class AuthLocalDataSource {
       id: id,
       name: name,
       email: email,
-      role: role,
+      role: role.name,
     );
   }
 

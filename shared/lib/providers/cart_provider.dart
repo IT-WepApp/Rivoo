@@ -79,8 +79,9 @@ class CartNotifier extends StateNotifier<CartState> {
         // تحديث الكمية إذا كان المنتج موجوداً بالفعل
         final existingItem = currentItems[existingIndex];
         final updatedItem = CartItemModel(
+          id: existingItem.id,
           productId: existingItem.productId,
-          title: existingItem.title,
+          name: existingItem.name,
           price: existingItem.price,
           quantity: existingItem.quantity + quantity,
           imageUrl: existingItem.imageUrl,
@@ -90,8 +91,9 @@ class CartNotifier extends StateNotifier<CartState> {
         // إضافة منتج جديد إلى السلة
         currentItems.add(
           CartItemModel(
+            id: product.id,
             productId: product.id,
-            title: product.title,
+            name: product.name,
             price: product.price,
             quantity: quantity,
             imageUrl: product.imageUrl,
@@ -137,8 +139,9 @@ class CartNotifier extends StateNotifier<CartState> {
         } else {
           // تحديث الكمية
           final updatedItem = CartItemModel(
+            id: item.id,
             productId: item.productId,
-            title: item.title,
+            name: item.name,
             price: item.price,
             quantity: quantity,
             imageUrl: item.imageUrl,

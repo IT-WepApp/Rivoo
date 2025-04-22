@@ -6,6 +6,7 @@ import '../../domain/repositories/auth_repository.dart';
 import '../datasources/auth_remote_datasource.dart';
 import '../datasources/auth_local_datasource.dart';
 import '../../../../core/services/crashlytics_manager.dart';
+import '../models/user_model.dart';
 
 /// تنفيذ مستودع المصادقة
 class AuthRepositoryImpl implements AuthRepository {
@@ -22,8 +23,8 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<UserEntity> signIn({required String email, required String password}) async {
     try {
-      final userModel =
-          await remoteDataSource.signIn(email: email, password: password);
+      final json = await remoteDataSource.login(email: email, password: password);
+      final userModel = UserModel.fromJson(json);
       await localDataSource.cacheUser(userModel);
 
       // تعيين معرف المستخدم في Crashlytics لتسهيل تتبع الأخطاء
@@ -40,7 +41,8 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<void> signOut() async {
     try {
-      await remoteDataSource.signOut();
+      final token = await localDataSource.getAccessToken();
+      await remoteDataSource.logout(token!);
       await localDataSource.clearUser();
     } catch (e, stack) {
       // تسجيل الخطأ في Crashlytics
@@ -53,16 +55,18 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<UserEntity?> getCurrentUser() async {
     try {
       // محاولة الحصول على المستخدم من المصدر البعيد أولاً
-      final remoteUser = await remoteDataSource.getCurrentUser();
+      final token = await localDataSource.getAccessToken();
+      final remoteUser = await remoteDataSource.getCurrentUser(token!);
 
-      if (remoteUser != null) {
-        await localDataSource.cacheUser(remoteUser);
+      await localDataSource.cacheUser(remoteUser);
 
-        // تعيين معرف المستخدم في Crashlytics
-        await crashlytics.setUserIdentifier(userId: remoteUser.id);
+      // تعيين معرف المستخدم في Crashlytics
+      await crashlytics.setUserIdentifier(userId: remoteUser.id);
 
-        return remoteUser;
-      }
+      return remoteUser;
+    } catch (e, stack) {
+      // تسجيل الخطأ في Crashlytics
+      await crashlytics.recordError(e, stack);
 
       // إذا لم يكن هناك مستخدم حالي، نحاول الحصول على آخر مستخدم مخزن محلياً
       final localUser = await localDataSource.getLastSignedInUser();
@@ -73,10 +77,6 @@ class AuthRepositoryImpl implements AuthRepository {
       }
 
       return localUser;
-    } catch (e, stack) {
-      // تسجيل الخطأ في Crashlytics
-      await crashlytics.recordError(e, stack);
-      return null;
     }
   }
 

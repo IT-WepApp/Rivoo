@@ -20,9 +20,6 @@ class AuthService {
   Future<fb_auth.User?> signIn(String email, String password) async {
     final credential = await _firebaseAuth.signInWithEmailAndPassword(
         email: email, password: password);
-    // Optionally store refresh token if applicable
-    // final refreshToken = await credential.user?.getIdTokenResult(true);
-    // await _secureStorageService.write('refreshToken', refreshToken?.token ?? '');
     return credential.user;
   }
 
@@ -34,11 +31,7 @@ class AuthService {
 
   Future<void> signOut() async {
     await _firebaseAuth.signOut();
-    // Optionally clear stored tokens
-    // await _secureStorageService.delete('refreshToken');
   }
-
-  // Add other auth methods like password reset, etc.
 }
 
 // Define secureStorageServiceProvider if it doesn't exist
