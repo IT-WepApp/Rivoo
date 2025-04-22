@@ -1,7 +1,7 @@
 import 'dart:developer';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_services/shared_services.dart';
-import 'package:shared_models/shared_models.dart'; // تأكد أن shared_models.dart يصدر product.dart
+import 'package:shared_libs/lib/services/shared_services.dart';
+import 'package:shared_libs/lib/models/shared_models.dart'; // تأكد أن shared_models.dart يصدر product.dart
 import 'package:firebase_auth/firebase_auth.dart';
 
 // Provider للحصول على ID البائع الحالي

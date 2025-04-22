@@ -4,8 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_widgets/shared_widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:shared_services/shared_services.dart';
-import 'package:shared_models/shared_models.dart';
+import 'package:shared_libs/lib/services/shared_services.dart';
+import 'package:shared_libs/lib/models/shared_models.dart';
 
 final currentSellerIdProvider = Provider<String?>((ref) {
   return FirebaseAuth.instance.currentUser?.uid;

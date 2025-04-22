@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:shared_services/shared_services.dart';
+import 'package:shared_libs/lib/services/shared_services.dart';
 import 'package:shared_widgets/shared_widgets.dart';
 import 'package:go_router/go_router.dart'; // ✅ ضروري لـ context.go
 

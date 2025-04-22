@@ -1,7 +1,7 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_models/shared_models.dart'; // Assuming these are properly imported
+import 'package:shared_libs/lib/models/shared_models.dart'; // Assuming these are properly imported
 
 // Provider definition
 final statisticsServiceProvider =

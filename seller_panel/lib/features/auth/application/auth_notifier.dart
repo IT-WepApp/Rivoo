@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_models/shared_models.dart'; // يحتوي على SellerModel
+import 'package:shared_libs/lib/models/shared_models.dart'; // يحتوي على SellerModel
 
 class AuthNotifier extends StateNotifier<SellerModel?> {
   AuthNotifier() : super(null); // بالبداية المستخدم غير مسجل دخول

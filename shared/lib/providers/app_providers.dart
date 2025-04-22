@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared/utils/logger.dart';
+import 'package:shared_libs/lib/utils/logger.dart'; // تم تحديث المسار للمكتبة الجديدة
 
 /// مزود لتجميع كل مزودي الحالة في التطبيق
 class AppProviders {

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:go_router/go_router.dart'; // For navigation
-import 'package:shared_models/shared_models.dart';
+import 'package:shared_libs/lib/models/shared_models.dart';
 import '../../application/orders_notifier.dart'; // Import your OrdersNotifier
 
 // This widget displays the list of currently assigned orders for the delivery person

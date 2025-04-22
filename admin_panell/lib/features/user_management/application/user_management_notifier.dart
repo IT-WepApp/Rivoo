@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_models/shared_models.dart'; // Use main export
-import 'package:shared_services/shared_services.dart'; // Use main export
+import 'package:shared_libs/lib/models/shared_models.dart'; // Use main export
+import 'package:shared_libs/lib/services/shared_services.dart'; // Use main export
 
 // Updated to use AsyncValue
 class UserManagementNotifier

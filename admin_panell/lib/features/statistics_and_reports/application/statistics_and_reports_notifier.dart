@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_models/shared_models.dart' as models;
-import 'package:shared_services/shared_services.dart' as svc;
+import 'package:shared_libs/lib/models/shared_models.dart' as models;
+import 'package:shared_libs/lib/services/shared_services.dart' as svc;
 
 // State for Seller Statistics
 class StatisticsState {

@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_models/shared_models.dart'; // Added import for ProductModel
-import 'package:shared_services/shared_services.dart'; // Added import for ProductService
+import 'package:shared_libs/lib/models/shared_models.dart'; // Added import for ProductModel
+import 'package:shared_libs/lib/services/shared_services.dart'; // Added import for ProductService
 
 // Updated to use AsyncValue
 class ProductManagementNotifier

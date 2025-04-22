@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared/services/firestore_service.dart';
-import 'package:shared/models/product.dart';
+import 'package:shared_libs/lib/services/firestore_service.dart';
+import 'package:shared_libs/lib/models/product.dart';
 
 /// نموذج حالة المنتجات
 class ProductsState {

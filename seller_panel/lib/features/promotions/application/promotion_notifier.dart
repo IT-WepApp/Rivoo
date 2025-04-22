@@ -2,8 +2,8 @@
 
 import 'dart:developer';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_models/src/models/promotion.dart';
-import 'package:shared_services/shared_services.dart';
+import 'package:shared_libs/lib/models/src/models/promotion.dart';
+import 'package:shared_libs/lib/services/shared_services.dart';
 
 class PromotionState {
   final Promotion? promotion;

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_models/shared_models.dart';
+import 'package:shared_libs/lib/models/shared_models.dart';
 import '../../application/category_notifier.dart';
 
 class CategoryManagementPage extends ConsumerWidget {

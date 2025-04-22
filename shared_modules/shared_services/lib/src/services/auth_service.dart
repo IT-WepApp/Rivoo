@@ -1,5 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart' as fb_auth;
-import 'package:shared_services/src/services/secure_storage_service.dart';
+import 'package:shared_libs/lib/services/src/services/secure_storage_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart'; // Import Riverpod
 
 // Provider definition

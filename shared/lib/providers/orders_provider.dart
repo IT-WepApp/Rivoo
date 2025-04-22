@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared/services/firestore_service.dart';
-import 'package:shared/models/order.dart';
+import 'package:shared_libs/lib/services/firestore_service.dart';
+import 'package:shared_libs/lib/models/order.dart';
 
 /// نموذج حالة الطلبات
 class OrdersState {

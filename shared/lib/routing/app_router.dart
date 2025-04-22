@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared/providers/auth_provider.dart';
+import 'package:shared_libs/lib/providers/auth_provider.dart';
 
 /// ثوابت مسارات التطبيق
 class AppRoutes {

@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_models/shared_models.dart'; // يحتوي على OrderModel
-import 'package:shared_services/shared_services.dart'; // يحتوي على OrderService
+import 'package:shared_libs/lib/models/shared_models.dart'; // يحتوي على OrderModel
+import 'package:shared_libs/lib/services/shared_services.dart'; // يحتوي على OrderService
 
 // مزود وهمي مؤقت لتجربة الـ deliveryPersonId
 final currentDeliveryPersonIdProvider = Provider<String?>((ref) {

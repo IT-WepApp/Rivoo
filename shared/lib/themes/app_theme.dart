@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:shared/themes/app_colors.dart';
-import 'package:shared/themes/app_typography.dart';
+import 'package:shared_libs/lib/themes/app_colors.dart';
+import 'package:shared_libs/lib/themes/app_typography.dart';
 
 /// نظام الثيم الموحد للتطبيق
 class AppTheme {

@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
-import 'package:shared/models/user_model.dart';
-import 'package:shared/services/auth_service.dart';
+import 'package:shared_libs/lib/models/user_model.dart';
+import 'package:shared_libs/lib/services/auth_service.dart';
 
 /// حالة المصادقة
 enum AuthState {

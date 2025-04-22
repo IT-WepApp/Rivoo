@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared/services/notification_service.dart';
-import 'package:shared/models/notification_model.dart'; // ✅ تم نقل الكلاس هنا
+import 'package:shared_libs/lib/services/notification_service.dart';
+import 'package:shared_libs/lib/models/notification_model.dart'; // ✅ تم نقل الكلاس هنا
 
 /// نموذج حالة الإشعارات
 class NotificationState {

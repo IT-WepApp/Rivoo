@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
-import 'package:shared_models/shared_models.dart'; // Import OrderModel
-import 'package:shared_services/shared_services.dart'; // Import orderServiceProvider
+import 'package:shared_libs/lib/models/shared_models.dart'; // Import OrderModel
+import 'package:shared_libs/lib/services/shared_services.dart'; // Import orderServiceProvider
 import 'package:shared_widgets/shared_widgets.dart';
 import '../../../location/application/location_notifier.dart';
 

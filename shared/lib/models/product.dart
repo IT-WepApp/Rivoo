@@ -1,6 +1,6 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:equatable/equatable.dart';
-import 'package:shared/models/promotion.dart'; // ✅ استيراد enum من ملفه الرسمي
+import 'package:shared_libs/lib/models/promotion.dart'; // تم تحديث المسار للمكتبة الجديدة
 
 part 'product.g.dart';
 
