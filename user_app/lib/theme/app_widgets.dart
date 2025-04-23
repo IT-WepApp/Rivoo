@@ -1,298 +1,189 @@
 import 'package:flutter/material.dart';
+import 'app_theme.dart';
 
-/// مكونات واجهة المستخدم المشتركة للتطبيق
+/// مكونات واجهة المستخدم الموحدة
+///
+/// يحتوي هذا الملف على مكونات واجهة المستخدم الموحدة المستخدمة في جميع أنحاء التطبيق
+/// مثل الأزرار وحقول الإدخال والبطاقات وغيرها
+
 class AppWidgets {
-  /// حقل نص مخصص للتطبيق
-  static Widget AppTextField({
-    required TextEditingController controller,
-    required String labelText,
-    required String hintText,
-    String? Function(String?)? validator,
-    TextInputType keyboardType = TextInputType.text,
-    bool obscureText = false,
-    bool enabled = true,
-    Widget? prefixIcon,
-    Widget? suffixIcon,
-    int maxLines = 1,
-    int? maxLength,
-    void Function(String)? onChanged,
-    void Function()? onTap,
-    FocusNode? focusNode,
-    TextInputAction textInputAction = TextInputAction.next,
-    void Function(String)? onSubmitted,
-    EdgeInsetsGeometry? contentPadding,
-    bool autofocus = false,
-    bool readOnly = false,
-  }) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: TextFormField(
-        controller: controller,
-        decoration: InputDecoration(
-          labelText: labelText,
-          hintText: hintText,
-          prefixIcon: prefixIcon,
-          suffixIcon: suffixIcon,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: Colors.grey),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: Colors.grey),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: Colors.blue, width: 2),
-          ),
-          errorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(12),
-            borderSide: const BorderSide(color: Colors.red, width: 2),
-          ),
-          contentPadding: contentPadding ?? const EdgeInsets.all(16),
-          filled: true,
-          fillColor: enabled ? Colors.white : Colors.grey[100],
-        ),
-        validator: validator,
-        keyboardType: keyboardType,
-        obscureText: obscureText,
-        enabled: enabled,
-        maxLines: maxLines,
-        maxLength: maxLength,
-        onChanged: onChanged,
-        onTap: onTap,
-        focusNode: focusNode,
-        textInputAction: textInputAction,
-        onFieldSubmitted: onSubmitted,
-        autofocus: autofocus,
-        readOnly: readOnly,
-      ),
-    );
-  }
+  // منع إنشاء نسخة من الفئة
+  AppWidgets._();
 
-  /// زر مخصص للتطبيق
+  /// زر التطبيق الموحد
   static Widget AppButton({
     required String text,
     required VoidCallback onPressed,
-    bool isLoading = false,
     bool isOutlined = false,
+    bool isLoading = false,
+    bool isFullWidth = true,
+    IconData? icon,
     Color? backgroundColor,
     Color? textColor,
-    double width = double.infinity,
-    double height = 50,
-    double borderRadius = 12,
+    double? height,
+    double? width,
     EdgeInsetsGeometry? padding,
-    Widget? icon,
-    bool disabled = false,
+    BorderRadius? borderRadius,
   }) {
-    final buttonStyle = isOutlined
-        ? ElevatedButton.styleFrom(
-            foregroundColor: textColor ?? Colors.blue,
-            backgroundColor: Colors.transparent,
-            elevation: 0,
-            padding: padding ??
-                const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(borderRadius),
-              side: BorderSide(
-                  color: disabled ? Colors.grey : (textColor ?? Colors.blue)),
-            ),
-            minimumSize: Size(width, height),
-          )
-        : ElevatedButton.styleFrom(
-            foregroundColor: textColor ?? Colors.white,
-            backgroundColor:
-                disabled ? Colors.grey : (backgroundColor ?? Colors.blue),
-            elevation: 2,
-            padding: padding ??
-                const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(borderRadius),
-            ),
-            minimumSize: Size(width, height),
-          );
+    final buttonHeight = height ?? AppDimensions.buttonHeight;
+    final buttonWidth = width ?? (isFullWidth ? double.infinity : null);
+    final buttonPadding = padding ??
+        const EdgeInsets.symmetric(horizontal: AppDimensions.paddingL);
+    final buttonBorderRadius =
+        borderRadius ?? BorderRadius.circular(AppDimensions.radiusS);
 
-    return SizedBox(
-      width: width,
-      height: height,
-      child: ElevatedButton(
-        style: buttonStyle,
-        onPressed: disabled ? null : onPressed,
-        child: isLoading
-            ? const SizedBox(
-                width: 24,
-                height: 24,
-                child: CircularProgressIndicator(
-                  color: Colors.white,
-                  strokeWidth: 2,
-                ),
-              )
-            : icon != null
-                ? Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      icon,
-                      const SizedBox(width: 8),
-                      Text(
-                        text,
-                        style: const TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  )
-                : Text(
-                    text,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
+    if (isOutlined) {
+      return SizedBox(
+        height: buttonHeight,
+        width: buttonWidth,
+        child: OutlinedButton(
+          onPressed: isLoading ? null : onPressed,
+          style: OutlinedButton.styleFrom(
+            foregroundColor: textColor ?? AppColors.primary,
+            padding: buttonPadding,
+            shape: RoundedRectangleBorder(
+              borderRadius: buttonBorderRadius,
+            ),
+            side: BorderSide(color: backgroundColor ?? AppColors.primary),
+          ),
+          child: _buildButtonContent(text, icon, isLoading),
+        ),
+      );
+    } else {
+      return SizedBox(
+        height: buttonHeight,
+        width: buttonWidth,
+        child: ElevatedButton(
+          onPressed: isLoading ? null : onPressed,
+          style: ElevatedButton.styleFrom(
+            foregroundColor: textColor ?? AppColors.textOnPrimary,
+            backgroundColor: backgroundColor ?? AppColors.primary,
+            padding: buttonPadding,
+            shape: RoundedRectangleBorder(
+              borderRadius: buttonBorderRadius,
+            ),
+          ),
+          child: _buildButtonContent(text, icon, isLoading),
+        ),
+      );
+    }
+  }
+
+  /// محتوى الزر (نص + أيقونة + مؤشر التحميل)
+  static Widget _buildButtonContent(
+      String text, IconData? icon, bool isLoading) {
+    if (isLoading) {
+      return const SizedBox(
+        height: 20,
+        width: 20,
+        child: CircularProgressIndicator(
+          strokeWidth: 2,
+          valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+        ),
+      );
+    } else if (icon != null) {
+      return Row(
+        mainAxisSize: MainAxisSize.min,
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon, size: 18),
+          const SizedBox(width: 8),
+          Text(text),
+        ],
+      );
+    } else {
+      return Text(text);
+    }
+  }
+
+  /// حقل إدخال النص الموحد
+  static Widget AppTextField({
+    required TextEditingController controller,
+    String? labelText,
+    String? hintText,
+    String? errorText,
+    bool obscureText = false,
+    TextInputType keyboardType = TextInputType.text,
+    TextInputAction textInputAction = TextInputAction.next,
+    Function(String)? onChanged,
+    Function(String)? onSubmitted,
+    Function()? onTap,
+    IconData? prefixIcon,
+    Widget? suffix,
+    bool readOnly = false,
+    int? maxLines = 1,
+    int? maxLength,
+    bool enabled = true,
+    String? Function(String?)? validator,
+    AutovalidateMode autovalidateMode = AutovalidateMode.onUserInteraction,
+  }) {
+    return TextFormField(
+      controller: controller,
+      obscureText: obscureText,
+      keyboardType: keyboardType,
+      textInputAction: textInputAction,
+      readOnly: readOnly,
+      maxLines: maxLines,
+      maxLength: maxLength,
+      enabled: enabled,
+      onChanged: onChanged,
+      onFieldSubmitted: onSubmitted,
+      onTap: onTap,
+      validator: validator,
+      autovalidateMode: autovalidateMode,
+      decoration: InputDecoration(
+        labelText: labelText,
+        hintText: hintText,
+        errorText: errorText,
+        prefixIcon: prefixIcon != null ? Icon(prefixIcon) : null,
+        suffix: suffix,
       ),
     );
   }
 
-  /// بطاقة مخصصة للتطبيق
+  /// بطاقة التطبيق الموحدة
   static Widget AppCard({
     required Widget child,
-    double elevation = 2,
-    Color? color,
-    double borderRadius = 12,
-    EdgeInsetsGeometry padding = const EdgeInsets.all(16),
-    EdgeInsetsGeometry margin = const EdgeInsets.symmetric(vertical: 8),
-    void Function()? onTap,
+    VoidCallback? onTap,
+    Color? backgroundColor,
+    EdgeInsetsGeometry? padding,
+    EdgeInsetsGeometry? margin,
+    BorderRadius? borderRadius,
+    double? elevation,
   }) {
-    return Card(
-      elevation: elevation,
-      color: color ?? Colors.white,
+    final cardWidget = Card(
+      color: backgroundColor ?? AppColors.surface,
+      elevation: elevation ?? AppDimensions.elevationS,
       shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(borderRadius),
+        borderRadius:
+            borderRadius ?? BorderRadius.circular(AppDimensions.radiusM),
       ),
-      margin: margin,
-      child: InkWell(
+      margin: margin ?? const EdgeInsets.all(AppDimensions.paddingS),
+      child: Padding(
+        padding: padding ?? const EdgeInsets.all(AppDimensions.paddingM),
+        child: child,
+      ),
+    );
+
+    if (onTap != null) {
+      return InkWell(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(borderRadius),
-        child: Padding(
-          padding: padding,
-          child: child,
-        ),
-      ),
-    );
+        borderRadius: borderRadius ?? BorderRadius.circular(AppDimensions.radiusM),
+        child: cardWidget,
+      );
+    } else {
+      return cardWidget;
+    }
   }
 
-  /// شريط تنقل سفلي مخصص للتطبيق
-  static Widget AppBottomNavigationBar({
-    required int currentIndex,
-    required void Function(int) onTap,
-    required List<BottomNavigationBarItem> items,
-    Color? backgroundColor,
-    Color? selectedItemColor,
-    Color? unselectedItemColor,
-  }) {
-    return BottomNavigationBar(
-      currentIndex: currentIndex,
-      onTap: onTap,
-      items: items,
-      backgroundColor: backgroundColor ?? Colors.white,
-      selectedItemColor: selectedItemColor ?? Colors.blue,
-      unselectedItemColor: unselectedItemColor ?? Colors.grey,
-      type: BottomNavigationBarType.fixed,
-      elevation: 8,
-      showSelectedLabels: true,
-      showUnselectedLabels: true,
-    );
-  }
-
-  /// شريط تطبيق مخصص للتطبيق
-  static PreferredSizeWidget AppAppBar({
-    required String title,
-    List<Widget>? actions,
-    bool centerTitle = true,
-    Widget? leading,
-    PreferredSizeWidget? bottom,
-    Color? backgroundColor,
-    Color? foregroundColor,
-    double elevation = 0,
-    bool automaticallyImplyLeading = true,
-  }) {
-    return AppBar(
-      title: Text(title),
-      actions: actions,
-      centerTitle: centerTitle,
-      leading: leading,
-      bottom: bottom,
-      backgroundColor: backgroundColor ?? Colors.white,
-      foregroundColor: foregroundColor ?? Colors.black,
-      elevation: elevation,
-      automaticallyImplyLeading: automaticallyImplyLeading,
-    );
-  }
-
-  /// مؤشر تحميل مخصص للتطبيق
-  static Widget AppLoadingIndicator({
-    double size = 40,
-    Color? color,
-    double strokeWidth = 4,
-  }) {
-    return Center(
-      child: SizedBox(
-        width: size,
-        height: size,
-        child: CircularProgressIndicator(
-          color: color ?? Colors.blue,
-          strokeWidth: strokeWidth,
-        ),
-      ),
-    );
-  }
-
-  /// رسالة خطأ مخصصة للتطبيق
-  static Widget AppErrorMessage({
-    required String message,
-    VoidCallback? onRetry,
-    IconData icon = Icons.error_outline,
-    Color? iconColor,
-    double iconSize = 48,
-  }) {
-    return Center(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(
-            icon,
-            color: iconColor ?? Colors.red,
-            size: iconSize,
-          ),
-          const SizedBox(height: 16),
-          Text(
-            message,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-            ),
-            textAlign: TextAlign.center,
-          ),
-          if (onRetry != null) ...[
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: onRetry,
-              child: const Text('إعادة المحاولة'),
-            ),
-          ],
-        ],
-      ),
-    );
-  }
-
-  /// قائمة فارغة مخصصة للتطبيق
+  /// قائمة فارغة مع رسالة ودعوة للإجراء
   static Widget AppEmptyList({
     required String message,
-    IconData icon = Icons.hourglass_empty,
-    Color? iconColor,
-    double iconSize = 48,
-    VoidCallback? onAction,
     String? actionLabel,
+    VoidCallback? onAction,
+    IconData icon = Icons.inbox_outlined,
+    double? iconSize,
+    Color? iconColor,
   }) {
     return Center(
       child: Column(
@@ -300,23 +191,24 @@ class AppWidgets {
         children: [
           Icon(
             icon,
-            color: iconColor ?? Colors.grey,
-            size: iconSize,
+            size: iconSize ?? 64,
+            color: iconColor ?? AppColors.textSecondary,
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: AppDimensions.paddingM),
           Text(
             message,
             style: const TextStyle(
               fontSize: 16,
-              fontWeight: FontWeight.bold,
+              color: AppColors.textSecondary,
             ),
             textAlign: TextAlign.center,
           ),
-          if (onAction != null && actionLabel != null) ...[
-            const SizedBox(height: 16),
-            ElevatedButton(
+          if (actionLabel != null && onAction != null) ...[
+            const SizedBox(height: AppDimensions.paddingL),
+            AppButton(
+              text: actionLabel,
               onPressed: onAction,
-              child: Text(actionLabel),
+              isFullWidth: false,
             ),
           ],
         ],
@@ -324,107 +216,75 @@ class AppWidgets {
     );
   }
 
-  /// شريط بحث مخصص للتطبيق
-  static Widget AppSearchBar({
-    required TextEditingController controller,
-    required void Function(String) onChanged,
-    String hintText = 'بحث...',
-    void Function()? onClear,
-    void Function(String)? onSubmitted,
-    FocusNode? focusNode,
-    bool autofocus = false,
+  /// شريط تحميل مع نسبة مئوية
+  static Widget AppProgressBar({
+    required double value,
+    double? height,
+    Color? backgroundColor,
+    Color? progressColor,
+    BorderRadius? borderRadius,
+    bool showPercentage = true,
   }) {
-    return Container(
-      height: 50,
-      decoration: BoxDecoration(
-        color: Colors.grey[200],
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: TextField(
-        controller: controller,
-        onChanged: onChanged,
-        onSubmitted: onSubmitted,
-        focusNode: focusNode,
-        autofocus: autofocus,
-        decoration: InputDecoration(
-          hintText: hintText,
-          prefixIcon: const Icon(Icons.search),
-          suffixIcon: controller.text.isNotEmpty
-              ? IconButton(
-                  icon: const Icon(Icons.clear),
-                  onPressed: () {
-                    controller.clear();
-                    if (onClear != null) {
-                      onClear();
-                    } else {
-                      onChanged('');
-                    }
-                  },
-                )
-              : null,
-          border: InputBorder.none,
-          contentPadding:
-              const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        ClipRRect(
+          borderRadius:
+              borderRadius ?? BorderRadius.circular(AppDimensions.radiusXS),
+          child: LinearProgressIndicator(
+            value: value,
+            minHeight: height ?? 8,
+            backgroundColor: backgroundColor ?? AppColors.surfaceVariant,
+            valueColor: AlwaysStoppedAnimation<Color>(
+                progressColor ?? AppColors.primary),
+          ),
         ),
-      ),
+        if (showPercentage) ...[
+          const SizedBox(height: 4),
+          Text(
+            '${(value * 100).toInt()}%',
+            style: const TextStyle(
+              fontSize: 12,
+              color: AppColors.textSecondary,
+            ),
+          ),
+        ],
+      ],
     );
   }
 
-  /// شريط تبويب مخصص للتطبيق
-  static Widget AppTabBar({
-    required TabController controller,
-    required List<String> tabs,
-    Color? indicatorColor,
-    Color? labelColor,
-    Color? unselectedLabelColor,
-    double indicatorWeight = 3,
-    EdgeInsetsGeometry? padding,
-  }) {
-    return Container(
-      padding: padding,
-      child: TabBar(
-        controller: controller,
-        tabs: tabs.map((tab) => Tab(text: tab)).toList(),
-        indicatorColor: indicatorColor ?? Colors.blue,
-        labelColor: labelColor ?? Colors.blue,
-        unselectedLabelColor: unselectedLabelColor ?? Colors.grey,
-        indicatorWeight: indicatorWeight,
-      ),
-    );
-  }
-
-  /// شارة مخصصة للتطبيق
+  /// شارة العدد
   static Widget AppBadge({
     required Widget child,
     required int count,
     Color? backgroundColor,
     Color? textColor,
-    double size = 20,
+    double? size,
     EdgeInsetsGeometry? padding,
   }) {
+    final badgeSize = size ?? 18;
+
     return Stack(
       clipBehavior: Clip.none,
       children: [
         child,
         if (count > 0)
           Positioned(
-            right: -5,
             top: -5,
+            right: -5,
             child: Container(
-              padding: padding ?? const EdgeInsets.all(4),
+              width: badgeSize,
+              height: badgeSize,
+              padding: padding ?? EdgeInsets.zero,
               decoration: BoxDecoration(
-                color: backgroundColor ?? Colors.red,
+                color: backgroundColor ?? AppColors.error,
                 shape: BoxShape.circle,
-              ),
-              constraints: BoxConstraints(
-                minWidth: size,
-                minHeight: size,
               ),
               child: Center(
                 child: Text(
-                  count > 99 ? '99+' : count.toString(),
+                  count > 9 ? '9+' : count.toString(),
                   style: TextStyle(
-                    color: textColor ?? Colors.white,
+                    color: textColor ?? AppColors.textOnPrimary,
                     fontSize: 10,
                     fontWeight: FontWeight.bold,
                   ),
@@ -436,22 +296,139 @@ class AppWidgets {
     );
   }
 
-  /// شريط تقدم مخصص للتطبيق
-  static Widget AppProgressBar({
-    required double value,
-    double height = 8,
-    Color? backgroundColor,
-    Color? progressColor,
-    double borderRadius = 4,
+  /// مؤشر الحالة
+  static Widget AppStatusIndicator({
+    required String status,
+    required Color color,
+    double? size,
+    double? textSize,
   }) {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(borderRadius),
-      child: LinearProgressIndicator(
-        value: value,
-        minHeight: height,
-        backgroundColor: backgroundColor ?? Colors.grey[300],
-        valueColor: AlwaysStoppedAnimation<Color>(progressColor ?? Colors.blue),
+    final indicatorSize = size ?? 10;
+
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Container(
+          width: indicatorSize,
+          height: indicatorSize,
+          decoration: BoxDecoration(
+            color: color,
+            shape: BoxShape.circle,
+          ),
+        ),
+        const SizedBox(width: 6),
+        Text(
+          status,
+          style: TextStyle(
+            fontSize: textSize ?? 14,
+            color: AppColors.textSecondary,
+          ),
+        ),
+      ],
+    );
+  }
+
+  /// شريط البحث
+  static Widget AppSearchBar({
+    required TextEditingController controller,
+    required Function(String) onSearch,
+    String hintText = 'بحث...',
+    VoidCallback? onFilterTap,
+    bool showFilterButton = true,
+  }) {
+    return AppCard(
+      padding: const EdgeInsets.symmetric(
+        horizontal: AppDimensions.paddingS,
+        vertical: AppDimensions.paddingXS,
       ),
+      child: Row(
+        children: [
+          const Icon(Icons.search, color: AppColors.textSecondary),
+          const SizedBox(width: AppDimensions.paddingS),
+          Expanded(
+            child: TextField(
+              controller: controller,
+              decoration: InputDecoration(
+                hintText: hintText,
+                border: InputBorder.none,
+                hintStyle: const TextStyle(color: AppColors.textHint),
+              ),
+              onSubmitted: onSearch,
+            ),
+          ),
+          if (controller.text.isNotEmpty)
+            IconButton(
+              icon: const Icon(Icons.clear, color: AppColors.textSecondary),
+              onPressed: () {
+                controller.clear();
+                onSearch('');
+              },
+            ),
+          if (showFilterButton)
+            IconButton(
+              icon: const Icon(Icons.filter_list, color: AppColors.textSecondary),
+              onPressed: onFilterTap,
+            ),
+        ],
+      ),
+    );
+  }
+
+  /// عنصر قائمة مع صورة
+  static Widget AppListItem({
+    required String title,
+    String? subtitle,
+    String? imageUrl,
+    IconData? icon,
+    VoidCallback? onTap,
+    Widget? trailing,
+  }) {
+    return ListTile(
+      leading: imageUrl != null
+          ? ClipRRect(
+              borderRadius: BorderRadius.circular(AppDimensions.radiusS),
+              child: Image.network(
+                imageUrl,
+                width: 48,
+                height: 48,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    width: 48,
+                    height: 48,
+                    color: AppColors.surfaceVariant,
+                    child: const Icon(Icons.image_not_supported,
+                        color: AppColors.textSecondary),
+                  );
+                },
+              ),
+            )
+          : icon != null
+              ? Container(
+                  width: 48,
+                  height: 48,
+                  decoration: BoxDecoration(
+                    color: AppColors.surfaceVariant,
+                    borderRadius: BorderRadius.circular(AppDimensions.radiusS),
+                  ),
+                  child: Icon(icon, color: AppColors.primary),
+                )
+              : null,
+      title: Text(
+        title,
+        style: const TextStyle(
+          fontWeight: FontWeight.w500,
+          color: AppColors.textPrimary,
+        ),
+      ),
+      subtitle: subtitle != null
+          ? Text(
+              subtitle,
+              style: const TextStyle(color: AppColors.textSecondary),
+            )
+          : null,
+      trailing: trailing,
+      onTap: onTap,
     );
   }
 }
