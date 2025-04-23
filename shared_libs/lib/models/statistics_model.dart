@@ -4,10 +4,10 @@ class StatisticsModel {
 }
 
 class SalesData {
-  final String month;
-  final double sales;
+  final String totalSales;
+  final String orderCount;
 
-  SalesData(this.month, this.sales);
+  SalesData({required this.totalSales, required this.orderCount});
 }
 
 class StorePerformance {

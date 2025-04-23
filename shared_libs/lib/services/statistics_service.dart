@@ -1,7 +1,8 @@
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_libs/lib/models/shared_models.dart'; // Assuming these are properly imported
+import '../models/product.dart';
+import '../models/statistics_model.dart'; // <-- استيراد SalesData من هنا
 
 // Provider definition
 final statisticsServiceProvider =
@@ -64,13 +65,5 @@ class StatisticsService {
   }
 }
 
-class SalesData {
-  final String totalSales; // Now it's a String to avoid type errors
-  final String orderCount; // Now it's a String to avoid type errors
-
-  SalesData({required this.totalSales, required this.orderCount});
-}
-
-class StorePerformance {
-  // Define fields for store performance metrics
-}
+// ملاحظة: تم حذف SalesData من هنا
+// يُفترض أنه معرف في models/statistics_model.dart

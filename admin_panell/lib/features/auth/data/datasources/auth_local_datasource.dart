@@ -1,6 +1,6 @@
-import 'package:admin_panell/core/storage/secure_storage_service.dart';
-import 'package:admin_panell/features/auth/domain/entities/user_entity.dart';
-import 'package:admin_panell/features/auth/domain/entities/user_role.dart';
+import '../../../../../../shared_libs/lib/services/secure_storage_service.dart';
+import '../../../../../../shared_libs/lib/entities/user_entity.dart';
+import '../../domain/entities/user_role.dart';
 
 /// مصدر البيانات المحلي للمصادقة
 class AuthLocalDataSource {

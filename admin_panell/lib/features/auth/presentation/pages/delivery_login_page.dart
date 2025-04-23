@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:shared_libs/lib/widgets/shared_widgets.dart';
+import '../../../../../../shared_libs/lib/widgets/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart'; // Import Riverpod
-import 'package:shared_libs/lib/services/shared_services.dart'; // Import shared services
+import '../../../../../../shared_libs/lib/services/services.dart'; // Import shared services
 import 'package:go_router/go_router.dart'; // Import GoRouter
-import 'package:shared_libs/lib/models/shared_models.dart'; // Import UserModel
-
+import '../../../../../../shared_libs/lib/models/shared_models.dart'; // Import UserModel
+import '../../../../../../shared_libs/lib/models/user_model.dart';
 class DeliveryLoginPage extends ConsumerStatefulWidget {
   // Changed to Consumer
   const DeliveryLoginPage({Key? key}) : super(key: key);

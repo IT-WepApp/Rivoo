@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart'; // Added Material import
 import 'package:go_router/go_router.dart';
-import 'package:admin_panell/features/auth/presentation/pages/login_page.dart';
-import 'package:admin_panell/features/dashboard/presentation/pages/admin_home_page.dart';
-import 'package:admin_panell/features/category_management/presentation/pages/category_management_page.dart';
-import 'package:admin_panell/features/product_management/presentation/pages/product_list_page.dart';
-import 'package:admin_panell/features/order_management/presentation/pages/order_list_page.dart';
-import 'package:admin_panell/features/user_management/presentation/pages/user_list_page.dart';
-import 'package:admin_panell/features/store_management/presentation/pages/store_list_page.dart';
-import 'package:admin_panell/features/statistics_and_reports/presentation/pages/statistics_and_reports_page.dart';
+import 'features/auth/presentation/pages/login_page.dart';
+import 'features/dashboard/presentation/pages/admin_home_page.dart';
+import 'features/category_management/presentation/pages/category_management_page.dart';
+import 'features/product_management/presentation/pages/product_list_page.dart';
+import 'features/order_management/presentation/pages/order_list_page.dart';
+import 'features/user_management/presentation/pages/user_list_page.dart';
+import 'features/store_management/presentation/pages/store_list_page.dart';
+import 'features/statistics_and_reports/presentation/pages/statistics_and_reports_page.dart';
 
 // Placeholder/Example Auth Guard (Implement proper logic)
 Future<String?> authGuard(BuildContext context, GoRouterState state) async {

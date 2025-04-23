@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:shared_libs/lib/services/shared_services.dart';
-import 'package:shared_libs/lib/models/shared_models.dart'; // ✅ Import the Order model
+import '../../../../../../shared_libs/lib/models/order_model.dart';
+import '../../../../../../shared_libs/lib/services/services.dart'; 
+import '../../../../../../shared_libs/lib/services/order_service.dart'; 
+
 
 class DeliveryHomePage extends StatefulWidget {
   const DeliveryHomePage({Key? key}) : super(key: key);

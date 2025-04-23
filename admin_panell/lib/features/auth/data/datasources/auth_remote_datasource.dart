@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:admin_panell/core/config/api_config.dart';
-import 'package:admin_panell/core/errors/exceptions.dart';
-import 'package:admin_panell/features/auth/data/models/user_model.dart';
+import '../../../../core/config/api_config.dart';
+import '../../../../core/errors/exceptions.dart';
+import '../../../../../../shared_libs/lib/models/user_model.dart';
 
 /// مصدر البيانات البعيد للمصادقة
 class AuthRemoteDataSource {

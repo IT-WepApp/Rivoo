@@ -1,7 +1,7 @@
 // واجهة مستودع المصادقة في طبقة Domain
 // lib/features/auth/domain/repositories/auth_repository.dart
 
-import '../entities/user_entity.dart';
+import '../../../../../../shared_libs/lib/entities/user_entity.dart';
 
 /// واجهة مستودع المصادقة
 abstract class AuthRepository {

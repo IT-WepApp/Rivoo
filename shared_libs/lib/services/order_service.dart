@@ -1,6 +1,7 @@
 import 'dart:developer' as developer;
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:shared_libs/lib/models/shared_models.dart';
+import '../models/delivery_location_model.dart';
+import '../models/order.dart';
 
 class OrderService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -53,6 +54,19 @@ class OrderService {
     } catch (e, st) {
       developer.log('Error getting delivered orders for personnel: $e',
           stackTrace: st);
+      return [];
+    }
+  }
+
+  // استرجاع جميع الطلبات
+  Future<List<OrderModel>> getAllOrders() async {
+    try {
+      final snapshot = await _firestore.collection('orders').get();
+      return snapshot.docs
+          .map((doc) => OrderModel.fromJson(doc.data()))
+          .toList();
+    } catch (e, st) {
+      developer.log('Error getting all orders: $e', stackTrace: st);
       return [];
     }
   }

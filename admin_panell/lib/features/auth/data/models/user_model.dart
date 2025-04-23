@@ -1,7 +1,7 @@
 // نموذج المستخدم في طبقة Data
 // lib/features/auth/data/models/user_model.dart
 
-import '../../domain/entities/user_entity.dart';
+import '../../../../../../shared_libs/lib/entities/user_entity.dart';
 
 /// نموذج بيانات المستخدم
 class UserModel extends UserEntity {

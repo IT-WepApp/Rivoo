@@ -650,8 +650,7 @@ class _PieChartPainter extends CustomPainter {
     final radius = size.width < size.height ? size.width / 2.5 : size.height / 2.5;
 
     // Calculate total value
-    final total = data.fold(0.0, (sum, value) => sum + value);
-
+    final total = data.fold<double>(0.0, (sum, value) => sum + value);
     // Draw pie chart
     if (total > 0) {
       double startAngle = -90 * (3.14159265359 / 180); // Start from top (in radians)

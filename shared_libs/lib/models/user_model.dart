@@ -1,26 +1,22 @@
 import 'package:json_annotation/json_annotation.dart';
 import 'package:equatable/equatable.dart';
+import '../entities/user_entity.dart'; // تأكد أن المسار صحيح حسب هيكل مشروعك
 
 part 'user_model.g.dart';
 
 @JsonSerializable()
-class UserModel extends Equatable {
-  final String id;
-  final String name;
-  final String email;
-  final String role;
-  final String? storeId;
-
+class UserModel extends UserEntity with EquatableMixin {
   const UserModel({
-    required this.id,
-    required this.name,
-    required this.email,
-    required this.role,
-    this.storeId,
-  });
+    required String id,
+    required String name,
+    required String email,
+    required String role,
+    String? storeId,
+  }) : super(id: id, name: name, email: email, role: role, storeId: storeId);
 
   factory UserModel.fromJson(Map<String, dynamic> json) =>
       _$UserModelFromJson(json);
+
   Map<String, dynamic> toJson() => _$UserModelToJson(this);
 
   UserModel copyWith({

@@ -43,7 +43,7 @@ class AuthNotifier extends Notifier<AuthState> {
   late final SignOutUseCase _signOutUseCase;
   late final GetCurrentUserUseCase _getCurrentUserUseCase;
   late final IsSignedInUseCase _isSignedInUseCase;
-  late final SecureStorageService _secureStorage;
+  late final SecureStorageService _secureStorage; 
   late final CrashlyticsManager _crashlytics;
 
   @override

@@ -1,4 +1,4 @@
-import 'package:shared_libs/lib/models/category.dart';
+import '../models/category.dart';
 
 class CategoryService {
   // Replace with your actual database implementation

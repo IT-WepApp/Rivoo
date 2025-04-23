@@ -1,9 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_libs/lib/models/order.dart';
-import 'package:shared_libs/lib/models/product.dart';
-import 'package:shared_libs/lib/models/user_model.dart';
-import 'package:shared_libs/lib/models/store_model.dart';
+import '../models/order.dart';
+import '../models/product.dart';
+import '../models/user_model.dart';
+import '../models/store_model.dart';
 
 /// مزود خدمة Firestore
 final firestoreServiceProvider = Provider<FirestoreService>((ref) {
@@ -19,7 +19,7 @@ class FirestoreService {
   final String _productsCollection = 'products';
   final String _ordersCollection = 'orders';
   final String _storesCollection = 'stores';
-  final String _categoriesCollection = 'categories';
+  //final String _categoriesCollection = 'categories';
 
   /// الحصول على مستخدم بواسطة المعرف
   Future<UserModel?> getUser(String userId) async {
@@ -122,11 +122,11 @@ class FirestoreService {
   }
 
   /// الحصول على طلب بواسطة المعرف
-  Future<Order?> getOrder(String orderId) async {
+  Future<OrderModel?> getOrder(String orderId) async {
     try {
       final doc = await _firestore.collection(_ordersCollection).doc(orderId).get();
       if (doc.exists && doc.data() != null) {
-        return Order.fromJson(doc.data()!);
+        return OrderModel.fromJson(doc.data()!);
       }
       return null;
     } catch (e) {
@@ -135,7 +135,7 @@ class FirestoreService {
   }
 
   /// الحصول على طلبات مستخدم معين
-  Future<List<Order>> getUserOrders(String userId) async {
+  Future<List<OrderModel>> getUserOrders(String userId) async {
     try {
       final snapshot = await _firestore
           .collection(_ordersCollection)
@@ -143,7 +143,7 @@ class FirestoreService {
           .orderBy('createdAt', descending: true)
           .get();
       return snapshot.docs
-          .map((doc) => Order.fromJson(doc.data()))
+          .map((doc) => OrderModel.fromJson(doc.data()))
           .toList();
     } catch (e) {
       throw Exception('فشل في الحصول على طلبات المستخدم: $e');
@@ -151,7 +151,7 @@ class FirestoreService {
   }
 
   /// الحصول على طلبات متجر معين
-  Future<List<Order>> getStoreOrders(String storeId) async {
+  Future<List<OrderModel>> getStoreOrders(String storeId) async {
     try {
       final snapshot = await _firestore
           .collection(_ordersCollection)
@@ -159,7 +159,7 @@ class FirestoreService {
           .orderBy('createdAt', descending: true)
           .get();
       return snapshot.docs
-          .map((doc) => Order.fromJson(doc.data()))
+          .map((doc) => OrderModel.fromJson(doc.data()))
           .toList();
     } catch (e) {
       throw Exception('فشل في الحصول على طلبات المتجر: $e');
@@ -167,7 +167,7 @@ class FirestoreService {
   }
 
   /// الحصول على طلبات موصل معين
-  Future<List<Order>> getDeliveryOrders(String deliveryPersonId) async {
+  Future<List<OrderModel>> getDeliveryOrders(String deliveryPersonId) async {
     try {
       final snapshot = await _firestore
           .collection(_ordersCollection)
@@ -175,7 +175,7 @@ class FirestoreService {
           .orderBy('createdAt', descending: true)
           .get();
       return snapshot.docs
-          .map((doc) => Order.fromJson(doc.data()))
+          .map((doc) => OrderModel.fromJson(doc.data()))
           .toList();
     } catch (e) {
       throw Exception('فشل في الحصول على طلبات التوصيل: $e');
@@ -183,7 +183,7 @@ class FirestoreService {
   }
 
   /// إنشاء طلب جديد
-  Future<String?> createOrder(Order order) async {
+  Future<String?> createOrder(OrderModel order) async {
     try {
       final docRef = _firestore.collection(_ordersCollection).doc();
       await docRef.set(order.toJson());

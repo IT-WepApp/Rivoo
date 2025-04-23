@@ -7,7 +7,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/services/product_service.dart';
 import '../../../../core/widgets/app_widgets.dart';
-import '../../../../core/theme/app_colors.dart';
+import '../../../../../../shared_libs/lib/theme/app_colors.dart';
 
 /// صفحة تعديل منتج موجود
 class EditProductPage extends ConsumerStatefulWidget {

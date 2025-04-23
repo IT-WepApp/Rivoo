@@ -5,7 +5,7 @@ import 'dart:convert';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../core/services/secure_storage_service.dart';
 import '../../../core/constants/app_constants.dart';
-import '../../../core/utils/logger.dart';
+import '../../../../../shared_libs/lib/utils/logger.dart';
 import '../domain/entities/user_role.dart';
 
 /// مزود خدمة التخزين الآمن

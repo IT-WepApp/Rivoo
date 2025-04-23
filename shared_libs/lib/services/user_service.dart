@@ -1,7 +1,8 @@
 import 'dart:developer';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:shared_libs/lib/models/shared_models.dart'; // Corrected import
-import 'package:flutter_riverpod/flutter_riverpod.dart'; // Import Riverpod
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../models/user_model.dart'; // Import Riverpod
 
 // Provider definition
 final userServiceProvider = Provider<UserService>((ref) => UserService());

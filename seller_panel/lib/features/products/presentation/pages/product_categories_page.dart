@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/services/product_service.dart';
 import '../../../../core/widgets/app_widgets.dart';
-import '../../../../core/theme/app_colors.dart';
+import '../../../../../../shared_libs/lib/theme/app_colors.dart';
 
 /// صفحة إدارة فئات المنتجات
 class ProductCategoriesPage extends ConsumerStatefulWidget {

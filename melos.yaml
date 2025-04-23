@@ -1,37 +1,37 @@
-name: flutter_project
+name: rivoo_workspace
 
+# الحزم والتطبيقات الفعلية ضمن مشروع Rivoo
 packages:
-  - 'shared_modules/shared_models'
-  - 'shared_modules/shared_services'
-  - 'shared_modules/shared_widgets'
-  - 'admin_panell'
-  - 'delivery_app'
-  - 'seller_panel'
-  - 'user_app'
+  - shared_libs
+  - admin_panell
+  - delivery_app
+  - seller_panel
+  - user_app
 
+# أوامر Melos مخصصة
 command:
   bootstrap:
-    # Run `flutter pub get` in all packages and apps.
+    # تثبيت التبعيات في كل الحزم
     run: melos exec -- "flutter pub get"
 
   test:
-    # Run tests in all Flutter packages.
+    # تشغيل اختبارات الوحدات فقط في الحزم التي تحتوي على test
     run: melos exec --dir-exists="test" -- "flutter test"
 
   analyze:
-    # Run static analysis in all packages.
+    # تحليل ثابت للكود في كل الحزم
     run: melos exec -- "flutter analyze ."
 
   format:
-    # Format code in all packages.
+    # تنسيق تلقائي للكود في جميع الملفات
     run: melos exec -- "dart format ."
 
   upgrade:
-    # Upgrade dependencies in all packages.
+    # ترقية جميع التبعيات
     run: melos exec -- "flutter pub upgrade"
 
   clean:
-    # Clean build artifacts in all Flutter packages and apps.
+    # تنظيف كل المخرجات
     run: melos exec -- "flutter clean"
 
-  # Add more commands as needed for your project.
+# يمكنك إضافة أوامر مخصصة إضافية حسب الحاجة

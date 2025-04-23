@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../core/theme/app_colors.dart';
+import '../../../../../../shared_libs/lib/theme/app_colors.dart';
 import '../../../../core/widgets/app_widgets.dart';
 
 /// صفحة الإعدادات المتقدمة للبائع

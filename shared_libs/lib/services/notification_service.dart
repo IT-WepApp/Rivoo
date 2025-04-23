@@ -1,5 +1,5 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:shared_libs/lib/models/notification_model.dart'; // تأكد من أن هذا المسار صحيح بناءً على مكان وجود NotificationModel
+import '../models/notification_model.dart'; // تأكد من أن هذا المسار صحيح بناءً على مكان وجود NotificationModel
 
 class NotificationService {
   final FirebaseMessaging _messaging = FirebaseMessaging.instance;

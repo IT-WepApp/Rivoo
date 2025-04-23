@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../../core/services/notification_service.dart';
 import '../../../../core/widgets/app_widgets.dart';
-import '../../../../core/theme/app_colors.dart';
+import '../../../../../../shared_libs/lib/theme/app_colors.dart';
 
 /// صفحة إدارة الإشعارات للبائع
 class NotificationsPage extends ConsumerStatefulWidget {

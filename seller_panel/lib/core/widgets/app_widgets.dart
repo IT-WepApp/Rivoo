@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../theme/app_colors.dart';
+import '../../../../shared_libs/lib/theme/app_colors.dart';
 
 /// مكتبة المكونات المشتركة المستخدمة في التطبيق
 class AppWidgets {
