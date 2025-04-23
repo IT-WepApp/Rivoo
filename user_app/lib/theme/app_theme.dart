@@ -1,796 +1,757 @@
 import 'package:flutter/material.dart';
+import 'app_colors.dart';
 
 /// سمات التطبيق الموحدة
 ///
-/// يحتوي هذا الملف على سمات التطبيق الموحدة المستخدمة في جميع أنحاء التطبيق
-/// مثل الألوان والخطوط والأحجام وغيرها
+/// يحتوي هذا الملف على سمات التطبيق المستخدمة في جميع أنحاء التطبيق
+/// لضمان اتساق المظهر وسهولة التعديل
 
-/// ألوان التطبيق
-class AppColors {
-  // ألوان العلامة التجارية الأساسية
-  static const Color primary = Color(0xFF4CAF50);
-  static const Color primaryDark = Color(0xFF388E3C);
-  static const Color primaryLight = Color(0xFFC8E6C9);
-  static const Color accent = Color(0xFFFF9800);
-
-  // ألوان الخلفية
-  static const Color background = Color(0xFFF5F5F5);
-  static const Color surface = Color(0xFFFFFFFF);
-  static const Color surfaceVariant = Color(0xFFF0F0F0);
-
-  // ألوان النص
-  static const Color textPrimary = Color(0xFF212121);
-  static const Color textSecondary = Color(0xFF757575);
-  static const Color textHint = Color(0xFF9E9E9E);
-  static const Color textOnPrimary = Color(0xFFFFFFFF);
-  static const Color textOnAccent = Color(0xFF000000);
-
-  // ألوان الحالة
-  static const Color success = Color(0xFF4CAF50);
-  static const Color error = Color(0xFFF44336);
-  static const Color warning = Color(0xFFFF9800);
-  static const Color info = Color(0xFF2196F3);
-
-  // ألوان الحدود والفواصل
-  static const Color divider = Color(0xFFE0E0E0);
-  static const Color border = Color(0xFFBDBDBD);
-
-  // ألوان الوضع الداكن
-  static const Color darkBackground = Color(0xFF121212);
-  static const Color darkSurface = Color(0xFF1E1E1E);
-  static const Color darkSurfaceVariant = Color(0xFF2C2C2C);
-  static const Color darkTextPrimary = Color(0xFFE0E0E0);
-  static const Color darkTextSecondary = Color(0xFFB0B0B0);
-  static const Color darkTextHint = Color(0xFF9E9E9E);
-  static const Color darkDivider = Color(0xFF424242);
-  static const Color darkBorder = Color(0xFF616161);
-}
-
-/// قياسات التطبيق
-class AppDimensions {
-  // الهوامش والحشوات
-  static const double paddingXS = 4.0;
-  static const double paddingS = 8.0;
-  static const double paddingM = 16.0;
-  static const double paddingL = 24.0;
-  static const double paddingXL = 32.0;
-  static const double paddingXXL = 48.0;
-
-  // نصف قطر الحواف
-  static const double radiusXS = 4.0;
-  static const double radiusS = 8.0;
-  static const double radiusM = 12.0;
-  static const double radiusL = 16.0;
-  static const double radiusXL = 24.0;
-  static const double radiusXXL = 32.0;
-
-  // ارتفاعات العناصر
-  static const double buttonHeight = 48.0;
-  static const double inputHeight = 56.0;
-  static const double appBarHeight = 56.0;
-  static const double tabBarHeight = 48.0;
-  static const double bottomNavBarHeight = 56.0;
-
-  // أحجام الخط
-  static const double fontSizeXS = 12.0;
-  static const double fontSizeS = 14.0;
-  static const double fontSizeM = 16.0;
-  static const double fontSizeL = 18.0;
-  static const double fontSizeXL = 20.0;
-  static const double fontSizeXXL = 24.0;
-  static const double fontSizeXXXL = 32.0;
-
-  // أحجام الأيقونات
-  static const double iconSizeXS = 16.0;
-  static const double iconSizeS = 20.0;
-  static const double iconSizeM = 24.0;
-  static const double iconSizeL = 32.0;
-  static const double iconSizeXL = 48.0;
-
-  // سماكة الحدود
-  static const double borderWidthThin = 0.5;
-  static const double borderWidthRegular = 1.0;
-  static const double borderWidthThick = 2.0;
-
-  // ارتفاع الظل
-  static const double elevationXS = 1.0;
-  static const double elevationS = 2.0;
-  static const double elevationM = 4.0;
-  static const double elevationL = 8.0;
-  static const double elevationXL = 16.0;
-
-  // مدة الحركات
-  static const Duration animationDurationFast = Duration(milliseconds: 150);
-  static const Duration animationDurationMedium = Duration(milliseconds: 300);
-  static const Duration animationDurationSlow = Duration(milliseconds: 500);
-}
-
-/// فئة سمات التطبيق
 class AppTheme {
-  /// الحصول على سمة التطبيق الفاتحة
+  // منع إنشاء نسخة من الفئة
+  AppTheme._();
+
+  // سمة الوضع الفاتح
+  static ThemeData get light => lightTheme();
+  
+  // سمة الوضع الداكن
+  static ThemeData get dark => darkTheme();
+  
+  // الحصول على السمة بناءً على الوضع
+  static ThemeData getTheme(bool isDarkMode) {
+    return isDarkMode ? dark : light;
+  }
+  
+  // إنشاء سمة الوضع الفاتح
   static ThemeData lightTheme() {
-    return getLightTheme();
+    return ThemeData(
+      useMaterial3: true,
+      colorScheme: ColorScheme(
+        brightness: Brightness.light,
+        primary: AppColors.primary,
+        onPrimary: AppColors.textOnPrimary,
+        primaryContainer: AppColors.primaryVariant,
+        onPrimaryContainer: AppColors.textOnPrimary,
+        secondary: AppColors.secondary,
+        onSecondary: AppColors.textOnSecondary,
+        secondaryContainer: AppColors.secondaryVariant,
+        onSecondaryContainer: AppColors.textOnSecondary,
+        tertiary: AppColors.accent,
+        onTertiary: AppColors.textOnPrimary,
+        tertiaryContainer: AppColors.accent.withOpacity(0.7),
+        onTertiaryContainer: AppColors.textOnPrimary,
+        error: AppColors.error,
+        onError: AppColors.textOnPrimary,
+        errorContainer: AppColors.error.withOpacity(0.7),
+        onErrorContainer: AppColors.textOnPrimary,
+        background: AppColors.background,
+        onBackground: AppColors.textPrimary,
+        surface: AppColors.surface,
+        onSurface: AppColors.textPrimary,
+        surfaceVariant: AppColors.surfaceVariant,
+        onSurfaceVariant: AppColors.textSecondary,
+        outline: AppColors.divider,
+        shadow: AppColors.overlay,
+        inverseSurface: AppColors.darkSurface,
+        onInverseSurface: AppColors.darkTextPrimary,
+        inversePrimary: AppColors.primary.withOpacity(0.8),
+        surfaceTint: AppColors.primary.withOpacity(0.05),
+      ),
+      
+      // سمات النص
+      textTheme: const TextTheme(
+        displayLarge: TextStyle(
+          fontSize: 34,
+          fontWeight: FontWeight.bold,
+          color: AppColors.textPrimary,
+        ),
+        displayMedium: TextStyle(
+          fontSize: 28,
+          fontWeight: FontWeight.bold,
+          color: AppColors.textPrimary,
+        ),
+        displaySmall: TextStyle(
+          fontSize: 24,
+          fontWeight: FontWeight.bold,
+          color: AppColors.textPrimary,
+        ),
+        headlineLarge: TextStyle(
+          fontSize: 22,
+          fontWeight: FontWeight.w600,
+          color: AppColors.textPrimary,
+        ),
+        headlineMedium: TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.w600,
+          color: AppColors.textPrimary,
+        ),
+        headlineSmall: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.w600,
+          color: AppColors.textPrimary,
+        ),
+        titleLarge: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.w500,
+          color: AppColors.textPrimary,
+        ),
+        titleMedium: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w500,
+          color: AppColors.textPrimary,
+        ),
+        titleSmall: TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+          color: AppColors.textPrimary,
+        ),
+        bodyLarge: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.normal,
+          color: AppColors.textPrimary,
+        ),
+        bodyMedium: TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.normal,
+          color: AppColors.textPrimary,
+        ),
+        bodySmall: TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.normal,
+          color: AppColors.textSecondary,
+        ),
+        labelLarge: TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+          color: AppColors.textPrimary,
+        ),
+        labelMedium: TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.w500,
+          color: AppColors.textPrimary,
+        ),
+        labelSmall: TextStyle(
+          fontSize: 10,
+          fontWeight: FontWeight.w500,
+          color: AppColors.textSecondary,
+        ),
+      ),
+      
+      // سمات الأزرار
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          foregroundColor: AppColors.textOnPrimary,
+          backgroundColor: AppColors.primary,
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppDimensions.paddingL,
+            vertical: AppDimensions.paddingM,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppDimensions.radiusS),
+          ),
+          elevation: AppDimensions.elevationS,
+          minimumSize: const Size(0, AppDimensions.buttonHeight),
+        ),
+      ),
+      
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: AppColors.primary,
+          side: const BorderSide(color: AppColors.primary),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppDimensions.paddingL,
+            vertical: AppDimensions.paddingM,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppDimensions.radiusS),
+          ),
+          minimumSize: const Size(0, AppDimensions.buttonHeight),
+        ),
+      ),
+      
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          foregroundColor: AppColors.primary,
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppDimensions.paddingM,
+            vertical: AppDimensions.paddingS,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppDimensions.radiusS),
+          ),
+        ),
+      ),
+      
+      // سمات حقول الإدخال
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: AppColors.surfaceVariant,
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: AppDimensions.paddingM,
+          vertical: AppDimensions.paddingM,
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppDimensions.radiusS),
+          borderSide: BorderSide.none,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppDimensions.radiusS),
+          borderSide: BorderSide.none,
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppDimensions.radiusS),
+          borderSide: const BorderSide(color: AppColors.primary, width: 2),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppDimensions.radiusS),
+          borderSide: const BorderSide(color: AppColors.error, width: 1),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppDimensions.radiusS),
+          borderSide: const BorderSide(color: AppColors.error, width: 2),
+        ),
+        labelStyle: const TextStyle(color: AppColors.textSecondary),
+        hintStyle: const TextStyle(color: AppColors.textHint),
+        errorStyle: const TextStyle(color: AppColors.error),
+      ),
+      
+      // سمات البطاقات
+      cardTheme: CardTheme(
+        color: AppColors.surface,
+        elevation: AppDimensions.elevationS,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppDimensions.radiusM),
+        ),
+        margin: const EdgeInsets.all(AppDimensions.paddingS),
+      ),
+      
+      // سمات شريط التطبيق
+      appBarTheme: const AppBarTheme(
+        backgroundColor: AppColors.surface,
+        foregroundColor: AppColors.textPrimary,
+        elevation: AppDimensions.elevationS,
+        centerTitle: true,
+        titleTextStyle: TextStyle(
+          color: AppColors.textPrimary,
+          fontSize: 18,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+      
+      // سمات شريط التنقل السفلي
+      bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+        backgroundColor: AppColors.surface,
+        selectedItemColor: AppColors.primary,
+        unselectedItemColor: AppColors.textSecondary,
+        elevation: AppDimensions.elevationM,
+        type: BottomNavigationBarType.fixed,
+        showSelectedLabels: true,
+        showUnselectedLabels: true,
+      ),
+      
+      // سمات مؤشر التقدم الدائري
+      progressIndicatorTheme: const ProgressIndicatorThemeData(
+        color: AppColors.primary,
+        circularTrackColor: AppColors.surfaceVariant,
+        linearTrackColor: AppColors.surfaceVariant,
+      ),
+      
+      // سمات الفاصل
+      dividerTheme: const DividerThemeData(
+        color: AppColors.divider,
+        thickness: 1,
+        space: AppDimensions.paddingM,
+      ),
+      
+      // سمات الحوار
+      dialogTheme: DialogTheme(
+        backgroundColor: AppColors.surface,
+        elevation: AppDimensions.elevationL,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppDimensions.radiusM),
+        ),
+      ),
+      
+      // سمات القائمة المنسدلة
+      dropdownMenuTheme: DropdownMenuThemeData(
+        inputDecorationTheme: InputDecorationTheme(
+          filled: true,
+          fillColor: AppColors.surfaceVariant,
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: AppDimensions.paddingM,
+            vertical: AppDimensions.paddingS,
+          ),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(AppDimensions.radiusS),
+            borderSide: BorderSide.none,
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(AppDimensions.radiusS),
+            borderSide: BorderSide.none,
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(AppDimensions.radiusS),
+            borderSide: const BorderSide(color: AppColors.primary, width: 2),
+          ),
+        ),
+        menuStyle: MenuStyle(
+          backgroundColor: MaterialStateProperty.all(AppColors.surface),
+          elevation: MaterialStateProperty.all(AppDimensions.elevationM),
+          shape: MaterialStateProperty.all(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(AppDimensions.radiusS),
+            ),
+          ),
+        ),
+      ),
+      
+      // سمات الشرائح
+      sliderTheme: SliderThemeData(
+        activeTrackColor: AppColors.primary,
+        inactiveTrackColor: AppColors.surfaceVariant,
+        thumbColor: AppColors.primary,
+        overlayColor: AppColors.primary.withOpacity(0.2),
+        trackHeight: 4,
+        thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 10),
+        overlayShape: const RoundSliderOverlayShape(overlayRadius: 20),
+      ),
+      
+      // سمات مربع الاختيار
+      checkboxTheme: CheckboxThemeData(
+        fillColor: MaterialStateProperty.resolveWith((states) {
+          if (states.contains(MaterialState.selected)) {
+            return AppColors.primary;
+          }
+          return null;
+        }),
+        checkColor: MaterialStateProperty.all(AppColors.textOnPrimary),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppDimensions.radiusXS),
+        ),
+      ),
+      
+      // سمات زر الراديو
+      radioTheme: RadioThemeData(
+        fillColor: MaterialStateProperty.resolveWith((states) {
+          if (states.contains(MaterialState.selected)) {
+            return AppColors.primary;
+          }
+          return AppColors.textSecondary;
+        }),
+      ),
+      
+      // سمات مفتاح التبديل
+      switchTheme: SwitchThemeData(
+        thumbColor: MaterialStateProperty.resolveWith((states) {
+          if (states.contains(MaterialState.selected)) {
+            return AppColors.primary;
+          }
+          return AppColors.surfaceVariant;
+        }),
+        trackColor: MaterialStateProperty.resolveWith((states) {
+          if (states.contains(MaterialState.selected)) {
+            return AppColors.primary.withOpacity(0.5);
+          }
+          return AppColors.textSecondary.withOpacity(0.3);
+        }),
+      ),
+      
+      // سمات الشريط المنزلق
+      tabBarTheme: const TabBarTheme(
+        labelColor: AppColors.primary,
+        unselectedLabelColor: AppColors.textSecondary,
+        indicatorColor: AppColors.primary,
+        labelStyle: TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+        ),
+        unselectedLabelStyle: TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.normal,
+        ),
+      ),
+      
+      // سمات الرسوم المتحركة
+      pageTransitionsTheme: const PageTransitionsTheme(
+        builders: {
+          TargetPlatform.android: CupertinoPageTransitionsBuilder(),
+          TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+        },
+      ),
+      
+      // سمات أخرى
+      scaffoldBackgroundColor: AppColors.background,
+      primaryColor: AppColors.primary,
+      hintColor: AppColors.textHint,
+      disabledColor: AppColors.disabled,
+      dividerColor: AppColors.divider,
+      fontFamily: 'Cairo',
+    );
   }
-
-  /// الحصول على سمة التطبيق الداكنة
+  
+  // إنشاء سمة الوضع الداكن
   static ThemeData darkTheme() {
-    return getDarkTheme();
-  }
-  
-  /// خاصية للوصول إلى السمة الفاتحة (لإصلاح أخطاء الاختبارات)
-  static ThemeData get light => getLightTheme();
-  
-  /// خاصية للوصول إلى السمة الداكنة (لإصلاح أخطاء الاختبارات)
-  static ThemeData get dark => getDarkTheme();
-  
-  /// طريقة للحصول على السمة حسب الوضع (لإصلاح أخطاء الاختبارات)
-  static ThemeData getTheme(bool isDark) {
-    return isDark ? darkTheme() : lightTheme();
-  }
-}
-
-/// سمة التطبيق الفاتحة
-ThemeData getLightTheme() {
-  final theme = ThemeData(
-    useMaterial3: true,
-    colorScheme: const ColorScheme(
-      brightness: Brightness.light,
-      primary: AppColors.primary,
-      onPrimary: AppColors.textOnPrimary,
-      primaryContainer: AppColors.primaryLight,
-      onPrimaryContainer: AppColors.primaryDark,
-      secondary: AppColors.accent,
-      onSecondary: AppColors.textOnAccent,
-      secondaryContainer: Color(0xFFFFE0B2),
-      onSecondaryContainer: Color(0xFFE65100),
-      tertiary: Color(0xFF2196F3),
-      onTertiary: Colors.white,
-      tertiaryContainer: Color(0xFFBBDEFB),
-      onTertiaryContainer: Color(0xFF0D47A1),
-      error: AppColors.error,
-      onError: Colors.white,
-      errorContainer: Color(0xFFFFCDD2),
-      onErrorContainer: Color(0xFFB71C1C),
-      surface: AppColors.surface,
-      onSurface: AppColors.textPrimary,
-      surfaceContainerHighest: AppColors.surfaceVariant,
-      onSurfaceVariant: AppColors.textSecondary,
-      outline: AppColors.border,
-      outlineVariant: AppColors.divider,
-      shadow: Colors.black,
-      scrim: Colors.black54,
-      inverseSurface: Color(0xFF121212),
-      onInverseSurface: Colors.white,
-      inversePrimary: Color(0xFFA5D6A7),
-    ),
-
-    // الخطوط
-    fontFamily: 'Cairo',
-    textTheme: const TextTheme(
-      displayLarge: TextStyle(
-        fontSize: 32,
-        fontWeight: FontWeight.bold,
-        color: AppColors.textPrimary,
+    return ThemeData(
+      useMaterial3: true,
+      colorScheme: ColorScheme(
+        brightness: Brightness.dark,
+        primary: AppColors.primary,
+        onPrimary: AppColors.textOnPrimary,
+        primaryContainer: AppColors.primaryVariant,
+        onPrimaryContainer: AppColors.textOnPrimary,
+        secondary: AppColors.secondary,
+        onSecondary: AppColors.textOnSecondary,
+        secondaryContainer: AppColors.secondaryVariant,
+        onSecondaryContainer: AppColors.textOnSecondary,
+        tertiary: AppColors.accent,
+        onTertiary: AppColors.textOnPrimary,
+        tertiaryContainer: AppColors.accent.withOpacity(0.7),
+        onTertiaryContainer: AppColors.textOnPrimary,
+        error: AppColors.error,
+        onError: AppColors.textOnPrimary,
+        errorContainer: AppColors.error.withOpacity(0.7),
+        onErrorContainer: AppColors.textOnPrimary,
+        background: AppColors.darkBackground,
+        onBackground: AppColors.darkTextPrimary,
+        surface: AppColors.darkSurface,
+        onSurface: AppColors.darkTextPrimary,
+        surfaceVariant: AppColors.darkCard,
+        onSurfaceVariant: AppColors.darkTextSecondary,
+        outline: AppColors.divider.withOpacity(0.5),
+        shadow: AppColors.overlay,
+        inverseSurface: AppColors.surface,
+        onInverseSurface: AppColors.textPrimary,
+        inversePrimary: AppColors.primary.withOpacity(0.8),
+        surfaceTint: AppColors.primary.withOpacity(0.05),
       ),
-      displayMedium: TextStyle(
-        fontSize: 28,
-        fontWeight: FontWeight.bold,
-        color: AppColors.textPrimary,
-      ),
-      displaySmall: TextStyle(
-        fontSize: 24,
-        fontWeight: FontWeight.bold,
-        color: AppColors.textPrimary,
-      ),
-      headlineLarge: TextStyle(
-        fontSize: 22,
-        fontWeight: FontWeight.bold,
-        color: AppColors.textPrimary,
-      ),
-      headlineMedium: TextStyle(
-        fontSize: 20,
-        fontWeight: FontWeight.bold,
-        color: AppColors.textPrimary,
-      ),
-      headlineSmall: TextStyle(
-        fontSize: 18,
-        fontWeight: FontWeight.bold,
-        color: AppColors.textPrimary,
-      ),
-      titleLarge: TextStyle(
-        fontSize: 18,
-        fontWeight: FontWeight.w600,
-        color: AppColors.textPrimary,
-      ),
-      titleMedium: TextStyle(
-        fontSize: 16,
-        fontWeight: FontWeight.w600,
-        color: AppColors.textPrimary,
-      ),
-      titleSmall: TextStyle(
-        fontSize: 14,
-        fontWeight: FontWeight.w600,
-        color: AppColors.textPrimary,
-      ),
-      bodyLarge: TextStyle(
-        fontSize: 16,
-        fontWeight: FontWeight.normal,
-        color: AppColors.textPrimary,
-      ),
-      bodyMedium: TextStyle(
-        fontSize: 14,
-        fontWeight: FontWeight.normal,
-        color: AppColors.textPrimary,
-      ),
-      bodySmall: TextStyle(
-        fontSize: 12,
-        fontWeight: FontWeight.normal,
-        color: AppColors.textSecondary,
-      ),
-      labelLarge: TextStyle(
-        fontSize: 14,
-        fontWeight: FontWeight.w600,
-        color: AppColors.textPrimary,
-      ),
-      labelMedium: TextStyle(
-        fontSize: 12,
-        fontWeight: FontWeight.w600,
-        color: AppColors.textPrimary,
-      ),
-      labelSmall: TextStyle(
-        fontSize: 10,
-        fontWeight: FontWeight.w600,
-        color: AppColors.textSecondary,
-      ),
-    ),
-
-    // أنماط الأزرار
-    elevatedButtonTheme: ElevatedButtonThemeData(
-      style: ElevatedButton.styleFrom(
-        foregroundColor: AppColors.textOnPrimary,
-        backgroundColor: AppColors.primary,
-        minimumSize: const Size(double.infinity, AppDimensions.buttonHeight),
-        padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingL),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppDimensions.radiusS),
+      
+      // سمات النص
+      textTheme: const TextTheme(
+        displayLarge: TextStyle(
+          fontSize: 34,
+          fontWeight: FontWeight.bold,
+          color: AppColors.darkTextPrimary,
         ),
+        displayMedium: TextStyle(
+          fontSize: 28,
+          fontWeight: FontWeight.bold,
+          color: AppColors.darkTextPrimary,
+        ),
+        displaySmall: TextStyle(
+          fontSize: 24,
+          fontWeight: FontWeight.bold,
+          color: AppColors.darkTextPrimary,
+        ),
+        headlineLarge: TextStyle(
+          fontSize: 22,
+          fontWeight: FontWeight.w600,
+          color: AppColors.darkTextPrimary,
+        ),
+        headlineMedium: TextStyle(
+          fontSize: 20,
+          fontWeight: FontWeight.w600,
+          color: AppColors.darkTextPrimary,
+        ),
+        headlineSmall: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.w600,
+          color: AppColors.darkTextPrimary,
+        ),
+        titleLarge: TextStyle(
+          fontSize: 18,
+          fontWeight: FontWeight.w500,
+          color: AppColors.darkTextPrimary,
+        ),
+        titleMedium: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.w500,
+          color: AppColors.darkTextPrimary,
+        ),
+        titleSmall: TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+          color: AppColors.darkTextPrimary,
+        ),
+        bodyLarge: TextStyle(
+          fontSize: 16,
+          fontWeight: FontWeight.normal,
+          color: AppColors.darkTextPrimary,
+        ),
+        bodyMedium: TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.normal,
+          color: AppColors.darkTextPrimary,
+        ),
+        bodySmall: TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.normal,
+          color: AppColors.darkTextSecondary,
+        ),
+        labelLarge: TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+          color: AppColors.darkTextPrimary,
+        ),
+        labelMedium: TextStyle(
+          fontSize: 12,
+          fontWeight: FontWeight.w500,
+          color: AppColors.darkTextPrimary,
+        ),
+        labelSmall: TextStyle(
+          fontSize: 10,
+          fontWeight: FontWeight.w500,
+          color: AppColors.darkTextSecondary,
+        ),
+      ),
+      
+      // سمات الأزرار
+      elevatedButtonTheme: ElevatedButtonThemeData(
+        style: ElevatedButton.styleFrom(
+          foregroundColor: AppColors.textOnPrimary,
+          backgroundColor: AppColors.primary,
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppDimensions.paddingL,
+            vertical: AppDimensions.paddingM,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppDimensions.radiusS),
+          ),
+          elevation: AppDimensions.elevationS,
+          minimumSize: const Size(0, AppDimensions.buttonHeight),
+        ),
+      ),
+      
+      outlinedButtonTheme: OutlinedButtonThemeData(
+        style: OutlinedButton.styleFrom(
+          foregroundColor: AppColors.primary,
+          side: const BorderSide(color: AppColors.primary),
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppDimensions.paddingL,
+            vertical: AppDimensions.paddingM,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppDimensions.radiusS),
+          ),
+          minimumSize: const Size(0, AppDimensions.buttonHeight),
+        ),
+      ),
+      
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          foregroundColor: AppColors.primary,
+          padding: const EdgeInsets.symmetric(
+            horizontal: AppDimensions.paddingM,
+            vertical: AppDimensions.paddingS,
+          ),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppDimensions.radiusS),
+          ),
+        ),
+      ),
+      
+      // سمات حقول الإدخال
+      inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: AppColors.darkCard,
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: AppDimensions.paddingM,
+          vertical: AppDimensions.paddingM,
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppDimensions.radiusS),
+          borderSide: BorderSide.none,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppDimensions.radiusS),
+          borderSide: BorderSide.none,
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppDimensions.radiusS),
+          borderSide: const BorderSide(color: AppColors.primary, width: 2),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppDimensions.radiusS),
+          borderSide: const BorderSide(color: AppColors.error, width: 1),
+        ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(AppDimensions.radiusS),
+          borderSide: const BorderSide(color: AppColors.error, width: 2),
+        ),
+        labelStyle: const TextStyle(color: AppColors.darkTextSecondary),
+        hintStyle: const TextStyle(color: AppColors.darkTextSecondary),
+        errorStyle: const TextStyle(color: AppColors.error),
+      ),
+      
+      // سمات البطاقات
+      cardTheme: CardTheme(
+        color: AppColors.darkCard,
         elevation: AppDimensions.elevationS,
-      ),
-    ),
-
-    outlinedButtonTheme: OutlinedButtonThemeData(
-      style: OutlinedButton.styleFrom(
-        foregroundColor: AppColors.primary,
-        minimumSize: const Size(double.infinity, AppDimensions.buttonHeight),
-        padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingL),
         shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppDimensions.radiusS),
+          borderRadius: BorderRadius.circular(AppDimensions.radiusM),
         ),
-        side: const BorderSide(color: AppColors.primary),
+        margin: const EdgeInsets.all(AppDimensions.paddingS),
       ),
-    ),
-
-    textButtonTheme: TextButtonThemeData(
-      style: TextButton.styleFrom(
-        foregroundColor: AppColors.primary,
-        minimumSize: const Size(0, AppDimensions.buttonHeight),
-        padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppDimensions.radiusS),
-        ),
-      ),
-    ),
-
-    // أنماط حقول الإدخال
-    inputDecorationTheme: InputDecorationTheme(
-      filled: true,
-      fillColor: AppColors.surface,
-      contentPadding: const EdgeInsets.symmetric(
-        horizontal: AppDimensions.paddingM,
-        vertical: AppDimensions.paddingM,
-      ),
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(AppDimensions.radiusS),
-        borderSide: const BorderSide(color: AppColors.border),
-      ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(AppDimensions.radiusS),
-        borderSide: const BorderSide(color: AppColors.border),
-      ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(AppDimensions.radiusS),
-        borderSide: const BorderSide(color: AppColors.primary, width: 2),
-      ),
-      errorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(AppDimensions.radiusS),
-        borderSide: const BorderSide(color: AppColors.error),
-      ),
-      focusedErrorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(AppDimensions.radiusS),
-        borderSide: const BorderSide(color: AppColors.error, width: 2),
-      ),
-      labelStyle: const TextStyle(color: AppColors.textSecondary),
-      hintStyle: const TextStyle(color: AppColors.textHint),
-      errorStyle: const TextStyle(color: AppColors.error),
-    ),
-
-    // أنماط البطاقات
-    cardTheme: CardTheme(
-      color: AppColors.surface,
-      elevation: AppDimensions.elevationS,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppDimensions.radiusM),
-      ),
-      margin: const EdgeInsets.all(AppDimensions.paddingS),
-    ),
-
-    // أنماط شريط التطبيق
-    appBarTheme: const AppBarTheme(
-      backgroundColor: AppColors.surface,
-      foregroundColor: AppColors.textPrimary,
-      elevation: 0,
-      centerTitle: true,
-      titleTextStyle: TextStyle(
-        color: AppColors.textPrimary,
-        fontSize: 20,
-        fontWeight: FontWeight.bold,
-      ),
-      iconTheme: IconThemeData(color: AppColors.primary),
-    ),
-
-    // أنماط شريط التنقل السفلي
-    bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-      backgroundColor: AppColors.surface,
-      selectedItemColor: AppColors.primary,
-      unselectedItemColor: AppColors.textSecondary,
-      elevation: AppDimensions.elevationM,
-      type: BottomNavigationBarType.fixed,
-      showSelectedLabels: true,
-      showUnselectedLabels: true,
-    ),
-
-    // أنماط شريط التبويب
-    tabBarTheme: const TabBarTheme(
-      labelColor: AppColors.primary,
-      unselectedLabelColor: AppColors.textSecondary,
-      indicatorColor: AppColors.primary,
-      labelStyle: TextStyle(
-        fontSize: 14,
-        fontWeight: FontWeight.bold,
-      ),
-      unselectedLabelStyle: TextStyle(
-        fontSize: 14,
-        fontWeight: FontWeight.normal,
-      ),
-    ),
-
-    // أنماط القوائم
-    listTileTheme: const ListTileThemeData(
-      contentPadding: EdgeInsets.symmetric(
-        horizontal: AppDimensions.paddingM,
-        vertical: AppDimensions.paddingS,
-      ),
-      minLeadingWidth: 24,
-      iconColor: AppColors.primary,
-    ),
-
-    // أنماط الفواصل
-    dividerTheme: const DividerThemeData(
-      color: AppColors.divider,
-      thickness: 1,
-      space: AppDimensions.paddingM,
-    ),
-
-    // أنماط مؤشر التقدم
-    progressIndicatorTheme: const ProgressIndicatorThemeData(
-      color: AppColors.primary,
-      circularTrackColor: AppColors.surfaceVariant,
-      linearTrackColor: AppColors.surfaceVariant,
-    ),
-
-    // أنماط مربع الحوار
-    dialogTheme: DialogTheme(
-      backgroundColor: AppColors.surface,
-      elevation: AppDimensions.elevationL,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppDimensions.radiusL),
-      ),
-    ),
-
-    // أنماط مؤشر التبديل
-    switchTheme: SwitchThemeData(
-      thumbColor: WidgetStateProperty.resolveWith((states) {
-        if (states.contains(WidgetState.selected)) {
-          return AppColors.primary;
-        }
-        return Colors.grey;
-      }),
-      trackColor: WidgetStateProperty.resolveWith((states) {
-        if (states.contains(WidgetState.selected)) {
-          return AppColors.primaryLight;
-        }
-        return Colors.grey.shade300;
-      }),
-    ),
-
-    // أنماط مربع الاختيار
-    checkboxTheme: CheckboxThemeData(
-      fillColor: WidgetStateProperty.resolveWith((states) {
-        if (states.contains(WidgetState.selected)) {
-          return AppColors.primary;
-        }
-        return null;
-      }),
-      checkColor: WidgetStateProperty.all(AppColors.textOnPrimary),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppDimensions.radiusXS),
-      ),
-    ),
-
-    // أنماط زر الراديو
-    radioTheme: RadioThemeData(
-      fillColor: WidgetStateProperty.resolveWith((states) {
-        if (states.contains(WidgetState.selected)) {
-          return AppColors.primary;
-        }
-        return AppColors.textSecondary;
-      }),
-    ),
-
-    // أنماط مؤشر التمرير
-    sliderTheme: const SliderThemeData(
-      activeTrackColor: AppColors.primary,
-      inactiveTrackColor: AppColors.surfaceVariant,
-      thumbColor: AppColors.primary,
-      overlayColor: Color(0x1F4CAF50),
-      valueIndicatorColor: AppColors.primary,
-      valueIndicatorTextStyle: TextStyle(color: AppColors.textOnPrimary),
-    ),
-
-    // أنماط الرسوم المتحركة
-    pageTransitionsTheme: const PageTransitionsTheme(
-      builders: {
-        TargetPlatform.android: CupertinoPageTransitionsBuilder(),
-        TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
-      },
-    ),
-  );
-  
-  // إضافة خاصية textDirection لإصلاح أخطاء الاختبارات
-  return theme.copyWith(
-    textDirection: TextDirection.rtl,
-  );
-}
-
-/// سمة التطبيق الداكنة
-ThemeData getDarkTheme() {
-  final theme = ThemeData(
-    useMaterial3: true,
-    colorScheme: const ColorScheme(
-      brightness: Brightness.dark,
-      primary: Color(0xFF81C784),
-      onPrimary: Color(0xFF000000),
-      primaryContainer: Color(0xFF1B5E20),
-      onPrimaryContainer: Color(0xFFC8E6C9),
-      secondary: Color(0xFFFFB74D),
-      onSecondary: Color(0xFF000000),
-      secondaryContainer: Color(0xFFE65100),
-      onSecondaryContainer: Color(0xFFFFE0B2),
-      tertiary: Color(0xFF64B5F6),
-      onTertiary: Color(0xFF000000),
-      tertiaryContainer: Color(0xFF0D47A1),
-      onTertiaryContainer: Color(0xFFBBDEFB),
-      error: Color(0xFFEF5350),
-      onError: Color(0xFF000000),
-      errorContainer: Color(0xFFB71C1C),
-      onErrorContainer: Color(0xFFFFCDD2),
-      surface: AppColors.darkSurface,
-      onSurface: AppColors.darkTextPrimary,
-      surfaceContainerHighest: AppColors.darkSurfaceVariant,
-      onSurfaceVariant: AppColors.darkTextSecondary,
-      outline: AppColors.darkBorder,
-      outlineVariant: AppColors.darkDivider,
-      shadow: Colors.black,
-      scrim: Colors.black54,
-      inverseSurface: Colors.white,
-      onInverseSurface: Colors.black,
-      inversePrimary: AppColors.primary,
-    ),
-
-    // الخطوط
-    fontFamily: 'Cairo',
-    textTheme: const TextTheme(
-      displayLarge: TextStyle(
-        fontSize: 32,
-        fontWeight: FontWeight.bold,
-        color: AppColors.darkTextPrimary,
-      ),
-      displayMedium: TextStyle(
-        fontSize: 28,
-        fontWeight: FontWeight.bold,
-        color: AppColors.darkTextPrimary,
-      ),
-      displaySmall: TextStyle(
-        fontSize: 24,
-        fontWeight: FontWeight.bold,
-        color: AppColors.darkTextPrimary,
-      ),
-      headlineLarge: TextStyle(
-        fontSize: 22,
-        fontWeight: FontWeight.bold,
-        color: AppColors.darkTextPrimary,
-      ),
-      headlineMedium: TextStyle(
-        fontSize: 20,
-        fontWeight: FontWeight.bold,
-        color: AppColors.darkTextPrimary,
-      ),
-      headlineSmall: TextStyle(
-        fontSize: 18,
-        fontWeight: FontWeight.bold,
-        color: AppColors.darkTextPrimary,
-      ),
-      titleLarge: TextStyle(
-        fontSize: 18,
-        fontWeight: FontWeight.w600,
-        color: AppColors.darkTextPrimary,
-      ),
-      titleMedium: TextStyle(
-        fontSize: 16,
-        fontWeight: FontWeight.w600,
-        color: AppColors.darkTextPrimary,
-      ),
-      titleSmall: TextStyle(
-        fontSize: 14,
-        fontWeight: FontWeight.w600,
-        color: AppColors.darkTextPrimary,
-      ),
-      bodyLarge: TextStyle(
-        fontSize: 16,
-        fontWeight: FontWeight.normal,
-        color: AppColors.darkTextPrimary,
-      ),
-      bodyMedium: TextStyle(
-        fontSize: 14,
-        fontWeight: FontWeight.normal,
-        color: AppColors.darkTextPrimary,
-      ),
-      bodySmall: TextStyle(
-        fontSize: 12,
-        fontWeight: FontWeight.normal,
-        color: AppColors.darkTextSecondary,
-      ),
-      labelLarge: TextStyle(
-        fontSize: 14,
-        fontWeight: FontWeight.w600,
-        color: AppColors.darkTextPrimary,
-      ),
-      labelMedium: TextStyle(
-        fontSize: 12,
-        fontWeight: FontWeight.w600,
-        color: AppColors.darkTextPrimary,
-      ),
-      labelSmall: TextStyle(
-        fontSize: 10,
-        fontWeight: FontWeight.w600,
-        color: AppColors.darkTextSecondary,
-      ),
-    ),
-
-    // أنماط الأزرار
-    elevatedButtonTheme: ElevatedButtonThemeData(
-      style: ElevatedButton.styleFrom(
-        foregroundColor: Colors.black,
-        backgroundColor: const Color(0xFF81C784),
-        minimumSize: const Size(double.infinity, AppDimensions.buttonHeight),
-        padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingL),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppDimensions.radiusS),
-        ),
+      
+      // سمات شريط التطبيق
+      appBarTheme: const AppBarTheme(
+        backgroundColor: AppColors.darkSurface,
+        foregroundColor: AppColors.darkTextPrimary,
         elevation: AppDimensions.elevationS,
-      ),
-    ),
-
-    outlinedButtonTheme: OutlinedButtonThemeData(
-      style: OutlinedButton.styleFrom(
-        foregroundColor: const Color(0xFF81C784),
-        minimumSize: const Size(double.infinity, AppDimensions.buttonHeight),
-        padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingL),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppDimensions.radiusS),
-        ),
-        side: const BorderSide(color: Color(0xFF81C784)),
-      ),
-    ),
-
-    textButtonTheme: TextButtonThemeData(
-      style: TextButton.styleFrom(
-        foregroundColor: const Color(0xFF81C784),
-        minimumSize: const Size(0, AppDimensions.buttonHeight),
-        padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(AppDimensions.radiusS),
+        centerTitle: true,
+        titleTextStyle: TextStyle(
+          color: AppColors.darkTextPrimary,
+          fontSize: 18,
+          fontWeight: FontWeight.w600,
         ),
       ),
-    ),
-
-    // أنماط حقول الإدخال
-    inputDecorationTheme: InputDecorationTheme(
-      filled: true,
-      fillColor: AppColors.darkSurface,
-      contentPadding: const EdgeInsets.symmetric(
-        horizontal: AppDimensions.paddingM,
-        vertical: AppDimensions.paddingM,
+      
+      // سمات شريط التنقل السفلي
+      bottomNavigationBarTheme: const BottomNavigationBarThemeData(
+        backgroundColor: AppColors.darkSurface,
+        selectedItemColor: AppColors.primary,
+        unselectedItemColor: AppColors.darkTextSecondary,
+        elevation: AppDimensions.elevationM,
+        type: BottomNavigationBarType.fixed,
+        showSelectedLabels: true,
+        showUnselectedLabels: true,
       ),
-      border: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(AppDimensions.radiusS),
-        borderSide: const BorderSide(color: AppColors.darkBorder),
+      
+      // سمات مؤشر التقدم الدائري
+      progressIndicatorTheme: const ProgressIndicatorThemeData(
+        color: AppColors.primary,
+        circularTrackColor: AppColors.darkCard,
+        linearTrackColor: AppColors.darkCard,
       ),
-      enabledBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(AppDimensions.radiusS),
-        borderSide: const BorderSide(color: AppColors.darkBorder),
+      
+      // سمات الفاصل
+      dividerTheme: const DividerThemeData(
+        color: AppColors.divider,
+        thickness: 1,
+        space: AppDimensions.paddingM,
       ),
-      focusedBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(AppDimensions.radiusS),
-        borderSide: const BorderSide(color: Color(0xFF81C784), width: 2),
+      
+      // سمات الحوار
+      dialogTheme: DialogTheme(
+        backgroundColor: AppColors.darkCard,
+        elevation: AppDimensions.elevationL,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppDimensions.radiusM),
+        ),
       ),
-      errorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(AppDimensions.radiusS),
-        borderSide: const BorderSide(color: Color(0xFFEF5350)),
+      
+      // سمات القائمة المنسدلة
+      dropdownMenuTheme: DropdownMenuThemeData(
+        inputDecorationTheme: InputDecorationTheme(
+          filled: true,
+          fillColor: AppColors.darkCard,
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: AppDimensions.paddingM,
+            vertical: AppDimensions.paddingS,
+          ),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(AppDimensions.radiusS),
+            borderSide: BorderSide.none,
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(AppDimensions.radiusS),
+            borderSide: BorderSide.none,
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(AppDimensions.radiusS),
+            borderSide: const BorderSide(color: AppColors.primary, width: 2),
+          ),
+        ),
+        menuStyle: MenuStyle(
+          backgroundColor: MaterialStateProperty.all(AppColors.darkCard),
+          elevation: MaterialStateProperty.all(AppDimensions.elevationM),
+          shape: MaterialStateProperty.all(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(AppDimensions.radiusS),
+            ),
+          ),
+        ),
       ),
-      focusedErrorBorder: OutlineInputBorder(
-        borderRadius: BorderRadius.circular(AppDimensions.radiusS),
-        borderSide: const BorderSide(color: Color(0xFFEF5350), width: 2),
+      
+      // سمات الشرائح
+      sliderTheme: SliderThemeData(
+        activeTrackColor: AppColors.primary,
+        inactiveTrackColor: AppColors.darkCard,
+        thumbColor: AppColors.primary,
+        overlayColor: AppColors.primary.withOpacity(0.2),
+        trackHeight: 4,
+        thumbShape: const RoundSliderThumbShape(enabledThumbRadius: 10),
+        overlayShape: const RoundSliderOverlayShape(overlayRadius: 20),
       ),
-      labelStyle: const TextStyle(color: AppColors.darkTextSecondary),
-      hintStyle: const TextStyle(color: AppColors.darkTextHint),
-      errorStyle: const TextStyle(color: Color(0xFFEF5350)),
-    ),
-
-    // أنماط البطاقات
-    cardTheme: CardTheme(
-      color: AppColors.darkSurface,
-      elevation: AppDimensions.elevationS,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppDimensions.radiusM),
+      
+      // سمات مربع الاختيار
+      checkboxTheme: CheckboxThemeData(
+        fillColor: MaterialStateProperty.resolveWith((states) {
+          if (states.contains(MaterialState.selected)) {
+            return AppColors.primary;
+          }
+          return null;
+        }),
+        checkColor: MaterialStateProperty.all(AppColors.textOnPrimary),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(AppDimensions.radiusXS),
+        ),
       ),
-      margin: const EdgeInsets.all(AppDimensions.paddingS),
-    ),
-
-    // أنماط شريط التطبيق
-    appBarTheme: const AppBarTheme(
-      backgroundColor: AppColors.darkSurface,
-      foregroundColor: AppColors.darkTextPrimary,
-      elevation: 0,
-      centerTitle: true,
-      titleTextStyle: TextStyle(
-        color: AppColors.darkTextPrimary,
-        fontSize: 20,
-        fontWeight: FontWeight.bold,
+      
+      // سمات زر الراديو
+      radioTheme: RadioThemeData(
+        fillColor: MaterialStateProperty.resolveWith((states) {
+          if (states.contains(MaterialState.selected)) {
+            return AppColors.primary;
+          }
+          return AppColors.darkTextSecondary;
+        }),
       ),
-      iconTheme: IconThemeData(color: Color(0xFF81C784)),
-    ),
-
-    // أنماط شريط التنقل السفلي
-    bottomNavigationBarTheme: const BottomNavigationBarThemeData(
-      backgroundColor: AppColors.darkSurface,
-      selectedItemColor: Color(0xFF81C784),
-      unselectedItemColor: AppColors.darkTextSecondary,
-      elevation: AppDimensions.elevationM,
-      type: BottomNavigationBarType.fixed,
-      showSelectedLabels: true,
-      showUnselectedLabels: true,
-    ),
-
-    // أنماط شريط التبويب
-    tabBarTheme: const TabBarTheme(
-      labelColor: Color(0xFF81C784),
-      unselectedLabelColor: AppColors.darkTextSecondary,
-      indicatorColor: Color(0xFF81C784),
-      labelStyle: TextStyle(
-        fontSize: 14,
-        fontWeight: FontWeight.bold,
+      
+      // سمات مفتاح التبديل
+      switchTheme: SwitchThemeData(
+        thumbColor: MaterialStateProperty.resolveWith((states) {
+          if (states.contains(MaterialState.selected)) {
+            return AppColors.primary;
+          }
+          return AppColors.darkCard;
+        }),
+        trackColor: MaterialStateProperty.resolveWith((states) {
+          if (states.contains(MaterialState.selected)) {
+            return AppColors.primary.withOpacity(0.5);
+          }
+          return AppColors.darkTextSecondary.withOpacity(0.3);
+        }),
       ),
-      unselectedLabelStyle: TextStyle(
-        fontSize: 14,
-        fontWeight: FontWeight.normal,
+      
+      // سمات الشريط المنزلق
+      tabBarTheme: const TabBarTheme(
+        labelColor: AppColors.primary,
+        unselectedLabelColor: AppColors.darkTextSecondary,
+        indicatorColor: AppColors.primary,
+        labelStyle: TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+        ),
+        unselectedLabelStyle: TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.normal,
+        ),
       ),
-    ),
-
-    // أنماط القوائم
-    listTileTheme: const ListTileThemeData(
-      contentPadding: EdgeInsets.symmetric(
-        horizontal: AppDimensions.paddingM,
-        vertical: AppDimensions.paddingS,
+      
+      // سمات الرسوم المتحركة
+      pageTransitionsTheme: const PageTransitionsTheme(
+        builders: {
+          TargetPlatform.android: CupertinoPageTransitionsBuilder(),
+          TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+        },
       ),
-      minLeadingWidth: 24,
-      iconColor: Color(0xFF81C784),
-    ),
-
-    // أنماط الفواصل
-    dividerTheme: const DividerThemeData(
-      color: AppColors.darkDivider,
-      thickness: 1,
-      space: AppDimensions.paddingM,
-    ),
-
-    // أنماط مؤشر التقدم
-    progressIndicatorTheme: const ProgressIndicatorThemeData(
-      color: Color(0xFF81C784),
-      circularTrackColor: AppColors.darkSurfaceVariant,
-      linearTrackColor: AppColors.darkSurfaceVariant,
-    ),
-
-    // أنماط مربع الحوار
-    dialogTheme: DialogTheme(
-      backgroundColor: AppColors.darkSurface,
-      elevation: AppDimensions.elevationL,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppDimensions.radiusL),
-      ),
-    ),
-
-    // أنماط مؤشر التبديل
-    switchTheme: SwitchThemeData(
-      thumbColor: WidgetStateProperty.resolveWith((states) {
-        if (states.contains(WidgetState.selected)) {
-          return const Color(0xFF81C784);
-        }
-        return Colors.grey;
-      }),
-      trackColor: WidgetStateProperty.resolveWith((states) {
-        if (states.contains(WidgetState.selected)) {
-          return const Color(0xFF1B5E20);
-        }
-        return Colors.grey.shade800;
-      }),
-    ),
-
-    // أنماط مربع الاختيار
-    checkboxTheme: CheckboxThemeData(
-      fillColor: WidgetStateProperty.resolveWith((states) {
-        if (states.contains(WidgetState.selected)) {
-          return const Color(0xFF81C784);
-        }
-        return null;
-      }),
-      checkColor: WidgetStateProperty.all(Colors.black),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(AppDimensions.radiusXS),
-      ),
-    ),
-
-    // أنماط زر الراديو
-    radioTheme: RadioThemeData(
-      fillColor: WidgetStateProperty.resolveWith((states) {
-        if (states.contains(WidgetState.selected)) {
-          return const Color(0xFF81C784);
-        }
-        return AppColors.darkTextSecondary;
-      }),
-    ),
-
-    // أنماط مؤشر التمرير
-    sliderTheme: const SliderThemeData(
-      activeTrackColor: Color(0xFF81C784),
-      inactiveTrackColor: AppColors.darkSurfaceVariant,
-      thumbColor: Color(0xFF81C784),
-      overlayColor: Color(0x1F81C784),
-      valueIndicatorColor: Color(0xFF81C784),
-      valueIndicatorTextStyle: TextStyle(color: Colors.black),
-    ),
-
-    // أنماط الرسوم المتحركة
-    pageTransitionsTheme: const PageTransitionsTheme(
-      builders: {
-        TargetPlatform.android: CupertinoPageTransitionsBuilder(),
-        TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
-      },
-    ),
-  );
-  
-  // إضافة خاصية textDirection لإصلاح أخطاء الاختبارات
-  return theme.copyWith(
-    textDirection: TextDirection.rtl,
-  );
+      
+      // سمات أخرى
+      scaffoldBackgroundColor: AppColors.darkBackground,
+      primaryColor: AppColors.primary,
+      hintColor: AppColors.darkTextSecondary,
+      disabledColor: AppColors.disabled,
+      dividerColor: AppColors.divider.withOpacity(0.5),
+      fontFamily: 'Cairo',
+    );
+  }
 }
