@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'router.dart';
+import 'admin_router.dart';
 import 'theme.dart';
 import 'core/services/crashlytics_manager.dart';
 import 'core/services/crashlytics_manager_impl.dart';
@@ -10,11 +10,6 @@ import 'core/services/crashlytics_manager_impl.dart';
 // تعريف مزود خدمة Crashlytics
 final crashlyticsManagerProvider = Provider<CrashlyticsManager>((ref) {
   return CrashlyticsManagerImpl();
-});
-
-// تعريف مزود خدمة التوجيه
-final routerProvider = Provider<GoRouter>((ref) {
-  return appRouter;
 });
 
 // تعريف سمة التطبيق
@@ -47,7 +42,8 @@ class AdminPanelApp extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final router = ref.watch(routerProvider);
+    // استخدام مزود موجه التطبيق المحسن
+    final router = ref.watch(adminRouterProvider);
 
     return MaterialApp.router(
       title: 'لوحة الإدارة',
