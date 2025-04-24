@@ -53,6 +53,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
   AuthNotifier({FirebaseAuth? auth})
       : _auth = auth ?? FirebaseAuth.instance,
         super(const AuthState()) {
+    _auth.useAuthEmulator('localhost', 9099);
     // الاستماع لتغييرات حالة المصادقة
     _auth.authStateChanges().listen(_authStateChanged);
   }
