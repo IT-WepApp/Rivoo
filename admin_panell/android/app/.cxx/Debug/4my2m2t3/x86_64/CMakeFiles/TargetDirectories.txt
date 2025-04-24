@@ -1,0 +1,2 @@
+D:/IT-WepApp/Rivoo/admin_panell/android/app/.cxx/Debug/4my2m2t3/x86_64/CMakeFiles/edit_cache.dir
+D:/IT-WepApp/Rivoo/admin_panell/android/app/.cxx/Debug/4my2m2t3/x86_64/CMakeFiles/rebuild_cache.dir

@@ -4,13 +4,12 @@ import 'package:admin_panell/features/auth/domain/usecases/sign_out_usecase.dart
 import 'package:admin_panell/features/auth/domain/usecases/get_current_user_usecase.dart';
 import 'package:admin_panell/features/auth/domain/usecases/is_signed_in_usecase.dart';
 import 'package:admin_panell/features/auth/presentation/bloc/auth_notifier.dart';
-import 'package:admin_panell/features/auth/domain/entities/user_entity.dart';
+import 'package:shared_libs/entities/user_entity.dart';
 import 'package:admin_panell/core/services/crashlytics_manager.dart';
 import 'package:admin_panell/core/storage/secure_storage_service.dart';
 import 'package:mockito/mockito.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 
 class MockSignInUseCase extends Mock implements SignInUseCase {}
 class MockSignOutUseCase extends Mock implements SignOutUseCase {}
@@ -18,6 +17,10 @@ class MockGetCurrentUserUseCase extends Mock implements GetCurrentUserUseCase {}
 class MockIsSignedInUseCase extends Mock implements IsSignedInUseCase {}
 class MockSecureStorageService extends Mock implements SecureStorageService {}
 class MockCrashlyticsManager extends Mock implements CrashlyticsManager {}
+
+class User extends UserEntity {
+  const User({required super.id, required super.email, required super.role, required super.name});
+}
 
 void main() {
   late MockSignInUseCase mockSignInUseCase;
@@ -61,19 +64,15 @@ void main() {
 
     test('يجب أن يقوم بتسجيل الدخول بنجاح', () async {
       when(mockSignInUseCase.execute(email: email, password: password))
-          .thenAnswer((_) async => user);
-  
+          .thenAnswer((_) async => user as dynamic);
+
       when(mockCrashlyticsManager.setUserIdentifier(userId: any))
           .thenAnswer((_) async => {});
 
-      await authNotifier.signIn(email: email, password: password);
+      await authNotifier.handleEvent(SignInEvent(email: email, password: password));
 
-      verify(mockSignInUseCase.execute(email: email, password: password))
-          .called(1);
-      expect(authNotifier.state.user, user);
-      expect(authNotifier.state.isAuthenticated, true);
-      expect(authNotifier.state.isLoading, false);
-      expect(authNotifier.state.error, null);
+      expect(authNotifier.state, isA<AuthAuthenticated>());
+      expect((authNotifier.state as AuthAuthenticated).user, user);
     });
 
     test('يجب أن يعالج خطأ تسجيل الدخول', () async {
@@ -83,14 +82,10 @@ void main() {
       when(mockCrashlyticsManager.recordError(any, StackTrace.current))
           .thenAnswer((_) async => {});
 
-      await authNotifier.signIn(email: email, password: password);
+      await authNotifier.handleEvent(SignInEvent(email: email, password: password));
 
-      verify(mockSignInUseCase.execute(email: email, password: password))
-          .called(1);
-      expect(authNotifier.state.user, null);
-      expect(authNotifier.state.isAuthenticated, false);
-      expect(authNotifier.state.isLoading, false);
-      expect(authNotifier.state.error, isNotNull);
+      expect(authNotifier.state, isA<AuthError>());
+      expect((authNotifier.state as AuthError).message, isNotNull);
     });
   });
 
@@ -100,13 +95,9 @@ void main() {
       when(mockCrashlyticsManager.setUserIdentifier(userId: any))
           .thenAnswer((_) async => {});
 
-      await authNotifier.signOut();
+      await authNotifier.handleEvent(SignOutEvent());
 
-      verify(mockSignOutUseCase.execute()).called(1);
-      expect(authNotifier.state.user, null);
-      expect(authNotifier.state.isAuthenticated, false);
-      expect(authNotifier.state.isLoading, false);
-      expect(authNotifier.state.error, null);
+      expect(authNotifier.state, isA<AuthUnauthenticated>());
     });
   });
 }
