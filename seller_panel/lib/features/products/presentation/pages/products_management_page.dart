@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/constants/route_constants.dart';
 import '../../../../core/services/product_service.dart';
 import '../../../../core/widgets/app_widgets.dart';
-import '../../../../../../shared_libs/lib/theme/app_colors.dart';
+import 'package:shared_libs/theme/app_colors.dart';
 
 /// صفحة إدارة المنتجات للبائع
 class ProductsManagementPage extends ConsumerStatefulWidget {

@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import '../../../../../../shared_libs/lib/models/models.dart'; // Added import
-import '../../../../../../shared_libs/lib/services/services.dart'; // Assuming UserService is here
+import 'package:shared_libs/models/models.dart'; // Added import
+import 'package:shared_libs/services/services.dart'; // Assuming UserService is here
 
 import '../../application/order_management_notifier.dart';
 
@@ -209,7 +209,7 @@ class OrderListItem extends ConsumerWidget {
                     ?.copyWith(fontWeight: FontWeight.bold)),
             const SizedBox(height: 6),
             Text(
-                'Date: ${DateFormat('yyyy-MM-dd HH:mm').format(order.createdAt.toDate())}'),
+                'Date: ${DateFormat('yyyy-MM-dd HH:mm').format(order.createdAt)}'),
             const SizedBox(height: 4),
             // Display customer name fetched asynchronously
             customerNameAsync.when(

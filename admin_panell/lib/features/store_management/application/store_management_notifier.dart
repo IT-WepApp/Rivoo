@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../../../shared_libs/lib/models/models.dart'; // Added import
-import '../../../../../../shared_libs/lib/services/services.dart'; // Added import
+import 'package:shared_libs/models/models.dart'; // Added import
+import 'package:shared_libs/services/services.dart'; // Added import
 
 // Updated to use AsyncValue
 class StoreManagementNotifier

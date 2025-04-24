@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 // Needed for CartItemModel
-import '../../../../../../shared_libs/lib/services/services.dart';
-import '../../../../../../shared_libs/lib/widgets/widgets .dart';
+import 'package:shared_libs/services/services.dart';
+import 'package:shared_libs/widgets/widgets .dart';
 import 'package:go_router/go_router.dart';
 import '../../../cart/application/cart_notifier.dart';
 import 'package:user_app/features/auth/application/auth_notifier.dart';

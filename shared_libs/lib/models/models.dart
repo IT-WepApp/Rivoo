@@ -17,3 +17,4 @@ export 'delivery_person_model.dart';
 export 'statistics_model.dart';
 export 'promotion.dart';
 export 'admin_model.dart';
+

@@ -3,8 +3,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import '../../../../../../shared_libs/lib/models/src/models/promotion.dart';
-import '../../../../../../shared_libs/lib/widgets/widgets .dart';
+import 'package:shared_libs/models/src/models/promotion.dart';
+import 'package:shared_libs/widgets/widgets .dart';
 import '../../application/promotion_notifier.dart';
 
 class PromotionManagementPage extends ConsumerStatefulWidget {

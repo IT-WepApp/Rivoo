@@ -8,7 +8,7 @@ import '../../../../core/services/order_service.dart';
 import '../../../../core/services/product_service.dart';
 import '../../../../core/services/notification_service.dart';
 import '../../../../core/widgets/app_widgets.dart';
-import '../../../../../../shared_libs/lib/theme/app_colors.dart';
+import 'package:shared_libs/theme/app_colors.dart';
 
 /// صفحة لوحة التحكم الرئيسية للبائع
 class SellerDashboardPage extends ConsumerStatefulWidget {

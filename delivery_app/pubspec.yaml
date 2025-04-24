@@ -41,14 +41,9 @@ dependencies:
   equatable: ^2.0.5
   dartz: ^0.10.1
   # الحزم المشتركة في المونوربو
-  models:
-    path: ../shared_modules/models
-  services:
-    path: ../shared_modules/services
-  widgets :
-    path: ../shared_modules/widgets 
-  shared_core:
-    path: ../shared_core
+  shared_libs:
+    path: ../shared_libs
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -5,11 +5,9 @@
       <module fileurl="file://$PROJECT_DIR$/admin_panell/melos_admin_panell.iml" filepath="$PROJECT_DIR$/admin_panell/melos_admin_panell.iml" />
       <module fileurl="file://$PROJECT_DIR$/delivery_app/melos_delivery_app.iml" filepath="$PROJECT_DIR$/delivery_app/melos_delivery_app.iml" />
       <module fileurl="file://$PROJECT_DIR$/seller_panel/melos_seller_panel.iml" filepath="$PROJECT_DIR$/seller_panel/melos_seller_panel.iml" />
-      <module fileurl="file://$PROJECT_DIR$/shared_modules/shared_models/melos_shared_models.iml" filepath="$PROJECT_DIR$/shared_modules/shared_models/melos_shared_models.iml" />
-      <module fileurl="file://$PROJECT_DIR$/shared_modules/shared_services/melos_shared_services.iml" filepath="$PROJECT_DIR$/shared_modules/shared_services/melos_shared_services.iml" />
-      <module fileurl="file://$PROJECT_DIR$/shared_modules/shared_widgets/melos_shared_widgets.iml" filepath="$PROJECT_DIR$/shared_modules/shared_widgets/melos_shared_widgets.iml" />
+      <module fileurl="file://$PROJECT_DIR$/shared_libs/melos_shared_libs.iml" filepath="$PROJECT_DIR$/shared_libs/melos_shared_libs.iml" />
       <module fileurl="file://$PROJECT_DIR$/user_app/melos_user_app.iml" filepath="$PROJECT_DIR$/user_app/melos_user_app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/melos_flutter_project.iml" filepath="$PROJECT_DIR$/melos_flutter_project.iml" />
+      <module fileurl="file://$PROJECT_DIR$/melos_rivoo_workspace.iml" filepath="$PROJECT_DIR$/melos_rivoo_workspace.iml" />
     </modules>
   </component>
 </project>

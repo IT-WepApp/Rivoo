@@ -4,9 +4,9 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
-import '../../../../../../shared_libs/lib/models/models.dart'; // Import OrderModel
-import '../../../../../../shared_libs/lib/services/services.dart'; // Import orderServiceProvider
-import '../../../../../../shared_libs/lib/widgets/widgets .dart';
+import 'package:shared_libs/models/models.dart'; // Import OrderModel
+import 'package:shared_libs/services/services.dart'; // Import orderServiceProvider
+import 'package:shared_libs/widgets/widgets .dart';
 import '../../../location/application/location_notifier.dart';
 
 /// Fetch a single [OrderModel] by its ID.

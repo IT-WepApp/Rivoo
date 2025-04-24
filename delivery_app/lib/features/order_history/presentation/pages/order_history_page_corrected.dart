@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../../../shared_libs/lib/models/models.dart';
+import 'package:shared_libs/models/models.dart';
 import 'package:intl/intl.dart';
 import '../../application/order_history_notifier.dart';
 

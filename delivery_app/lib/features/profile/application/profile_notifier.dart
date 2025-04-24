@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../../../shared_libs/lib/models/models.dart'; // يحتوي على DeliveryPersonModel
-import '../../../../../../shared_libs/lib/services/services.dart'; // يحتوي على DeliveryPersonService
+import 'package:shared_libs/models/models.dart'; // يحتوي على DeliveryPersonModel
+import 'package:shared_libs/services/services.dart'; // يحتوي على DeliveryPersonService
 
 // مزود وهمي مؤقت لـ ID المندوب (عدّله لاحقاً حسب المصدر الحقيقي مثل Firebase Auth)
 final currentDeliveryPersonIdProvider = Provider<String?>((ref) {

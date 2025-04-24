@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../../../shared_libs/lib/models/models.dart'; // Import OrderModel
-import '../../../../../../shared_libs/lib/services/services.dart'; // Import OrderService and orderServiceProvider
+import 'package:shared_libs/models/models.dart'; // Import OrderModel
+import 'package:shared_libs/services/services.dart'; // Import OrderService and orderServiceProvider
 
 // Define the state for Order History
 class OrderHistoryState {

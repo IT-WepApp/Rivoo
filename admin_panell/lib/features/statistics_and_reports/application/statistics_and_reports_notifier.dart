@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../../../shared_libs/lib/models/models.dart' as models;
-import '../../../../../../shared_libs/lib/services/services.dart' as svc;
+import 'package:shared_libs/models/models.dart' as models;
+import 'package:shared_libs/services/services.dart' as svc;
+
 
 // State for Seller Statistics
 class StatisticsState {
@@ -41,14 +42,15 @@ class StatisticsAndReportsNotifier extends StateNotifier<StatisticsState> {
   Future<void> fetchSalesData(DateTimeRange dateRange) async {
     state = state.copyWith(salesData: const AsyncLoading());
     try {
-      final List<svc.SalesData> svcData =
+      final List<models.SalesData> svcData =
           await _statisticsService.getSalesData(dateRange);
 
       final data = svcData.map((item) {
         return models.SalesData(
-          'Placeholder Month', // Placeholder for month
-          double.tryParse(item.totalSales) ?? 0.0, // Convert to double
+          totalSales: item.totalSales,
+          orderCount: item.orderCount,
         );
+
       }).toList();
 
       state = state.copyWith(salesData: AsyncData(data));
@@ -62,7 +64,7 @@ class StatisticsAndReportsNotifier extends StateNotifier<StatisticsState> {
   Future<void> fetchStorePerformance(DateTimeRange dateRange) async {
     state = state.copyWith(storePerformance: const AsyncLoading());
     try {
-      final List<svc.StorePerformance> svcPerf =
+      final List<models.StorePerformance> svcPerf =
           await _statisticsService.getStorePerformance(dateRange);
 
       final perf = svcPerf.map((item) {

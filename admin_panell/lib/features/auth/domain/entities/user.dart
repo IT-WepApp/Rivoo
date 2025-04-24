@@ -1,5 +1,5 @@
 import 'package:equatable/equatable.dart';
-import '../../../../../../shared_libs/lib/entities/user_entity.dart';
+import 'package:shared_libs/entities/user_entity.dart';
 
 /// نموذج المستخدم الأساسي للتطبيق
 class User extends Equatable {

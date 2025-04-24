@@ -1,7 +1,10 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../../../shared_libs/lib/models/models.dart'; // Added import for ProductModel
-import '../../../../../../shared_libs/lib/services/services.dart'; // Added import for ProductService
+import 'package:shared_libs/models/product.dart';
+import 'package:shared_libs/services/services.dart'; // Added import for ProductService
 
+final productServiceProvider = Provider<ProductService>((ref) {
+  return ProductService();
+});
 // Updated to use AsyncValue
 class ProductManagementNotifier
     extends StateNotifier<AsyncValue<List<Product>>> {
@@ -35,18 +38,6 @@ class ProductManagementNotifier
           .approveProduct(productId); // Ensure this method exists
       // Refetch to get the updated list
       await fetchProducts();
-      // Example of optimistic update (if Product has copyWith and status):
-      // if (previousState is AsyncData<List<Product>>) {
-      //   final updatedList = previousState.value.map((prod) {
-      //     if (prod.id == productId) {
-      //       return prod.copyWith(status: 'approved');
-      //     }
-      //     return prod;
-      //   }).toList();
-      //   state = AsyncData(updatedList);
-      // } else {
-      //    await fetchProducts(); // Fetch if previous state wasn't data
-      // }
     } catch (e, stacktrace) {
       state = AsyncError('Failed to approve product: $e', stacktrace);
       // Optionally revert state if optimistic update was used

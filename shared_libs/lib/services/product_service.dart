@@ -1,13 +1,13 @@
-import '../models/product.dart';
-import '../models/promotion.dart';
-import '../utils/logger.dart';
+import 'package:shared_libs/models/product.dart';
+import 'package:shared_libs/models/promotion.dart';
+import 'package:shared_libs/utils/logger.dart';
 
 class ProductService {
   // Assuming you have a way to interact with your database (e.g., Firestore, a REST API)
   // Replace this with your actual database interaction logic.
   // For example, you might have a DatabaseClient class.
   // DatabaseClient _dbClient;
-  
+
   final AppLogger _logger = AppLogger();
 
   // Constructor (adjust as needed)
@@ -21,14 +21,6 @@ class ProductService {
     DateTime? endDate,
   }) async {
     try {
-      // 1. Get the product from the database
-      // final product = await _dbClient.getProduct(productId);
-
-      // if (product == null) {
-      //   throw Exception('Product not found');
-      // }
-
-      // 2. Update the product with the promotion details
       Product(
           id: 'temp',
           name: 'temp',
@@ -37,17 +29,13 @@ class ProductService {
           sellerId: 'temp',
           price: 1.0,
           imageUrl: 'temp',
-          status: 'pending', // Assuming ProductStatus is a string
+          status: 'pending',
           hasPromotion: true,
           promotionType: type,
           promotionValue: value,
           promotionStartDate: startDate,
           promotionEndDate: endDate);
-
-      // 3. Save the updated product to the database
-      // await _dbClient.updateProduct(updatedProduct);
     } catch (e) {
-      // Handle errors appropriately
       _logger.error('Failed to create promotion', e);
       throw Exception('Failed to create promotion: $e');
     }
@@ -61,14 +49,6 @@ class ProductService {
     DateTime? endDate,
   }) async {
     try {
-      // 1. Get the product from the database
-      // final product = await _dbClient.getProduct(productId);
-
-      // if (product == null) {
-      //   throw Exception('Product not found');
-      // }
-
-      // 2. Update the product with the new promotion details
       Product(
           id: 'temp',
           name: 'temp',
@@ -77,15 +57,12 @@ class ProductService {
           sellerId: 'temp',
           price: 1.0,
           imageUrl: 'temp',
-          status: 'pending', // Assuming ProductStatus is a string
+          status: 'pending',
           hasPromotion: true,
           promotionType: type,
           promotionValue: value,
           promotionStartDate: startDate,
           promotionEndDate: endDate);
-
-      // 3. Save the updated product to the database
-      // await _dbClient.updateProduct(updatedProduct);
     } catch (e) {
       _logger.error('Failed to update promotion', e);
       throw Exception('Failed to update promotion: $e');
@@ -94,14 +71,6 @@ class ProductService {
 
   Future<void> deletePromotion(String productId) async {
     try {
-      // 1. Get the product from the database
-      // final product = await _dbClient.getProduct(productId);
-
-      // if (product == null) {
-      //   throw Exception('Product not found');
-      // }
-
-      // 2. Remove the promotion details from the product
       const Product(
           id: 'temp',
           name: 'temp',
@@ -110,15 +79,12 @@ class ProductService {
           sellerId: 'temp',
           price: 1.0,
           imageUrl: 'temp',
-          status: 'pending', // Assuming ProductStatus is a string
+          status: 'pending',
           hasPromotion: false,
           promotionType: null,
           promotionValue: null,
           promotionStartDate: null,
           promotionEndDate: null);
-
-      // 3. Save the updated product to the database
-      // await _dbClient.updateProduct(updatedProduct);
     } catch (e) {
       _logger.error('Failed to delete promotion', e);
       throw Exception('Failed to delete promotion: $e');
@@ -127,12 +93,6 @@ class ProductService {
 
   Future<PromotionDetails?> getPromotionsForProduct(String productId) async {
     try {
-      // 1. Get the product from the database
-      // final product = await _dbClient.getProduct(productId);
-
-      // if (product == null) {
-      //   throw Exception('Product not found');
-      // }
       const product = Product(
           id: 'temp',
           name: 'temp',
@@ -141,14 +101,13 @@ class ProductService {
           sellerId: 'temp',
           price: 1.0,
           imageUrl: 'temp',
-          status: 'pending', // Assuming ProductStatus is a string
+          status: 'pending',
           hasPromotion: false,
           promotionType: null,
           promotionValue: null,
           promotionStartDate: null,
           promotionEndDate: null);
 
-      // 2. Check if the product has a promotion and return the details
       if (product.hasPromotion) {
         return PromotionDetails(
           type: product.promotionType!,
@@ -162,6 +121,40 @@ class ProductService {
     } catch (e) {
       _logger.error('Failed to get promotion for product', e);
       throw Exception('Failed to get promotion for product: $e');
+    }
+  }
+
+  Future<List<Product>> getAllProducts() async {
+    return [
+      const Product(
+        id: '1',
+        name: 'Test Product',
+        description: 'Sample description',
+        categoryId: 'cat1',
+        sellerId: 'seller1',
+        price: 100.0,
+        imageUrl: 'https://example.com/image.jpg',
+        status: 'pending',
+        hasPromotion: false,
+      ),
+    ];
+  }
+
+  Future<void> approveProduct(String productId) async {
+    try {
+      _logger.info('Product $productId approved');
+    } catch (e) {
+      _logger.error('Failed to approve product', e);
+      throw Exception('Failed to approve product: $e');
+    }
+  }
+
+  Future<void> rejectProduct(String productId) async {
+    try {
+      _logger.info('Product $productId rejected');
+    } catch (e) {
+      _logger.error('Failed to reject product', e);
+      throw Exception('Failed to reject product: $e');
     }
   }
 }

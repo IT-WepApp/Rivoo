@@ -1,7 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../../../shared_libs/lib/models/models.dart'; // SalesData, StorePerformance
+import 'package:shared_libs/models/models.dart'; // SalesData, StorePerformance
 import 'package:intl/intl.dart';
 
 import '../../application/statistics_and_reports_notifier.dart';
@@ -178,13 +178,13 @@ class _StatisticsAndReportsPageState
                       dotData: const FlDotData(show: false),
                       belowBarData: BarAreaData(
                         show: true,
-                        color: Theme.of(context).primaryColor.withOpacity(0.2),
+                        color: Theme.of(context).primaryColor.withAlpha(51),
                       ),
                     ),
                   ],
                   lineTouchData: LineTouchData(
                     touchTooltipData: LineTouchTooltipData(
-                      tooltipBgColor: Colors.blueGrey.withOpacity(0.8),
+                      tooltipBgColor: Colors.blueGrey.withAlpha(204),
                     ),
                   ),
                 ),
@@ -203,7 +203,7 @@ class _StatisticsAndReportsPageState
 
   List<FlSpot> _generateFlSpots(List<SalesData> salesData) {
     return salesData.asMap().entries.map((e) {
-      return FlSpot(e.key.toDouble(), e.value.sales);
+      return FlSpot(e.key.toDouble(), double.tryParse(e.value.totalSales) ?? 0.0);
     }).toList();
   }
 

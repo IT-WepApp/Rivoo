@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '../../../../../../shared_libs/lib/services/services.dart'; 
-import '../../../../../../shared_libs/lib/widgets/widgets.dart';
+import 'package:shared_libs/services/services.dart'; 
+import 'package:shared_libs/widgets/widgets.dart';
 import 'package:go_router/go_router.dart'; // ✅ ضروري لـ context.go
 
 class AdminLoginPage extends StatefulWidget {

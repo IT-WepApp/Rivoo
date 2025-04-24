@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../../../shared_libs/lib/widgets/widgets.dart';
+import 'package:shared_libs/widgets/widgets.dart';
 import 'package:go_router/go_router.dart';
 
 class AdminHomePage extends StatelessWidget {

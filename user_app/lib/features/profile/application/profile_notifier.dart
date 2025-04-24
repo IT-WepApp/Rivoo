@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../../../shared_libs/lib/models/models.dart';
-import '../../../../../../shared_libs/lib/services/services.dart';
+import 'package:shared_libs/models/models.dart';
+import 'package:shared_libs/services/services.dart';
 import 'dart:developer';
 // Correctly import userIdProvider from auth_notifier
 import 'package:user_app/features/auth/application/auth_notifier.dart';

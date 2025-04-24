@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../../../shared_libs/lib/widgets/widgets .dart';
+import 'package:shared_libs/widgets/widgets .dart';
 import 'package:user_app/features/ratings/application/ratings_notifier.dart';
 import 'package:intl/intl.dart';
 

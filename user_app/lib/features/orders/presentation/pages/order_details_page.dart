@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../../../shared_libs/lib/models/models.dart';
-import '../../../../../../shared_libs/lib/services/services.dart';
-import '../../../../../../shared_libs/lib/widgets/widgets .dart';
+import 'package:shared_libs/models/models.dart';
+import 'package:shared_libs/services/services.dart';
+import 'package:shared_libs/widgets/widgets .dart';
 import 'package:intl/intl.dart';
 import 'package:user_app/features/cart/application/cart_notifier.dart';
 import 'package:go_router/go_router.dart';

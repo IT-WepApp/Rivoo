@@ -6,7 +6,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../../core/services/product_service.dart';
 import '../../../../core/widgets/app_widgets.dart';
-import '../../../../../../shared_libs/lib/theme/app_colors.dart';
+import 'package:shared_libs/theme/app_colors.dart';
 import '../../domain/repositories/product_repository.dart';
 import '../../data/repositories/product_repository_impl.dart';
 import '../../data/datasources/product_firebase_datasource.dart';

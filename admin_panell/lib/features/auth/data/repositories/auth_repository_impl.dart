@@ -1,7 +1,7 @@
 // تنفيذ مستودع المصادقة (Repository Implementation) في طبقة Data
 // lib/features/auth/data/repositories/auth_repository_impl.dart
 
-import '../../../../../../shared_libs/lib/entities/user_entity.dart';
+import 'package:shared_libs/entities/user_entity.dart';
 import '../../domain/repositories/auth_repository.dart';
 import '../datasources/auth_remote_datasource.dart';
 import '../datasources/auth_local_datasource.dart';

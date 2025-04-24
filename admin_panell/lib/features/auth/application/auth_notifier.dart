@@ -1,11 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../domain/usecases/sign_in_usecase.dart';
-import '../domain/usecases/sign_out_usecase.dart';
-import '../domain/usecases/get_current_user_usecase.dart';
-import '../domain/usecases/is_signed_in_usecase.dart';
-import '../domain/entities/user.dart';
-import '../../../core/storage/secure_storage_service.dart';
-import '../../../core/services/crashlytics_manager.dart';
+import 'package:admin_panell/features/auth/domain/usecases/sign_in_usecase.dart';
+import 'package:admin_panell/features/auth/domain/usecases/sign_out_usecase.dart';
+import 'package:admin_panell/features/auth/domain/usecases/get_current_user_usecase.dart';
+import 'package:admin_panell/features/auth/domain/usecases/is_signed_in_usecase.dart';
+import 'package:admin_panell/features/auth/domain/entities/user.dart';
+import 'package:admin_panell/core/storage/secure_storage_service.dart';
+import 'package:admin_panell/core/services/crashlytics_manager.dart';
 
 /// حالة المصادقة في التطبيق
 class AuthState {

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../../../shared_libs/lib/models/models.dart';
+import 'package:shared_libs/models/models.dart';
 import '../../application/profile_notifier.dart';
 // Needed for AppTextField
 
