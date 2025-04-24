@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
-import 'package:shared_libs/lib/models/shared_models.dart'; // Added import
-import 'package:shared_libs/lib/services/shared_services.dart'; // Assuming UserService is here
+import '../../../../../../shared_libs/lib/models/models.dart'; // Added import
+import '../../../../../../shared_libs/lib/services/services.dart'; // Assuming UserService is here
 
 import '../../application/order_management_notifier.dart';
 

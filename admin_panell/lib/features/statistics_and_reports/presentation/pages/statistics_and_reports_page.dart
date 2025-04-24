@@ -1,7 +1,7 @@
 import 'package:fl_chart/fl_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_libs/lib/models/shared_models.dart'; // SalesData, StorePerformance
+import '../../../../../../shared_libs/lib/models/models.dart'; // SalesData, StorePerformance
 import 'package:intl/intl.dart';
 
 import '../../application/statistics_and_reports_notifier.dart';

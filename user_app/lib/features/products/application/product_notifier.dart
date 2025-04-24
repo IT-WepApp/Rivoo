@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_libs/lib/models/shared_models.dart'; // Use main export
-import 'package:shared_libs/lib/services/shared_services.dart'; // Use main export
+import '../../../../../../shared_libs/lib/models/models.dart'; // Use main export
+import '../../../../../../shared_libs/lib/services/services.dart'; // Use main export
 import 'dart:developer';
 
 // Notifier for product-related states

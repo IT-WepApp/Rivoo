@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:shared_libs/lib/models/shared_models.dart'; // تأكد أن Product موجود هنا
+import '../../../../../../shared_libs/lib/models/models.dart'; // تأكد أن Product موجود هنا
 import '../../application/products_notifier.dart';
 
 class ProductListPage extends ConsumerStatefulWidget {

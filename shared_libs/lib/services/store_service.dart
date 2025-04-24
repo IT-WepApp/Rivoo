@@ -10,7 +10,7 @@ class StoreService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final String _collectionPath = 'stores';
 
-  // Use StoreModel from shared_models
+  // Use StoreModel from models
   Future<List<StoreModel>> getAllStores() async {
     try {
       final querySnapshot = await _firestore.collection(_collectionPath).get();

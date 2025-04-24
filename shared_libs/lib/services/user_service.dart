@@ -11,7 +11,7 @@ class UserService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final String _collectionPath = 'users'; // Or differentiate based on user type
 
-  // Use UserModel from shared_models
+  // Use UserModel from models
   Future<void> createUser(UserModel user) async {
     try {
       await _firestore

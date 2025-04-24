@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_libs/lib/models/shared_models.dart'; // Added import
+import '../../../../../../shared_libs/lib/models/models.dart'; // Added import
 import '../../application/product_management_notifier.dart';
 
 class ProductListPage extends ConsumerStatefulWidget {

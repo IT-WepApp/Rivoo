@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 // استورد نموذج المتجر
-import 'package:shared_libs/lib/models/shared_models.dart' show StoreModel;
+import '../../../../../../shared_libs/lib/models/models.dart' show StoreModel;
 // موفر الـ notifier
 import '../../application/store_management_notifier.dart';
 

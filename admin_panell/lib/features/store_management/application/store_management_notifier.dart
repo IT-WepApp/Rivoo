@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_libs/lib/models/shared_models.dart'; // Added import
-import 'package:shared_libs/lib/services/shared_services.dart'; // Added import
+import '../../../../../../shared_libs/lib/models/models.dart'; // Added import
+import '../../../../../../shared_libs/lib/services/services.dart'; // Added import
 
 // Updated to use AsyncValue
 class StoreManagementNotifier
@@ -82,13 +82,13 @@ class StoreManagementNotifier
   // }
 }
 
-// Provider for StoreService (defined in shared_services)
-// We assume storeServiceProvider is imported from shared_services
+// Provider for StoreService (defined in services)
+// We assume storeServiceProvider is imported from services
 
 // Provider for the Notifier
 final storeManagementProvider = StateNotifierProvider<StoreManagementNotifier,
     AsyncValue<List<StoreModel>>>((ref) {
-  // Read the StoreService provider (imported from shared_services)
+  // Read the StoreService provider (imported from services)
   final storeService = ref.read(storeServiceProvider);
   return StoreManagementNotifier(storeService);
 });

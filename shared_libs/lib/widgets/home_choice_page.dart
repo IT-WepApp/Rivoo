@@ -1,4 +1,4 @@
-// shared_modules/shared_widgets/lib/home_choice_page.dart
+// shared_modules/widgets /lib/home_choice_page.dart
 
 import 'package:flutter/material.dart';
 

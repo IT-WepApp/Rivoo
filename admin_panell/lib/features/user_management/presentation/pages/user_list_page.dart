@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_libs/lib/models/shared_models.dart'; // Use main export
+import '../../../../../../shared_libs/lib/models/models.dart'; // Use main export
 // Use main export
 
 import '../../application/user_management_notifier.dart';

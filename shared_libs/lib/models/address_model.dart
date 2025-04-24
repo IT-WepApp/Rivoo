@@ -171,6 +171,7 @@ class AddressModel extends Equatable {
 }
 
 /// تعداد أنواع العناوين
+@JsonEnum()
 enum AddressType {
   home,     // منزل
   work,     // عمل

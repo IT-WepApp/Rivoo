@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_libs/lib/models/shared_models.dart'; // Added import for ProductModel
-import 'package:shared_libs/lib/services/shared_services.dart'; // Added import for ProductService
+import '../../../../../../shared_libs/lib/models/models.dart'; // Added import for ProductModel
+import '../../../../../../shared_libs/lib/services/services.dart'; // Added import for ProductService
 
 // Updated to use AsyncValue
 class ProductManagementNotifier
@@ -8,7 +8,7 @@ class ProductManagementNotifier
   // Changed ProductModel to Product
   final ProductService _productService;
 
-  // Use Product from shared_models
+  // Use Product from models
   ProductManagementNotifier(this._productService)
       : super(const AsyncLoading()) {
     fetchProducts();
@@ -17,7 +17,7 @@ class ProductManagementNotifier
   Future<void> fetchProducts() async {
     state = const AsyncLoading();
     try {
-      // Use Product from shared_models
+      // Use Product from models
       final products = await _productService
           .getAllProducts(); // Ensure this method returns List<Product>
       state = AsyncData(products);
@@ -73,15 +73,15 @@ class ProductManagementNotifier
   // Future<void> editProduct(Product product) async { ... }
 }
 
-// Provider for ProductService (already defined in shared_services)
-// We assume productServiceProvider from shared_services is imported and used.
+// Provider for ProductService (already defined in services)
+// We assume productServiceProvider from services is imported and used.
 
 // Provider for the Notifier
 final productManagementProvider =
     StateNotifierProvider<ProductManagementNotifier, AsyncValue<List<Product>>>(
         (ref) {
   // Changed ProductModel to Product
-  // Read the ProductService provider (assuming it's available from shared_services)
+  // Read the ProductService provider (assuming it's available from services)
   final productService = ref.read(productServiceProvider);
   return ProductManagementNotifier(productService);
 });

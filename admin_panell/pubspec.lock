@@ -971,10 +971,10 @@ packages:
       relative: true
     source: path
     version: "1.0.0"
-  shared_models:
+  models:
     dependency: "direct main"
     description:
-      path: "../shared_modules/shared_models"
+      path: "../shared_modules/models"
       relative: true
     source: path
     version: "1.0.0"
@@ -1034,17 +1034,17 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.4.1"
-  shared_services:
+  services:
     dependency: "direct main"
     description:
-      path: "../shared_modules/shared_services"
+      path: "../shared_modules/services"
       relative: true
     source: path
     version: "1.0.0"
-  shared_widgets:
+  widgets :
     dependency: "direct main"
     description:
-      path: "../shared_modules/shared_widgets"
+      path: "../shared_modules/widgets "
       relative: true
     source: path
     version: "1.0.0"

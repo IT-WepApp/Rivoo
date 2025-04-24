@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_libs/lib/models/shared_models.dart';
+import '../../../../../../shared_libs/lib/models/models.dart';
 
 import '../../../../core/architecture/presentation/base_view_model.dart';
 import '../domain/entities/cart_item.dart';

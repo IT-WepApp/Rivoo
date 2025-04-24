@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:shared_libs/lib/widgets/shared_widgets.dart';
+import '../../../../../../shared_libs/lib/widgets/widgets .dart';
 
 /// صفحة نموذج عنوان الشحن
 ///

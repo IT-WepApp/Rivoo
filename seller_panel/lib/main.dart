@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart'; // Import Riverpod
-import 'package:shared_libs/lib/widgets/shared_widgets.dart';
+import '../../../../../../shared_libs/lib/widgets/widgets .dart';
 import 'firebase_options.dart';
 
 // Import app router

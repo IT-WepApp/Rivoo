@@ -4,8 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 // Import shared models and services
-import 'package:shared_libs/lib/models/shared_models.dart';
-import 'package:shared_libs/lib/services/shared_services.dart';
+import '../../../../../../shared_libs/lib/models/models.dart';
+import '../../../../../../shared_libs/lib/services/services.dart';
 
 // Auth notifier
 import 'package:delivery_app/features/auth/application/auth_notifier.dart';

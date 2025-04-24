@@ -1,11 +1,11 @@
 import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_libs/lib/widgets/shared_widgets.dart';
+import '../../../../../../shared_libs/lib/widgets/widgets .dart';
 import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:shared_libs/lib/services/shared_services.dart';
-import 'package:shared_libs/lib/models/shared_models.dart';
+import '../../../../../../shared_libs/lib/services/services.dart';
+import '../../../../../../shared_libs/lib/models/models.dart';
 
 final currentSellerIdProvider = Provider<String?>((ref) {
   return FirebaseAuth.instance.currentUser?.uid;

@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../../shared_libs/lib/models/shared_models.dart';
+import '../../../../../shared_libs/lib/models/models.dart';
 import '../../../../../shared_libs/lib/services/services.dart'; 
 import '../../../../../shared_libs/lib/models/category.dart';
 

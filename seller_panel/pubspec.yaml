@@ -42,12 +42,12 @@ dependencies:
   freezed_annotation: ^2.4.1
   
   # الحزم المشتركة في المونوربو
-  shared_models:
-    path: ../shared_modules/shared_models
-  shared_services:
-    path: ../shared_modules/shared_services
-  shared_widgets:
-    path: ../shared_modules/shared_widgets
+  models:
+    path: ../shared_modules/models
+  services:
+    path: ../shared_modules/services
+  widgets :
+    path: ../shared_modules/widgets 
   shared_core:
     path: ../shared_core
   image_picker: ^1.0.7

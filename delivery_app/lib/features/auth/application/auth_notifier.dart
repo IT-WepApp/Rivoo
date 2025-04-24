@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 // Import the correct model name (DeliveryPersonModel) via the main export
-import 'package:shared_libs/lib/models/shared_models.dart';
-import 'package:shared_libs/lib/services/shared_services.dart';
+import '../../../../../../shared_libs/lib/models/models.dart';
+import '../../../../../../shared_libs/lib/services/services.dart';
 import 'dart:developer'; // For logging
 
 // StateNotifier for Delivery App Authentication - Use the correct model type

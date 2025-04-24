@@ -51,14 +51,8 @@ dependencies:
   equatable: ^2.0.5
   dartz: ^0.10.1
   # Shared Modules
-  shared_models:
-    path: ../shared_modules/shared_models
-  shared_services:
-    path: ../shared_modules/shared_services
-  shared_widgets:
-    path: ../shared_modules/shared_widgets
-  shared_core:
-    path: ../shared_core
+  shared_libs:
+    path: ../shared_libs
 dev_dependencies:
   flutter_test:
     sdk: flutter

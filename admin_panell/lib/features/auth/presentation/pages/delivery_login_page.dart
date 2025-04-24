@@ -4,7 +4,7 @@ import '../../../../../../shared_libs/lib/widgets/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart'; // Import Riverpod
 import '../../../../../../shared_libs/lib/services/services.dart'; // Import shared services
 import 'package:go_router/go_router.dart'; // Import GoRouter
-import '../../../../../../shared_libs/lib/models/shared_models.dart'; // Import UserModel
+import '../../../../../../shared_libs/lib/models/models.dart'; // Import UserModel
 import '../../../../../../shared_libs/lib/models/user_model.dart';
 class DeliveryLoginPage extends ConsumerStatefulWidget {
   // Changed to Consumer

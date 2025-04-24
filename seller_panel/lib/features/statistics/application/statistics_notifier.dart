@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_libs/lib/models/shared_models.dart' as models;
-import 'package:shared_libs/lib/services/shared_services.dart';
+import '../../../../../../shared_libs/lib/models/models.dart' as models;
+import '../../../../../../shared_libs/lib/services/services.dart';
 import '../../products/application/products_notifier.dart';
 
 class SellerStatisticsState {

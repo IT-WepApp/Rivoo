@@ -3,7 +3,7 @@
 
 // تصدير النماذج
 export 'models/product_model.dart';
-export 'models/order_model.dart';
+export 'models/order.dart';
 export 'models/cart_model.dart';
 export 'models/category_model.dart';
 export 'models/review_model.dart';

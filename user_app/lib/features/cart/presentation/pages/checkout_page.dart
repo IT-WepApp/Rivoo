@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:user_app/features/profile/presentation/pages/shipping_address_list_page.dart';
 import 'package:user_app/features/profile/domain/models/shipping_address.dart';
 import 'package:user_app/features/profile/application/shipping_address_notifier.dart';
-import 'package:shared_libs/lib/widgets/shared_widgets.dart';
+import '../../../../../../shared_libs/lib/widgets/widgets .dart';
 
 class CheckoutPage extends ConsumerStatefulWidget {
   const CheckoutPage({super.key});

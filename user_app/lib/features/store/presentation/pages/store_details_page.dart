@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_libs/lib/models/shared_models.dart';
-import 'package:shared_libs/lib/services/shared_services.dart';
-import 'package:shared_libs/lib/widgets/shared_widgets.dart';
+import '../../../../../../shared_libs/lib/models/models.dart';
+import '../../../../../../shared_libs/lib/services/services.dart';
+import '../../../../../../shared_libs/lib/widgets/widgets .dart';
 import '../../../cart/application/cart_notifier.dart';
 import '../../../products/application/product_notifier.dart';
 import 'package:user_app/features/auth/application/auth_notifier.dart';

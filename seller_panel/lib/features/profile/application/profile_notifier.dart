@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_libs/lib/models/shared_models.dart';
-import 'package:shared_libs/lib/services/shared_services.dart';
+import '../../../../../../shared_libs/lib/models/models.dart';
+import '../../../../../../shared_libs/lib/services/services.dart';
 import 'package:firebase_auth/firebase_auth.dart'; // ضروري لـ currentSellerIdProvider
 
 final currentSellerIdProvider = Provider<String?>((ref) {

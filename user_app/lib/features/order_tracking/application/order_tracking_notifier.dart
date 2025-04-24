@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_libs/lib/services/shared_services.dart';
-import 'package:shared_libs/lib/models/shared_models.dart';
+import '../../../../../../shared_libs/lib/services/services.dart';
+import '../../../../../../shared_libs/lib/models/models.dart';
 import 'package:location/location.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'dart:developer';

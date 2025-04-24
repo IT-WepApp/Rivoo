@@ -34,17 +34,9 @@ dependencies:
   freezed_annotation: ^2.4.1
   
   # الحزم المشتركة في المونوربو
-  shared_models:
-    path: ../shared_modules/shared_models
-  shared_services:
-    path: ../shared_modules/shared_services
-  shared_widgets:
-    path: ../shared_modules/shared_widgets
-  shared:
-    path: ../shared
-  shared_core:
-    path: ../shared_core
-    
+  shared_libs:
+    path: ../shared_libs
+
 dev_dependencies:
   flutter_lints: ^2.0.0
   flutter_test:

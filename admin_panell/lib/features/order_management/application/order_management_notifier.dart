@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_libs/lib/services/shared_services.dart'; // ✅ لاستيراد OrderService
-import 'package:shared_libs/lib/models/shared_models.dart'; // ✅ لاستيراد OrderModel
+import 'package:shared_libs/services/services.dart'; // ✅ لاستيراد OrderService
+import 'package:shared_libs/models/models.dart';
+ // ✅ لاستيراد OrderModel
 
 // استخدام OrderModel بدلاً من Order
 class OrderManagementNotifier
