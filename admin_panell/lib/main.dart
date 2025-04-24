@@ -6,6 +6,8 @@ import 'admin_router.dart';
 import 'theme.dart';
 import 'core/services/crashlytics_manager.dart';
 import 'core/services/crashlytics_manager_impl.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 // تعريف مزود خدمة Crashlytics
 final crashlyticsManagerProvider = Provider<CrashlyticsManager>((ref) {
@@ -20,6 +22,8 @@ void main() async {
 
   // تهيئة Firebase
   await Firebase.initializeApp();
+  FirebaseFirestore.instance.useFirestoreEmulator('localhost', 8080);
+  FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
 
   // إنشاء حاوية المزودات
   final container = ProviderContainer();
