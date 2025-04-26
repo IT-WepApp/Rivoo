@@ -38,15 +38,29 @@ class OrderService {
     }
   }
 
-  // استرجاع الطلبات المسلمة لشخص توصيل محدد
+  // استرجاع الطلبات المسلمة لشخص توصيل محدد مع دعم الفلترة والفرز
   Future<List<OrderModel>> getDeliveredOrdersForPersonnel(
-      String deliveryPersonnelId) async {
+    String deliveryPersonnelId, {
+    String? sortBy,
+    String? sortOrder,
+    String? filterByStatus,
+  }) async {
     try {
-      final snapshot = await _firestore
+      Query<Map<String, dynamic>> query = _firestore
           .collection('orders')
-          .where('deliveryId', isEqualTo: deliveryPersonnelId)
-          .where('status', isEqualTo: 'delivered')
-          .get();
+          .where('deliveryId', isEqualTo: deliveryPersonnelId);
+
+      if (filterByStatus != null) {
+        query = query.where('status', isEqualTo: filterByStatus);
+      } else {
+        query = query.where('status', isEqualTo: 'delivered');
+      }
+
+      if (sortBy != null) {
+        query = query.orderBy(sortBy, descending: sortOrder == 'desc');
+      }
+
+      final snapshot = await query.get();
 
       return snapshot.docs
           .map((doc) => OrderModel.fromJson(doc.data()))
@@ -75,8 +89,9 @@ class OrderService {
   Future<OrderModel?> getOrder(String orderId) async {
     try {
       final doc = await _firestore.collection('orders').doc(orderId).get();
-      if (doc.exists && doc.data() != null) {
-        return OrderModel.fromJson(doc.data()!);
+      final data = doc.data();
+      if (doc.exists && data != null) {
+        return OrderModel.fromJson(data);
       }
       return null;
     } catch (e, st) {

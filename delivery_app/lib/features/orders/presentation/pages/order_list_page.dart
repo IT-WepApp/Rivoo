@@ -85,7 +85,7 @@ class OrderListItem extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('Customer ID: ${order.userId}'),
-            Text('Date: ${formatter.format(order.createdAt.toDate())}'),
+            Text('Date: ${formatter.format(order.createdAt)}'),
           ],
         ),
         trailing: Chip(

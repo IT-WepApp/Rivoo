@@ -1,0 +1,2 @@
+D:/IT-WepApp/Rivoo/delivery_app/android/app/.cxx/Debug/039493m5/x86_64/CMakeFiles/edit_cache.dir
+D:/IT-WepApp/Rivoo/delivery_app/android/app/.cxx/Debug/039493m5/x86_64/CMakeFiles/rebuild_cache.dir

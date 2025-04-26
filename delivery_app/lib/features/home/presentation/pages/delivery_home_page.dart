@@ -2,13 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
-// Import shared models and services
 import 'package:shared_libs/models/models.dart';
 import 'package:shared_libs/services/services.dart';
-
-// Auth notifier
 import 'package:delivery_app/features/auth/application/auth_notifier.dart';
+import 'package:shared_libs/services/order_service_provider.dart';
+
 
 // Provider لاسم العميل
 final customerNameProvider =
@@ -33,7 +31,7 @@ final assignedOrdersProvider = FutureProvider<List<OrderModel>>((ref) async {
   final allOrders = await orderService.getAllOrders();
   return allOrders
       .where((o) =>
-          o.deliveryId == deliveryPersonId &&
+          o.deliveryPersonId == deliveryPersonId &&
           (o.status == 'processing' || o.status == 'shipped'))
       .toList();
 });
@@ -178,7 +176,7 @@ class _OrderListItem extends ConsumerWidget {
             error: (e, _) => Text('Customer: Error (${order.userId})'),
           ),
           Text('Status: ${order.status}'),
-          Text('To: ${order.address}'),
+          Text('To: ${order.deliveryAddress}'),
         ],
       ),
       trailing: const Icon(Icons.arrow_forward_ios, size: 16),

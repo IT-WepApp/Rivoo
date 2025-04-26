@@ -202,7 +202,7 @@ class OrderHistoryItem extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text('Customer ID: ${order.userId}'),
-            Text('Date: ${formatter.format(order.createdAt.toDate())}'),
+            Text('Date: ${formatter.format(order.createdAt)}'),
             Text('Total: \$${order.total.toStringAsFixed(2)}'),
             Text(
                 'Status: ${order.status[0].toUpperCase()}${order.status.substring(1)}'),

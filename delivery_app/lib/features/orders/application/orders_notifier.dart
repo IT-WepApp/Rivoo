@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_libs/models/models.dart'; // يحتوي على OrderModel
 import 'package:shared_libs/services/services.dart'; // يحتوي على OrderService
-
+import 'package:shared_libs/services/order_service_provider.dart';
 // مزود وهمي مؤقت لتجربة الـ deliveryPersonId
 final currentDeliveryPersonIdProvider = Provider<String?>((ref) {
   // يفترض أن ترجع الـ ID من مصدر حقيقي مثل shared preferences أو auth
@@ -28,7 +28,7 @@ class OrdersNotifier extends StateNotifier<AsyncValue<List<OrderModel>>> {
       final allOrders = await _orderService.getAllOrders();
       final assignedOrders = allOrders
           .where((o) =>
-              o.deliveryId == _deliveryPersonId &&
+              o.deliveryPersonId == _deliveryPersonId &&
               (o.status == 'processing' || o.status == 'shipped'))
           .toList();
 

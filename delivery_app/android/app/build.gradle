@@ -27,7 +27,7 @@ android {
 
     // يجب أن يكون مساويًا لـ targetSdk
     compileSdk 35
-    ndkVersion "23.1.7779620"
+    ndkVersion "26.3.11579264"
 
     defaultConfig {
         applicationId "com.example.delivery_app"

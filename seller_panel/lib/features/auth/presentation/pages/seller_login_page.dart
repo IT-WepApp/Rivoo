@@ -5,6 +5,7 @@ import '../../../../core/constants/route_constants.dart';
 import '../../../../core/services/auth_service.dart';
 import 'package:shared_libs/theme/app_colors.dart';
 import '../../../../core/widgets/app_widgets.dart';
+import 'package:shared_libs/widgets/enhanced_inputs.dart';
 
 class SellerLoginPage extends ConsumerStatefulWidget {
   const SellerLoginPage({Key? key}) : super(key: key);
@@ -167,9 +168,9 @@ class _SellerLoginPageState extends ConsumerState<SellerLoginPage> {
                 // حقل البريد الإلكتروني
                 AppWidgets.appTextField(
                   controller: _emailController,
-                  label: 'البريد الإلكتروني',
-                  hint: 'أدخل بريدك الإلكتروني',
-                  prefixIcon: const Icon(Icons.email_outlined),
+                  labelText: 'البريد الإلكتروني',
+                  hintText: 'أدخل بريدك الإلكتروني',
+                  prefixIcon: Icons.email_outlined,
                   keyboardType: TextInputType.emailAddress,
                   textInputAction: TextInputAction.next,
                   validator: (value) {
@@ -188,9 +189,9 @@ class _SellerLoginPageState extends ConsumerState<SellerLoginPage> {
                 // حقل كلمة المرور
                 AppWidgets.appTextField(
                   controller: _passwordController,
-                  label: 'كلمة المرور',
-                  hint: 'أدخل كلمة المرور',
-                  prefixIcon: const Icon(Icons.lock_outline),
+                  labelText: 'كلمة المرور',
+                  hintText: 'أدخل كلمة المرور',
+                  prefixIcon: Icons.lock_outline,
                   obscureText: _obscurePassword,
                   textInputAction: TextInputAction.done,
                   validator: (value) {

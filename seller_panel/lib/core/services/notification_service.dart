@@ -3,7 +3,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import '../constants/app_constants.dart';
-import '../utils/logger.dart';
+import 'package:shared_libs/utils/logger.dart';
 import 'auth_service.dart';
 
 /// خدمة الإشعارات للبائعين
