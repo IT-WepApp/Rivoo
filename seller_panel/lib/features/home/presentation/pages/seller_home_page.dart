@@ -1,7 +1,9 @@
 import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_libs/widgets/widgets .dart';
+import 'package:seller_panel/core/widgets/app_widgets.dart' show AppWidgets;
+import 'package:shared_libs/services/order_service_provider.dart' show orderServiceProvider;
+import 'package:shared_libs/widgets/widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_libs/services/services.dart';
@@ -110,7 +112,7 @@ class SellerHomePage extends ConsumerWidget {
             ? const Text('No recent orders found.')
             : Column(
                 children: recentOrders
-                    .map((order) => AppCard(
+                    .map((order) => AppWidgets.appCard(
                           margin: const EdgeInsets.only(bottom: 8),
                           child: ListTile(
                             title: Text('Order #${order.id}'),

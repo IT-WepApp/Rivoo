@@ -47,3 +47,17 @@ export 'widgets/enhanced_cards.dart';
 export 'widgets/enhanced_inputs.dart';
 export 'widgets/enhanced_lists.dart';
 export 'widgets/enhanced_notifications.dart';
+
+//الثيمات 
+export 'theme/app_colors.dart';
+export 'theme/app_text_styles.dart';
+export 'theme/app_theme.dart';
+export 'theme/theme_provider.dart';
+
+// التقارير
+export 'utils/logger.dart';
+
+
+// مابعرف
+export 'entities/user_entity.dart';
+

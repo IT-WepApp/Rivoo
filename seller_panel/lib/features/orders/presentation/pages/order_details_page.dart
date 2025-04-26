@@ -96,10 +96,10 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
             'هل أنت متأكد من رغبتك في إلغاء هذا الطلب؟ لا يمكن التراجع عن هذا الإجراء.',
         confirmText: 'إلغاء الطلب',
         cancelText: 'تراجع',
-        isDangerous: true,
+        confirmColor: Colors.red
       );
 
-      if (!confirmed) {
+      if (confirmed != true) {
         return;
       }
     } else {
@@ -417,7 +417,7 @@ class _OrderDetailsPageState extends ConsumerState<OrderDetailsPage> {
             padding: const EdgeInsets.all(8),
             margin: const EdgeInsets.only(bottom: 16),
             decoration: BoxDecoration(
-              color: AppColors.error.withOpacity(0.1),
+              color: AppColors.primary.withAlpha(127),
               borderRadius: BorderRadius.circular(8),
               border: Border.all(color: AppColors.error),
             ),

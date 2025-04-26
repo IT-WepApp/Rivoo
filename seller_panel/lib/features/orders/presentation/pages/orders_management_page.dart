@@ -255,15 +255,20 @@ class _OrdersManagementPageState extends ConsumerState<OrdersManagementPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // شريط البحث
-          AppWidgets.searchBar(
-            controller: _searchController,
-            onSearch: (value) {
-              setState(() {
+        AppWidgets.searchBar(
+          controller: _searchController,
+          hintText: 'البحث برقم الطلب أو اسم العميل...',
+          onChanged: (value) {
+                setState(() {
                 _applyFilters();
               });
-            },
-            hintText: 'البحث برقم الطلب أو اسم العميل...',
-          ),
+             },
+          onSearch: (value) {
+                setState(() {
+                _applyFilters();
+              });
+             },
+           ),
           const SizedBox(height: 16),
 
           // فلاتر إضافية
@@ -398,11 +403,12 @@ class _OrdersManagementPageState extends ConsumerState<OrdersManagementPage> {
         return AppWidgets.orderListItem(
           orderId: orderNumber,
           status: status,
-          total: totalAmount.toDouble(),
-          date: orderDate,
+          amount: totalAmount.toStringAsFixed(2), // ✅ تعديل هنا
+          date: '${orderDate.day}/${orderDate.month}/${orderDate.year}', // ✅ تعديل هنا (تحويل DateTime إلى String)
           customerName: customerName,
           onTap: () => context.push('${RouteConstants.orderDetails}/$orderId'),
         );
+
       },
     );
   }

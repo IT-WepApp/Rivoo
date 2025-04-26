@@ -209,10 +209,10 @@ class _ProductCategoriesPageState extends ConsumerState<ProductCategoriesPage> {
               'هناك ${productsUsingCategory.length} منتج يستخدم هذه الفئة. هل تريد تغيير فئة هذه المنتجات إلى "أخرى"؟',
           confirmText: 'نعم، تغيير الفئة',
           cancelText: 'إلغاء',
-          isDangerous: true,
+          confirmColor: Colors.red
         );
 
-        if (!confirmed) {
+        if (confirmed != true) {
           return;
         }
       } else {
@@ -226,10 +226,10 @@ class _ProductCategoriesPageState extends ConsumerState<ProductCategoriesPage> {
           message: 'هل أنت متأكد من رغبتك في حذف فئة "$category"؟',
           confirmText: 'حذف',
           cancelText: 'إلغاء',
-          isDangerous: true,
+          confirmColor: Colors.red
         );
 
-        if (!confirmed) {
+        if (confirmed != true) {
           return;
         }
       } else {

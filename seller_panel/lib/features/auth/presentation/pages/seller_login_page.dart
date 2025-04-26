@@ -203,7 +203,7 @@ class _SellerLoginPageState extends ConsumerState<SellerLoginPage> {
                     }
                     return null;
                   },
-                  suffixIcon: IconButton(
+                  suffix: IconButton(
                     icon: Icon(
                       _obscurePassword
                           ? Icons.visibility
@@ -211,7 +211,7 @@ class _SellerLoginPageState extends ConsumerState<SellerLoginPage> {
                     ),
                     onPressed: _togglePasswordVisibility,
                   ),
-                  onFieldSubmitted: (_) => _login(),
+                  onSubmitted: (_) => _login(),
                 ),
 
                 const SizedBox(height: 24),

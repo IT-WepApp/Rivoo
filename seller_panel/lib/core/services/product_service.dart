@@ -32,6 +32,20 @@ class ProductService {
       return data;
     }).toList();
   }
+// الحصول على منتجات بائع حسب معرف البائع (sellerId)
+Future<List<Map<String, dynamic>>> getProductsBySeller(String sellerId) async {
+  final snapshot = await _firestore
+      .collection(AppConstants.productsCollection)
+      .where('sellerId', isEqualTo: sellerId)
+      .orderBy('createdAt', descending: true)
+      .get();
+
+  return snapshot.docs.map((doc) {
+    final data = doc.data();
+    data['id'] = doc.id;
+    return data;
+  }).toList();
+}
 
   // الحصول على منتج محدد
   Future<Map<String, dynamic>?> getProduct(String productId) async {

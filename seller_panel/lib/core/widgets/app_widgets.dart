@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../../../shared_libs/lib/theme/app_colors.dart';
+import 'package:shared_libs/theme/app_colors.dart';
 
 /// مكتبة المكونات المشتركة المستخدمة في التطبيق
 class AppWidgets {
@@ -362,71 +362,76 @@ class AppWidgets {
   }
 
   /// زر مخصص
-  static Widget appButton({
-    required String text,
-    VoidCallback? onPressed,
-    Color? backgroundColor,
-    Color? textColor,
-    IconData? icon,
-    bool isLoading = false,
-    double width = double.infinity,
-    double height = 48,
-    EdgeInsetsGeometry? padding,
-    BorderRadius? borderRadius,
-  }) {
-    return SizedBox(
-      width: width,
-      height: height,
-      child: ElevatedButton(
-        onPressed: isLoading ? null : onPressed,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: backgroundColor ?? AppColors.primary,
-          foregroundColor: textColor ?? AppColors.onPrimary,
-          padding: padding ?? const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
-          shape: RoundedRectangleBorder(
-            borderRadius: borderRadius ?? BorderRadius.circular(8),
-          ),
-          elevation: 2,
+static Widget appButton({
+  required String text,
+  VoidCallback? onPressed,
+  Color? backgroundColor,
+  Color? textColor,
+  IconData? icon,
+  bool isLoading = false,
+  double width = double.infinity,
+  double height = 48,
+  EdgeInsetsGeometry? padding,
+  BorderRadius? borderRadius,
+  Color? borderColor, // << إضافة جديدة هنا
+}) {
+  return SizedBox(
+    width: width,
+    height: height,
+    child: ElevatedButton(
+      onPressed: isLoading ? null : onPressed,
+      style: ElevatedButton.styleFrom(
+        backgroundColor: backgroundColor ?? AppColors.primary,
+        foregroundColor: textColor ?? AppColors.onPrimary,
+        padding: padding ?? const EdgeInsets.symmetric(vertical: 12, horizontal: 16),
+        shape: RoundedRectangleBorder(
+          borderRadius: borderRadius ?? BorderRadius.circular(8),
+          side: borderColor != null ? BorderSide(color: borderColor) : BorderSide.none, // << إضافة هنا
         ),
-        child: isLoading
-            ? const SizedBox(
-                width: 24,
-                height: 24,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
-                ),
-              )
-            : Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  if (icon != null) ...[
-                    Icon(icon, size: 20),
-                    const SizedBox(width: 8),
-                  ],
-                  Text(
-                    text,
-                    style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ],
-              ),
+        elevation: 2,
       ),
-    );
-  }
+      child: isLoading
+          ? const SizedBox(
+              width: 24,
+              height: 24,
+              child: CircularProgressIndicator(
+                strokeWidth: 2,
+                valueColor: AlwaysStoppedAnimation<Color>(Colors.white),
+              ),
+            )
+          : Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                if (icon != null) ...[
+                  Icon(icon, size: 20),
+                  const SizedBox(width: 8),
+                ],
+                Text(
+                  text,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
+            ),
+    ),
+  );
+}
 
-  /// بطاقة مخصصة
-  static Widget appCard({
-    required Widget child,
-    double? elevation,
-    Color? color,
-    EdgeInsetsGeometry? padding,
-    BorderRadius? borderRadius,
-    VoidCallback? onTap,
-  }) {
-    return Card(
+  /// بطاقة مخصصة مع دعم الهامش (margin)
+static Widget appCard({
+  required Widget child,
+  double? elevation,
+  Color? color,
+  EdgeInsetsGeometry? padding,
+  EdgeInsetsGeometry? margin, // ✅ أضفنا دعم الـ margin
+  BorderRadius? borderRadius,
+  VoidCallback? onTap,
+}) {
+  return Container(
+    margin: margin, // ✅ تطبيق المارجن هنا
+    child: Card(
       elevation: elevation ?? 2,
       color: color ?? AppColors.surface,
       shape: RoundedRectangleBorder(
@@ -440,8 +445,10 @@ class AppWidgets {
           child: child,
         ),
       ),
-    );
-  }
+    ),
+  );
+}
+
 
   /// عنصر قائمة طلبات
   static Widget orderListItem({

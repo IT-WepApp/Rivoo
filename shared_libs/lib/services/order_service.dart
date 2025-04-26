@@ -99,4 +99,22 @@ class OrderService {
       return null;
     }
   }
+
+  // استرجاع الطلبات الخاصة ببائع معين 🔥
+  Future<List<OrderModel>> getOrdersBySeller(String sellerId) async {
+    try {
+      final querySnapshot = await _firestore
+          .collection('orders')
+          .where('sellerId', isEqualTo: sellerId)
+          .orderBy('createdAt', descending: true)
+          .get();
+
+      return querySnapshot.docs
+          .map((doc) => OrderModel.fromJson(doc.data()))
+          .toList();
+    } catch (e, st) {
+      developer.log('Error getting orders by seller: $e', stackTrace: st);
+      return [];
+    }
+  }
 }

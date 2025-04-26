@@ -574,10 +574,10 @@ class _SellerDashboardPageState extends ConsumerState<SellerDashboardPage> {
                 message: 'هل أنت متأكد من رغبتك في تسجيل الخروج؟',
                 confirmText: 'تسجيل الخروج',
                 cancelText: 'إلغاء',
-                isDangerous: true,
+                confirmColor: Colors.red,
               );
 
-              if (confirmed && context.mounted) {
+              if (confirmed == true && context.mounted) {
                 final authService = ref.read(authServiceProvider);
                 await authService.signOut();
                 if (context.mounted) {

@@ -164,10 +164,10 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
         message: 'هل أنت متأكد من رغبتك في حذف هذا الإشعار؟',
         confirmText: 'حذف',
         cancelText: 'إلغاء',
-        isDangerous: true,
+        confirmColor: Colors.red
       );
 
-      if (!confirmed) {
+      if (confirmed != true) {
         return;
       }
     } else {
@@ -228,10 +228,10 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
             'هل أنت متأكد من رغبتك في حذف جميع الإشعارات؟ لا يمكن التراجع عن هذا الإجراء.',
         confirmText: 'حذف الكل',
         cancelText: 'إلغاء',
-        isDangerous: true,
+        confirmColor: Colors.red
       );
 
-      if (!confirmed) {
+      if (confirmed != true) {
         return;
       }
     } else {
