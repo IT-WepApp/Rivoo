@@ -2,7 +2,8 @@
 
 import 'dart:developer';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_libs/models/src/models/promotion.dart';
+import 'package:shared_libs/models/promotion.dart';
+import 'package:shared_libs/services/product_service_provider.dart';
 import 'package:shared_libs/services/services.dart';
 
 class PromotionState {
@@ -81,7 +82,13 @@ class PromotionNotifier extends StateNotifier<PromotionState> {
       return false;
     }
     try {
-      await _productService.updatePromotion(productId, promotion);
+      await _productService.updatePromotion(
+        productId: productId,
+        type: promotion.type,
+        value: promotion.value,
+        startDate: promotion.startDate,
+        endDate: promotion.endDate,
+      );
       state = state.copyWith(promotion: promotion, isLoading: false);
       return true;
     } catch (e, stacktrace) {
@@ -97,7 +104,7 @@ class PromotionNotifier extends StateNotifier<PromotionState> {
     state = state.copyWith(
         isLoading: true, clearError: true, clearValidationErrors: true);
     try {
-      await _productService.removePromotion(productId);
+      await _productService.deletePromotion(productId);
       state = state.copyWith(promotion: null, isLoading: false);
       return true;
     } catch (e, stacktrace) {

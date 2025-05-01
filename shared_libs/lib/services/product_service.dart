@@ -3,15 +3,9 @@ import 'package:shared_libs/models/promotion.dart';
 import 'package:shared_libs/utils/logger.dart';
 
 class ProductService {
-  // Assuming you have a way to interact with your database (e.g., Firestore, a REST API)
-  // Replace this with your actual database interaction logic.
-  // For example, you might have a DatabaseClient class.
-  // DatabaseClient _dbClient;
-
   final AppLogger _logger = AppLogger();
 
-  // Constructor (adjust as needed)
-  ProductService(/*this._dbClient*/);
+  ProductService();
 
   Future<void> createPromotion({
     required String productId,
@@ -22,19 +16,20 @@ class ProductService {
   }) async {
     try {
       Product(
-          id: 'temp',
-          name: 'temp',
-          description: 'temp',
-          categoryId: 'temp',
-          sellerId: 'temp',
-          price: 1.0,
-          imageUrl: 'temp',
-          status: 'pending',
-          hasPromotion: true,
-          promotionType: type,
-          promotionValue: value,
-          promotionStartDate: startDate,
-          promotionEndDate: endDate);
+        id: 'temp',
+        name: 'temp',
+        description: 'temp',
+        categoryId: 'temp',
+        sellerId: 'temp',
+        price: 1.0,
+        imageUrl: 'temp',
+        status: 'pending',
+        hasPromotion: true,
+        promotionType: type,
+        promotionValue: value,
+        promotionStartDate: startDate,
+        promotionEndDate: endDate,
+      );
     } catch (e) {
       _logger.error('Failed to create promotion', e);
       throw Exception('Failed to create promotion: $e');
@@ -50,19 +45,20 @@ class ProductService {
   }) async {
     try {
       Product(
-          id: 'temp',
-          name: 'temp',
-          description: 'temp',
-          categoryId: 'temp',
-          sellerId: 'temp',
-          price: 1.0,
-          imageUrl: 'temp',
-          status: 'pending',
-          hasPromotion: true,
-          promotionType: type,
-          promotionValue: value,
-          promotionStartDate: startDate,
-          promotionEndDate: endDate);
+        id: 'temp',
+        name: 'temp',
+        description: 'temp',
+        categoryId: 'temp',
+        sellerId: 'temp',
+        price: 1.0,
+        imageUrl: 'temp',
+        status: 'pending',
+        hasPromotion: true,
+        promotionType: type,
+        promotionValue: value,
+        promotionStartDate: startDate,
+        promotionEndDate: endDate,
+      );
     } catch (e) {
       _logger.error('Failed to update promotion', e);
       throw Exception('Failed to update promotion: $e');
@@ -72,19 +68,20 @@ class ProductService {
   Future<void> deletePromotion(String productId) async {
     try {
       const Product(
-          id: 'temp',
-          name: 'temp',
-          description: 'temp',
-          categoryId: 'temp',
-          sellerId: 'temp',
-          price: 1.0,
-          imageUrl: 'temp',
-          status: 'pending',
-          hasPromotion: false,
-          promotionType: null,
-          promotionValue: null,
-          promotionStartDate: null,
-          promotionEndDate: null);
+        id: 'temp',
+        name: 'temp',
+        description: 'temp',
+        categoryId: 'temp',
+        sellerId: 'temp',
+        price: 1.0,
+        imageUrl: 'temp',
+        status: 'pending',
+        hasPromotion: false,
+        promotionType: null,
+        promotionValue: null,
+        promotionStartDate: null,
+        promotionEndDate: null,
+      );
     } catch (e) {
       _logger.error('Failed to delete promotion', e);
       throw Exception('Failed to delete promotion: $e');
@@ -94,19 +91,20 @@ class ProductService {
   Future<PromotionDetails?> getPromotionsForProduct(String productId) async {
     try {
       const product = Product(
-          id: 'temp',
-          name: 'temp',
-          description: 'temp',
-          categoryId: 'temp',
-          sellerId: 'temp',
-          price: 1.0,
-          imageUrl: 'temp',
-          status: 'pending',
-          hasPromotion: false,
-          promotionType: null,
-          promotionValue: null,
-          promotionStartDate: null,
-          promotionEndDate: null);
+        id: 'temp',
+        name: 'temp',
+        description: 'temp',
+        categoryId: 'temp',
+        sellerId: 'temp',
+        price: 1.0,
+        imageUrl: 'temp',
+        status: 'pending',
+        hasPromotion: false,
+        promotionType: null,
+        promotionValue: null,
+        promotionStartDate: null,
+        promotionEndDate: null,
+      );
 
       if (product.hasPromotion) {
         return PromotionDetails(
@@ -140,6 +138,19 @@ class ProductService {
     ];
   }
 
+  Future<Product?> getProduct(String productId) async {
+    try {
+      final allProducts = await getAllProducts();
+      for (final product in allProducts) {
+        if (product.id == productId) return product;
+      }
+      return null;
+    } catch (e) {
+      _logger.error('Failed to get product', e);
+      throw Exception('Failed to get product: $e');
+    }
+  }
+
   Future<void> approveProduct(String productId) async {
     try {
       _logger.info('Product $productId approved');
@@ -155,6 +166,43 @@ class ProductService {
     } catch (e) {
       _logger.error('Failed to reject product', e);
       throw Exception('Failed to reject product: $e');
+    }
+  }
+
+  Future<List<Product>> getProductsBySeller(String sellerId) async {
+    try {
+      final allProducts = await getAllProducts();
+      return allProducts.where((product) => product.sellerId == sellerId).toList();
+    } catch (e) {
+      _logger.error('Failed to fetch products by seller', e);
+      throw Exception('Failed to fetch products by seller: $e');
+    }
+  }
+
+  Future<void> createProduct(Product product) async {
+    try {
+      _logger.info('Product ${product.id} created');
+    } catch (e) {
+      _logger.error('Failed to create product', e);
+      throw Exception('Failed to create product: $e');
+    }
+  }
+
+  Future<void> updateProduct(Product product) async {
+    try {
+      _logger.info('Product ${product.id} updated');
+    } catch (e) {
+      _logger.error('Failed to update product', e);
+      throw Exception('Failed to update product: $e');
+    }
+  }
+
+  Future<void> deleteProduct(String productId) async {
+    try {
+      _logger.info('Product $productId deleted');
+    } catch (e) {
+      _logger.error('Failed to delete product', e);
+      throw Exception('Failed to delete product: $e');
     }
   }
 }

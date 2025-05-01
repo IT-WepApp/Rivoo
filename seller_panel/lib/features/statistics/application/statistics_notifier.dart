@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_libs/models/models.dart' as models;
+import 'package:shared_libs/models/product.dart' as models;
 import 'package:shared_libs/services/services.dart';
 import '../../products/application/products_notifier.dart';
 
@@ -59,10 +60,12 @@ class StatisticsNotifier extends StateNotifier<SellerStatisticsState> {
       // Assuming svcData is a single SalesData object and we need to create a list
       final data = [
         models.SalesData(
-          'Placeholder Month',
-          double.parse(svcData.totalSales), // Convert totalSales to double
+         totalSales: svcData.totalSales,
+         orderCount: svcData.orderCount,
         )
       ];
+
+
 
       state = state.copyWith(salesData: AsyncData(data));
     } catch (e, stacktrace) {

@@ -10,8 +10,11 @@ class RouteConstants {
   static const String performance = '/performance';
   static const String settings = '/settings';
   static const String profile = '/profile';
+  static const String editProfile = '/profile/edit';
   static const String notifications = '/notifications';
   static const String promotions = '/promotions';
+  static const String inventory = '/inventory';
+
   
   // مسارات المنتجات
   static const String productDetails = '/products/:id';

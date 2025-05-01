@@ -4,7 +4,8 @@ import 'package:shared_libs/models/product.dart';
 import 'package:shared_libs/services/services.dart';
 import 'package:shared_libs/models/models.dart'; // تأكد أن models.dart يصدر product.dart
 import 'package:firebase_auth/firebase_auth.dart';
-import '../../../../core/services/product_service.dart';
+import 'package:shared_libs/services/product_service_provider.dart';
+
 
 // Provider للحصول على ID البائع الحالي
 final currentSellerIdProvider = Provider<String?>((ref) {
