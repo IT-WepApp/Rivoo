@@ -1,15 +1,12 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:admin_panell/features/auth/domain/usecases/sign_in_usecase.dart';
-import 'package:admin_panell/features/auth/domain/usecases/sign_out_usecase.dart';
-import 'package:admin_panell/features/auth/domain/usecases/get_current_user_usecase.dart';
-import 'package:admin_panell/features/auth/domain/usecases/is_signed_in_usecase.dart';
-import 'package:admin_panell/features/auth/domain/entities/user.dart';
-import 'package:admin_panell/core/storage/secure_storage_service.dart';
-import 'package:admin_panell/core/services/crashlytics_manager.dart';
+import 'package:shared_libs/entities/user_entity.dart';
+import 'package:shared_libs/services/auth_service.dart'; // Import unified AuthService
+import 'package:shared_libs/services/secure_storage_service.dart'; // Import unified SecureStorageService
+// Assuming AppLogger or similar is used within AuthService for logging/crash reporting
 
 /// حالة المصادقة في التطبيق
 class AuthState {
-  final User? user;
+  final UserEntity? user;
   final bool isAuthenticated;
   final bool isLoading;
   final String? error;
@@ -23,129 +20,119 @@ class AuthState {
 
   /// إنشاء نسخة جديدة من الحالة مع تحديث بعض القيم
   AuthState copyWith({
-    User? user,
+    UserEntity? user,
     bool? isAuthenticated,
     bool? isLoading,
     String? error,
+    bool clearError = false, // Option to clear error
   }) {
     return AuthState(
       user: user ?? this.user,
       isAuthenticated: isAuthenticated ?? this.isAuthenticated,
       isLoading: isLoading ?? this.isLoading,
-      error: error,
+      error: clearError ? null : error ?? this.error,
     );
   }
 }
 
-/// مدير حالة المصادقة في التطبيق
+/// مدير حالة المصادقة في التطبيق باستخدام AuthService الموحد
 class AuthNotifier extends Notifier<AuthState> {
-  late final SignInUseCase _signInUseCase;
-  late final SignOutUseCase _signOutUseCase;
-  late final GetCurrentUserUseCase _getCurrentUserUseCase;
-  late final IsSignedInUseCase _isSignedInUseCase;
-  late final SecureStorageService _secureStorage; 
-  late final CrashlyticsManager _crashlytics;
+  late final AuthService _authService;
+  // SecureStorageService might be used internally by AuthService or directly if needed
+  // late final SecureStorageService _secureStorage;
 
   @override
   AuthState build() {
-    _signInUseCase = ref.read(signInUseCaseProvider);
-    _signOutUseCase = ref.read(signOutUseCaseProvider);
-    _getCurrentUserUseCase = ref.read(getCurrentUserUseCaseProvider);
-    _isSignedInUseCase = ref.read(isSignedInUseCaseProvider);
-    _secureStorage = ref.read(secureStorageServiceProvider);
-    _crashlytics = ref.read(crashlyticsManagerProvider);
-    
-    return const AuthState();
+    _authService = ref.read(authServiceProvider); // Use the provider for unified AuthService
+    // _secureStorage = ref.read(secureStorageServiceProvider); // If needed directly
+    _initialize();
+    return const AuthState(isLoading: true); // Initial state is loading
+  }
+
+  Future<void> _initialize() async {
+    await checkAuthStatus();
   }
 
   /// التحقق من حالة المصادقة الحالية
   Future<void> checkAuthStatus() async {
-    state = state.copyWith(isLoading: true);
+    state = state.copyWith(isLoading: true, clearError: true);
     try {
-      final isSignedIn = await _isSignedInUseCase.execute();
-      if (isSignedIn) {
-        final user = await _getCurrentUserUseCase.execute();
-        if (user != null) {
-          await _crashlytics.setUserIdentifier(userId: user.id);
-          state = state.copyWith(
-            user: user,
-            isAuthenticated: true,
-            isLoading: false,
-          );
-        } else {
-          state = state.copyWith(
-            isAuthenticated: false,
-            isLoading: false,
-          );
-        }
+      final user = await _authService.getCurrentUser();
+      if (user != null) {
+        // Optionally check user role for admin panel access
+        // if (user.role == UserRole.admin) { ... }
+        state = state.copyWith(
+          user: user,
+          isAuthenticated: true,
+          isLoading: false,
+        );
       } else {
         state = state.copyWith(
+          user: null,
           isAuthenticated: false,
           isLoading: false,
         );
       }
-    } catch (e, stackTrace) {
-      await _crashlytics.recordError(e, stackTrace);
+    } catch (e) {
+      // Error logged within AuthService
       state = state.copyWith(
+        user: null,
         isAuthenticated: false,
         isLoading: false,
-        error: e.toString(),
+        error: 'فشل التحقق من حالة المصادقة: $e',
       );
     }
   }
 
   /// تسجيل الدخول باستخدام البريد الإلكتروني وكلمة المرور
-  Future<void> signIn({required String email, required String password}) async {
-    state = state.copyWith(isLoading: true, error: null);
+  Future<bool> signIn({required String email, required String password}) async {
+    state = state.copyWith(isLoading: true, clearError: true);
     try {
-      final user =
-          await _signInUseCase.execute(email: email, password: password);
-      await _crashlytics.setUserIdentifier(userId: user.id);
+      final user = await _authService.signInWithEmailPassword(email: email, password: password);
+      // Optionally check user role
+      // if (user.role != UserRole.admin) { throw Exception('Access denied'); }
       state = state.copyWith(
         user: user,
         isAuthenticated: true,
         isLoading: false,
       );
-    } catch (e, stackTrace) {
-      await _crashlytics.recordError(e, stackTrace);
+      return true;
+    } catch (e) {
+      // Error logged within AuthService
       state = state.copyWith(
         isLoading: false,
-        error: e.toString(),
+        error: 'فشل تسجيل الدخول: $e',
       );
+      return false;
     }
   }
 
   /// تسجيل الخروج من التطبيق
   Future<void> signOut() async {
-    state = state.copyWith(isLoading: true, error: null);
+    state = state.copyWith(isLoading: true, clearError: true);
     try {
-      await _signOutUseCase.execute();
-      await _crashlytics.setUserIdentifier(userId: null);
+      await _authService.signOut();
       state = state.copyWith(
         user: null,
         isAuthenticated: false,
         isLoading: false,
       );
-    } catch (e, stackTrace) {
-      await _crashlytics.recordError(e, stackTrace);
+    } catch (e) {
+      // Error logged within AuthService
       state = state.copyWith(
         isLoading: false,
-        error: e.toString(),
+        error: 'فشل تسجيل الخروج: $e',
       );
     }
   }
 }
 
-// تعريف مزودات لحالات الاستخدام
-final signInUseCaseProvider = Provider<SignInUseCase>((ref) => throw UnimplementedError());
-final signOutUseCaseProvider = Provider<SignOutUseCase>((ref) => throw UnimplementedError());
-final getCurrentUserUseCaseProvider = Provider<GetCurrentUserUseCase>((ref) => throw UnimplementedError());
-final isSignedInUseCaseProvider = Provider<IsSignedInUseCase>((ref) => throw UnimplementedError());
-final secureStorageServiceProvider = Provider<SecureStorageService>((ref) => throw UnimplementedError());
-final crashlyticsManagerProvider = Provider<CrashlyticsManager>((ref) => throw UnimplementedError());
+// Assuming authServiceProvider is defined elsewhere, providing the unified AuthService
+// e.g., final authServiceProvider = Provider<AuthService>((ref) => AuthService(...));
 
 // تعريف مزود AuthNotifier
 final authNotifierProvider = NotifierProvider<AuthNotifier, AuthState>(() => AuthNotifier());
 
 // تعريف مزود authProvider كبديل لـ authNotifierProvider للتوافق مع الكود الحالي
 final authProvider = authNotifierProvider;
+
