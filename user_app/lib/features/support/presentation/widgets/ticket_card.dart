@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:user_app/core/theme/app_theme.dart';
-import 'package:user_app/features/support/domain/entities/ticket.dart';
+import 'package:shared_libs/entities/ticket_entity.dart';
+import 'package:shared_libs/enums/ticket_status.dart';
 
 /// بطاقة التذكرة
 class TicketCard extends StatelessWidget {

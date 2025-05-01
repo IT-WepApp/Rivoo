@@ -1,5 +1,5 @@
-import 'package:user_app/features/auth/domain/entities/user.dart';
-import 'package:user_app/features/auth/domain/entities/user_role.dart';
+import 'package:shared_libs/entities/user_entity.dart';
+import 'package:shared_libs/enums/user_role.dart';
 
 /// مصدر بيانات المصادقة المحلي
 class AuthLocalDatasource {

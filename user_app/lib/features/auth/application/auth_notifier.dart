@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart' as fb_auth;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:user_app/features/auth/application/auth_state.dart' as state_lib;
-import 'package:user_app/features/auth/application/auth_service.dart';
+import 'package:shared_libs/services/auth_service.dart';
 
 /// مزود لحالة المصادقة
 final authStateNotifierProvider =

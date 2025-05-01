@@ -4,7 +4,7 @@ import 'package:user_app/core/architecture/domain/either.dart';
 import 'package:user_app/core/architecture/domain/failure.dart';
 import 'package:user_app/features/auth/data/datasources/auth_local_datasource.dart';
 import 'package:user_app/features/auth/data/datasources/auth_remote_datasource.dart';
-import 'package:user_app/features/auth/domain/entities/user.dart';
+import 'package:shared_libs/entities/user_entity.dart';
 import 'package:user_app/features/auth/domain/repositories/auth_repository.dart';
 
 /// تنفيذ مستودع المصادقة

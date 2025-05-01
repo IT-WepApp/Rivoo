@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:user_app/features/auth/application/auth_service.dart';
+import 'package:shared_libs/services/auth_service.dart';
 import 'package:user_app/features/auth/domain/user_model.dart';
 
 part 'auth_state_provider.freezed.dart';

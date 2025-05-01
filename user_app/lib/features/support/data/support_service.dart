@@ -1,7 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:user_app/features/support/domain/entities/ticket.dart';
+import 'package:shared_libs/entities/ticket_entity.dart';
+import 'package:shared_libs/enums/ticket_status.dart';
+import 'package:shared_libs/enums/ticket_category.dart';
 
 /// خدمة الدعم الفني
 class SupportService {
