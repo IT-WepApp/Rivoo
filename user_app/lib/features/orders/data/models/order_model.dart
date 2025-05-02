@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:user_app/features/orders/domain/entities/order.dart';
+import 'package:shared_libs/models/order.dart';
 
 /// نموذج الطلب
 class OrderModel extends Order {

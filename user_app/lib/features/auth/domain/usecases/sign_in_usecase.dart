@@ -1,8 +1,8 @@
 import 'package:dartz/dartz.dart';
-import 'package:user_app/core/architecture/domain/failure.dart';
-import 'package:user_app/core/architecture/domain/usecase.dart';
+import 'package:shared_libs/core/architecture/domain/failure.dart';
+import 'package:shared_libs/core/architecture/domain/usecase.dart';
 import 'package:user_app/features/auth/domain/auth_repository.dart';
-import 'package:user_app/features/auth/domain/user_model.dart';
+import 'package:shared_libs/models/user_model.dart';
 
 /// معلمات تسجيل الدخول
 class SignInParams {

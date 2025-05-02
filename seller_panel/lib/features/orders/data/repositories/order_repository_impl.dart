@@ -1,8 +1,8 @@
 import 'package:dartz/dartz.dart';
-import 'package:seller_panel/core/error/exceptions.dart';
-import 'package:seller_panel/core/error/failures.dart';
+import 'package:shared_libs/core/error/exceptions.dart';
+import 'package:shared_libs/core/error/failures.dart';
 import 'package:seller_panel/features/orders/data/datasources/order_firebase_datasource.dart';
-import 'package:seller_panel/features/orders/domain/entities/order_entity.dart';
+import 'package:shared_libs/models/order.dart';
 import 'package:seller_panel/features/orders/domain/repositories/order_repository.dart';
 
 /// تنفيذ مستودع الطلبات

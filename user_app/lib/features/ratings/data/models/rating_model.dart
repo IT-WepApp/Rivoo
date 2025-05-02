@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:user_app/features/ratings/domain/entities/rating.dart';
-import 'package:user_app/core/architecture/domain/failure.dart';
+import 'package:shared_libs/core/architecture/domain/failure.dart';
 
 /// نموذج التقييم
 class RatingModel extends Rating {

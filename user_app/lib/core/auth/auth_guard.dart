@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:user_app/core/state/auth_state_provider.dart';
-import 'package:user_app/features/auth/domain/user_model.dart';
+import 'package:shared_libs/models/user_model.dart';
 
 /// حارس المصادقة للتحقق من صلاحيات الوصول للمسارات
 class AuthGuard {

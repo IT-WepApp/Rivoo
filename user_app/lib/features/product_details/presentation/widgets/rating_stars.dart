@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:user_app/features/product_details/domain/entities/rating.dart';
+import 'package:shared_libs/entities/rating_entity.dart';
 
 /// نجوم التقييم
 class RatingStars extends StatelessWidget {

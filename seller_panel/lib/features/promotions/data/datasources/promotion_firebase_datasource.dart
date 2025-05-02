@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:seller_panel/features/promotions/domain/entities/promotion_entity.dart';
+import 'package:shared_libs/models/promotion.dart';
 
 /// مصدر بيانات Firebase للعروض
 abstract class PromotionFirebaseDataSource {

@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:user_app/core/architecture/domain/entity.dart';
+import 'package:shared_libs/core/architecture/domain/entity.dart';
 
 part 'payment_model.freezed.dart';
 part 'payment_model.g.dart';

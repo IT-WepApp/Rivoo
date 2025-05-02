@@ -1,4 +1,4 @@
-import 'package:user_app/core/architecture/domain/entity.dart';
+import 'package:shared_libs/core/architecture/domain/entity.dart';
 
 /// أنواع طرق الدفع
 enum PaymentMethodType {

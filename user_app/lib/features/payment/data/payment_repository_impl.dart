@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:dartz/dartz.dart';
 import 'package:http/http.dart' as http;
 import 'package:flutter_stripe/flutter_stripe.dart';
-import 'package:user_app/core/architecture/domain/failure.dart';
+import 'package:shared_libs/core/architecture/domain/failure.dart';
 import 'package:user_app/features/payment/domain/payment_entity.dart';
 import 'package:user_app/features/payment/domain/payment_repository.dart';
 import 'package:shared_libs/services/secure_storage_service.dart';

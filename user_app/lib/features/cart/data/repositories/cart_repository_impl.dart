@@ -1,5 +1,5 @@
 import 'package:dartz/dartz.dart';
-import 'package:user_app/core/architecture/domain/failure.dart';
+import 'package:shared_libs/core/architecture/domain/failure.dart';
 import 'package:user_app/features/cart/data/models/cart_item_model.dart';
 import 'package:user_app/features/cart/domain/entities/cart_item.dart';
 import 'package:user_app/features/cart/domain/repositories/cart_repository.dart';

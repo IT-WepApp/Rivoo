@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:user_app/features/orders/domain/entities/order.dart';
+import 'package:shared_libs/models/order.dart';
 import 'package:user_app/features/orders/domain/repositories/order_repository.dart';
 import 'package:dartz/dartz.dart';
-import 'package:user_app/core/architecture/domain/failure.dart';
+import 'package:shared_libs/core/architecture/domain/failure.dart';
 
 /// تنفيذ مستودع الطلبات
 class OrderRepositoryImpl implements OrderRepository {

@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:seller_panel/features/orders/domain/entities/order_entity.dart';
+import 'package:shared_libs/models/order.dart';
 
 /// مصدر بيانات Firebase للطلبات
 abstract class OrderFirebaseDataSource {

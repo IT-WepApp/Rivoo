@@ -1,8 +1,8 @@
 import 'package:dartz/dartz.dart';
-import 'package:seller_panel/core/error/exceptions.dart';
-import 'package:seller_panel/core/error/failures.dart';
+import 'package:shared_libs/core/error/exceptions.dart';
+import 'package:shared_libs/core/error/failures.dart';
 import 'package:seller_panel/features/promotions/data/datasources/promotion_firebase_datasource.dart';
-import 'package:seller_panel/features/promotions/domain/entities/promotion_entity.dart';
+import 'package:shared_libs/models/promotion.dart';
 import 'package:seller_panel/features/promotions/domain/repositories/promotion_repository.dart';
 
 /// تنفيذ مستودع العروض

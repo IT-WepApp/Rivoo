@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:user_app/core/state/connectivity_provider.dart';
+import 'package:shared_libs/providers/connectivity_provider.dart';
 import 'package:user_app/features/products/domain/product_model.dart';
 
 part 'products_provider.freezed.dart';

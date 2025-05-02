@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:user_app/core/architecture/domain/failure.dart';
-import 'package:user_app/core/architecture/presentation/base_view_model.dart';
+import 'package:shared_libs/core/architecture/domain/failure.dart';
+import 'package:shared_libs/core/architecture/presentation/base_view_model.dart';
 import 'package:user_app/features/payment/domain/payment_entity.dart';
 import 'package:user_app/features/payment/domain/usecases/payment_usecases.dart';
 

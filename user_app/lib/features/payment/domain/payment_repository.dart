@@ -1,5 +1,5 @@
 import 'package:dartz/dartz.dart';
-import 'package:user_app/core/architecture/domain/failure.dart';
+import 'package:shared_libs/core/architecture/domain/failure.dart';
 import 'package:user_app/features/payment/domain/payment_entity.dart';
 
 /// واجهة مستودع الدفع

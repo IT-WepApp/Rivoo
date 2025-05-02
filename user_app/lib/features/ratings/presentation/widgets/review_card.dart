@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:user_app/features/ratings/application/ratings_notifier.dart';
-import 'package:user_app/features/ratings/presentation/widgets/rating_stars.dart';
+import 'package:shared_libs/widgets/rating_stars.dart';
 
 class ReviewCard extends StatelessWidget {
   final RatingModel rating;

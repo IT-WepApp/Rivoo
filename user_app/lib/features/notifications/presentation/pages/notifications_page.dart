@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_libs/widgets/widgets .dart';
-import 'package:user_app/features/notifications/application/notification_service.dart';
+import 'package:shared_libs/services/notification_service.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class NotificationsPage extends ConsumerStatefulWidget {

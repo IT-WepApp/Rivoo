@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:user_app/l10n/app_localizations.dart';
-import 'package:user_app/features/orders/domain/entities/order.dart';
+import 'package:shared_libs/models/order.dart';
 
 /// صفحة تتبع الطلب
 class OrderTrackingPage extends StatefulWidget {

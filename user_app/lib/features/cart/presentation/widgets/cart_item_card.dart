@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:shared_libs/theme/app_theme.dart'; // Updated import
-import 'package:user_app/features/cart/domain/entities/user_cart_item.dart'; // Updated import
+import 'package:shared_libs/entities/cart_item_entity.dart'; // Updated import
 import 'package:user_app/features/products/domain/user_product.dart'; // Updated import
 
 /// بطاقة عنصر سلة التسوق

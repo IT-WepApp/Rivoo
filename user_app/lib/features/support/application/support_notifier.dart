@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:user_app/features/support/application/support_service.dart';
-import 'package:user_app/features/support/domain/ticket.dart';
+import 'package:shared_libs/services/support_service.dart';
+import 'package:shared_libs/entities/ticket_entity.dart';
 
 /// حالة الدعم الفني
 class SupportState {
