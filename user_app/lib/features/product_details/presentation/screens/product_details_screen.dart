@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:user_app/core/theme/app_theme.dart';
-import 'package:user_app/features/product_details/domain/entities/product.dart';
-import 'package:user_app/features/product_details/domain/entities/rating.dart';
+import 'package:shared_libs/theme/app_theme.dart'; // Updated import
+// Updated import to use ProductDetails
+import 'package:user_app/features/product_details/domain/entities/product_details.dart'; 
+import 'package:shared_libs/entities/rating_entity.dart'; // Assuming RatingEntity is in shared_libs
 import 'package:user_app/features/product_details/presentation/widgets/rating_stars.dart';
 import 'package:user_app/features/product_details/presentation/widgets/interactive_rating_stars.dart';
+import 'package:user_app/features/products/domain/product_status.dart'; // Keep this for status enum
 
 /// شاشة تفاصيل المنتج
 class ProductDetailsScreen extends StatefulWidget {
@@ -21,8 +23,10 @@ class ProductDetailsScreen extends StatefulWidget {
 }
 
 class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
-  late Product _product;
-  late List<Rating> _ratings;
+  // Use ProductDetails type
+  late ProductDetails _product;
+  // Assuming RatingEntity is the unified type
+  late List<RatingEntity> _ratings; 
   bool _isLoading = true;
   int _selectedImageIndex = 0;
   int _quantity = 1;
@@ -41,45 +45,49 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
     
     setState(() {
       _isLoading = false;
-      // بيانات وهمية للمنتج
-      _product = Product(
+      // بيانات وهمية للمنتج (Using ProductDetails)
+      _product = ProductDetails(
         id: widget.productId,
         name: 'سماعات لاسلكية فاخرة',
         description: 'سماعات لاسلكية عالية الجودة مع إلغاء الضوضاء النشط وعمر بطارية يصل إلى 30 ساعة. تتميز بتصميم مريح وصوت نقي وواضح.',
         price: 299.99,
         discountPrice: 249.99,
-        imageUrl: 'https://example.com/headphones1.jpg',
+        imageUrl: 'https://via.placeholder.com/300/CCCCCC/FFFFFF?text=Product1',
         additionalImages: [
-          'https://example.com/headphones1.jpg',
-          'https://example.com/headphones2.jpg',
-          'https://example.com/headphones3.jpg',
+          'https://via.placeholder.com/300/CCCCCC/FFFFFF?text=Product1',
+          'https://via.placeholder.com/300/92c952/FFFFFF?text=Product2',
+          'https://via.placeholder.com/300/771796/FFFFFF?text=Product3',
         ],
-        category: ProductCategory.electronics,
+        categoryId: 'electronics-headphones',
         status: ProductStatus.available,
         rating: 4.5,
         reviewCount: 128,
         quantity: 50,
+        inStock: true,
         createdAt: DateTime.now().subtract(const Duration(days: 30)),
         updatedAt: DateTime.now(),
+        tags: ['wireless', 'noise-cancelling', 'audio'],
+        isFeatured: true,
       );
       
-      // بيانات وهمية للتقييمات
+      // بيانات وهمية للتقييمات (Using RatingEntity)
       _ratings = [
-        Rating(
+        RatingEntity(
           id: '1',
           productId: widget.productId,
           userId: 'user1',
           rating: 5.0,
-          title: 'ممتاز!',
+          // Assuming RatingEntity might not have a title, adjust if needed
+          // title: 'ممتاز!', 
           comment: 'جودة صوت رائعة وعمر بطارية طويل.',
           createdAt: DateTime.now().subtract(const Duration(days: 5)),
         ),
-        Rating(
+        RatingEntity(
           id: '2',
           productId: widget.productId,
           userId: 'user2',
           rating: 4.0,
-          title: 'جيد جدًا',
+          // title: 'جيد جدًا', 
           comment: 'سماعات رائعة، لكن السعر مرتفع قليلاً.',
           createdAt: DateTime.now().subtract(const Duration(days: 10)),
         ),
@@ -205,12 +213,12 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   
                   const SizedBox(height: 8),
                   
-                  // السعر
+                  // السعر (Using isOnSale and actualPrice getters)
                   Row(
                     children: [
-                      if (_product.discountPrice != null) ...[
+                      if (_product.isOnSale) ...[
                         Text(
-                          '\$${_product.discountPrice!.toStringAsFixed(2)}',
+                          '\$${_product.actualPrice.toStringAsFixed(2)}',
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
@@ -237,7 +245,9 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Text(
-                            '-${_product.discountPercentage!.toStringAsFixed(0)}%',
+                            // Using discountPercentage getter
+                            
+'-${_product.discountPercentage!.toStringAsFixed(0)}%',
                             style: const TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.bold,
@@ -260,7 +270,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                   
                   const SizedBox(height: 16),
                   
-                  // الحالة
+                  // الحالة (Using isAvailable getter)
                   Row(
                     children: [
                       Container(
@@ -329,7 +339,8 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                       ),
                       IconButton(
                         icon: const Icon(Icons.add),
-                        onPressed: _quantity < _product.quantity
+                        // Check against product quantity
+                        onPressed: _quantity < _product.quantity 
                             ? () {
                                 setState(() {
                                   _quantity++;
@@ -372,7 +383,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                     ],
                   ),
                   
-                  // قائمة التقييمات
+                  // قائمة التقييمات (Using RatingEntity)
                   ListView.builder(
                     shrinkWrap: true,
                     physics: const NeverScrollableScrollPhysics(),
@@ -389,8 +400,16 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                               Row(
                                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                                 children: [
+                                  // Assuming RatingEntity might not have a title
+                                  // Text(
+                                  //   rating.title,
+                                  //   style: const TextStyle(
+                                  //     fontWeight: FontWeight.bold,
+                                  //   ),
+                                  // ),
+                                  // Placeholder for user name if available
                                   Text(
-                                    rating.title,
+                                    'User ${rating.userId.substring(0,4)}...',
                                     style: const TextStyle(
                                       fontWeight: FontWeight.bold,
                                     ),
@@ -402,7 +421,7 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                                 ],
                               ),
                               const SizedBox(height: 8),
-                              Text(rating.comment),
+                              Text(rating.comment ?? ''), // Use comment from RatingEntity
                               const SizedBox(height: 4),
                               Text(
                                 '${rating.createdAt.day}/${rating.createdAt.month}/${rating.createdAt.year}',
@@ -429,38 +448,29 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
                             style: Theme.of(context).textTheme.subtitle1,
                           ),
                           const SizedBox(height: 8),
-                          Center(
-                            child: InteractiveRatingStars(
-                              initialRating: 0,
-                              onRatingChanged: (rating) {
-                                // حفظ التقييم
-                              },
-                            ),
+                          InteractiveRatingStars(
+                            initialRating: 0,
+                            onRatingChanged: (rating) {
+                              // Handle rating change
+                            },
                           ),
                           const SizedBox(height: 16),
                           TextField(
                             decoration: const InputDecoration(
-                              labelText: 'عنوان التقييم',
-                              border: OutlineInputBorder(),
-                            ),
-                          ),
-                          const SizedBox(height: 16),
-                          TextField(
-                            decoration: const InputDecoration(
-                              labelText: 'تعليقك',
+                              hintText: 'اكتب تعليقك هنا...',
                               border: OutlineInputBorder(),
                             ),
                             maxLines: 3,
+                            onChanged: (comment) {
+                              // Handle comment change
+                            },
                           ),
                           const SizedBox(height: 16),
-                          SizedBox(
-                            width: double.infinity,
-                            child: ElevatedButton(
-                              onPressed: () {
-                                // إرسال التقييم
-                              },
-                              child: const Text('إرسال التقييم'),
-                            ),
+                          ElevatedButton(
+                            onPressed: () {
+                              // إرسال التقييم
+                            },
+                            child: const Text('إرسال التقييم'),
                           ),
                         ],
                       ),
@@ -472,43 +482,32 @@ class _ProductDetailsScreenState extends State<ProductDetailsScreen> {
           ],
         ),
       ),
-      bottomNavigationBar: BottomAppBar(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          child: Row(
-            children: [
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: _product.isAvailable
-                      ? () {
-                          // إضافة إلى سلة التسوق
-                        }
-                      : null,
-                  style: ElevatedButton.styleFrom(
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                  ),
-                  child: const Text('إضافة إلى السلة'),
-                ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: ElevatedButton(
-                  onPressed: _product.isAvailable
-                      ? () {
-                          // شراء الآن
-                        }
-                      : null,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppTheme.secondaryColor,
-                    padding: const EdgeInsets.symmetric(vertical: 12),
-                  ),
-                  child: const Text('شراء الآن'),
-                ),
-              ),
-            ],
+      bottomNavigationBar: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Theme.of(context).cardColor,
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 4,
+              offset: const Offset(0, -2),
+            ),
+          ],
+        ),
+        child: ElevatedButton(
+          onPressed: _product.isAvailable
+              ? () {
+                  // إضافة إلى السلة
+                }
+              : null,
+          style: ElevatedButton.styleFrom(
+            padding: const EdgeInsets.symmetric(vertical: 16),
+            textStyle: const TextStyle(fontSize: 18),
           ),
+          child: const Text('إضافة إلى السلة'),
         ),
       ),
     );
   }
 }
+

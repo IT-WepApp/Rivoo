@@ -1,21 +1,20 @@
 import 'package:json_annotation/json_annotation.dart';
-import 'package:equatable/equatable.dart';
-import 'promotion.dart'; // ✅ استيراد enum من ملفه الرسمي
+import '../entities/product_entity.dart'; // Import the base entity
+import 'promotion.dart'; // Import PromotionType enum
+import 'package:cloud_firestore/cloud_firestore.dart'; // For Timestamp converters
 
 part 'product.g.dart';
 
-@JsonSerializable()
-class Product extends Equatable {
-  final String id;
-  final String name;
-  final String description;
-  final double price;
-  final String imageUrl;
-  final String categoryId;
+@JsonSerializable(explicitToJson: true) // Ensure nested objects are serialized
+class Product extends ProductEntity {
+  // Fields inherited from ProductEntity:
+  // id, name, description, price, imageUrl, categoryId, createdAt, updatedAt
+
+  // Fields specific to the Product model (for seller/admin context):
   final String sellerId;
-  final String? storeId; // ✅ مضاف لدعم معرف المتجر
-  final String? notes; // ✅ مضاف لدعم الملاحظات
-  final String status; // ✅ مضاف
+  final String? storeId;
+  final String? notes;
+  final String status;
   final bool hasPromotion;
   final PromotionType? promotionType;
   final double? promotionValue;
@@ -23,12 +22,17 @@ class Product extends Equatable {
   final DateTime? promotionEndDate;
 
   const Product({
-    required this.id,
-    required this.name,
-    required this.description,
-    required this.price,
-    required this.imageUrl,
-    required this.categoryId,
+    // Fields for ProductEntity (passed to super)
+    required String id,
+    required String name,
+    required String description,
+    required double price,
+    required String imageUrl,
+    required String categoryId,
+    required DateTime createdAt, // Added based on ProductEntity
+    required DateTime updatedAt, // Added based on ProductEntity
+
+    // Fields specific to this model
     required this.sellerId,
     this.storeId,
     this.notes,
@@ -38,51 +42,47 @@ class Product extends Equatable {
     this.promotionValue,
     this.promotionStartDate,
     this.promotionEndDate,
-  });
+  }) : super(
+          id: id,
+          name: name,
+          description: description,
+          price: price,
+          imageUrl: imageUrl,
+          categoryId: categoryId,
+          createdAt: createdAt,
+          updatedAt: updatedAt,
+        );
 
+  // --- Validation --- (Kept as it's specific to this model's context)
   void validatePromotion() {
     if (hasPromotion) {
       if (promotionType == null) {
-        throw Exception(
-            'Promotion type cannot be null when promotion is enabled.');
+        throw Exception('Promotion type cannot be null when promotion is enabled.');
       }
-
-      if (promotionValue == null) {
-        throw Exception(
-            'Promotion value must be a positive number when promotion is enabled.');
+      if (promotionValue == null || promotionValue! <= 0) {
+        throw Exception('Promotion value must be a positive number when promotion is enabled.');
       }
-
-      final value = promotionValue!;
-      if (value <= 0) {
-        throw Exception(
-            'Promotion value must be a positive number when promotion is enabled.');
-      }
-
-      if (promotionEndDate != null && promotionStartDate == null) {
-        throw Exception(
-            'Promotion start date can not be null when promotion end date is provided');
-      }
-
-      if (promotionStartDate != null && promotionEndDate == null) {
-        throw Exception(
-            'Promotion end date can not be null when promotion start date is provided');
-      }
-
       if (promotionStartDate != null && promotionEndDate != null) {
         if (!promotionStartDate!.isBefore(promotionEndDate!)) {
           throw Exception('Promotion start date must be before the end date.');
         }
       }
+      // Add checks for start/end date consistency if needed
     }
   }
 
+  // --- copyWith --- (Updated to include all fields)
   Product copyWith({
+    // Entity fields
     String? id,
     String? name,
     String? description,
     double? price,
     String? imageUrl,
     String? categoryId,
+    DateTime? createdAt,
+    DateTime? updatedAt,
+    // Model specific fields
     String? sellerId,
     String? storeId,
     String? notes,
@@ -94,12 +94,16 @@ class Product extends Equatable {
     DateTime? promotionEndDate,
   }) {
     return Product(
+      // Entity fields
       id: id ?? this.id,
       name: name ?? this.name,
       description: description ?? this.description,
       price: price ?? this.price,
       imageUrl: imageUrl ?? this.imageUrl,
       categoryId: categoryId ?? this.categoryId,
+      createdAt: createdAt ?? this.createdAt,
+      updatedAt: updatedAt ?? this.updatedAt,
+      // Model specific fields
       sellerId: sellerId ?? this.sellerId,
       storeId: storeId ?? this.storeId,
       notes: notes ?? this.notes,
@@ -112,19 +116,15 @@ class Product extends Equatable {
     );
   }
 
-  factory Product.fromJson(Map<String, dynamic> json) =>
-      _$ProductFromJson(json);
-
+  // --- Serialization --- (Keep JsonSerializable methods)
+  factory Product.fromJson(Map<String, dynamic> json) => _$ProductFromJson(json);
   Map<String, dynamic> toJson() => _$ProductToJson(this);
 
+  // --- Equatable --- (Updated props)
   @override
   List<Object?> get props => [
-        id,
-        name,
-        description,
-        price,
-        imageUrl,
-        categoryId,
+        // Include super.props and model-specific props
+        ...super.props,
         sellerId,
         storeId,
         notes,
@@ -136,3 +136,13 @@ class Product extends Equatable {
         promotionEndDate,
       ];
 }
+
+// --- Json Converters (if needed, especially for DateTime/Timestamp) ---
+// Ensure these converters are available or defined here/globally
+DateTime _dateTimeFromTimestamp(Timestamp timestamp) => timestamp.toDate();
+Timestamp _dateTimeToTimestamp(DateTime dateTime) => Timestamp.fromDate(dateTime);
+
+DateTime? _nullableDateTimeFromTimestamp(Timestamp? timestamp) => timestamp?.toDate();
+Timestamp? _nullableDateTimeToTimestamp(DateTime? dateTime) =>
+    dateTime == null ? null : Timestamp.fromDate(dateTime);
+

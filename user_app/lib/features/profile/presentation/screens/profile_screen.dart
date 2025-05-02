@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:user_app/core/theme/app_theme.dart';
-import 'package:user_app/features/profile/domain/entities/user.dart';
+import 'package:shared_libs/theme/app_theme.dart'; // Updated import
+import 'package:shared_libs/entities/user_entity.dart'; // Updated import
+import 'package:shared_libs/enums/user_role.dart'; // Import UserRole
 
 /// شاشة الملف الشخصي
 class ProfileScreen extends StatefulWidget {
@@ -12,7 +13,7 @@ class ProfileScreen extends StatefulWidget {
 }
 
 class _ProfileScreenState extends State<ProfileScreen> {
-  late User _user;
+  late UserEntity _user; // Changed type to UserEntity
   bool _isLoading = true;
 
   @override
@@ -26,19 +27,24 @@ class _ProfileScreenState extends State<ProfileScreen> {
     // في الواقع، سيتم استدعاء واجهة برمجة التطبيقات لجلب بيانات المستخدم
     // هذا مجرد تنفيذ وهمي لأغراض العرض
     await Future.delayed(const Duration(seconds: 1));
-    
+
     setState(() {
       _isLoading = false;
-      // بيانات وهمية للمستخدم
-      _user = User(
+      // بيانات وهمية للمستخدم - تم التحديث لاستخدام UserEntity
+      // ملاحظة: تم تعيين role إلى UserRole.user كمثال، حيث لا يوجد حقل type/premium في UserEntity
+      // يجب تعديل هذا المنطق ليعكس كيفية تمثيل حالة "premium" فعليًا في بيانات المستخدم الحقيقية.
+      _user = UserEntity(
         id: '123',
         name: 'أحمد محمد',
         email: 'ahmed@example.com',
         phone: '+201234567890',
         avatarUrl: 'https://example.com/avatar.jpg',
-        type: UserType.premium,
+        role: UserRole.user, // Changed from type: UserType.premium - Requires logic adjustment
         createdAt: DateTime.now().subtract(const Duration(days: 365)),
+        updatedAt: DateTime.now().subtract(const Duration(days: 1)), // Added required field
         lastLoginAt: DateTime.now(),
+        isEmailVerified: true, // Example value
+        isPhoneVerified: false, // Example value
       );
     });
   }
@@ -93,9 +99,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                           )
                         : null,
                   ),
-                  
                   const SizedBox(height: 16),
-                  
                   // اسم المستخدم
                   Text(
                     _user.name,
@@ -105,10 +109,8 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       color: Colors.white,
                     ),
                   ),
-                  
                   const SizedBox(height: 4),
-                  
-                  // نوع المستخدم
+                  // نوع المستخدم - تم التحديث لاستخدام role
                   Container(
                     padding: const EdgeInsets.symmetric(
                       horizontal: 12,
@@ -119,16 +121,14 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       borderRadius: BorderRadius.circular(16),
                     ),
                     child: Text(
-                      _getUserTypeText(_user.type),
+                      _getUserRoleText(_user.role), // Changed from _getUserTypeText(_user.type)
                       style: const TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                   ),
-                  
                   const SizedBox(height: 8),
-                  
                   // البريد الإلكتروني
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -147,7 +147,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ),
                     ],
                   ),
-                  
                   // رقم الهاتف
                   if (_user.phone != null) ...[
                     const SizedBox(height: 4),
@@ -169,9 +168,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       ],
                     ),
                   ],
-                  
                   const SizedBox(height: 16),
-                  
                   // زر تعديل الملف الشخصي
                   ElevatedButton(
                     onPressed: () {
@@ -186,7 +183,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 ],
               ),
             ),
-            
             // قائمة الخيارات
             Padding(
               padding: const EdgeInsets.all(16),
@@ -201,7 +197,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       Navigator.pushNamed(context, '/orders');
                     },
                   ),
-                  
                   _buildOptionCard(
                     icon: Icons.favorite,
                     title: 'المفضلة',
@@ -211,7 +206,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       Navigator.pushNamed(context, '/favorites');
                     },
                   ),
-                  
                   _buildOptionCard(
                     icon: Icons.location_on,
                     title: 'العناوين',
@@ -221,7 +215,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       Navigator.pushNamed(context, '/addresses');
                     },
                   ),
-                  
                   _buildOptionCard(
                     icon: Icons.payment,
                     title: 'طرق الدفع',
@@ -231,7 +224,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       Navigator.pushNamed(context, '/payment-methods');
                     },
                   ),
-                  
                   _buildOptionCard(
                     icon: Icons.headset_mic,
                     title: 'الدعم الفني',
@@ -241,7 +233,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       Navigator.pushNamed(context, '/support');
                     },
                   ),
-                  
                   _buildOptionCard(
                     icon: Icons.info,
                     title: 'عن التطبيق',
@@ -251,9 +242,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                       _showAboutDialog(context);
                     },
                   ),
-                  
                   const SizedBox(height: 16),
-                  
                   // زر تسجيل الخروج
                   SizedBox(
                     width: double.infinity,
@@ -304,15 +293,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 
-  /// الحصول على نص نوع المستخدم
-  String _getUserTypeText(UserType type) {
-    switch (type) {
-      case UserType.regular:
+  /// الحصول على نص دور المستخدم - تم التحديث
+  String _getUserRoleText(UserRole role) {
+    switch (role) {
+      case UserRole.user:
+        // ملاحظة: كيف يتم تمثيل المستخدم المميز؟ قد يتطلب حقلًا إضافيًا أو منطقًا مختلفًا.
         return 'مستخدم عادي';
-      case UserType.premium:
-        return 'مستخدم مميز';
-      case UserType.admin:
+      case UserRole.admin:
         return 'مسؤول';
+      case UserRole.seller:
+        return 'بائع';
+      case UserRole.driver:
+        return 'مندوب توصيل';
       default:
         return 'مستخدم';
     }
@@ -340,7 +332,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         ],
       ),
     );
-    
+
     if (result == true) {
       // تنفيذ تسجيل الخروج
       // في الواقع، سيتم استدعاء خدمة المصادقة لتسجيل الخروج
@@ -358,6 +350,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
         content: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
+            // قد تحتاج إلى التأكد من وجود هذا الأصل أو استخدام مسار من shared_libs إذا تم توحيده
             Image.asset(
               'assets/logo.png',
               height: 80,
@@ -405,3 +398,4 @@ class _ProfileScreenState extends State<ProfileScreen> {
     );
   }
 }
+

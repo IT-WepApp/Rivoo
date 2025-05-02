@@ -1,19 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:user_app/core/theme/app_theme.dart';
-import 'package:user_app/features/cart/domain/entities/cart_item.dart';
-import 'package:user_app/features/products/domain/product.dart';
+import 'package:shared_libs/theme/app_theme.dart'; // Updated import
+import 'package:user_app/features/cart/domain/entities/user_cart_item.dart'; // Updated import
+import 'package:user_app/features/products/domain/user_product.dart'; // Updated import
 
 /// بطاقة عنصر سلة التسوق
 class CartItemCard extends StatelessWidget {
-  /// عنصر سلة التسوق
-  final CartItem cartItem;
-  
+  /// عنصر سلة التسوق (باستخدام النموذج الموحد)
+  final UserCartItem cartItem;
+
   /// دالة تنفذ عند تغيير الكمية
   final Function(int)? onQuantityChanged;
-  
+
   /// دالة تنفذ عند إزالة العنصر
   final VoidCallback? onRemove;
-  
+
   /// دالة تنفذ عند النقر على العنصر
   final VoidCallback? onTap;
 
@@ -28,8 +28,9 @@ class CartItemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final product = cartItem.product;
-    
+    // استخدام UserProduct من UserCartItem
+    final UserProduct product = cartItem.product;
+
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       child: InkWell(
@@ -46,7 +47,7 @@ class CartItemCard extends StatelessWidget {
                   width: 80,
                   height: 80,
                   child: Image.network(
-                    product.imageUrl,
+                    product.imageUrl, // Use imageUrl from ProductEntity
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) {
                       return Container(
@@ -63,9 +64,9 @@ class CartItemCard extends StatelessWidget {
                   ),
                 ),
               ),
-              
+
               const SizedBox(width: 12),
-              
+
               // تفاصيل المنتج
               Expanded(
                 child: Column(
@@ -81,15 +82,17 @@ class CartItemCard extends StatelessWidget {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                     ),
-                    
+
                     const SizedBox(height: 4),
-                    
+
                     // السعر
                     Row(
                       children: [
-                        if (product.discountPrice != null) ...[
+                        // Check isDiscounted from UserProduct
+                        if (product.isDiscounted) ...[
                           Text(
-                            '\$${product.discountPrice!.toStringAsFixed(2)}',
+                            // Use actualPrice from UserProduct
+                            '\$${product.actualPrice.toStringAsFixed(2)}',
                             style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
@@ -117,9 +120,9 @@ class CartItemCard extends StatelessWidget {
                         ],
                       ],
                     ),
-                    
+
                     const SizedBox(height: 8),
-                    
+
                     // التحكم في الكمية
                     Row(
                       children: [
@@ -142,7 +145,7 @@ class CartItemCard extends StatelessWidget {
                             ),
                           ),
                         ),
-                        
+
                         // عرض الكمية
                         Container(
                           margin: const EdgeInsets.symmetric(horizontal: 8),
@@ -161,7 +164,7 @@ class CartItemCard extends StatelessWidget {
                             ),
                           ),
                         ),
-                        
+
                         // زر زيادة الكمية
                         Container(
                           decoration: BoxDecoration(
@@ -181,10 +184,10 @@ class CartItemCard extends StatelessWidget {
                             ),
                           ),
                         ),
-                        
+
                         const Spacer(),
-                        
-                        // السعر الإجمالي
+
+                        // السعر الإجمالي (يأتي الآن من UserCartItem المحسوب)
                         Text(
                           '\$${cartItem.totalPrice.toStringAsFixed(2)}',
                           style: const TextStyle(
@@ -197,7 +200,7 @@ class CartItemCard extends StatelessWidget {
                   ],
                 ),
               ),
-              
+
               // زر الإزالة
               if (onRemove != null) ...[
                 const SizedBox(width: 8),
@@ -214,3 +217,4 @@ class CartItemCard extends StatelessWidget {
     );
   }
 }
+

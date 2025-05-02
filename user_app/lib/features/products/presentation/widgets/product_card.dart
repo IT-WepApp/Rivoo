@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:user_app/core/theme/app_theme.dart';
 import 'package:user_app/features/product_details/presentation/widgets/rating_stars.dart';
-import 'package:user_app/features/product_details/domain/entities/product.dart';
+// Updated import to use ProductDetails
+import 'package:user_app/features/product_details/domain/entities/product_details.dart'; 
 import 'package:user_app/features/products/domain/product_status.dart';
 
 /// بطاقة عرض المنتج
 class ProductCard extends StatelessWidget {
-  /// بيانات المنتج
-  final Product product;
+  /// بيانات المنتج (Using ProductDetails now)
+  final ProductDetails product;
   
   /// دالة تنفذ عند النقر على البطاقة
   final VoidCallback? onTap;
@@ -61,7 +62,7 @@ class ProductCard extends StatelessWidget {
                   child: AspectRatio(
                     aspectRatio: 1,
                     child: Image.network(
-                      product.imageUrl,
+                      product.imageUrl, // From ProductEntity
                       fit: BoxFit.cover,
                       errorBuilder: (context, error, stackTrace) {
                         return Container(
@@ -79,8 +80,8 @@ class ProductCard extends StatelessWidget {
                   ),
                 ),
                 
-                // شارة الخصم
-                if (showDiscountBadge && product.discountPrice != null) ...[
+                // شارة الخصم (Using isOnSale getter from ProductDetails)
+                if (showDiscountBadge && product.isOnSale) ...[
                   Positioned(
                     top: 8,
                     left: 8,
@@ -94,7 +95,8 @@ class ProductCard extends StatelessWidget {
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: Text(
-                        '-${_calculateDiscountPercentage(product.price, product.discountPrice!).toStringAsFixed(0)}%',
+                        // Using discountPercentage getter from ProductDetails
+                        '-${product.discountPercentage!.toStringAsFixed(0)}%',
                         style: const TextStyle(
                           color: Colors.white,
                           fontWeight: FontWeight.bold,
@@ -192,7 +194,7 @@ class ProductCard extends StatelessWidget {
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        '(${product.reviewCount})',
+                        '(${product.reviewCount})', // Use reviewCount from ProductDetails
                         style: const TextStyle(
                           fontSize: 12,
                           color: Colors.grey,
@@ -203,12 +205,12 @@ class ProductCard extends StatelessWidget {
                   
                   const SizedBox(height: 8),
                   
-                  // السعر
+                  // السعر (Using isOnSale and actualPrice getters from ProductDetails)
                   Row(
                     children: [
-                      if (product.discountPrice != null) ...[
+                      if (product.isOnSale) ...[
                         Text(
-                          '\$${product.discountPrice!.toStringAsFixed(2)}',
+                          '\$${product.actualPrice.toStringAsFixed(2)}',
                           style: const TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -240,7 +242,7 @@ class ProductCard extends StatelessWidget {
               ),
             ),
             
-            // زر الإضافة إلى السلة
+            // زر الإضافة إلى السلة (Using isAvailable getter from ProductDetails)
             if (showAddToCartButton) ...[
               Padding(
                 padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
@@ -262,10 +264,5 @@ class ProductCard extends StatelessWidget {
       ),
     );
   }
-  
-  /// حساب نسبة الخصم
-  double _calculateDiscountPercentage(double originalPrice, double discountPrice) {
-    if (originalPrice <= 0) return 0;
-    return ((originalPrice - discountPrice) / originalPrice) * 100;
-  }
 }
+
