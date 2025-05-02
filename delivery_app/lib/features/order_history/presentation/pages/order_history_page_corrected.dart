@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_libs/models/models.dart';
 import 'package:intl/intl.dart';
-import '../../application/order_history_notifier.dart';
+import '../../providers/order_history_notifier.dart';
 
 // ✅ تعريف مؤقت لـ currentDeliveryPersonIdProvider (انقل هذا لاحقًا لمكان مناسب)
 final currentDeliveryPersonIdProvider = Provider<String?>((ref) {

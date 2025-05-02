@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:user_app/features/products/application/product_notifier.dart';
+import 'package:user_app/features/products/providers/product_notifier.dart';
 import 'package:shared_libs/widgets/widgets .dart';
 import 'package:shared_libs/models/models.dart';
 import 'package:go_router/go_router.dart';
-import 'package:user_app/features/cart/application/cart_notifier.dart';
+import 'package:user_app/features/cart/providers/cart_notifier.dart';
 
 class HomePage extends ConsumerStatefulWidget {
   const HomePage({super.key});

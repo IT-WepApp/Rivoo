@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_libs/models/models.dart';
-import '../../application/orders_notifier.dart';
+import '../../providers/orders_notifier.dart';
 
 class OrderListPage extends ConsumerStatefulWidget {
   const OrderListPage({super.key});

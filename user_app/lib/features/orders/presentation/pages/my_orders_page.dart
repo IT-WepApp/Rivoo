@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_libs/widgets/widgets .dart';
 import 'package:intl/intl.dart';
 import 'package:go_router/go_router.dart';
-import 'package:user_app/features/orders/application/orders_notifier.dart';
-import 'package:user_app/features/auth/application/auth_notifier.dart';
+import 'package:user_app/features/orders/providers/orders_notifier.dart';
+import 'package:user_app/features/auth/providers/auth_notifier.dart';
 
 class MyOrdersPage extends ConsumerWidget {
   const MyOrdersPage({super.key});

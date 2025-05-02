@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_libs/models/promotion.dart';
 import 'package:shared_libs/widgets/widgets.dart';
-import '../../application/promotion_notifier.dart';
+import '../../providers/promotion_notifier.dart';
 
 class PromotionManagementPage extends ConsumerStatefulWidget {
   final String productId;

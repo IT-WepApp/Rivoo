@@ -9,7 +9,7 @@ import 'package:shared_libs/services/services.dart'; // Import orderServiceProvi
 import 'package:shared_libs/widgets/connection_status_indicator.dart';
 import 'package:shared_libs/widgets/delivery_stopwatch.dart';
 import 'package:shared_libs/widgets/widgets.dart';
-import '../../../location/application/location_notifier.dart';
+import '../../../location/providers/location_notifier.dart';
 import 'package:shared_libs/services/order_service_provider.dart';
 
 /// Fetch a single [OrderModel] by its ID.

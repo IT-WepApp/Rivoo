@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 // Import your AuthNotifier provider
-import 'package:delivery_app/features/auth/application/auth_notifier.dart';
+import 'package:delivery_app/features/auth/providers/auth_notifier.dart';
 
 class DeliveryLoginPage extends ConsumerWidget {
   const DeliveryLoginPage({super.key});

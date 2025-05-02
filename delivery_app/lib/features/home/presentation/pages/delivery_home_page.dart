@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:shared_libs/models/models.dart';
 import 'package:shared_libs/services/services.dart';
-import 'package:delivery_app/features/auth/application/auth_notifier.dart';
+import 'package:delivery_app/features/auth/providers/auth_notifier.dart';
 import 'package:shared_libs/services/order_service_provider.dart';
 
 

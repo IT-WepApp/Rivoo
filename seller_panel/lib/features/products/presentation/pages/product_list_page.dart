@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:shared_libs/models/models.dart'; // تأكد أن Product موجود هنا
 import 'package:shared_libs/models/product.dart';
-import '../../application/products_notifier.dart';
+import '../../providers/products_notifier.dart';
 
 class ProductListPage extends ConsumerStatefulWidget {
   const ProductListPage({super.key});

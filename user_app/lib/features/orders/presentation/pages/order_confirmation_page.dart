@@ -4,8 +4,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_libs/services/services.dart';
 import 'package:shared_libs/widgets/widgets .dart';
 import 'package:go_router/go_router.dart';
-import '../../../cart/application/cart_notifier.dart';
-import 'package:user_app/features/auth/application/auth_notifier.dart';
+import '../../../cart/providers/cart_notifier.dart';
+import 'package:user_app/features/auth/providers/auth_notifier.dart';
 
 class OrderConfirmationPage extends ConsumerStatefulWidget {
   const OrderConfirmationPage({super.key});

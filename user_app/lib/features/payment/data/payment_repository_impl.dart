@@ -230,7 +230,7 @@ class PaymentRepositoryImpl implements PaymentRepository {
         Uri.parse('$_apiUrl/payment_intents'),
         headers: {
           'Authorization': 'Bearer $_apiKey',
-          'Content-Type': 'application/x-www-form-urlencoded',
+          'Content-Type': 'providers/x-www-form-urlencoded',
         },
         body: {
           'amount': amount.toString(),
@@ -282,7 +282,7 @@ class PaymentRepositoryImpl implements PaymentRepository {
         Uri.parse('$_apiUrl/payment_intents/$paymentIntentId/confirm'),
         headers: {
           'Authorization': 'Bearer $_apiKey',
-          'Content-Type': 'application/x-www-form-urlencoded',
+          'Content-Type': 'providers/x-www-form-urlencoded',
         },
       );
 

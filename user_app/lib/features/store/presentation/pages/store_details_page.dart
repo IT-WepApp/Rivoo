@@ -3,9 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_libs/models/models.dart';
 import 'package:shared_libs/services/services.dart';
 import 'package:shared_libs/widgets/widgets .dart';
-import '../../../cart/application/cart_notifier.dart';
-import '../../../products/application/product_notifier.dart';
-import 'package:user_app/features/auth/application/auth_notifier.dart';
+import '../../../cart/providers/cart_notifier.dart';
+import '../../../products/providers/product_notifier.dart';
+import 'package:user_app/features/auth/providers/auth_notifier.dart';
 
 class StoreDetailsPage extends ConsumerWidget {
   final String storeId;

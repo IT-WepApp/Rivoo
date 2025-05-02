@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 // استورد نموذج المتجر
 import 'package:shared_libs/models/models.dart' show StoreModel;
 // موفر الـ notifier
-import '../../application/store_management_notifier.dart';
+import '../../providers/store_management_notifier.dart';
 
 class StoreListPage extends ConsumerStatefulWidget {
   const StoreListPage({super.key});

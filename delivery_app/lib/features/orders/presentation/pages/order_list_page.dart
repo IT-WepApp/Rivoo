@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:go_router/go_router.dart'; // For navigation
 import 'package:shared_libs/models/models.dart';
-import '../../application/orders_notifier.dart'; // Import your OrdersNotifier
+import '../../providers/orders_notifier.dart'; // Import your OrdersNotifier
 
 // This widget displays the list of currently assigned orders for the delivery person
 class OrderListPage extends ConsumerWidget {

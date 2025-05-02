@@ -45,8 +45,8 @@ class ApiConfig {
   
   /// الحصول على رؤوس HTTP الافتراضية
   Map<String, String> get defaultHeaders => {
-    'Content-Type': 'application/json',
-    'Accept': 'application/json',
+    'Content-Type': 'providers/json',
+    'Accept': 'providers/json',
     if (apiKey != null) 'X-API-Key': apiKey!,
   };
   

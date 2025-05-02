@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_libs/models/models.dart'; // Use main export
 // Use main export
 
-import '../../application/user_management_notifier.dart';
+import '../../providers/user_management_notifier.dart';
 
 class UserListPage extends ConsumerStatefulWidget {
   // Changed to StatefulWidget

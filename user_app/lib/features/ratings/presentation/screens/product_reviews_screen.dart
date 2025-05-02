@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:user_app/features/ratings/application/ratings_notifier.dart';
+import 'package:user_app/features/ratings/providers/ratings_notifier.dart';
 import 'package:user_app/features/ratings/presentation/widgets/rating_summary.dart';
 import 'package:user_app/features/ratings/presentation/widgets/review_card.dart';
 import 'package:user_app/features/ratings/presentation/screens/add_review_screen.dart';

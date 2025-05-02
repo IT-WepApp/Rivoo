@@ -4,7 +4,7 @@ import 'package:shared_libs/models/models.dart';
 import 'package:shared_libs/services/services.dart';
 import 'package:shared_libs/widgets/widgets .dart';
 import 'package:intl/intl.dart';
-import 'package:user_app/features/cart/application/cart_notifier.dart';
+import 'package:user_app/features/cart/providers/cart_notifier.dart';
 import 'package:go_router/go_router.dart';
 
 // مزود يجلب تفاصيل طلب محدد

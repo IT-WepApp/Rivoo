@@ -1,5 +1,5 @@
 // ملف تصدير لميزة التقييمات
-export 'application/ratings_notifier.dart';
+export 'providers/ratings_notifier.dart';
 export 'presentation/widgets/rating_stars.dart';
 export 'presentation/widgets/interactive_rating_stars.dart';
 export 'presentation/widgets/rating_summary.dart';

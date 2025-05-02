@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:user_app/features/cart/application/cart_notifier.dart';
+import 'package:user_app/features/cart/providers/cart_notifier.dart';
 import 'package:shared_libs/models/models.dart'; // Use main export
 import 'package:shared_libs/widgets/widgets .dart'; // Use main export
 import 'package:intl/intl.dart'; // For currency formatting

@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_libs/models/models.dart'; // SalesData, StorePerformance
 import 'package:intl/intl.dart';
 
-import '../../application/statistics_and_reports_notifier.dart';
+import '../../providers/statistics_and_reports_notifier.dart';
 
 class StatisticsAndReportsPage extends ConsumerStatefulWidget {
   const StatisticsAndReportsPage({super.key});
