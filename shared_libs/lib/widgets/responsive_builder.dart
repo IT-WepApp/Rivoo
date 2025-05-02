@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:user_app/core/utils/responsive_utils.dart';
+import '../utils/responsive_utils.dart';
 
 /// بناء متجاوب للواجهات
 ///

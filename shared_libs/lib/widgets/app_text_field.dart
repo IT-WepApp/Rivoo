@@ -1,55 +1,89 @@
 import 'package:flutter/material.dart';
-
+import 'package:flutter/services.dartimport '../theme/app_theme.dart';/// حقل نص مخصص للتطبيق مع دعم للتحقق والتنسيق
 class AppTextField extends StatelessWidget {
-  final TextEditingController controller;
-  final String label;
-  final bool obscureText;
-  final String? Function(String?)? validator;
-  final TextInputType keyboardType;
+  final String labelText;
   final String? hintText;
-  final IconData? prefixIcon;
-  final InputDecoration? decoration;
-  final int maxLines;
-  final bool enabled; // ✅ تم تعريفه
+  final String? errorText;
+  final bool obscureText;
+  final TextEditingController? controller;
+  final TextInputType keyboardType;
+  final Function(String)? onChanged;
+  final Function(String)? onSubmitted;
+  final List<TextInputFormatter>? inputFormatters;
+  final int? maxLines;
+  final int? maxLength;
+  final bool enabled;
+  final Widget? prefix;
+  final Widget? suffix;
+  final FocusNode? focusNode;
+  final bool autofocus;
+  final TextCapitalization textCapitalization;
+  final EdgeInsetsGeometry? contentPadding;
 
   const AppTextField({
-    super.key,
-    required this.controller,
-    required this.label,
-    this.obscureText = false,
-    this.validator,
-    this.keyboardType = TextInputType.text,
+    Key? key,
+    required this.labelText,
     this.hintText,
-    this.prefixIcon,
-    this.decoration,
+    this.errorText,
+    this.obscureText = false,
+    this.controller,
+    this.keyboardType = TextInputType.text,
+    this.onChanged,
+    this.onSubmitted,
+    this.inputFormatters,
     this.maxLines = 1,
-    this.enabled = true, // ✅ تم إضافته مع قيمة افتراضية
-  });
+    this.maxLength,
+    this.enabled = true,
+    this.prefix,
+    this.suffix,
+    this.focusNode,
+    this.autofocus = false,
+    this.textCapitalization = TextCapitalization.none,
+    this.contentPadding,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return TextFormField(
+    return TextField(
       controller: controller,
       obscureText: obscureText,
       keyboardType: keyboardType,
-      validator: validator,
+      onChanged: onChanged,
+      onSubmitted: onSubmitted,
       maxLines: maxLines,
-      enabled: enabled, // ✅ استخدمناه هنا
-      decoration: decoration ??
-          InputDecoration(
-            labelText: label,
-            hintText: hintText,
-            prefixIcon: prefixIcon != null
-                ? Icon(prefixIcon, color: Colors.blue.shade400)
-                : null,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderSide: BorderSide(color: Colors.blue.shade700, width: 2),
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ),
+      maxLength: maxLength,
+      enabled: enabled,
+      focusNode: focusNode,
+      autofocus: autofocus,
+      textCapitalization: textCapitalization,
+      inputFormatters: inputFormatters,
+      style: AppTheme.bodyStyle,
+      decoration: InputDecoration(
+        labelText: labelText,
+        hintText: hintText,
+        errorText: errorText,
+        prefixIcon: prefix,
+        suffixIcon: suffix,
+        contentPadding: contentPadding ?? const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(color: AppTheme.dividerColor),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: BorderSide(color: AppTheme.dividerColor),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: AppTheme.primaryColor, width: 2),
+        ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(8),
+          borderSide: const BorderSide(color: AppTheme.errorColor, width: 2),
+        ),
+        filled: true,
+        fillColor: enabled ? Colors.white : Colors.grey[100],
+      ),
     );
   }
 }

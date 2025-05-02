@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/theme/app_theme.dart';
-import '../../../../core/widgets/app_button.dart';
+import 'package:shared_libs/widgets/app_button.dart';
 import '../../data/payment_model.dart';
 import '../widgets/payment_summary.dart';
 

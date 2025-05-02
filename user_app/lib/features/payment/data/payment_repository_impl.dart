@@ -6,7 +6,7 @@ import 'package:user_app/core/architecture/domain/failure.dart';
 import 'package:user_app/features/payment/domain/payment_entity.dart';
 import 'package:user_app/features/payment/domain/payment_repository.dart';
 import 'package:user_app/core/services/secure_storage_service.dart';
-import 'package:user_app/core/constants/app_constants.dart';
+import 'package:shared_libs/constants/app_constants.dart';
 
 /// تنفيذ مستودع الدفع
 /// يقوم بتنفيذ واجهة PaymentRepository باستخدام Stripe وSecureStorageService

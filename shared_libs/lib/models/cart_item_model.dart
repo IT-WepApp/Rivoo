@@ -4,13 +4,13 @@ part 'cart_item_model.g.dart';
 
 @JsonSerializable()
 class CartItemModel {
-  // Renamed from CartItem to CartItemModel for consistency
-  final String id; // Added id (often same as productId for cart items)
+  final String id; // Often same as productId for cart items
   final String productId;
   final String name;
   final int quantity;
   final double price;
-  final String? imageUrl; // Added optional imageUrl
+  final String? imageUrl; // Optional imageUrl
+  final DateTime addedAt; // Added timestamp
 
   CartItemModel({
     required this.id,
@@ -18,6 +18,7 @@ class CartItemModel {
     required this.name,
     required this.quantity,
     required this.price,
+    required this.addedAt, // Make required
     this.imageUrl,
   });
 
@@ -34,6 +35,7 @@ class CartItemModel {
     int? quantity,
     double? price,
     String? imageUrl,
+    DateTime? addedAt,
   }) {
     return CartItemModel(
       id: id ?? this.id,
@@ -42,6 +44,8 @@ class CartItemModel {
       quantity: quantity ?? this.quantity,
       price: price ?? this.price,
       imageUrl: imageUrl ?? this.imageUrl,
+      addedAt: addedAt ?? this.addedAt,
     );
   }
 }
+

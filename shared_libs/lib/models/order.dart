@@ -5,7 +5,7 @@ part 'order.g.dart';
 
 /// نموذج الطلب
 /// يستخدم لتمثيل بيانات الطلبات في التطبيق
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true) // Added explicitToJson
 class OrderModel extends Equatable {
   /// معرف الطلب الفريد
   final String id;
@@ -165,11 +165,17 @@ class OrderModel extends Equatable {
 /// نموذج عنصر الطلب
 @JsonSerializable()
 class OrderItem extends Equatable {
+  /// معرف العنصر الفريد (يمكن أن يكون نفس معرف المنتج في سياق الطلب)
+  final String id; // Added from user_app
+  
   /// معرف المنتج
   final String productId;
   
   /// اسم المنتج
   final String productName;
+
+  /// صورة المنتج (اختياري)
+  final String? productImage; // Added from user_app
   
   /// سعر الوحدة
   final double price;
@@ -185,8 +191,10 @@ class OrderItem extends Equatable {
 
   /// منشئ النموذج
   const OrderItem({
+    required this.id, // Make required
     required this.productId,
     required this.productName,
+    this.productImage, // Make optional
     required this.price,
     required this.quantity,
     required this.total,
@@ -201,8 +209,10 @@ class OrderItem extends Equatable {
 
   @override
   List<Object?> get props => [
+        id, // Added to props
         productId,
         productName,
+        productImage, // Added to props
         price,
         quantity,
         total,
@@ -287,3 +297,4 @@ class Address extends Equatable {
         longitude,
       ];
 }
+

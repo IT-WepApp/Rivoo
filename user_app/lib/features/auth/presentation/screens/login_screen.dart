@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:user_app/core/theme/app_theme.dart';
-import 'package:user_app/core/widgets/app_button.dart';
+import 'package:shared_libs/widgets/app_button.dart';
 import 'package:user_app/core/widgets/app_text_field.dart';
 import 'package:user_app/l10n/app_localizations.dart';
 
