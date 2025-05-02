@@ -8,7 +8,7 @@ import 'firebase_options.dart';
 import 'router.dart';
 
 // Remove or refactor NotificationService initialization if handled differently
-// import 'package:seller_panel/services/notification_service.dart';
+// import 'package:shared_libs/services/notification_service.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

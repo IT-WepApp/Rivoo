@@ -1,7 +1,7 @@
 import 'dart:developer' as developer;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:seller_panel/core/widgets/app_widgets.dart' show AppWidgets;
+import 'package:shared_libs/widgets/app_widgets.dart' show AppWidgets;
 import 'package:shared_libs/services/order_service_provider.dart' show orderServiceProvider;
 import 'package:shared_libs/widgets/widgets.dart';
 import 'package:go_router/go_router.dart';

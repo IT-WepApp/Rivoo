@@ -5,7 +5,7 @@ import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:user_app/core/architecture/domain/failure.dart';
 import 'package:user_app/features/payment/domain/payment_entity.dart';
 import 'package:user_app/features/payment/domain/payment_repository.dart';
-import 'package:user_app/core/services/secure_storage_service.dart';
+import 'package:shared_libs/services/secure_storage_service.dart';
 import 'package:shared_libs/constants/app_constants.dart';
 
 /// تنفيذ مستودع الدفع

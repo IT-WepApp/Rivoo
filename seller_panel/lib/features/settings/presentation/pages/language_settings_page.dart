@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:seller_panel/core/services/language_service.dart';
+import 'package:shared_libs/services/language_service.dart';
 import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 
 /// واجهة المستخدم لتغيير اللغة

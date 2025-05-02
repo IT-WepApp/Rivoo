@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:shared_libs/utils/validators.dart';
 import 'package:shared_libs/services/auth_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:user_app/core/constants/route_constants.dart';
+import 'package:shared_libs/constants/route_constants.dart';
 import 'package:go_router/go_router.dart';
 
 class RegisterPage extends ConsumerStatefulWidget {
