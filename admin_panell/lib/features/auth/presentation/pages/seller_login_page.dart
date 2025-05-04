@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:shared_libs/services/services.dart'; 
-import 'package:shared_libs/widgets/widgets.dart'; // ✅ لحل UserService
+import 'package:shared_libs/shared_libs.dart';
 import 'package:go_router/go_router.dart'; // ✅ لحل context.go
 
 class SellerLoginPage extends StatefulWidget {

@@ -1,6 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
-import 'package:user_app/core/architecture/domain/failure.dart';
+import 'failure.dart';
 
 /// واجهة حالة الاستخدام الأساسية
 /// تتبع مبدأ المسؤولية الواحدة من مبادئ SOLID

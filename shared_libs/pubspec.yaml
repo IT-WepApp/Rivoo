@@ -1,3 +1,5 @@
+# shared_libs/pubspec.yaml
+
 name: shared_libs
 description: تطبيق Rivoo الموحد مع المكتبات المشتركة
 version: 1.0.0
@@ -5,13 +7,13 @@ publish_to: 'none'
 
 environment:
   sdk: '>=2.17.0 <4.0.0'
-  flutter: ">=3.0.0"
+  flutter: '>=3.0.0'
 
 dependencies:
   flutter:
     sdk: flutter
 
-  # خدمات Firebase
+  # Firebase services
   firebase_core: ^2.15.0
   firebase_auth: ^4.7.2
   firebase_messaging: ^14.6.5
@@ -21,34 +23,33 @@ dependencies:
   cloud_functions: ^4.4.0
   firebase_crashlytics: ^3.4.4
 
-
-  # خدمات التخزين المحلي
+  # Local storage
   flutter_secure_storage: ^9.0.0
   shared_preferences: ^2.2.0
 
-  # خدمات الشبكة
+  # Networking
   dio: ^5.3.0
   http: ^1.1.0
   connectivity_plus: ^5.0.2
 
-  # خدمات الموقع
+  # Location
   geolocator: ^13.0.2
   geocoding: ^2.1.0
   google_maps_flutter: ^2.5.3
 
-  # خدمات الإشعارات
+  # Notifications
   flutter_local_notifications: ^17.2.1
 
-  # إدارة الحالة
+  # State management
   flutter_riverpod: ^2.3.6
   provider: ^6.0.5
   equatable: ^2.0.5
   dartz: ^0.10.1
 
-  # التوجيه
+  # Routing
   go_router: ^13.0.1
 
-  # واجهة المستخدم
+  # UI
   cached_network_image: ^3.2.3
   flutter_svg: ^2.0.7
   intl: ^0.19.0
@@ -56,17 +57,27 @@ dependencies:
   flutter_spinkit: ^5.2.0
   shimmer: ^3.0.0
 
-  # أدوات المطور
+  # Dev tools
   logger: ^1.4.0
   uuid: ^4.5.1
   json_annotation: ^4.8.1
+
+  # Annotations for Freezed
+  freezed_annotation: ^2.2.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^2.0.2
+
+  # Code generators
   build_runner: ^2.4.6
   json_serializable: ^6.7.1
+
+  # Freezed itself
+  freezed: ^2.3.2
+
+  # For mocking/tests
   mockito: ^5.4.2
   flutter_launcher_icons: ^0.13.1
   melos: ^6.3.2

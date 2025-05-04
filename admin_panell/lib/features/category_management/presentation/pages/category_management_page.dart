@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_libs/widgets/category_list.dart';
-import '../../../../features/dashboard/presentation/widgets/admin_drawer.dart';
+import 'package:shared_libs/shared_libs.dart';
 
 /// صفحة إدارة الفئات
 class CategoryManagementPage extends ConsumerWidget {

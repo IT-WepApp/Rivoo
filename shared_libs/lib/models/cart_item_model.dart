@@ -1,27 +1,30 @@
 import 'package:json_annotation/json_annotation.dart';
-import '../entities/cart_item_entity.dart'; // Import the base entity
-import 'package:cloud_firestore/cloud_firestore.dart'; // For Timestamp converters
+import '../entities/cart_item_entity.dart'; // base entity
+import 'package:cloud_firestore/cloud_firestore.dart'; // for Timestamp
 
 part 'cart_item_model.g.dart';
 
+/// بيانات عنصر واحد داخل سلة التسوق، تمتد من الـ Entity الأساسي
 @JsonSerializable(explicitToJson: true)
 class CartItemModel extends CartItemEntity {
-  // Fields inherited from CartItemEntity:
-  // id, productId, quantity, addedAt
+  // الوراثة من CartItemEntity توفر:
+  //   id, productId, quantity, addedAt
 
-  // Fields specific to this model (often for display/API interaction):
+  /// اسم المنتج (للعرض)
   final String name;
+  /// سعر الوحدة
   final double price;
+  /// رابط الصورة (إن وجد)
   final String? imageUrl;
 
   CartItemModel({
-    // Fields for CartItemEntity (passed to super)
+    // حقول الـ Entity:
     required String id,
     required String productId,
     required int quantity,
     required DateTime addedAt,
 
-    // Fields specific to this model
+    // الحقول الخاصة بالنموذج
     required this.name,
     required this.price,
     this.imageUrl,
@@ -32,40 +35,38 @@ class CartItemModel extends CartItemEntity {
           addedAt: addedAt,
         );
 
-  // --- JsonSerializable methods ---
+  /// تحويل من JSON
   factory CartItemModel.fromJson(Map<String, dynamic> json) =>
       _$CartItemModelFromJson(json);
+
+  /// تحويل إلى JSON
   Map<String, dynamic> toJson() => _$CartItemModelToJson(this);
 
-  // --- copyWith method ---
+  /// إنشاء نسخة جديدة مع بعض التعديلات
   CartItemModel copyWith({
     // Entity fields
     String? id,
     String? productId,
     int? quantity,
     DateTime? addedAt,
-    // Model specific fields
+    // نموذج-specific
     String? name,
     double? price,
     String? imageUrl,
   }) {
     return CartItemModel(
-      // Entity fields
       id: id ?? this.id,
       productId: productId ?? this.productId,
       quantity: quantity ?? this.quantity,
       addedAt: addedAt ?? this.addedAt,
-      // Model specific fields
       name: name ?? this.name,
       price: price ?? this.price,
       imageUrl: imageUrl ?? this.imageUrl,
     );
   }
 
-  // --- Equatable --- (Updated props)
   @override
   List<Object?> get props => [
-        // Include super.props and model-specific props
         ...super.props,
         name,
         price,
@@ -73,12 +74,10 @@ class CartItemModel extends CartItemEntity {
       ];
 }
 
-// --- Json Converters (if needed, especially for DateTime/Timestamp) ---
-// Ensure these converters are available or defined here/globally
-DateTime _dateTimeFromTimestamp(Timestamp timestamp) => timestamp.toDate();
-Timestamp _dateTimeToTimestamp(DateTime dateTime) => Timestamp.fromDate(dateTime);
+// Json-Timestamp converters
+DateTime _dateTimeFromTimestamp(Timestamp t) => t.toDate();
+Timestamp _dateTimeToTimestamp(DateTime dt) => Timestamp.fromDate(dt);
 
-DateTime? _nullableDateTimeFromTimestamp(Timestamp? timestamp) => timestamp?.toDate();
-Timestamp? _nullableDateTimeToTimestamp(DateTime? dateTime) =>
-    dateTime == null ? null : Timestamp.fromDate(dateTime);
-
+DateTime? _nullableDateTimeFromTimestamp(Timestamp? t) => t?.toDate();
+Timestamp? _nullableDateTimeToTimestamp(DateTime? dt) =>
+    dt == null ? null : Timestamp.fromDate(dt);

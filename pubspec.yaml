@@ -1,3 +1,5 @@
+# rivoo/pubspec.yaml
+
 name: rivoo
 description: تطبيق Rivoo الموحد مع المكتبات المشتركة
 version: 1.0.0
@@ -11,6 +13,10 @@ dependencies:
   flutter:
     sdk: flutter
 
+  # الحزمة المشتركة
+  shared_libs:
+    path: shared_libs
+
   # خدمات Firebase
   firebase_core: ^2.15.0
   firebase_auth: ^4.7.2
@@ -20,7 +26,6 @@ dependencies:
   firebase_storage: ^11.2.5
   cloud_functions: ^4.4.0
   firebase_crashlytics: ^3.4.4
-
 
   # خدمات التخزين المحلي
   flutter_secure_storage: ^9.0.0
@@ -46,7 +51,7 @@ dependencies:
   dartz: ^0.10.1
 
   # التوجيه
-  go_router: ^10.0.0
+  go_router: ^13.0.1
 
   # واجهة المستخدم
   cached_network_image: ^3.2.3
@@ -58,7 +63,7 @@ dependencies:
 
   # أدوات المطور
   logger: ^1.4.0
-  uuid: ^3.0.7
+  uuid: ^4.5.1
   json_annotation: ^4.8.1
 
 dev_dependencies:
@@ -73,6 +78,5 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
-  assets:
-    - assets/images/
-    - assets/icons/
+
+

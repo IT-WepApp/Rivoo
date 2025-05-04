@@ -1,5 +1,5 @@
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:user_app/core/architecture/domain/failure.dart';
+import '../domain/failure.dart';
 
 /// حالة العرض الأساسية التي تمثل حالة واجهة المستخدم
 /// تستخدم في نموذج المشاهدة (ViewModel) لإدارة حالة الشاشة

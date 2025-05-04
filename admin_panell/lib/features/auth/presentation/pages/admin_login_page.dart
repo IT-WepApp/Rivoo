@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../providers/auth_notifier.dart'; // Import your AuthNotifier
+import 'package:shared_libs/shared_libs.dart'; // Import your AuthNotifier
 
 class AdminLoginPage extends ConsumerWidget {
   const AdminLoginPage({super.key});

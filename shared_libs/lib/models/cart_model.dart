@@ -1,6 +1,8 @@
 import 'package:equatable/equatable.dart';
 import 'package:json_annotation/json_annotation.dart';
 
+import 'cart_item_model.dart'; // ← pull in the separate model
+
 part 'cart_model.g.dart';
 
 /// نموذج سلة التسوق
@@ -81,9 +83,10 @@ class CartModel extends Equatable {
       // إذا كان المنتج موجوداً، قم بتحديث الكمية
       final updatedItems = List<CartItemModel>.from(items);
       final existingItem = items[existingItemIndex];
+      final newQuantity = existingItem.quantity + item.quantity;
       updatedItems[existingItemIndex] = existingItem.copyWith(
-        quantity: existingItem.quantity + item.quantity,
-        total: (existingItem.quantity + item.quantity) * existingItem.price,
+        quantity: newQuantity,
+        // no more `total:` parameter here
       );
       
       // إعادة حساب الإجماليات
@@ -97,7 +100,8 @@ class CartModel extends Equatable {
       );
     } else {
       // إذا كان المنتج غير موجود، أضفه إلى القائمة
-      final updatedItems = List<CartItemModel>.from(items)..add(item);
+      final updatedItems = List<CartItemModel>.from(items)
+        ..add(item);
       
       // إعادة حساب الإجماليات
       final newSubtotal = _calculateSubtotal(updatedItems);
@@ -139,7 +143,7 @@ class CartModel extends Equatable {
       final item = items[itemIndex];
       updatedItems[itemIndex] = item.copyWith(
         quantity: quantity,
-        total: quantity * item.price,
+        // no `total:` here either
       );
       
       // إعادة حساب الإجماليات
@@ -190,7 +194,8 @@ class CartModel extends Equatable {
 
   /// حساب إجمالي سعر المنتجات
   double _calculateSubtotal(List<CartItemModel> items) {
-    return items.fold(0, (sum, item) => sum + item.total);
+    // sum up price * quantity
+    return items.fold(0, (sum, item) => sum + item.price * item.quantity);
   }
 
   /// حساب إجمالي المبلغ
@@ -230,79 +235,5 @@ class CartModel extends Equatable {
         total,
         couponCode,
         updatedAt,
-      ];
-}
-
-/// نموذج عنصر السلة
-@JsonSerializable()
-class CartItemModel extends Equatable {
-  /// معرف المنتج
-  final String productId;
-  
-  /// اسم المنتج
-  final String productName;
-  
-  /// صورة المنتج
-  final String? productImage;
-  
-  /// سعر الوحدة
-  final double price;
-  
-  /// الكمية المطلوبة
-  final int quantity;
-  
-  /// إجمالي سعر العنصر (السعر × الكمية)
-  final double total;
-  
-  /// خيارات إضافية للمنتج (الحجم، اللون، الخ)
-  final Map<String, dynamic>? options;
-
-  /// منشئ النموذج
-  const CartItemModel({
-    required this.productId,
-    required this.productName,
-    this.productImage,
-    required this.price,
-    required this.quantity,
-    required this.total,
-    this.options,
-  });
-
-  /// إنشاء نسخة جديدة من النموذج مع تحديث بعض الحقول
-  CartItemModel copyWith({
-    String? productId,
-    String? productName,
-    String? productImage,
-    double? price,
-    int? quantity,
-    double? total,
-    Map<String, dynamic>? options,
-  }) {
-    return CartItemModel(
-      productId: productId ?? this.productId,
-      productName: productName ?? this.productName,
-      productImage: productImage ?? this.productImage,
-      price: price ?? this.price,
-      quantity: quantity ?? this.quantity,
-      total: total ?? this.total,
-      options: options ?? this.options,
-    );
-  }
-
-  /// تحويل النموذج إلى Map
-  Map<String, dynamic> toJson() => _$CartItemModelToJson(this);
-
-  /// إنشاء نموذج من Map
-  factory CartItemModel.fromJson(Map<String, dynamic> json) => _$CartItemModelFromJson(json);
-
-  @override
-  List<Object?> get props => [
-        productId,
-        productName,
-        productImage,
-        price,
-        quantity,
-        total,
-        options,
       ];
 }

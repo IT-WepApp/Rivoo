@@ -17,4 +17,12 @@ export 'delivery_person_model.dart';
 export 'statistics_model.dart';
 export 'promotion.dart';
 export 'admin_model.dart';
+export 'category.dart';
+export 'product.dart';
+export 'delivery_location_model.dart';
+export 'rating_model.dart';
+export 'shared_models.dart';
+export 'cart_item_model.dart';
+export 'order_model.dart';
+
 
