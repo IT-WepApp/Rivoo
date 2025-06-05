@@ -42,7 +42,6 @@ class StoreService {
   Future<void> createStore(StoreModel store) async {
     try {
       // Use StoreModel object
-      // TODO: Ensure StoreModel includes a status field, perhaps defaulting to 'pending'
       await _firestore
           .collection(_collectionPath)
           .doc(store.id)
@@ -79,7 +78,6 @@ class StoreService {
 
   Future<void> approveStore(String storeId) async {
     try {
-      // TODO: Add a 'status' field to StoreModel if it doesn't exist
       await _firestore
           .collection(_collectionPath)
           .doc(storeId)
@@ -93,7 +91,6 @@ class StoreService {
 
   Future<void> rejectStore(String storeId) async {
     try {
-      // TODO: Add a 'status' field to StoreModel if it doesn't exist
       await _firestore
           .collection(_collectionPath)
           .doc(storeId)
