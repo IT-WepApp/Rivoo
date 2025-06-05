@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:shared_libs/constants/app_constants.dart';
-import 'package:shared_libs/services/product_service.dart';
+import 'package:shared_libs/services/product_service_provider.dart';
 import 'package:shared_libs/widgets/app_widgets.dart';
 import 'package:shared_libs/theme/app_colors.dart';
 

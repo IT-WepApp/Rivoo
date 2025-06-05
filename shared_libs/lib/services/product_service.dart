@@ -6,6 +6,7 @@ import 'package:shared_libs/models/product.dart';
 import 'package:shared_libs/models/promotion.dart';
 import 'package:shared_libs/utils/logger.dart';
 import 'package:shared_libs/services/auth_service.dart';
+import 'package:shared_libs/services/product_service_provider.dart';
 
 /// خدمة إدارة المنتجات والمحفزات المشتركة
 class ProductService {
@@ -409,10 +410,7 @@ class PromotionDetails {
   });
 }
 
-/// مزوّد الخدمة (Riverpod)
-final productServiceProvider = Provider<ProductService>((ref) {
-  return ProductService();
-});
+
 
 /// مزوّد بيانات منتجات البائع (Map)
 final sellerProductsProvider =
