@@ -5,7 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:shared_libs/constants/route_constants.dart';
 import 'package:shared_libs/services/auth_service.dart';
 import 'package:shared_libs/services/order_service.dart';
-import 'package:shared_libs/services/product_service.dart';
+import 'package:shared_libs/services/product_service_provider.dart';
 import 'package:shared_libs/services/notification_service.dart';
 import 'package:shared_libs/widgets/app_widgets.dart';
 import 'package:shared_libs/theme/app_colors.dart';

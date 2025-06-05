@@ -1,10 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_libs/models/product.dart';
 import 'package:shared_libs/services/services.dart'; // Added import for ProductService
-
-final productServiceProvider = Provider<ProductService>((ref) {
-  return ProductService();
-});
 // Updated to use AsyncValue
 class ProductManagementNotifier
     extends StateNotifier<AsyncValue<List<Product>>> {
