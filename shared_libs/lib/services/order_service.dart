@@ -1,4 +1,4 @@
-import 'dart';:developer' as developer;
+import 'dart:developer' as developer;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_libs/constants/app_constants.dart';
@@ -494,5 +494,3 @@ class OrderService {
   }
 }
 
-/// موفر حالة الخدمة (Riverpod)
-final orderServiceProvider = Provider<OrderService>((ref) => OrderService());
