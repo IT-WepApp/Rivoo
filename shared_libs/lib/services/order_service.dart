@@ -494,5 +494,3 @@ class OrderService {
   }
 }
 
-/// موفر حالة الخدمة (Riverpod)
-final orderServiceProvider = Provider<OrderService>((ref) => OrderService());
