@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../../../../core/services/notification_service.dart';
-import '../../../../core/widgets/app_widgets.dart';
+import 'package:shared_libs/services/notification_service.dart';
+import 'package:shared_libs/widgets/app_widgets.dart';
 import 'package:shared_libs/theme/app_colors.dart';
 
 /// صفحة إدارة الإشعارات للبائع

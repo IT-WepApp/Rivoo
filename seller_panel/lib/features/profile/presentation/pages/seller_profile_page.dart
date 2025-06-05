@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../core/constants/route_constants.dart';
-import '../../../../core/widgets/app_widgets.dart';
+import 'package:shared_libs/constants/route_constants.dart';
+import 'package:shared_libs/widgets/app_widgets.dart';
 import 'package:shared_libs/theme/app_colors.dart';
 
 /// صفحة الملف الشخصي للبائع
