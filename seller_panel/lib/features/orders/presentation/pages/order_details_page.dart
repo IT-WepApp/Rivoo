@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_libs/services/order_service.dart';
+import 'package:shared_libs/services/order_service_provider.dart';
 import 'package:shared_libs/widgets/app_widgets.dart';
 import 'package:shared_libs/theme/app_colors.dart';
 
