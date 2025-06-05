@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../../../../core/services/product_service.dart';
-import '../../../../core/widgets/app_widgets.dart';
+import 'package:shared_libs/services/product_service.dart';
+import 'package:shared_libs/widgets/app_widgets.dart';
 import 'package:shared_libs/theme/app_colors.dart';
 
 /// صفحة إدارة فئات المنتجات

@@ -4,9 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import '../../../../core/constants/app_constants.dart';
-import '../../../../core/services/product_service.dart';
-import '../../../../core/widgets/app_widgets.dart';
+import 'package:shared_libs/constants/app_constants.dart';
+import 'package:shared_libs/services/product_service.dart';
+import 'package:shared_libs/widgets/app_widgets.dart';
 import 'package:shared_libs/theme/app_colors.dart';
 
 /// صفحة تعديل منتج موجود

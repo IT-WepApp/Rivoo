@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../constants/app_constants.dart';
-import 'auth_service.dart';
+import 'package:shared_libs/constants/app_constants.dart';
+import 'package:shared_libs/services/auth_service.dart';
 
 /// خدمة إدارة الطلبات للبائعين
 class OrderService {

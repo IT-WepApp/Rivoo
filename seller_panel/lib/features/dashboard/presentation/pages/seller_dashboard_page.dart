@@ -2,12 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import '../../../../core/constants/route_constants.dart';
-import '../../../../core/services/auth_service.dart';
-import '../../../../core/services/order_service.dart';
-import '../../../../core/services/product_service.dart';
-import '../../../../core/services/notification_service.dart';
-import '../../../../core/widgets/app_widgets.dart';
+import 'package:shared_libs/constants/route_constants.dart';
+import 'package:shared_libs/services/auth_service.dart';
+import 'package:shared_libs/services/order_service.dart';
+import 'package:shared_libs/services/product_service.dart';
+import 'package:shared_libs/services/notification_service.dart';
+import 'package:shared_libs/widgets/app_widgets.dart';
 import 'package:shared_libs/theme/app_colors.dart';
 
 /// صفحة لوحة التحكم الرئيسية للبائع
