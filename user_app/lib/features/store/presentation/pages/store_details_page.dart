@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_libs/models/models.dart';
 import 'package:shared_libs/services/services.dart';
-import 'package:shared_libs/widgets/widgets .dart';
+import 'package:shared_libs/widgets/widgets.dart';
 import '../../../cart/providers/cart_notifier.dart';
 import '../../../products/providers/product_notifier.dart';
 import 'package:user_app/features/auth/providers/auth_notifier.dart';
