@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:shared_libs/widgets/widgets .dart';
+import 'package:shared_libs/widgets/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:go_router/go_router.dart';
 import 'package:user_app/features/orders/providers/orders_notifier.dart';
